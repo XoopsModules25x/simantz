@@ -1,0 +1,316 @@
+<html xmlns:ntb>
+<head>
+
+<title>Adobe Flex Charting 2 and Nitobi AJAX Grid 3.22 via FABridge</title>
+
+<link type="text/css" rel="stylesheet" href="style/nitobi.grid.css" />
+<!--
+Link in the FABridge JavaScript file.
+-->
+<script src="resources/bridgesrc/fabridge.js" language="javascript"></script>
+
+<!--
+Link in the Nitobi AJAX Grid Component JavaScript file.
+-->
+<script language="javascript" src="nitobi.toolkit.js"></script>
+
+<script language="javascript" src="nitobi.grid.js"></script>
+
+<!--
+Link in the custom Nitobi Flex Charting interface file.
+-->
+<script language="javascript" src="nitobi.charting.js"></script>
+
+<script language="javascript">
+var lastMonth = 0;
+var lastYear = 0;
+
+// To do custom data transformations on the client XSLT is very efficient
+// We will do data grouping on the client to display in a Flex Chart.
+var xslDoc = nitobi.xml.createXslDoc();
+xslDoc.async = false;
+xslDoc.load('dataConverter.xslt');
+nitobi.dataFormatter = nitobi.xml.createXslProcessor(xslDoc);
+
+
+// Wait for the Flash movie to load completely then plot any data that is ready
+FABridge.addInitializationCallback("mybridge",initFlex);
+
+function initFlex()
+{
+	chart_controller.flexReady = true;
+}
+
+
+/**
+ * A simple global object with methods for dealing with Flex Chart
+ */
+var chart_controller = {
+	flexReady: false,
+	renderAttempts: 0,
+	maxRenderAttempts: 100,
+	chartCreated: false,
+    /**
+     * Renders the given data in the Flex Chart and updates the Chart title
+     */
+	renderChart: function(chartData, targetMonth, targetYear)
+	{
+		if (!this.flexReady)
+		{
+			if (this.renderAttempts < this.maxRenderAttempts)
+			{
+				window.setTimeout(function(){chart_controller.renderChart(chartData, targetMonth, targetYear);}, 50);
+				this.renderAttempts ++;
+			}
+			return;
+		}
+		if (!this.chartCreated)
+		{
+		    // Create the Chart using our Flex Charting method.
+			nitobi.CreateChart(FABridge, 'mybridge', 'chart1', chartData);
+			this.chartCreated = true;
+		}
+		this.updateChartData(FABridge, 'mybridge', 'chart1', chartData);
+		// Update the chart title
+		var title = FABridge['mybridge'].root().getChildByName("title");
+		title.setText("Day Sales Breakdown In " + getMonthName(targetMonth) + " " + targetYear);
+	},
+    /**
+     * Update the Flex Chart with a new DataProvider.
+     * The chartData is in an ECMAScript arrary of structs [{totalSales:100,month:4,year:2004}]
+     */
+	updateChartData: function (FABridge, bridgeName, chartName, chartData)
+	{
+	    // Get the Root of our Flex application and find our Chart
+		var root = FABridge[bridgeName].root();
+		var chart = root.getChildByName(chartName);
+		// Change the DataProvider property
+		chart.set("dataProvider",chartData);
+		chart.get("horizontalAxis").set("dataProvider",chartData);
+	}
+}
+
+/**
+ * A simple global object with methods for dealing with user interactions
+ * with the overview Grid.
+ */
+var overviewGrid_controller = {
+	/**
+	 * Oncellclick handles the cell click events in the overview Grid.
+	 */
+	oncellclick: function(eventArgs)
+	{
+	    // Use the event arguments to get the Grid object.
+		var overviewGrid = eventArgs.getSource();
+
+		// Get the month and year of the record that was clicked on in the Grid
+		var row = eventArgs.getCell().getRow();
+		var month = overviewGrid.getCellObject(row,3).getValue();
+		var year = overviewGrid.getCellObject(row,4).getValue();
+
+        // Check if we have actually changed the month or year
+        if (month == lastMonth && year == lastYear)
+            return;
+
+        // Indicate AJAX activity!
+        spinner.show();
+
+        // Set the month and year as filters on the detail Grid
+		var detailGrid = nitobi.getGrid("detailGrid");
+		detailGrid.getDataSource().setGetHandlerParameter('startMonth',month);
+		detailGrid.getDataSource().setGetHandlerParameter('startYear',year);
+        // Bind to the new datasource, which will retrieve the new data from the server.
+		detailGrid.dataBind();
+
+		return true;
+	}
+}
+
+/**
+ * A simple global object with methods for dealing with user interactions
+ * with the detail Grid.
+ */
+var detailGrid_controller = {
+    /**
+     * Capture the CellClick event on the detail Grid and delete the
+     * clicked row if the user clicked on the [x] column.
+     */
+	deleteRow: function(eventArgs)
+	{
+		eventArgs.grid.deleteCurrentRow();
+	},
+	/**
+	 *
+	 */
+	cellEdit: function(eventArgs)
+	{
+		var detailGrid = eventArgs.getSource();
+		var row = detailGrid.getRowObject(eventArgs.getCell().getRow());
+		row.getCell("ProductTotal").setValue(nitobi.lang.parseNumber(row.getCell("ProductPrice").getValue()) * nitobi.lang.parseNumber(row.getCell("Quantity").getValue()));
+
+        // The Nitobi Grid uses XML data but it is easy to convert the data
+        // to another format like JSON using the Nitobi XML library and XSLT.
+        // Note: this also performs grouping on the data very efficiently.
+        var jsonData = nitobi.xml.transformToString(detailGrid.getDataSource().xmlDoc, nitobi.dataFormatter);
+
+        // Now we have the sales data in JSON format grouped by day
+        chart_controller.renderChart(eval(jsonData), lastMonth, lastYear);
+	},
+	/**
+	 * VisualizeData is fired on the DataReady event of the detail Grid
+	 * This will take the sales data from the detail Grid and group sales
+	 * by day so that it can be summarized visually in the Flex Chart.
+	 */
+    visualizeData: function()
+    {
+        var overviewGrid = nitobi.getGrid('overviewGrid');
+        var detailGrid = nitobi.getGrid('detailGrid');
+
+        // Get the currently selected row in the overviewGrid
+        var row = overviewGrid.getSelectedRowObject();
+        if (row == null)
+        {
+            row = overviewGrid.getRowObject(0);
+        }
+
+        // Get the month and year information from the currently selected row.
+        var month = row.getCell(3).getValue();
+        var year = row.getCell(4).getValue();
+
+        // Check if we have actually changed the month or year
+        if (month == lastMonth && year == lastYear)
+            return;
+
+        lastMonth = month;
+        lastYear = year;
+
+        // The Nitobi Grid uses XML data but it is easy to convert the data
+        // to another format like JSON using the Nitobi XML library and XSLT.
+        // Note: this also performs grouping on the data very efficiently.
+        var jsonData = nitobi.xml.transformToString(detailGrid.getDataSource().xmlDoc, nitobi.dataFormatter);
+
+        // Now we have the sales data in JSON format grouped by day
+        chart_controller.renderChart(eval(jsonData),month,year);
+
+        // Remove the activity indicator.
+        spinner.hide();
+    }
+}
+
+/**
+ * Simple spinner instance that we can show and hide as an activity indicator.
+ */
+var spinner = {
+    show: function() {
+	    document.getElementById('ActivityIndicator').style.display = 'block';
+	},
+	hide: function() {
+	    document.getElementById('ActivityIndicator').style.display = 'none';
+	}
+}
+
+</script>
+
+</head>
+
+<body onLoad="nitobi.initGrids();">
+
+	<div id="ActivityIndicator" style="display:none;position:absolute;top:10px;left:250px;">
+		<img src="resources/indicator_wheel2.gif" width="32" height="32"></img>
+	</div>
+
+    <!--
+    This is our Flex Chart object. The actual SWF file is a blank movie in which
+    we are able to create a Flex Chart programmatically from JavaScript using the FABridge
+    -->
+	<div style="left:20px;top:150px;position:absolute;">
+	 	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+			id="chart" width="868" height="200"
+			codntbse="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab" VIEWASTEXT>
+			<param name="movie" value="resources/ajaxflex.swf" />
+			<param name="quality" value="high" />
+			<param name='flashvars' value='bridgeName=mybridge' />
+			<param name="allowScriptAccess" value="sameDomain" />
+			<param name="bgcolor" value="#ffffff" />
+
+			<embed src="resources/ajaxflex.swf"
+				quality="high"
+				 bgcolor="#ffffff"
+				width="868" height="200" name="mybridge" align="middle"
+				play="true"
+				loop="false"
+				quality="high"
+				flashvars="bridgeName=mybridge"
+				allowScriptAccess="sameDomain"
+				type="application/x-shockwave-flash"
+				pluginspage="http://www.macromedia.com/go/getflashplayer">
+			</embed>
+		</object>
+	</div>
+
+	<table style="left:20px;top:370px;position:absolute;">
+    	<tr><td class="header" style="width:350px;">Sales Summary</td><td class="header" style="width:500px;">Sales Details</td></tr>
+        <tr>
+
+            <td>
+                <!--
+                This is the declaration for the "Master" Nitobi Grid component.
+                We are able to define all our data columns and events through a
+                simple HTML declaration.
+                -->
+		        <ntb:grid
+		 	        id="overviewGrid"
+		 	        gethandler="summary_load_data.php"
+		 	        width="350"
+		 	        height="240"
+		 	        mode="livescrolling"
+		 	        rowsperpage="24"
+		 	        oncellclickevent="overviewGrid_controller.oncellclick(eventArgs);"
+		 	        ondatareadyevent="spinner.hide();"
+		 	        rowhighlightenabled="true"
+		 	        toolbarenabled = "false">
+		 	        <ntb:columns>
+		 		        <ntb:textcolumn label="Period" width="120" xdatafld="Period" editable="false" ></ntb:textcolumn>
+				        <ntb:numbercolumn label="Monthly Revenue" width="100" xdatafld="MonthlyRevenue" editable="false" mask="$###"></ntb:numbercolumn>
+				        <ntb:textcolumn label="Sales" width="80" xdatafld="SalesCount" editable="false"></ntb:textcolumn>
+				        <ntb:textcolumn label="Month" width="40" xdatafld="SalesMonth" editable="false" sortenabled="false"></ntb:textcolumn>
+				        <ntb:textcolumn label="Year" width="40" xdatafld="SalesYear" editable="false" sortenabled="false"></ntb:textcolumn>
+
+			        </ntb:columns>
+		        </ntb:grid>
+        	</td>
+        	<td>
+        	    <!--
+        	    This is the declaration for the "Detail" Nitobi Grid component.
+        	    When records in the Master Grid are selected the Detail Grid is
+        	    updated to show more information about the sales for the selected month.
+        	    -->
+			    <ntb:grid
+			    id="detailGrid"
+			    gethandler="detail_load_data.php?startYear=2004&startMonth=1"
+			    savehandler="detail_save_data.php"
+			    ondatareadyevent="detailGrid_controller.visualizeData();"
+			    height="240"
+			    mode="locallivescrolling"
+			    width="500"
+			    rowhighlightenabled="true"
+			    rowsperpage="10"
+			    toolbarenabled="true">
+				    <ntb:columns>
+					    <ntb:textcolumn label="Date" width="100" xdatafld="OrderDate" initial="01/01/2004"></ntb:textcolumn>
+					    <ntb:textcolumn label="Product Name" width="255" xdatafld="ProductName" initial="New Sale"></ntb:textcolumn>
+
+					    <ntb:numbercolumn label="Price" width="50" xdatafld="ProductPrice" mask="$###.00" initial="0" onaftercelleditevent="detailGrid_controller.cellEdit(eventArgs)"></ntb:numbercolumn>
+					    <ntb:numbercolumn label="Qty" width="30" xdatafld="Quantity" mask="####" initial="0" onaftercelleditevent="detailGrid_controller.cellEdit(eventArgs)"></ntb:numbercolumn>
+					    <ntb:textcolumn  label="  " width="30" xdatafld="deleteImgUrl" initial="resources/del.gif" oncellclickevent="detailGrid_controller.deleteRow(eventArgs);">
+						    <ntb:imageeditor></ntb:imageeditor>
+					    </ntb:textcolumn>
+					    <ntb:numbercolumn label="ProductTotal" xdatafld="ProductTotal" initial="0" visible="false"></ntb:numbercolumn>
+				    </ntb:columns>
+			    </ntb:grid>
+            </td>
+
+        </tr>
+	</table>
+</body>
+</html>

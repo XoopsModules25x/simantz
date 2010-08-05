@@ -1,0 +1,46 @@
+#rollover {
+width:100px;
+margin:auto;
+}
+#rollover a {
+text-decoration:none;
+color:#ff00ff;
+background-color:#333333;
+display:block;
+font-size:1em;
+font-weight:bold;
+}
+#rollover li {
+float:left;
+width:50px;
+}
+#rollover h2 {
+height:10px;
+margin:0;
+padding:0;
+}
+#rollover h2 img {
+display:block;
+}
+#rollover #a h2 {
+background-color:#133333;
+}
+#rollover #b h2 {
+background-color:#233333;
+}
+#rollover #c h2 {
+background-color:#333333;
+}
+#rollover li:hover h2 img, #rollover li.sfhover h2 img {
+display:none;
+}
+#rollover li ul {
+display:none;
+}
+#rollover li:hover ul, #rollover li.sfhover ul {
+display:block;
+}
+#rollover li ul li:hover a, #rollover li ul li.sfhover a{
+background-color:#ff00ff;
+color:#333333;
+}
