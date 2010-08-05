@@ -1,0 +1,23 @@
+
+        @import url("tree/nitobi.reset.css");
+    
+        @import url("tree/base/tree.css");
+    
+        @import url("tree/documents/tree.css");
+    
+        @import url("tree/finefolders/tree.css");
+    
+        @import url("tree/folders/tree.css");
+    .nitobi-hide {
+	display:none;
+}
+
+.ntb-effects-small {
+	clear:both;
+	display:block;
+	float:none;
+	height:0px;
+	//height:1px;
+	overflow:hidden;
+	width:auto;
+}

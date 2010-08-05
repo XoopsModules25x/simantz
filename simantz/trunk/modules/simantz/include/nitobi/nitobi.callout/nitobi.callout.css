@@ -1,0 +1,29 @@
+
+        @import url("callout/vista/nitobi.callout.css");
+    
+        @import url("callout/impact/nitobi.callout.css");
+    
+        @import url("callout/xp/nitobi.callout.css");
+    
+        @import url("callout/clean/nitobi.callout.css");
+    
+        @import url("callout/peanut_info/nitobi.callout.css");
+    
+        @import url("callout/peanut_talkbubble/nitobi.callout.css");
+    
+        @import url("callout/peanut_exclam/nitobi.callout.css");
+    
+        @import url("callout/peanut_noaccess/nitobi.callout.css");
+    .nitobi-hide {
+	display:none;
+}
+
+.ntb-effects-small {
+	clear:both;
+	display:block;
+	float:none;
+	height:0px;
+	//height:1px;
+	overflow:hidden;
+	width:auto;
+}

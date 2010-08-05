@@ -1,0 +1,23 @@
+
+        @import url("tabstrip/nitobi.reset.css");
+    
+        @import url("tabstrip/glass/nitobi.tabstrip.css");
+    
+        @import url("tabstrip/plain/nitobi.tabstrip.css");
+    
+        @import url("tabstrip/nitobi/nitobi.tabstrip.css");
+    
+        @import url("tabstrip/nested/nitobi.tabstrip.css");
+    .nitobi-hide {
+	display:none;
+}
+
+.ntb-effects-small {
+	clear:both;
+	display:block;
+	float:none;
+	height:0px;
+	//height:1px;
+	overflow:hidden;
+	width:auto;
+}
