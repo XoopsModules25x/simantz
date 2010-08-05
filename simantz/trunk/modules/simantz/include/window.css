@@ -1,0 +1,22 @@
+/* 
+    Document   : window
+    Created on : May 29, 2010, 1:11:45 PM
+    Author     : kstan
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+#treeModuleWindows {
+
+    vertical-align:top;
+}
+
+#formModuleWindows {
+   vertical-align:top;
+}
+
