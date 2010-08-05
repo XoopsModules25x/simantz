@@ -1,0 +1,60 @@
+Xoops framework sometimes got a lot of changes,
+everytime before we change xoops framework, we need to make sure new framework
+support our existing code very well.
+Sometimes due to some reason we need to change the xoops, here is the file we'd
+change and we need to make sure when upgrade xoops the following file need to
+ammend too.
+
+
+Below is the file:
+<ROOT>/class/database/mysqldatabase.php
+<ROOT>/include/checklogin.php
+<ROOT>/user.php
+<ROOT>/themes/default (use entire folder)
+
+1. Add following line into <ROOT>/class/database/mysqldatabase.php, ~ line 348
+============
+ function callMySQLIProcedure($sql)
+	{
+                $mysqli = new mysqli(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS, XOOPS_DB_NAME);
+                        $mysqli->real_query($sql);
+                        $result =$mysqli->store_result();
+                        $row = $result->fetch_assoc();
+                        $status = $row['status'];
+                        $mysqli->close();
+                        return $status;
+
+            }
+
+
+===============
+
+
+2. Add following line into <ROOT>/include/checklogin.php ~ line 64
+============
+//modify by kstan@simit.com.my 2009-06-23 for trace login event
+include_once XOOPS_ROOT_PATH . "/modules/loginhistory/class/LoginHistory.php";
+$lh = new LoginHistory();
+$lh->insertEventRecord($user->getVar("uid"),"I","k");// (uid,insert,killprevioussession/reserveprevioussession)
+//end modifcation kstan@simit.com.my 2009-06-23
+
+=============
+
+3.Logout code
+
+Add following line into <ROOT>/user.php, after line ~89
+
+//after 3 line of code as below
+//if ($op == 'logout') {
+  //  $message = '';
+    //$_SESSION = array();
+
+
+	// add for login history : 2010-03-21
+    if ( $xoopsUser ){
+	        include_once XOOPS_ROOT_PATH . "/modules/loginhistory/class/LoginHistory.php";
+	        $lh = new LoginHistory();
+	        $lh->insertEventRecord($xoopsUser->getVar('uid'),"O");
+	    }
+	//end
+========
