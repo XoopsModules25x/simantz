@@ -1,0 +1,93 @@
+/*
+iPhoneCal - inspired by apple's default calendar widget in Dashboard
+*/
+.iPhoneCal{
+	background-color: rgb( 230, 230, 230 );
+	color: rgb( 46, 63, 81 );
+	font-size:22px;
+	width:320px; /* cellwidth * 7 + cellborder * 14 */
+	display:block;
+	min-height:322px;
+	font-family: Helvetica;
+	letter-spacing: 1px;
+	-webkit-box-shadow: 0px 15px 15px #888;
+}
+.iPhoneCal:hover{ cursor:pointer; }
+.iPhoneCal .calwrapper{ display:block; }
+.iPhoneCal .calweekswrapper{ display:block; }
+
+.iPhoneCal .calheader{
+	display: block;
+	width:100%;
+	text-align:center;
+	font-size:22px; font-weight: bold;
+}
+.iPhoneCal .caltitle{
+	width:auto;
+	margin-left:auto;
+	margin-right:auto;
+	text-align:center;
+	height:23px;
+	padding-top: 6px;
+	vertical-align: bottom;
+}
+.iPhoneCal .calcontrol{
+	font-weight: bold;
+	width:44px;
+	padding-top: 6px;
+	height:23px;
+}
+.iPhoneCal .calprevmonth{ float:left; }
+.iPhoneCal .calnextmonth{ float:right; }
+.iPhoneCal .calclose{ float:right; display:none; }
+
+.iPhoneCal .daybox{
+	float:left;
+	border-top: 2px solid rgb( 210, 210, 210 );
+	border-right: 2px solid rgb( 210, 210, 210 );
+	width:44px;
+	height:35px;
+	font-weight: bold;
+	text-align:center;	
+	padding-top: 9px;
+}
+.iPhoneCal .dayboxname{
+	border-right: 2px solid rgb( 201, 199, 204 );
+	border-top: none;
+	background-color: rgb( 201, 199, 204 );
+	font-size: 10px;
+	height: 14px;
+	color:#666666;
+	padding-top: 3px;
+}
+.iPhoneCal .dayboxvalue{
+	display:none;
+}
+.iPhoneCal .daybox:hover{
+}
+.iPhoneCal .dayboxname:hover{
+}
+.iPhoneCal .dayinmonth{
+}
+.iPhoneCal .dayoutmonth{
+	color: rgb( 150, 150, 150 );
+}
+.iPhoneCal .dayselected{
+	color: #ffffff;
+	background-color: rgb( 12, 96, 194 );
+}
+.iPhoneCal .dayselected .dayboxdate{
+	text-decoration: none;
+}
+.iPhoneCal .daycurrent{
+}
+.iPhoneCal .weekbox{
+	width:100%;
+	display:block;
+}
+.iPhoneCal .endweek{
+	float:left;
+	border-right: none;
+}
+.iPhoneCal .weekboxname{
+}
