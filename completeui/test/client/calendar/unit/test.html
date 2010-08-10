@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns:ntb="http://www.nitobi.com">
+<head>
+	<title>JSSpec Unit Test - Calendar</title>
+	<script language="javascript" src="../base.js"></script>
+	<script>
+		initTest();
+	</script>
+	<script type="text/javascript">// <![CDATA[
+
+		describe('Vanilla Date Picker', {
+			before_each: function(){
+				cal = nitobi.loadComponent('cal1');
+			},
+			'should have Calendar JavaScript object': function(){
+				value_of(cal.getCalendar().xmlNode.xml).should_match(/ntb:calendar/);
+			},
+			'should have Events Manager JavaScript object': function() {
+				value_of(cal.getEventsManager()).should_not_be_null();
+			},
+			'should have Date Input JavaScript object': function() {
+				value_of(cal.getInput().xmlNode.xml).should_match(/ntb:dateinput/);
+			},
+			'should have Events URL property': function() {
+				value_of(cal.getEventsUrl()).should_have_at_least(0,'characters');
+			},
+			'should have an array of seven long day names': function () {
+				value_of(cal.getLongDayNames()).should_have(7,'items');
+			},
+			'should have an array of 12 long month names': function () {
+				value_of(cal.getLongMonthNames()).should_have(12,'items');
+			},
+			'should have an array of seven short day names': function () {
+				value_of(cal.getMinDayNames()).should_have(7,'items');
+			},
+			'should have some "Cancel" text for the "Cancel" button': function () {
+				value_of(cal.getNavCancelText()).should_have_at_least(1,"characters");
+			},
+			'should have some "Confirm" text for the "Confirm" button': function () {
+				value_of(cal.getNavConfirmText()).should_have_at_least(1,"characters");
+			},
+			'should have some "invalid year" text for the "invalid year" alert': function () {
+				value_of(cal.getNavInvalidYearText()).should_have_at_least(1,"characters");
+			},
+			'should have some "out of range" text for the "out of range" alert': function () {
+				value_of(cal.getNavOutOfRangeText()).should_have_at_least(1,"characters");
+			},
+			'should have some "select month" text for the month field of the quick nav panel': function () {
+				value_of(cal.getNavSelectMonthText()).should_have_at_least(1,"characters");
+			},
+			'should have some "select year" text for the year field of the quick nav panel': function () {
+				value_of(cal.getNavSelectYearText()).should_have_at_least(1,"characters");
+			},
+			'should have some text for the quick nav tooltip': function () {
+				value_of(cal.getQuickNavTooltip()).should_have_at_least(1,"characters");
+			},
+			'should initially return no selected date': function () {
+				value_of(cal.getSelectedDate()).should_be_null();
+			},
+			'should allow setting of selected date': function () {
+				cal.setSelectedDate('12/12/2009');
+				value_of(cal.getSelectedDate()).should_not_be_null();
+			},
+			'should have an array of seven short day names': function () {
+				value_of(cal.getShortDayNames()).should_have(7,'items');
+			},
+			'should have an array of 12 short month names': function () {
+				value_of(cal.getShortMonthNames()).should_have(12,'items');
+			},
+			'should have the correct default submission mask': function () {
+				value_of(cal.getSubmitMask()).should_be('yyyy-MM-dd');
+			},
+			'should return correct theme name': function () {
+				value_of(cal.getTheme()).should_be('leopard');
+			},
+			'should allow setting the events URL property': function () {
+				cal.setEventsUrl('http://www.nitobi.com');
+				value_of(cal.getEventsUrl()).should_be('http://www.nitobi.com');
+			},
+			'should have an empty max date property initially': function () {
+				value_of(cal.getMaxDate()).should_be_null();
+			},
+			'should allow setting of max date property': function () {
+				cal.setMaxDate('yesterday');
+				value_of(cal.getMaxDate()).should_not_be_null();
+			},
+			'should have an empty min date property initially': function () {
+				value_of(cal.getMinDate()).should_be_null();
+			},			
+			'should allow setting of min date property': function () {
+				cal.setMinDate('last week');
+				value_of(cal.getMinDate()).should_not_be_null();
+			},
+			'should allow setting the submission mask': function () {
+				cal.setSubmitMask('yy-MM-dd');
+				value_of(cal.getSubmitMask()).should_be('yy-MM-dd');
+			},
+			'should allow clearing of selected date': function () {
+				cal.setSelectedDate('12/12/2009');
+				cal.clear();
+				value_of(cal.getSelectedDate()).should_be_null();
+			}
+		});
+		describe('Vanilla Date Input',{
+			before_each: function(){
+				dp = nitobi.loadComponent('cal1').getInput();
+			},
+			'should have proper default display mask': function () {
+				value_of(dp.getDisplayMask()).should_be('MMM dd yyyy')
+			}
+		});
+// ]]></script>
+
+</head>
+<body>
+<div id="cont">
+	<ntb:datepicker id="cal1" theme="leopard">
+		<ntb:dateinput></ntb:dateinput>
+		<ntb:calendar></ntb:calendar>
+	</ntb:datepicker>
+</div>
+</body>
+</html>
