@@ -1,0 +1,5 @@
+
+		../src/client/spotlight/../toolkit/js/nitobi/base/toolkitdetection.js 
+		../src/client/spotlight/../callout/js/nitobi/callout/callout.js 
+		../src/client/spotlight/../callout/js/nitobi/callout/hint.js 
+		../src/client/spotlight/js/nitobi/spotlight/spotlight.js 

@@ -1,0 +1,5 @@
+
+		../src/client/tree/../toolkit/js/nitobi/base/toolkitdetection.js 
+		../src/client/tree/js/nitobi/tree/tree.js 
+		../src/client/tree/js/nitobi/tree/children.js 
+		../src/client/tree/js/nitobi/tree/node.js 

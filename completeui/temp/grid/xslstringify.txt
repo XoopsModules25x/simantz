@@ -1,0 +1,37 @@
+
+		stringify("../src/client/grid/xsl/addXid.xslt", "../temp/grid/nitobi.data.addXidXslProc.js", "addXidXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/adjustXi.xslt", "../temp/grid/nitobi.data.adjustXiXslProc.js", "adjustXiXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/dataTranslatorXsl.xslt", "../temp/grid/nitobi.data.dataTranslatorXslProc.js", "dataTranslatorXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/dateFormatTemplates.xslt", "../temp/grid/nitobi.grid.dateFormatTemplatesXslProc.js", "dateFormatTemplatesXslProc", "nitobi.grid");
+	
+		stringify("../src/client/grid/xsl/dateEditor.xslt", "../temp/grid/nitobi.form.dateXslProc.js", "dateXslProc", "nitobi.form");
+	
+		stringify("../src/client/grid/xsl/declarationConverter.xslt", "../temp/grid/nitobi.grid.declarationConverterXslProc.js", "declarationConverterXslProc", "nitobi.grid");
+	
+		stringify("../src/client/grid/xsl/frameCssXsl.xslt", "../temp/grid/nitobi.grid.frameCssXslProc.js", "frameCssXslProc", "nitobi.grid");
+	
+		stringify("../src/client/grid/xsl/frameXsl.xslt", "../temp/grid/nitobi.grid.frameXslProc.js", "frameXslProc", "nitobi.grid");
+	
+		stringify("../src/client/grid/xsl/listboxXsl.xslt", "../temp/grid/nitobi.form.listboxXslProc.js", "listboxXslProc", "nitobi.form");
+	
+		stringify("../src/client/grid/xsl/mergeEbaXmlToLog.xslt", "../temp/grid/nitobi.data.mergeEbaXmlToLogXslProc.js", "mergeEbaXmlToLogXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/mergeEbaXml.xslt", "../temp/grid/nitobi.data.mergeEbaXmlXslProc.js", "mergeEbaXmlXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/numberFormatTemplates.xslt", "../temp/grid/nitobi.grid.numberFormatTemplatesXslProc.js", "numberFormatTemplatesXslProc", "nitobi.grid");
+	
+		stringify("../src/client/grid/xsl/numberEditor.xslt", "../temp/grid/nitobi.form.numberXslProc.js", "numberXslProc", "nitobi.form");
+	
+		stringify("../src/client/grid/xsl/rowXsl.xslt", "../temp/grid/nitobi.grid.rowXslProc.js", "rowXslProc", "nitobi.grid");
+	
+		stringify("../src/client/grid/xsl/sort.xslt", "../temp/grid/nitobi.data.sortXslProc.js", "sortXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/fillColumn.xslt", "../temp/grid/nitobi.data.fillColumnXslProc.js", "fillColumnXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/xsl/updategramTranslatorXsl.xslt", "../temp/grid/nitobi.data.updategramTranslatorXslProc.js", "updategramTranslatorXslProc", "nitobi.data");
+	
+		stringify("../src/client/grid/../calendar/xsl/nitobi/calendar/render.xsl", "../temp/grid/nitobi.calendar.datePickerTemplate.js", "datePickerTemplate", "nitobi.calendar");
+	

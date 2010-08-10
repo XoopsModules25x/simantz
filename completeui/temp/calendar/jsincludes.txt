@@ -1,0 +1,7 @@
+
+		../src/client/calendar/../toolkit/js/nitobi/base/toolkitdetection.js 
+		../src/client/calendar/js/nitobi/calendar/calendar.js 
+		../src/client/calendar/js/nitobi/calendar/datepicker.js 
+		../src/client/calendar/js/nitobi/calendar/dateinput.js 
+		../src/client/calendar/js/nitobi/calendar/calrenderer.js 
+		../src/client/calendar/js/nitobi/calendar/eventsmanager.js 

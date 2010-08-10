@@ -1,0 +1,7 @@
+
+		../src/client/tabstrip/../toolkit/js/nitobi/base/toolkitdetection.js 
+		../src/client/tabstrip/js/nitobi/tabstrip/tabstrip.js 
+		../src/client/tabstrip/js/nitobi/tabstrip/tab.js 
+		../src/client/tabstrip/js/nitobi/tabstrip/tabs.js 
+		../src/client/tabstrip/js/nitobi/tabstrip/tabchangeeventargs.js 
+		../src/client/tabstrip/js/nitobi/tabstrip/error/error.js 

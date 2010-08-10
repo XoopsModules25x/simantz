@@ -1,0 +1,19 @@
+
+		../temp/grid/nitobi.data.addXidXslProc.js 
+		../temp/grid/nitobi.data.adjustXiXslProc.js 
+		../temp/grid/nitobi.data.dataTranslatorXslProc.js 
+		../temp/grid/nitobi.grid.dateFormatTemplatesXslProc.js 
+		../temp/grid/nitobi.form.dateXslProc.js 
+		../temp/grid/nitobi.grid.declarationConverterXslProc.js 
+		../temp/grid/nitobi.grid.frameCssXslProc.js 
+		../temp/grid/nitobi.grid.frameXslProc.js 
+		../temp/grid/nitobi.form.listboxXslProc.js 
+		../temp/grid/nitobi.data.mergeEbaXmlToLogXslProc.js 
+		../temp/grid/nitobi.data.mergeEbaXmlXslProc.js 
+		../temp/grid/nitobi.grid.numberFormatTemplatesXslProc.js 
+		../temp/grid/nitobi.form.numberXslProc.js 
+		../temp/grid/nitobi.grid.rowXslProc.js 
+		../temp/grid/nitobi.data.sortXslProc.js 
+		../temp/grid/nitobi.data.fillColumnXslProc.js 
+		../temp/grid/nitobi.data.updategramTranslatorXslProc.js 
+		../temp/grid/nitobi.calendar.datePickerTemplate.js 

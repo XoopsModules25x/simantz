@@ -1,0 +1,4 @@
+
+		../src/client/fisheye/../toolkit/js/nitobi/base/toolkitdetection.js 
+		../src/client/fisheye/js/nitobi/fisheye/fisheye.js 
+		../src/client/fisheye/js/nitobi/fisheye/menuitem.js 

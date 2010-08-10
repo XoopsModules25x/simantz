@@ -1,0 +1,3 @@
+
+		stringify("../src/client/toolkit/js/nitobi/base/xsl/uniqueidgenerator.xsl", "../temp/toolkit/nitobi.base.uniqueIdGeneratorProc.js", "uniqueIdGeneratorProc", "nitobi.base");
+	

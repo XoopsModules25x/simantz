@@ -1,0 +1,7 @@
+
+        stringify("../src/client/treegrid/xml/model.xml", "../temp/treegrid/nitobi.grid.modelDoc.js", "modelDoc", "nitobi.grid");
+    
+        stringify("../src/client/treegrid/xml/toolbar.xml", "../temp/treegrid/nitobi.grid.toolbarDoc.js", "toolbarDoc", "nitobi.grid");
+    
+        stringify("../src/client/treegrid/xml/toolbarpaging.xml", "../temp/treegrid/nitobi.grid.pagingToolbarDoc.js", "pagingToolbarDoc", "nitobi.grid");
+    

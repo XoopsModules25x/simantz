@@ -1,0 +1,7 @@
+
+        stringify("../src/client/grid/xml/model.xml", "../temp/grid/nitobi.grid.modelDoc.js", "modelDoc", "nitobi.grid");
+    
+        stringify("../src/client/grid/xml/toolbar.xml", "../temp/grid/nitobi.grid.toolbarDoc.js", "toolbarDoc", "nitobi.grid");
+    
+        stringify("../src/client/grid/xml/toolbarpaging.xml", "../temp/grid/nitobi.grid.pagingToolbarDoc.js", "pagingToolbarDoc", "nitobi.grid");
+    

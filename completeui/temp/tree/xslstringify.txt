@@ -1,0 +1,5 @@
+
+		stringify("../src/client/tree/xsl/nitobi/tree/render.xsl", "../temp/tree/nitobi.tree.xslTemplate.js", "xslTemplate", "nitobi.tree");
+	
+		stringify("../src/client/tree/xsl/nitobi/tree/datatranslator.xsl", "../temp/tree/nitobi.tree.dataTranslator.js", "dataTranslator", "nitobi.tree");
+	
