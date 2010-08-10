@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
 if(typeof (nitobi)=="undefined"||typeof (nitobi.lang)=="undefined"){
@@ -177,7 +177,6 @@ D.align(_2f,_31,D.align.ALIGNMIDDLEHORIZ);
 D.align(_2f,this.getHtmlNode("body"),D.align.ALIGNTOP);
 D.align(_2e,this.getHtmlNode("body"),D.align.ALIGNTOP|D.align.ALIGNLEFT);
 _30.callback=function(){
-_2d.focus();
 };
 _30.start();
 };
