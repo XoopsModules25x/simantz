@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
 if(typeof (nitobi)=="undefined"||typeof (nitobi.lang)=="undefined"){
@@ -889,7 +889,9 @@ var _8b=new nitobi.grid.OnCellClickEventArgs(this,this.getSelectedCellObject());
 if(!this.fire("BeforeCellClick",_8b)||(!!_8a&&!nitobi.event.evaluate(_8a.getOnBeforeCellClickEvent(),_8b))){
 return;
 }
+if(nitobi.browser.IE){
 this.waitt=true;
+}
 this.setCellClicked(true);
 this.setActiveCell(_89,evt.ctrlKey||evt.metaKey);
 if(this.waitt==true){
@@ -1316,10 +1318,6 @@ return;
 }
 var sct=0;
 var scl=0;
-if(!nitobi.browser.IE){
-sct=SS.scrollTop;
-scl=SS.scrollLeft;
-}
 var R1=nitobi.html.getBoundingClientRect(AC);
 var R2=nitobi.html.getBoundingClientRect(SS);
 var B=EBA_SELECTION_BUFFER||0;
@@ -8769,12 +8767,13 @@ nitobi.form.Calendar.prototype.handleCalendarMouseDown=function(evt){
 this.ignoreBlur=true;
 };
 nitobi.form.Calendar.prototype.handleCalendarMouseUp=function(evt){
-this.handleMouseUp(evt);
+this.ignoreBlur=false;
 };
 nitobi.form.Calendar.prototype.setVisibleComplete=function(){
 this.isPickerVisible=!this.isPickerVisible;
 };
 nitobi.form.Calendar.prototype.handlePick=function(){
+this.control.focus();
 var date=this.datePicker.getSelectedDate();
 var _7a8=nitobi.base.DateMath.toIso8601(date);
 this.control.value=_7a8;
@@ -9227,7 +9226,6 @@ D.align(_80d,_80f,D.align.ALIGNMIDDLEHORIZ);
 D.align(_80d,this.getHtmlNode("body"),D.align.ALIGNTOP);
 D.align(_80c,this.getHtmlNode("body"),D.align.ALIGNTOP|D.align.ALIGNLEFT);
 _80e.callback=function(){
-_80b.focus();
 };
 _80e.start();
 };
