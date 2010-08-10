@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
 if(typeof (nitobi)=="undefined"){
@@ -3276,7 +3276,7 @@ if(nitobi.base.DateMath.invalid(date)){
 return "";
 }
 var pz=nitobi.lang.padZeros;
-return date.getFullYear()+"-"+pz(date.getMonth()+1)+"-"+pz(date.getDate())+" "+pz(date.getHours())+":"+pz(date.getMinutes())+":"+pz(date.getSeconds());
+return date.getFullYear()+"-"+pz(date.getMonth()+1)+"-"+pz(date.getDate());
 };
 nitobi.base.DateMath.invalid=function(date){
 return (!date)||(date.toString()=="Invalid Date");
