@@ -140,7 +140,7 @@ EOF;
 
 <html>
 <head>
-	<title>SimEDU Approval</title>
+	<title>HIUMEN Approval</title>
 
 	<meta name="viewport" content="user-scalable=no, width=device-width">
 
@@ -170,7 +170,7 @@ EOF;
 <div class="jPintPageSet">
 
 	<div id="mainMenuPage" class="jPintPage IconMenu">
-                <div class="txtWelcome">Welcome to SimEDU Mobile</div>
+                <div class="txtWelcome">Welcome to HIUMEN Mobile</div>
                 
 		<ul>
 			<li><a onclick="enterPage()" style="cursor:pointer"><img src="../simantz/mobile/images/NavEnter.png"></a></li>
@@ -182,7 +182,7 @@ EOF;
 	</div>
 
 	<div id="checkPage" class="jPintPage IconMenu" >
-               <h1>Welcome To SimEDU System
+               <h1>Welcome To HIUMEN System
 			<div class="EditModeInvisible">
 				<a class="BackButton">Back</a>
 			</div>

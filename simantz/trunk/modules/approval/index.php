@@ -11,7 +11,7 @@ $userbasicmobileweb="false";
 if(strpos( $_SERVER['HTTP_USER_AGENT'], "BlackBerry")>=0)
  $userbasicmobileweb="true";
 
- 
+if($userid>0){
 echo <<< EOF
     <script type="text/javascript">
 
@@ -26,5 +26,7 @@ echo <<< EOF
         self.location = "newmobile.php";        
     </script>
 EOF;
-
+}
+else
+redirect_header("../../user.php",3,"Redirect to login page");
 ?>

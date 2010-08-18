@@ -202,14 +202,15 @@ echo <<< EOF
     function clickrecord(eventArgs){
                     row=eventArgs.getCell().getRow();
                     col=eventArgs.getCell().getColumn();
+                    
                     var  myGrid = nitobi.getGrid('DataboundGridApprovalList');
                     var myCell = myGrid.getCellObject(row, col);
-                    var objectVal = myGrid.getCellObject(row, 10);
-                    var objectVal2 = myGrid.getCellObject(row, 9);
-                    var objectVal3 = myGrid.getCellObject(row, 8);
-                    var objectVal4 = myGrid.getCellObject(row, 11);
-                    var objectVal5 = myGrid.getCellObject(row, 7);
-                    var objectVal6 = myGrid.getCellObject(row, 12);
+                    var objectVal = myGrid.getCellObject(row, 11);
+                    var objectVal2 = myGrid.getCellObject(row, 10);
+                    var objectVal3 = myGrid.getCellObject(row, 9);
+                    var objectVal4 = myGrid.getCellObject(row, 12);
+                    var objectVal5 = myGrid.getCellObject(row, 8);
+                    var objectVal6 = myGrid.getCellObject(row, 13);
 
                     var primarykey_value = objectVal.getValue();
                     var primarykey_name = objectVal2.getValue();
@@ -217,8 +218,8 @@ echo <<< EOF
                     var window_workflow = objectVal4.getValue();
                     var workflowtransaction_id = objectVal5.getValue();
                     var hyperlink = objectVal6.getValue();
-
-                    if(col == 5){
+	
+                    if(col == 6){
 //                        if(primarykey_name == "leave_id"){
 //                        window.open("leave.php?action=edit&leave_id="+primarykey_value,"Leave"+primarykey_value);
 //                        }
@@ -230,7 +231,7 @@ echo <<< EOF
                             search();
                     }
 
-                    if(col == 6){
+                    if(col == 7){
                     //alert(workflowtransaction_id);
                         //if(primarykey_name == "leave_id"){
                             var data="action=approvalwindows&primarykey_value="+primarykey_value+"&primarykey_name="+primarykey_name+"&tablename="+tablename+"&window_workflow="+window_workflow+"&workflowtransaction_id="+workflowtransaction_id;
@@ -394,6 +395,7 @@ echo <<< EOF
              rowhighlightenabled="true"
              width="943"
              height="380"
+             rowheight="70"
              onaftersaveevent="savedone(eventArgs)"
              onbeforerowdeleteevent="beforeDelete()"
              onafterrowdeleteevent="save()"
@@ -403,54 +405,18 @@ echo <<< EOF
              >
 
             <ntb:columns>
-            <ntb:textcolumn width="40" label="No." xdatafld="seq_no" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="200" label="Description" xdatafld="workflow_name" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="250" label="Employee" xdatafld="employee_name" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="120" label="Date" xdatafld="apply_date" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="120" label="Status" xdatafld="workflowstatus_name" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn label="Edit" xdatafld="operation" sortenabled="false" width="45" initial="images/del.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
+            <ntb:textcolumn width="30" label="No." xdatafld="seq_no" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn width="150" label="Description" xdatafld="workflow_name" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn width="130" label="Employee" xdatafld="employee_name" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn width="115" label="Date" xdatafld="apply_date" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn width="400" label="Detail" xdatafld="workflowtransaction_description" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn width="65" label="Status" xdatafld="workflowstatus_name" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn label="Edit" xdatafld="operation" sortenabled="false" width="40" initial="images/del.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
             <ntb:imageeditor></ntb:imageeditor>
             </ntb:textcolumn>
-            <ntb:textcolumn label="Action" xdatafld="approval" sortenabled="false"	width="65" initial="images/approval.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
+            <ntb:textcolumn label="Action" xdatafld="approval" sortenabled="false" width="45" initial="images/approval.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
             <ntb:imageeditor></ntb:imageeditor>
             </ntb:textcolumn>
-
-
-
-EOF;
-//only admin user will see record info and isdeleted column
-/*
- *
- <ntb:textcolumn width="180" label="Employee" xdatafld="employee_name" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="60" label="Staff No" xdatafld="employee_no" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="80" label="Date" xdatafld="leave_date" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="150" label="Department" xdatafld="department_name" classname="{\$rh}"></ntb:textcolumn>
-
-            <ntb:textcolumn label="Approval" xdatafld="approval" sortenabled="false"	width="65" initial="approval.gif" classname="{\$rh}">
-            <ntb:imageeditor></ntb:imageeditor>
-            </ntb:textcolumn>
-            <ntb:textcolumn label="View" xdatafld="operation" sortenabled="false" width="50" initial="docicon.gif" classname="{\$rh}">
-            <ntb:imageeditor></ntb:imageeditor>
-            </ntb:textcolumn>
-
- <ntb:textcolumn width="80" label="Complete" xdatafld="iscomplete" classname="{\$rh}"></ntb:textcolumn>
- <ntb:textcolumn label="Complete" width="100" xdatafld="iscomplete" sortenabled="false">
-           <ntb:checkboxeditor datasource="[{value:'1',display:'Yes'},{value:'0',display:'No'}]"
-                  checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value"></ntb:checkboxeditor>
-           </ntb:textcolumn>
- */
-if($isadmin==1)
-{
-echo<<< EOF
-<ntb:textcolumn  label="Log"   xdatafld="info"    width="50"  sortenabled="false" >
-<ntb:linkeditor></ntb:linkeditor openwindow="true" >
-</ntb:textcolumn>
-
-
-EOF;
-}
-
-echo <<< EOF
 
            <ntb:textcolumn   label=""  width="0" xdatafld="workflowtransaction_id" sortenabled="false"></ntb:textcolumn>
            <ntb:textcolumn   label=""  width="0" xdatafld="tablename" sortenabled="false"></ntb:textcolumn>
@@ -492,7 +458,7 @@ echo <<< EOF
         <tr height="100px">
             <td width="70%" class="headerSearchTdTable">
                 <table>
-                <tr $stylesearchemployee>
+                <tr $stylesearchemployee >
                 <td class="searchTitle">Employee No.</td><td><input name="searchemployee_no" id="searchemployee_no"></td>
                 <td class="searchTitle">Employee Name</td><td><input name="searchemployee_name" id="searchemployee_name"></td>
                 </tr>
@@ -728,7 +694,7 @@ EOF;
                 $workflowtransaction_description = $rowdetails['workflowtransaction_description'];
             }
         }
-
+        $workflowtransaction_description = str_replace("\n","<br>",$workflowtransaction_description);
         $viewdetails = "$hyperlink?action=edit&$primarykey_name=$primarykey_value";
 
         $workflowbtn = $workflowapi->getWorkflowButton($workflow_code,$primarykey_value,"idLeaveForm","action",$this->parameter_array,"ajax",$person_id);
@@ -887,29 +853,57 @@ EOF;
          */
 
 
+        if($searchemployee_no != ""){
+        $wherestrapp .= " AND employee_no LIKE '%$searchemployee_no%' ";
 
-        $wherestring .= " AND (wt.target_uid = $this->createdby OR $this->createdby IN (wt.targetparameter_name)
-                        OR $this->createdby IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)
-                        ) ";
+        }
+        if($searchemployee_name != ""){
+        $wherestrapp .= " AND employee_name LIKE '%$searchemployee_name%' ";
+  
+        }
+
+       if($searchemployee_name != "" || $searchemployee_no != "")
+        {
+            $sql="select employee_id from sim_hr_employee where employee_id>0 $wherestrapp";
+            $this->log->showLog(4,"Fetchappraisal With SQL: $sql");
+            $query=$xoopsDB->query($sql);
+            $i=0;
+            $arremployee_id="";
+            while ($row=$xoopsDB->fetchArray($query))
+            {
+              $i++;
+              $employee_id=$row['employee_id'];
+              $arremployee_id .= ",'$employee_id'";
+
+             }
+          $arremployee_id = substr($arremployee_id,1);
+          $wherestring .= " and emp.employee_id in ($arremployee_id) ";
+
+         }
+
+
+        if($searchleave_fromdate != "" && $searchleave_todate != ""){
+        $wherestring .= " AND wt.workflowtransaction_datetime BETWEEN '$searchleave_fromdate' AND '$searchleave_todate' ";
+        }
+
+        $wherestring .= " AND (wt.target_uid = $this->createdby OR $this->createdby IN (wt.targetparameter_name) ".
+                      "  OR $this->createdby IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)) ";
 
         $wherestring .= " AND wt.iscomplete = 0 ";
         if($searchiscomplete != "true"){
-        //$wherestring .= " AND wt.iscomplete = '0' ";
+        $wherestring .= " AND wt.iscomplete = '0' ";
         }else{
-        //$wherestring .= " AND wt.iscomplete = '1' ";
+        $wherestring .= " AND wt.iscomplete = '1' ";
         }
 
 
-        $sql = "SELECT
-                wt.*, emp.employee_name, emp.employee_no,
-                wf.workflow_name,ws.workflowstatus_name
-                FROM sim_workflowtransaction wt
-                LEFT JOIN sim_hr_employee emp ON wt.person_id = emp.employee_id
-                INNER JOIN sim_workflow wf ON wt.workflow_id = wf.workflow_id
-                INNER JOIN sim_workflowstatus ws ON wt.workflowstatus_id = ws.workflowstatus_id
-                $wherestring
-
-                ORDER BY wt.created DESC";
+        $sql = "SELECT wt.*, emp.employee_name, emp.employee_no, emp.employee_id,".
+                " wf.workflow_name,ws.workflowstatus_name,wt.workflowtransaction_description ".
+                " FROM sim_workflowtransaction wt ".
+                " LEFT JOIN sim_hr_employee emp ON wt.person_id = emp.employee_id ".
+                " INNER JOIN sim_workflow wf ON wt.workflow_id = wf.workflow_id ".
+                " INNER JOIN sim_workflowstatus ws ON wt.workflowstatus_id = ws.workflowstatus_id ".
+                " $wherestring  ORDER BY wt.created DESC";
 
                 // GROUP BY wt.tablename, wt.primarykey_name, wt.primarykey_value
                 //ORDER BY " . $sortcolumn . " " . $sortdirection ." ";
@@ -932,7 +926,7 @@ EOF;
         $getHandler->DefineField("person_id");
         $getHandler->DefineField("hyperlink");
         $getHandler->DefineField("workflowstatus_name");
-
+        $getHandler->DefineField("workflowtransaction_description");
         //$getHandler->DefineField("completeleave");
         $getHandler->DefineField("rh");
 
@@ -973,6 +967,7 @@ EOF;
              $getHandler->DefineRecordFieldValue("person_id", $row['person_id']);
              $getHandler->DefineRecordFieldValue("hyperlink", $row['hyperlink']);
              $getHandler->DefineRecordFieldValue("workflowstatus_name", $row['workflowstatus_name']);
+             $getHandler->DefineRecordFieldValue("workflowtransaction_description", $row['workflowtransaction_description']);
 
 
              //$getHandler->DefineRecordFieldValue("iscomplete",($row['completeleave'] == 1 ? "Yes" : "No"));
