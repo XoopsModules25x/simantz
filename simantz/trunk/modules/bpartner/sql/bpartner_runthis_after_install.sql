@@ -1,24 +1,23 @@
 SET FOREIGN_KEY_CHECKS=0;
-
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 INSERT INTO  sim_bpartner  ( bpartner_id ,  bpartnergroup_id ,  bpartner_no ,  bpartner_name ,  isactive ,  seqno ,  created ,  createdby ,  updated ,  updatedby ,  currency_id ,  terms_id ,  salescreditlimit ,  organization_id ,  bpartner_url ,  debtoraccounts_id ,  description ,  shortremarks ,  tax_id ,  currentbalance ,  creditoraccounts_id ,  isdebtor ,  iscreditor ,  istransporter ,  purchasecreditlimit ,  enforcesalescreditlimit ,  enforcepurchasecreditlimit ,  currentsalescreditstatus ,  currentpurchasecreditstatus ,  bankaccountname ,  bankname ,  bankaccountno ,  isdealer ,  isprospect ,  employeecount ,  alternatename ,  companyno ,  industry_id ,  tooltips ,  salespricelist_id ,  purchasepricelist_id ,  employee_id ,  inchargeperson ,  isdeleted ) VALUES
 (0, 0, '', '', 0, 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, 0, 0, '0.00', 0, '', 0, '', '', 0, '0.00', 0, 0, 0, 0, '0.00', 0, 0, '0.00', '0.00', '', '', '', 0, 0, 0, '', '', 0, '', 0, 0, 0, '', 0);
-UPDATE sim_bpartner SET bpartner_id=0 WHERE bpartner_id=1;
 
 INSERT INTO  sim_bpartnergroup  ( bpartnergroup_id ,  bpartnergroup_name ,  isactive ,  seqno ,  created ,  createdby ,  updated ,  updatedby ,  organization_id ,  description ,  debtoraccounts_id ,  creditoraccounts_id ,  isdeleted ) VALUES
 (0, '', 0, 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, 1, '', 0, 0, 0);
-UPDATE sim_bpartnergroup SET bpartnergroup_id=0 WHERE bpartnergroup_id=1;
+
 
 INSERT INTO  sim_followuptype  ( followuptype_id ,  followuptype_name ,  isactive ,  seqno ,  organization_id ,  description ,  created ,  createdby ,  updated ,  updatedby ) VALUES
 (0, '', 0, 0, 0, '', '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0);
-UPDATE sim_followuptype SET followuptype_id=0 WHERE followuptype_id=1;
+
 
 INSERT INTO  sim_industry  ( industry_id ,  industry_name ,  description ,  created ,  createdby ,  updated ,  updatedby ,  isactive ,  seqno ,  organization_id ,  isdeleted ) VALUES
 (0, '', NULL, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, 0, 0, 1, 0);
-UPDATE sim_industry SET industry_id=0 WHERE industry_id=1;
+
 
 INSERT INTO  sim_terms  ( terms_id ,  terms_name ,  seqno ,  isactive ,  created ,  createdby ,  updated ,  updatedby ,  organization_id ,  daycount ,  description ) VALUES
 (0, '', 0, 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, 0, 0, '');
-UPDATE sim_terms SET terms_id=0 WHERE terms_id=1;
+
 
 ALTER TABLE  sim_bpartner 
   ADD CONSTRAINT  sim_bpartner_ibfk_1  FOREIGN KEY ( organization_id ) REFERENCES  sim_organization  ( organization_id ) ON DELETE CASCADE,
@@ -42,4 +41,6 @@ ALTER TABLE  sim_followuptype
 ALTER TABLE  sim_terms 
   ADD CONSTRAINT  sim_terms_ibfk_1  FOREIGN KEY ( organization_id ) REFERENCES  sim_organization  ( organization_id ) ON DELETE CASCADE;
 
+ALTER TABLE  sim_industry 
+  ADD CONSTRAINT  sim_industry_ibfk_1  FOREIGN KEY ( organization_id ) REFERENCES  sim_organization  ( organization_id ) ON DELETE CASCADE;
 SET FOREIGN_KEY_CHECKS=1;
