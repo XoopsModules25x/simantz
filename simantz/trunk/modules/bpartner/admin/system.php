@@ -7,7 +7,7 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 xoops_cp_header();
 
 include_once "../setting.php";
-include_once '../class/Log.inc.php';
+include_once '../class/Log.php';
 $log = new Log();
 $url=XOOPS_URL;
 $isadmin=$xoopsUser->getVar('uid');

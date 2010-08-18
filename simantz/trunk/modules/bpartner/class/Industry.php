@@ -33,18 +33,18 @@ class Industry
         $this->tableindustry="sim_industry";
 	$this->log=$log;
    }
- 
+
   public function fetchIndustry($industry_id) {
 
 
 	$this->log->showLog(3,"Fetching industry detail into class Industry.php.<br>");
-		
+
 	$sql="SELECT * from $this->tableindustry where industry_id=$industry_id";
-	
+
 	$this->log->showLog(4,"ProductIndustry->fetchIndustry, before execute:" . $sql . "<br>");
-	
+
 	$query=$this->xoopsDB->query($sql);
-	
+
 	if($row=$this->xoopsDB->fetchArray($query)){
 		$this->jobposition_name=$row["industry_name"];
 		$this->organization_id=$row['organization_id'];
@@ -52,7 +52,7 @@ class Industry
 		$this->isactive=$row['isactive'];
 		$this->isdeleted=$row['isdeleted'];
 		$this->description=$row['description'];
-        
+
    	$this->log->showLog(4,"Industry->fetchIndustry,database fetch into class successfully");
 	$this->log->showLog(4,"Industry Name:$this->industry_name");
 
@@ -74,10 +74,10 @@ class Industry
 //  if($isadmin==1)
 //  $showdeleted="<input type=\"checkbox\" name=\"searchisdeleted\" id=\"searchisdeleted\" onchange=\"hideadd()\">".
 //        "<a onclick=document.getElementById(\"searchisdeleted\").click() title=\"Show deleted records.\">Show Deleted Only</a>";
-  
+
   echo <<< EOF
           <form name="frmJobposition">
-<table style="width:100%;" > 
+<table style="width:100%;" >
  <tr>
   <td align="center" >
 
@@ -91,8 +91,8 @@ class Industry
 
            <div class="divfield"> Active
                 <select name="searchisactive" id="searchisactive">
-                    <option value="-">Null</option>
-                    <option value="1" SELECTED="SELECTED">Yes</option>
+                    <option value="-" SELECTED="SELECTED">Null</option>
+                    <option value="1" >Yes</option>
                     <option value="0">No</option>
                 </select></div>
 
@@ -116,8 +116,8 @@ EOF;
         $ordinalStart=$_GET["StartRecordIndex"];
         $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
-    global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
-      
+    global $xoopsDB,$wherestring,$xoopsUser,$isadmin,$defaultorganization_id;
+
     $tablename="sim_industry";
     $searchindustry_name=$_GET['searchindustry_name'];
     $searchisactive=$_GET['searchisactive'];
@@ -137,7 +137,7 @@ EOF;
         }
 
 
-        if($searchisactive !="-")
+        if($searchisactive !="-" && $searchisactive !="")
         $wherestring.= " AND isactive =$searchisactive";
 
 
@@ -146,11 +146,11 @@ EOF;
            $wherestring.= " AND industry_name LIKE '%".$searchindustry_name."%'";
 
 
-
+           $wherestring.= " AND organization_id =$defaultorganization_id";
      $sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
       $this->log->showLog(4,"With SQL: $sql");
         $query = $xoopsDB->query($sql);
-        
+
         $getHandler->ProcessRecords();
      	$getHandler->DefineField("industry_name");
      	$getHandler->DefineField("description");
@@ -174,9 +174,9 @@ EOF;
              $getHandler->DefineRecordFieldValue("industry_name",$row['industry_name']);
              $getHandler->DefineRecordFieldValue("isactive", $row['isactive']);
              $getHandler->DefineRecordFieldValue("seqno", $row['seqno']);
-             $getHandler->DefineRecordFieldValue("isdeleted",$row['isdeleted']);             
+             $getHandler->DefineRecordFieldValue("isdeleted",$row['isdeleted']);
              $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['industry_id']."&tablename=sim_industry&idname=industry_id&title=Industry");
-             $getHandler->DefineRecordFieldValue("description",$row['description']);  
+             $getHandler->DefineRecordFieldValue("description",$row['description']);
              $getHandler->DefineRecordFieldValue("industry_id",$row['industry_id']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
              $getHandler->SaveRecord();
@@ -198,7 +198,7 @@ EOF;
         $createdby=$xoopsUser->getVar('uid');
         $uname=$xoopsUser->getVar('uname');
         $uid=$xoopsUser->getVar('uid');
-        $organization=$xoopsUser->getVar('uid');       
+        $organization=$xoopsUser->getVar('uid');
         $organization_id=$this->defaultorganization_id;
         $tablename="sim_industry";
 
@@ -241,8 +241,8 @@ $this->log->showLog(3,"Start update($updateCount records)");
 if ($updateCount > 0)
 {
 
-      $arrfield=array("industry_name","isactive","seqno","updated","updatedby","organization_id","description");
-      $arrfieldtype=array('%s','%d','%d','%s','%d','%d','%s');
+      $arrfield=array("industry_name","isactive","seqno","updated","updatedby","description");
+      $arrfieldtype=array('%s','%d','%d','%s','%d','%s');
  // Yes there are UPDATEs to perform...
 
  for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
@@ -250,7 +250,7 @@ if ($updateCount > 0)
                 $saveHandler->ReturnUpdateField($currentRecord, "industry_name").",id:".
                 $saveHandler->ReturnUpdateField($currentRecord)."\n");
                 $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "industry_id");
-         
+
  }
 
  for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
@@ -260,17 +260,16 @@ if ($updateCount > 0)
                 $saveHandler->ReturnUpdateField($currentRecord, "industry_name"),
                 $saveHandler->ReturnUpdateField($currentRecord,"isactive"),
                 $saveHandler->ReturnUpdateField($currentRecord,"seqno"),
-                $saveHandler->ReturnUpdateField($currentRecord,"isdeleted"),
                 $timestamp,
                 $createdby,
                 $saveHandler->ReturnUpdateField($currentRecord,"description"));
-        
+
         $this->log->showLog(3,"***updating record($currentRecord),new industry_name:".
               $saveHandler->ReturnUpdateField($currentRecord, "industry_name").",id:".
               $saveHandler->ReturnUpdateField($currentRecord,"industry_id")."\n");
 
          $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "industry_name");
-          
+
          $save->UpdateRecord($tablename, "industry_id", $saveHandler->ReturnUpdateField($currentRecord,"industry_id"),
                     $arrfield, $arrvalue, $arrfieldtype,$controlvalue);
   if($save->failfeedback!=""){
@@ -289,11 +288,11 @@ if ($deleteCount > 0){
   for($currentRecord = 0; $currentRecord < $deleteCount; $currentRecord++){
     $record_id=$saveHandler->ReturnDeleteField($currentRecord);
 
-    $this->fetchIndustry($record_id);
+  //  $this->fetchIndustry($record_id);
     $controlvalue=$this->industry_name;
     $isdeleted=$this->isdeleted;
 
-    $save->DeleteRecord("sim_industry","industry_id",$record_id,$controlvalue,$isdeleted);
+    $save->DeleteRecord("sim_industry","industry_id",$record_id,$controlvalue,1);
    if($save->failfeedback!=""){
       $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
       $this->failfeedback.=$save->failfeedback;
@@ -309,7 +308,7 @@ $saveHandler->CompleteSave();
 }
 
   public function allowDelete($industry_id){
-	
+
 	$rowcount=0;
 	$sql = "select count(*) as rowcount from $this->tabledailyreport where jobposition_id = $jobposition_id or last_jobposition = $jobposition_id or next_jobposition = $jobposition_id ";
 	$query=$this->xoopsDB->query($sql);
@@ -323,6 +322,6 @@ $saveHandler->CompleteSave();
 	return true;
 //	return $checkistrue;
 	}
- 
+
 } // end of ClassJobposition
 ?>

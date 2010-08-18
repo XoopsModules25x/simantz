@@ -85,7 +85,7 @@ else{ //user dun have write permission, cannot save grid
 //    search();
      }
 
-     function search(){ 
+     function search(){
         var grid = nitobi.getGrid("DataboundGrid");
         var searchindustry_name=document.getElementById("searchindustry_name").value;
         var searchisactive=document.getElementById("searchisactive").value;
@@ -128,7 +128,7 @@ else{ //user dun have write permission, cannot save grid
        var  g = nitobi.getGrid('DataboundGrid');
         g.move(0,0);//need to trigger relative position 0,0 in for next code able to highlight at screen
         var selRow = g.getSelectedRow();
-  
+
     }
 
     //Call event after save complete
@@ -148,9 +148,9 @@ else{ //user dun have write permission, cannot save grid
         }
         else{ //save failed
         	search();
-   
+
                 popup('popUpDiv');
-     
+
         	return false;
         	}
     }
@@ -190,7 +190,7 @@ else{ //user dun have write permission, cannot save grid
 
     var g= nitobi.getGrid('DataboundGrid');
         g.insertRow();
-  
+
     }
 
     //trigger save activity from javascript
@@ -211,7 +211,7 @@ else{ //user dun have write permission, cannot save grid
 	    search();
     	   }
     	  // else //cancel request
-	    //search();	
+	    //search();
 	}
       }
       else{
@@ -319,10 +319,10 @@ else{ //user dun have write permission, cannot save grid
      $permctrl
      singleclickeditenabled="true"
      onhtmlreadyevent="dataready()"
- 
+
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
-     gethandler="industry.php?action=search&searchisactive=1"
+     gethandler="industry.php?action=search"
      savehandler="industry.php?action=save"
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
      onafterrowinsertevent="setDefaultValue(eventArgs)"
@@ -359,7 +359,7 @@ echo<<< EOF
                     checkedvalue="0" uncheckedvalue="1" displayfields="displaydd" valuefield="valuedd">
            </ntb:checkboxeditor>
        </ntb:textcolumn>
-        
+
 
 EOF;
 }

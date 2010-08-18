@@ -1,7 +1,7 @@
 <?php
 
 
-class BPartnerGroup
+class BPartnerList
 {
 
   public $bpartnergroup_id;
@@ -26,25 +26,25 @@ class BPartnerGroup
 
 
 //constructor
-   public function BPartnerGroup(){
+   public function BPartnerList(){
 	global $xoopsDB,$log,$defaultorganization_id;
         $this->defaultorganization_id=$defaultorganization_id;
   	$this->xoopsDB=$xoopsDB;
         $this->tablebpartnergroup="sim_bpartnergroup";
 	$this->log=$log;
    }
-
-  public function fetchBPartnerGroup($bpartnergroup_id) {
+ 
+  public function fetchBPartnerList($bpartnergroup_id) {
 
 
 	$this->log->showLog(3,"Fetching bpartnergroup detail into class BPartnerGroup.php.<br>");
-
+		
 	$sql="SELECT * from $this->tablebpartnergroup where bpartnergroup_id=$bpartnergroup_id";
-
+	
 	$this->log->showLog(4,"ProductBpartnergroup->fetchBPartnergroup, before execute:" . $sql . "<br>");
-
+	
 	$query=$this->xoopsDB->query($sql);
-
+	
 	if($row=$this->xoopsDB->fetchArray($query)){
 		$this->jobposition_name=$row["bpartnergroup_name"];
 		$this->organization_id=$row['organization_id'];
@@ -52,7 +52,7 @@ class BPartnerGroup
 		$this->isactive=$row['isactive'];
 		$this->isdeleted=$row['isdeleted'];
 		$this->description=$row['description'];
-
+        
    	$this->log->showLog(4,"bpartnergroup->fetchBPartnergroup,database fetch into class successfully");
 	$this->log->showLog(4,"bpartnergroup Name:$this->bpartnergroup_name");
 
@@ -74,10 +74,10 @@ class BPartnerGroup
 //  if($isadmin==1)
 //  $showdeleted="<input type=\"checkbox\" name=\"searchisdeleted\" id=\"searchisdeleted\" onchange=\"hideadd()\">".
 //        "<a onclick=document.getElementById(\"searchisdeleted\").click() title=\"Show deleted records.\">Show Deleted Only</a>";
-
+  
   echo <<< EOF
-          <form name="frmBPartnergroup">
-<table style="width:100%;" >
+          <form name="frmJobposition">
+<table style="width:100%;" > 
  <tr>
   <td align="center" >
 
@@ -91,8 +91,8 @@ class BPartnerGroup
 
            <div class="divfield"> Active
                 <select name="searchisactive" id="searchisactive">
-                    <option value="-" SELECTED="SELECTED">Null</option>
-                    <option value="1" >Yes</option>
+                    <option value="-">Null</option>
+                    <option value="1" SELECTED="SELECTED">Yes</option>
                     <option value="0">No</option>
                 </select></div>
 
@@ -108,7 +108,7 @@ class BPartnerGroup
 EOF;
 }
 
-  public function showBPartnerGroup($wherestring){
+  public function showBPartnerList($wherestring){
     include "../simantz/class/nitobi.xml.php";
     $getHandler = new EBAGetHandler();
     $this->log->showLog(3,"Load Grid with Query String=".$_SERVER['QUERY_STRING']);
@@ -116,13 +116,13 @@ EOF;
         $ordinalStart=$_GET["StartRecordIndex"];
         $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
-    global $xoopsDB,$wherestring,$xoopsUser,$isadmin,$defaultorganization_id;
+    global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
+      
+    $tablename="sim_bpartner";
 
-    $tablename="sim_bpartnergroup";
-    $searchbpartnergroup_name=$_GET['searchbpartnergroup_name'];
-    $searchisactive=$_GET['searchisactive'];
+    $searchchar=$_GET['searchchar'];
 
-    $this->log->showLog(2,"Access showBPartnerGroup($wherestring)");
+    $this->log->showLog(2,"Access showBPartner($wherestring)");
     if(empty($pagesize)){
           $pagesize=$this->defaultpagesize;
         }
@@ -130,51 +130,55 @@ EOF;
           $ordinalStart=0;
         }
         if(empty($sortcolumn)){
-           $sortcolumn="seqno,bpartnergroup_name ";
+           $sortcolumn="seqno,bpartner_name ";
         }
         if(empty($sortdirection)){
            $sortdirection="ASC";
         }
 
-       if($searchisactive !="-" && $searchisactive !="" )
-          $wherestring.= " AND isactive =$searchisactive";
+      if($searchchar !=""){
+           $wherestring.= " AND bp.bpartner_name LIKE '".$searchchar."%'";
+      }
 
-
-     if($searchbpartnergroup_name !="")
-           $wherestring.= " AND bpartnergroup_name LIKE '%".$searchbpartnergroup_name."%'";
-     
-           $wherestring.= " AND organization_id =$defaultorganization_id";
-     $sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
+      $sql = "SELECT bp.*, bpg.bpartnergroup_name, terms_name
+              FROM $tablename bp
+              inner join sim_bpartnergroup bpg on bpg.bpartnergroup_id = bp.bpartnergroup_id
+              left join sim_terms te on te.terms_id = bp.terms_id
+             $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
       $this->log->showLog(4,"With SQL: $sql");
         $query = $xoopsDB->query($sql);
-
+        
         $getHandler->ProcessRecords();
-     	$getHandler->DefineField("bpartnergroup_name");
-     	$getHandler->DefineField("description");
-     	$getHandler->DefineField("isactive");
-        $getHandler->DefineField("seqno");
-        $getHandler->DefineField("isdeleted");
-        $getHandler->DefineField("info");
-        $getHandler->DefineField("bpartnergroup_id");
+        $getHandler->DefineField("no");
+     	$getHandler->DefineField("bpartner_no");
+     	$getHandler->DefineField("bpartner_name");
+        $getHandler->DefineField("bpartnergroup_name");
+     	$getHandler->DefineField("terms_name");
+        $getHandler->DefineField("shortremarks");
+        $getHandler->DefineField("isactive");
+        $getHandler->DefineField("edit");
+        $getHandler->DefineField("bpartner_id");
         $getHandler->DefineField("rh");
 	$currentRecord = 0; // This will assist us finding the ordinalStart position
                     $rh="odd";
       while ($row=$xoopsDB->fetchArray($query))
      {
-                    if($rh=="even")
+          if($rh=="even")
             $rh="odd";
           else
             $rh="even";
      	    $currentRecord = $currentRecord +1;
             if($currentRecord > $ordinalStart){
-             $getHandler->CreateNewRecord($row['bpartnergroup_id']);
-             $getHandler->DefineRecordFieldValue("bpartnergroup_name",$row['bpartnergroup_name']);
-             $getHandler->DefineRecordFieldValue("isactive", $row['isactive']);
-             $getHandler->DefineRecordFieldValue("seqno", $row['seqno']);
-             $getHandler->DefineRecordFieldValue("isdeleted",$row['isdeleted']);
-             $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['bpartnergroup_id']."&tablename=sim_bpartnergroup&idname=bpartnergroup_id&title=Business Partner Group");
-             $getHandler->DefineRecordFieldValue("description",$row['description']);
-             $getHandler->DefineRecordFieldValue("bpartnergroup_id",$row['bpartnergroup_id']);
+             $getHandler->CreateNewRecord($row['bpartner_id']);
+             $getHandler->DefineRecordFieldValue("no",$currentRecord);
+             $getHandler->DefineRecordFieldValue("bpartner_no",$row['bpartner_no']);
+             $getHandler->DefineRecordFieldValue("bpartner_name", $row['bpartner_name']);
+             $getHandler->DefineRecordFieldValue("bpartnergroup_name", $row['bpartnergroup_name']);
+             $getHandler->DefineRecordFieldValue("terms_name",$row['terms_name']);
+             $getHandler->DefineRecordFieldValue("shortremarks",$row['shortremarks']);
+             $getHandler->DefineRecordFieldValue("isactive",($row['isactive'] ==1 ? "Yes" : "No"));
+             $getHandler->DefineRecordFieldValue("edit","bpartner.php?action=tablist&mode=edit&bpartner_id=".$row['bpartner_id']);
+             $getHandler->DefineRecordFieldValue("bpartner_id",$row['bpartner_id']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
              $getHandler->SaveRecord();
              }
@@ -183,7 +187,7 @@ EOF;
           $this->log->showLog(2,"complete function showBPartnerGroup()");
     }
 
-  public function saveBPartnerGroup(){
+  public function saveBPartnerList(){
     $this->log->showLog(2,"Access saveBPartnerGroup");
         include "../simantz/class/nitobi.xml.php";
         include_once "../simantz/class/Save_Data.inc.php";
@@ -195,7 +199,7 @@ EOF;
         $createdby=$xoopsUser->getVar('uid');
         $uname=$xoopsUser->getVar('uname');
         $uid=$xoopsUser->getVar('uid');
-        $organization=$xoopsUser->getVar('uid');
+        $organization=$xoopsUser->getVar('uid');       
         $organization_id=$this->defaultorganization_id;
         $tablename="sim_bpartnergroup";
 
@@ -238,8 +242,8 @@ $this->log->showLog(3,"Start update($updateCount records)");
 if ($updateCount > 0)
 {
 
-      $arrfield=array("bpartnergroup_name","isactive","seqno","updated","updatedby","description");
-      $arrfieldtype=array('%s','%d','%d','%s','%d','%s');
+      $arrfield=array("bpartnergroup_name","isactive","seqno","updated","updatedby","organization_id","description");
+      $arrfieldtype=array('%s','%d','%d','%s','%d','%d','%s');
  // Yes there are UPDATEs to perform...
 
  for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
@@ -247,7 +251,7 @@ if ($updateCount > 0)
                 $saveHandler->ReturnUpdateField($currentRecord, "bpartnergroup_name").",id:".
                 $saveHandler->ReturnUpdateField($currentRecord)."\n");
                 $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "bpartnergroup_id");
-
+         
  }
 
  for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
@@ -257,16 +261,17 @@ if ($updateCount > 0)
                 $saveHandler->ReturnUpdateField($currentRecord, "bpartnergroup_name"),
                 $saveHandler->ReturnUpdateField($currentRecord,"isactive"),
                 $saveHandler->ReturnUpdateField($currentRecord,"seqno"),
+                $saveHandler->ReturnUpdateField($currentRecord,"isdeleted"),
                 $timestamp,
                 $createdby,
                 $saveHandler->ReturnUpdateField($currentRecord,"description"));
-
+        
         $this->log->showLog(3,"***updating record($currentRecord),new bpartnergroup_name:".
               $saveHandler->ReturnUpdateField($currentRecord, "bpartnergroup_name").",id:".
               $saveHandler->ReturnUpdateField($currentRecord,"bpartnergroup_id")."\n");
 
          $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "bpartnergroup_name");
-
+          
          $save->UpdateRecord($tablename, "bpartnergroup_id", $saveHandler->ReturnUpdateField($currentRecord,"bpartnergroup_id"),
                     $arrfield, $arrvalue, $arrfieldtype,$controlvalue);
   if($save->failfeedback!=""){
@@ -304,6 +309,39 @@ $saveHandler->CompleteSave();
 
 }
 
+  public function searchAToZ(){
+	global $mode;
 
+	$this->log->showLog(3,"Prepare to provide a shortcut for user to search product easily. With function searchAToZ()");
+        $wherestring = "where bpartner_id >0 and isactive=1";
+
+	$sqlfilter="SELECT DISTINCT(LEFT(bpartner_name,1)) as shortname FROM sim_bpartner $wherestring order by bpartner_name";
+
+	$this->log->showLog(4,"With SQL:$sqlfilter");
+	$query=$this->xoopsDB->query($sqlfilter);
+	$i=0;
+	$firstname="";
+
+
+	$searchatoz= "<b>Business Partner Grouping By Name: </b><br>";
+	while ($row=$this->xoopsDB->fetchArray($query)){
+
+		$i++;
+		$shortname=strtoupper($row['shortname']);
+		if($i==1 && $filterstring=="")
+			$filterstring=$shortname;//if secretarial never do filter yet, if will choose 1st secretarial listing
+
+		$searchatoz.= "<A style='font-size:12;' href='javascript:searchchar(\"$shortname\")'>  $shortname  </A> ";
+	}
+         $searchatoz.= "<A style='font-size:12;' href='javascript:searchchar(\"all\")'> [SHOW ALL] </A> ";
+
+//
+//	$this->log->showLog(3,"Complete generate list of short cut");
+//echo <<< EOF
+//	<BR>
+//EOF;
+return $searchatoz;
+
+  	}
 } // end of ClassJobposition
 ?>

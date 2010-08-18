@@ -8,7 +8,7 @@ include "../simantz/menu.php";
 include "class/BPSelectCtrl.inc.php";
 $bpctrl = new BPSelectCtrl();
 
-echo "<script type='text/javascript'>autofocus();function tooltip(){}</script>";
+echo "<script type='text/javascript'>function tooltip(){;}</script>";
 
 ?>
 

@@ -47,17 +47,16 @@ public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlna
   }
 
 
-public function getSelectTerms($id,$showNull='N',$onchangefunction=""){
+public function getSelectTerms($id,$showNull='N'){
 global $defaultorganization_id,$tableterms;
 
 	$this->log->showLog(3,"Retrieve available system groups from database, with preselect id: $id");
 	$sql="SELECT terms_id,terms_name FROM $tableterms where (isactive=1 or terms_id=$id) 
 		AND terms_id>0 and organization_id=$defaultorganization_id
-		ORDER by defaultlevel,terms_name	";
+		ORDER by seqno,terms_name	";
 	$this->log->showLog(3,"Retrieve available system groups with sql:$sql");
 	
 	$this->log->showLog(4,"SQL: $sql");
-	$selectctl="<SELECT name='terms_id' $onchangefunction>";
 
 	if ($showNull=='Y')
 		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null</OPTION>';
@@ -76,8 +75,6 @@ global $defaultorganization_id,$tableterms;
 
 	}
 
-	$selectctl=$selectctl . "</SELECT>";
-
 	return $selectctl;
 	
 
@@ -86,11 +83,11 @@ global $defaultorganization_id,$tableterms;
 
 public function getSelectBPartnerGroup($id,$showNull='N') {
 	global $tablebpartnergroup,$defaultorganization_id;
-	 $sql="SELECT bpartnergroup_id,bpartnergroup_name from $tablebpartnergroup where (bpartnergroup_id=$id 
+	 $sql="SELECT bpartnergroup_id,bpartnergroup_name from $tablebpartnergroup where (bpartnergroup_id='$id'
 		OR bpartnergroup_id>0) and isactive=1 AND organization_id=$defaultorganization_id
-		order by defaultlevel,bpartnergroup_name ;";
+		order by seqno,bpartnergroup_name ;";
 	$this->log->showLog(4,"getSelectBPartnerGroup With SQL: $sql");
-	$selectctl="<SELECT name='bpartnergroup_id' $onchangefunction>";
+
 	if ($showNull=='Y')
 		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
 		
@@ -108,10 +105,32 @@ public function getSelectBPartnerGroup($id,$showNull='N') {
 
 	}
 
-	$selectctl=$selectctl . "</SELECT>";
-
 	return $selectctl;
   } 
-  
+
+public function getSelectIndustry($id,$showNull='N') {
+	global $tablebpartnergroup,$defaultorganization_id;
+        
+	$sql="SELECT industry_id,industry_name from sim_industry where (isactive=1 or industry_id=$id) and industry_id>0 AND organization_id=$defaultorganization_id order by industry_name asc;";
+	$this->log->showLog(3,"Generate Industry list with with SQL($id,$showNull): $sql");
+	if ($id==-1 || $showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$industry_id=$row['industry_id'];
+		$industry_name=$row['industry_name'];
+
+		if($id==$industry_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$industry_id' $selected>$industry_name</OPTION>";
+
+	}
+
+	return $selectctl;
+  }
 }
 ?>

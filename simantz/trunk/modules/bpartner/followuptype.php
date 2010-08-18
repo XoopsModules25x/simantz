@@ -1,8 +1,8 @@
 <?php
 include "system.php";
-include_once 'class/BPartnerGroup.php';
+include_once 'class/Followuptype.php';
 
-$o = new BPartnerGroup();
+$o = new Followuptype();
 $s = new XoopsSecurity();
 $action=$_REQUEST['action'];
 
@@ -12,22 +12,14 @@ $uid = $xoopsUser->getVar('uid');
 
 switch($action){
 case "search": //return xml table to grid
-    $wherestring=" WHERE bpartnergroup_id>0";
-    $o->showBPartnerGroup($wherestring);
+    $wherestring=" WHERE followuptype_id>0";
+    $o->showFollowuptype($wherestring);
     exit; //after return xml shall not run more code.
     break;
 case "save": //process submited xml data from grid
-     $o->saveBPartnerGroup();
+     $o->saveFollowuptype();
     break;
 default:
-
-//$issimbiz=false;
-//if(file_exists("../simbiz/class/AccountsAPI.php") ){
-//include_once "../simbiz/class/SimbizSelectCtrl.inc.php";
-//$simbizctrl = new SimbizSelectCtrl();
-//$issimbiz = true;
-//}
-
 include "menu.php";
 $xoTheme->addStylesheet("$url/modules/simantz/include/popup.css");
 $xoTheme->addScript("$url/modules/simantz/include/popup.js");
@@ -37,7 +29,7 @@ $xoTheme->addStylesheet("$url/modules/simantz/include/nitobi/nitobi.grid/nitobi.
 $xoTheme->addScript("$url/modules/simantz/include/nitobi/nitobi.grid/nitobi.grid.js");
 $xoTheme->addScript("$url/modules/simantz/include/firefox3_6fix.js");
 
-$o->showSearchForm(); //produce search form, comment here to hide search form
+//$o->showSearchForm(); //produce search form, comment here to hide search form
 if($isadmin==1){
     $grIdColumn=6; //define primary key column index, it will set as readonly afterwards (count from 0)
         $deleteddefaultvalue_js="myGrid.getCellObject(rowNo,5).setValue(0);"; //if admin login got deleted column, during admin insert new record shall set it default =0 (not deleted)
@@ -74,7 +66,7 @@ else{ //user dun have write permission, cannot save grid
     function init(){}
 
     function hideadd(){
-//
+
 //    if(document.getElementById("searchisdeleted").checked){
 //     document.getElementById("btnAdd").style.display = "none";
 //     var g = nitobi.getGrid('DataboundGrid');
@@ -95,22 +87,7 @@ else{ //user dun have write permission, cannot save grid
 
      function search(){
         var grid = nitobi.getGrid("DataboundGrid");
-        var searchbpartnergroup_name=document.getElementById("searchbpartnergroup_name").value;
-        var searchisactive=document.getElementById("searchisactive").value;
 
-        /*
-         *only user isadmin will have element searchisdeleted (apply in every windows and records)
-         *check element is exist before submit variable to avoid javascript failure
-         */
-        if(document.getElementById("searchisdeleted"))
-        var searchisdeleted=document.getElementById("searchisdeleted").checked;
-
-        //Submit javascript to grid with _GET method
-	grid.getDataSource().setGetHandlerParameter('searchbpartnergroup_name',searchbpartnergroup_name);
-	grid.getDataSource().setGetHandlerParameter('searchisactive',searchisactive);
-	grid.getDataSource().setGetHandlerParameter('searchisdeleted',searchisdeleted);
-
-        //reload grid data
 	grid.dataBind()
     }
 
@@ -173,7 +150,7 @@ else{ //user dun have write permission, cannot save grid
 
 
         if (errorMessage) {
-             document.getElementById('msgbox').innerHTML="<b style=\"color:red\">"+errorMessage+"</b><br/>";
+             document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">"+errorMessage+"</a><br/>";
             // document.getElementById('popupmessage').innerHTML="Please Wait.....";
              grid.dataBind();
          }
@@ -223,7 +200,7 @@ else{ //user dun have write permission, cannot save grid
 	}
       }
       else{
-      document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Group name cannot be null</b><br/>";
+      document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please enter Type name</a><br/>";
 
       }
     }
@@ -293,8 +270,7 @@ else{ //user dun have write permission, cannot save grid
 
         for( var i = 0; i < total_row; i++ ) {
         var namecell = grid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
-
-           name = namecell.getValue();
+        name = namecell.getValue();
 
            if(name=="")
            {
@@ -308,7 +284,7 @@ else{ //user dun have write permission, cannot save grid
           return false;
     }
      function resetsearch(){
-      document.getElementById("searchbpartnergroup_name").value="";
+      document.getElementById("searchterms_name").value="";
       document.getElementById("searchisactive").value="1";
        search();
      }
@@ -331,8 +307,8 @@ else{ //user dun have write permission, cannot save grid
 
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
-     gethandler="bpartnergroup.php?action=search"
-     savehandler="bpartnergroup.php?action=save"
+     gethandler="followuptype.php?action=search"
+     savehandler="followuptype.php?action=save"
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
      onafterrowinsertevent="setDefaultValue(eventArgs)"
      rowhighlightenabled="true"
@@ -345,15 +321,14 @@ else{ //user dun have write permission, cannot save grid
 
  <ntb:columns>
 
-   <ntb:textcolumn  classname="{\$rh}" width="240" label="Group Name " xdatafld="bpartnergroup_name" ></ntb:textcolumn>
+   <ntb:textcolumn  classname="{\$rh}" width="240" label="Type Name" xdatafld="followuptype_name" ></ntb:textcolumn>
 
+   <ntb:textcolumn  classname="{\$rh}" $changewidth label="Description" xdatafld="description" ></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Active" width="55" xdatafld="isactive" sortenabled="false" align="center">
          <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
           checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value"></ntb:checkboxeditor>
         </ntb:textcolumn>
-
-   <ntb:textcolumn  classname="{\$rh}" $changewidth label="Description" xdatafld="description" ></ntb:textcolumn>
 
    <ntb:numbercolumn classname="{\$rh}" maxlength="5" label="Seq No"  width="55" xdatafld="seqno" mask="###0"></ntb:numbercolumn>
 EOF;
@@ -368,13 +343,11 @@ echo<<< EOF
                     checkedvalue="0" uncheckedvalue="1" displayfields="displaydd" valuefield="valuedd">
            </ntb:checkboxeditor>
        </ntb:textcolumn>
-
-
 EOF;
 }
 
  echo <<< EOF
-      <ntb:numbercolumn   label="ID"  width="0" xdatafld="bpartnergroup_id" mask="###0" sortenabled="false">
+      <ntb:numbercolumn   label="ID"  width="0" xdatafld="followuptype_id" mask="###0" sortenabled="false">
                     </ntb:numbercolumn>
      <ntb:textcolumn  label="Del"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()">
             <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>
@@ -385,7 +358,7 @@ EOF;
 <tr><td align="left">
   <input id='afterconfirm' value='0' type='hidden'>
 <br>
-<div id="msgbox" class="blockContent"></div>
+<div id="msgbox" class='statusmsg'></div>
 </td></tr></table></div>
 EOF;
 
