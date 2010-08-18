@@ -4,39 +4,22 @@ xoops_cp_header();
 
 if(isset($_POST['submit'])){
 
-		$sql1="TRUNCATE TABLE sim_hr_travellingclaim;";
-		$sql2="TRUNCATE TABLE sim_hr_leaveadjustment;";
-		$sql3="TRUNCATE TABLE sim_hr_medicalclaim;";
-		$sql4="TRUNCATE TABLE sim_hr_overtimeclaim;";
-		$sql5="TRUNCATE TABLE sim_hr_panelclinics;";
-  		$sql6="TRUNCATE TABLE sim_hr_generalclaim;";
-		$sql7="TRUNCATE TABLE sim_hr_leave;";
-                $sql8="TRUNCATE TABLE sim_workflowtransaction;";
-                $sql9="TRUNCATE TABLE sim_hr_supervisorline;";
-		$sql10="UPDATE sim_hr_department set department_head=0 where department_id>0;";
-		$sql11="DELETE FROM sim_followup where employee_id>0;";
-		$sql12="DELETE FROM sim_hr_employee where employee_id>0;";
+		$sql1="TRUNCATE TABLE sim_bpartner;";
+		$sql2="TRUNCATE TABLE sim_address;";
+		$sql3="TRUNCATE TABLE sim_bpartnergroup;";
 
-		$sql13="ALTER TABLE sim_hr_employee AUTO_INCREMENT =1;";
+		$sql4="DELETE FROM sim_followuptype where followuptype_id>0;";
+		$sql5="ALTER TABLE sim_followuptype AUTO_INCREMENT =1;";
 
-		$sql14="DELETE FROM sim_hr_trainingtype where trainingtype_id>0;";
-		$sql15="ALTER TABLE sim_hr_trainingtype AUTO_INCREMENT =1;";
+		$sql6="DELETE FROM sim_bpartnergroup where bpartnergroup_id>0;";
+		$sql7="ALTER TABLE sim_bpartnergroup AUTO_INCREMENT =1;";
 
-		$sql16="DELETE FROM sim_hr_disciplinetype where disciplinetype_id>0;";
-		$sql17="ALTER TABLE sim_hr_disciplinetype AUTO_INCREMENT =1;";
+		$sql8="DELETE FROM sim_industry where industry_id>0;";
+		$sql9="ALTER TABLE sim_industry AUTO_INCREMENT =1;";
 
-		$sql18="DELETE FROM sim_hr_leavetype where leavetype_id>0;";
-		$sql19="ALTER TABLE sim_hr_leavetype AUTO_INCREMENT =1;";
+		$sql10="DELETE FROM sim_terms where terms_id>0;";
+		$sql11="ALTER TABLE sim_terms AUTO_INCREMENT =1;";
 
-                $sql20="TRUNCATE TABLE sim_hr_qualificationline;";
-
-                $sql21="TRUNCATE TABLE sim_hr_employeespouse;";
-                $sql22="TRUNCATE TABLE sim_hr_employeefamily;";
-
-                $sql23="TRUNCATE TABLE sim_hr_defaultpayroll;";
-                $sql24="TRUNCATE TABLE sim_hr_attachmentline;";
-                $sql25="TRUNCATE TABLE sim_hr_attachmentline;";
-                $sql26="TRUNCATE TABLE sim_hr_skillline;";
 
 		$qry=$xoopsDB->query($sql1);
 		$qry=$xoopsDB->query($sql2);
@@ -52,28 +35,6 @@ if(isset($_POST['submit'])){
 		$qry=$xoopsDB->query($sql9);
 		$qry=$xoopsDB->query($sql10);
 		$qry=$xoopsDB->query($sql11);
-		$qry=$xoopsDB->query($sql12);
-		$qry=$xoopsDB->query($sql13);
-		$qry=$xoopsDB->query($sql14);
-		$qry=$xoopsDB->query($sql15);
-		$qry=$xoopsDB->query($sql16);
-		$qry=$xoopsDB->query($sql17);
-		$qry=$xoopsDB->query($sql18);
-		$qry=$xoopsDB->query($sql19);
-		$qry=$xoopsDB->query($sql20);
-		$qry=$xoopsDB->query($sql21);
-		$qry=$xoopsDB->query($sql22);
-		$qry=$xoopsDB->query($sql23);
-		$qry=$xoopsDB->query($sql24);
-		$qry=$xoopsDB->query($sql25);
-		$qry=$xoopsDB->query($sql26);
-		$qry=$xoopsDB->query($sql27);
-		$qry=$xoopsDB->query($sql28);
-		$qry=$xoopsDB->query($sql29);
-		$qry=$xoopsDB->query($sql30);
-		$qry=$xoopsDB->query($sql31);
-		$qry=$xoopsDB->query($sql32);
-		$qry=$xoopsDB->query($sql33);
 
 
 		echo <<< EOF
@@ -94,32 +55,7 @@ if(isset($_POST['submit'])){
 		$sql10<br>
 		$sql11<br>
 		$sql12<br>
-		$sql13<br>
-		$sql14<br>
-		$sql15<br>
-		$sql16<br>
-		$sql17<br>
-		$sql18<br>
-		$sql19<br>
-		$sql20<br>
-		$sql21<br>
-		$sql22<br>
-		$sql23<br>
-		$sql24<br>
-		$sql25<br>
-		$sql26<br>
-		$sql27<br>
-		$sql28<br>
-		$sql29<br>
-		$sql30<br>
-		$sql31<br>
-		$sql32<br>
-		$sql33<br>
-		$sql34<br>
-		$sql35<br>
-		$sql36<br>
-		$sql37<br>
-		$sql38<br>
+
 	
 EOF;
 
