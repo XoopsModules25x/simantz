@@ -1852,7 +1852,7 @@ return $searchatoz;
 	$i=0;
 	$firstname="";
 
-	$searchAToZ = "<b>Filter Employee Grouping By Name: </b>";
+	$searchAToZ = "<br><b>Filter Employee Grouping By Name: </b>";
 	while ($row=$this->xoopsDB->fetchArray($query)){
 
 		$i++;
@@ -5031,7 +5031,7 @@ echo <<< EOF
     return false;
     }
 
-</script>
+</script><br>
         <table>
             <tr>
             <td width="60px">$search_button</td>
