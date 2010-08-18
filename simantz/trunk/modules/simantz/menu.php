@@ -108,10 +108,12 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
 }
 </script>
 
-	<div style='color: #4D2222; v-align:bottom; line-height:3em;'>
-		<span style='font-weight:bold;text-align:left;font-size:24px;'>$menuname </span>
-	$helpctrl<div style="float:right; v-align:bottom; padding-left:1em;color: #4D2222;line-height:3em;">User: $uname</div><div style="float:right; text-align:right; v-align:bottom;color: #4D2222;line-height:3em;">Organization $orgctrl </div>
-       </div>
+	<div style='color: #4D2222; v-align:top; line-height:3em;'>
+	   <div style='float:left;font-weight:bold;text-align:left;font-size:24px;'>$menuname  </div>
+           <div style='float:left;padding-left:1em;'> $helpctrl</div>
+           <div style="float:right; v-align:top; padding-left:1em;color: #4D2222;">User: $uname</div>
+           <div style="float:right; text-align:right; v-align:top;color: #4D2222;">Organization $orgctrl </div>
+       </div><br><br>
 EOF;
 
 
