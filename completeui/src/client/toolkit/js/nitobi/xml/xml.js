@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
 nitobi.lang.defineNs("nitobi.xml");
@@ -28,7 +28,7 @@ if (nitobi.browser.IE)
 {
 	//	TODO: this should be pooled.
 	//Define a global XSLTemplate Object so that we dont have to create it at runtime
-	//This is used when creating an XSLT Processor 
+	//This is used when creating an XSLT Processor
 	var inUse = false;
 	/**
 	 * @private
@@ -93,7 +93,7 @@ nitobi.xml.createXmlDoc = function(xml)
 	// checks for anything added to the beginning of the response, i.e. by a debugger
 	if (xml != null)
 		xml = xml.substring(xml.indexOf("<?xml"));
-	
+
 	if (xml != null && xml.documentElement != null)
 		return xml;
 
@@ -122,7 +122,7 @@ nitobi.xml.createXmlDoc = function(xml)
  * returns the XML document object to allow for chaining operations.
  * @param {XMLDocument} doc An xml document to receive the XML from the xml string.
  * @param {String} str XML string to load into the XmlDocument object (doc).
- * @param {Boolean} clearDoc Flag indicating if the expensive operation of clearing the XMLDocument should be performed. 
+ * @param {Boolean} clearDoc Flag indicating if the expensive operation of clearing the XMLDocument should be performed.
  * This is only required if the XMLDocument already has contents to be overwritten. Optional.
  * @type XMLDocument
  */
@@ -135,7 +135,7 @@ nitobi.xml.loadXml = function(doc, xml, clearDoc)
 	{
 		// customize by kstan@simit.com.my 11-07-2010
 		var p=new DOMParser();
-		var myxml=xml.replace(/\n/g,"&#xa;").replace(/>&#xa;</g,">\n<");
+		var myxml=xml.replace(/\n/g,"&#xa;").replace(/\&#xa;</g,"<");
 		var tempDoc=p.parseFromString(myxml!=null?myxml:"","text/xml");
 
 		// added the terse if for Chrome ... not sure what the deal is there...
@@ -212,7 +212,7 @@ nitobi.xml.createXslDoc = function(xsl)
 	var doc = null;
 
 	if (nitobi.browser.IE)
-		doc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument.3.0"); 
+		doc = new ActiveXObject("MSXML2.FreeThreadedDOMDocument.3.0");
 	else
 		doc = nitobi.xml.createXmlDoc();
 
@@ -275,7 +275,7 @@ nitobi.xml.parseHtml = function(element)
 	if (nitobi.browser.IE)
 	{
 		// First things first, IE will mess with attribute values containing &quot;
-		// eg attname="&quot;Value&quot;" => attname='"Value"' note the outer single quotes!!! 
+		// eg attname="&quot;Value&quot;" => attname='"Value"' note the outer single quotes!!!
 		var regexpQuot = new RegExp("(\\\s+.[^=]*)='(.*?)'","g");
 		html = html.replace(regexpQuot, function(m,_1,_2){return _1+"=\""+_2.replace(/"/g,"&quot;")+"\"";});
 
@@ -298,11 +298,11 @@ nitobi.xml.parseHtml = function(element)
 		}
 	}
 	else
-	{	
+	{
 		// The html is going to have everything escaped in firfox - ie <br> == &lt;br&gt;.
 		// but the & character is a problem.
 		fixedHtml = html;//.replace(/(\s+.[^\=]*)\=\s*([^\"^\s^\>]+)/g,"$1=\"$2\" ")
-		fixedHtml = fixedHtml.replace(/\n/gi,'').replace(/\>\s*\</gi,'><').replace(/(.*?:.*?\s)/i,"$1  ");		
+		fixedHtml = fixedHtml.replace(/\n/gi,'').replace(/\>\s*\</gi,'><').replace(/(.*?:.*?\s)/i,"$1  ");
 		fixedHtml = fixedHtml.replace(/\&/g,'&amp;');
 		fixedHtml = fixedHtml.replace(/\&amp;gt;/g,'&gt;').replace(/\&amp;lt;/g,'&lt;').replace(/\&amp;apos;/g,'&apos;').replace(/\&amp;quot;/g,'&quot;').replace(/\&amp;amp;/g,'&amp;').replace(/\&amp;eq;/g,'&eq;');
 	}
@@ -425,7 +425,7 @@ nitobi.xml.transformToString = function(xml,xsl,type)
 			else
 			{
 				nitobi.lang.throwError("The transformToString fn could not find any valid output");
-			}				
+			}
 		}
 	}
 	else if (nitobi.browser.SAFARI||nitobi.browser.CHROME)
@@ -526,7 +526,7 @@ nitobi.xml.createXmlHttp = function()
 }
 
 /**
- * Creates a namespaced XML element. 
+ * Creates a namespaced XML element.
  * @param {XMLDocument} xmlDoc The document to create the element in.
  * @param {String} elementName The name of the element to create.
  * @param {String} [ns] The namespace.  The default namespace is "http://www.nitobi.com".
@@ -633,10 +633,10 @@ if (!nitobi.browser.IE)
 	XMLDocument.prototype.selectNodes = function(sExpr, contextNode)
 	{
 		try {
-			//	TODO: we need to get some assert stuff in here ... 
+			//	TODO: we need to get some assert stuff in here ...
 			if (this.nsResolver == null)
 				this.nsResolver = this.createNSResolver(this.documentElement);
-	
+
 			var oResult = this.evaluate(sExpr, (contextNode?contextNode:this), new MyNSResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 			var nodeList = new Array(oResult.snapshotLength);
 			nodeList.expr = sExpr;
@@ -694,7 +694,7 @@ if (!nitobi.browser.IE)
 		{
 			var x = indexExpression[indexExpression.length-1];
 			if (sExpr.lastIndexOf(x) + x.length != sExpr.length)
-			{     
+			{
 				sExpr += "[1]";
 			}
 		}
@@ -772,11 +772,11 @@ nitobi.xml.encode = function(str)
 /**
  * @private
  * Makes a valid XPATH query from a value.
- * This addresses a deficiency in XSL.A literal string can be written with either kind of quote. 
- * XPaths usually appear in attributes, and of course these have to be quoted too. 
- * You can use the usual XML entities &quot; and &apos; for quotes in your XPaths, but remember 
+ * This addresses a deficiency in XSL.A literal string can be written with either kind of quote.
+ * XPaths usually appear in attributes, and of course these have to be quoted too.
+ * You can use the usual XML entities &quot; and &apos; for quotes in your XPaths, but remember
  * that these are expanded by the XML parser, before the XPath string is parsed. There is no way to
- * escape characters at the XPath level, so you can't have a literal XPath string 
+ * escape characters at the XPath level, so you can't have a literal XPath string
  * containing both kinds of quote.However, you can create a concat function that tricks the processor into accepting
  * both kinds of quotes, which is what this function does.
  * @param {String} Value The value.
