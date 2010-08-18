@@ -9617,12 +9617,13 @@ nitobi.form.Calendar.prototype.handleCalendarMouseDown=function(evt){
 this.ignoreBlur=true;
 };
 nitobi.form.Calendar.prototype.handleCalendarMouseUp=function(evt){
-this.handleMouseUp(evt);
+this.ignoreBlur=false;
 };
 nitobi.form.Calendar.prototype.setVisibleComplete=function(){
 this.isPickerVisible=!this.isPickerVisible;
 };
 nitobi.form.Calendar.prototype.handlePick=function(){
+this.control.focus();
 var date=this.datePicker.getSelectedDate();
 var _8cc=nitobi.base.DateMath.toIso8601(date);
 this.control.value=_8cc;
@@ -10073,7 +10074,6 @@ D.align(_931,_933,D.align.ALIGNMIDDLEHORIZ);
 D.align(_931,this.getHtmlNode("body"),D.align.ALIGNTOP);
 D.align(_930,this.getHtmlNode("body"),D.align.ALIGNTOP|D.align.ALIGNLEFT);
 _932.callback=function(){
-_92f.focus();
 };
 _932.start();
 };

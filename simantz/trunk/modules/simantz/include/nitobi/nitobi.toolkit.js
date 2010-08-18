@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- *
+ * 
  * http://www.nitobi.com/license
  */
 if(typeof (nitobi)=="undefined"){
@@ -690,7 +690,7 @@ if(nitobi.browser.IE){
 doc.loadXML(xml);
 }else{
 var p=new DOMParser();
-var _bb=xml.replace(/\n/g,"&#xa;").replace(/>&#xa;</g,">\n<");
+var _bb=xml.replace(/\n/g,"&#xa;").replace(/\&#xa;</g,"<");
 var _bc=p.parseFromString(_bb!=null?_bb:"","text/xml");
 if(_b9){
 while(doc.hasChildNodes()){

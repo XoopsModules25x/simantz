@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- *
+ * 
  * http://www.nitobi.com/license
  */
 if(typeof (nitobi)=="undefined"||typeof (nitobi.lang)=="undefined"){
@@ -2812,7 +2812,7 @@ return key;
 nitobi.grid.Grid.prototype.insertAfterCurrentRow=function(){
 if(this.activeCell){
 var _256=nitobi.grid.Cell.getRowNumber(this.activeCell);
-this.insertRow(_256+1);
+this.insertRow(_256+2);
 }else{
 this.insertRow();
 }
