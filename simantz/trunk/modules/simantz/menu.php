@@ -5,22 +5,27 @@ include_once '../themes/default/style.css';
 global $menuname;
 $ctrl= new SelectCtrl();
 
-//print_r($_SERVER);
+$browser=$_SERVER['HTTP_USER_AGENT'];
 $deniedaccess=true;
+
 $i=0;
 foreach($allowbrowser as $ab){
+        
+$i++;        
     if(strpos($browser, $ab)>0)
-        {$deniedaccess=false;
+        {
+        $deniedaccess=false;
+
         break;
 
         }
     else
         continue;
-$i++;        
-}        
-        
-   if($deniedaccess && $i>0) //if user define will enforce checking
-    redirect_header($url,300,"<b style='color:red'>You browser {$browser} is not supported, please contact the developer.</b>");
+
+}       
+   if($deniedaccess!="" && $i>0) {//if user define will enforce checking
+    redirect_header("$url",300,"<b style='color:red'>Your browser {$browser} is not supported, please click <a href='{$supportbrowserurl}' target='_blank'>here</a> to get supported browser.</b>");
+   }
 //if there is no module id submit from another include use simantz module as menu
 if($parentwindows_id=="")
     $parentwindows_id=0;
@@ -47,7 +52,7 @@ echo <<< EOF
 EOF;
         $menulist = "<div style='height:30px'><div id='navbarCP'><ul class='menu' id='menu'>
         <li>
-        <a href='index.php' class='menulink'>Homes</a>
+        <a href='index.php' class='menulink'>Home</a>
         </li>";
 
 $menulist .= $permission->showMenu($parentwindows_id,0,$userid,$module_id);
@@ -83,7 +88,8 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
 	<br>
 
 EOF;*/
-
+if($helpurl!="")
+    $helpctrl="<a href='{$helpurl}' target='_blank'>Help</a>";
 echo <<< EOF
 
 <script type="text/javascript">
@@ -104,10 +110,8 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
 
 	<div style='color: #4D2222; v-align:bottom; line-height:3em;'>
 		<span style='font-weight:bold;text-align:left;font-size:24px;'>$menuname </span>
-	<div style="float:right; v-align:bottom; padding-left:1em;color: #4D2222;line-height:3em;">User: $uname</div><div style="float:right; text-align:right; v-align:bottom;color: #4D2222;line-height:3em;">Organization $orgctrl</div>
+	$helpctrl<div style="float:right; v-align:bottom; padding-left:1em;color: #4D2222;line-height:3em;">User: $uname</div><div style="float:right; text-align:right; v-align:bottom;color: #4D2222;line-height:3em;">Organization $orgctrl </div>
        </div>
-</br>
-</br>
 EOF;
 
 

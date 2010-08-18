@@ -24,6 +24,7 @@ class Window
   public $created;
   public $createdby;
   public $updated;
+  public $helpurl;
   public $updatedby;
   public $windowsetting;
   public $description;
@@ -38,13 +39,13 @@ class Window
    public function Window(){
 	global $path,$tableprefix,$tablewindow,$tablemodules,$log,$xoopsDB;
         $this->arrUpdateField=array("mid","windowsetting","seqno","description","parentwindows_id","filename","isactive",
-                    "window_name","updated","updatedby","table_name");
+                    "window_name","updated","updatedby","table_name","helpurl");
         $this->arrInsertField=array("mid","windowsetting","seqno","description","parentwindows_id","filename","isactive",
-                    "window_name","created","createdby","updated","updatedby","table_name");
+                    "window_name","created","createdby","updated","updatedby","table_name","helpurl");
         $this->arrInsertFieldType=array("%d","%s","%d","%s","%d","%s","%d",
-                    "%s","%s","%d","%s","%d","%s");
+                    "%s","%s","%d","%s","%d","%s","%s");
         $this->arrUpdateFieldType=array("%d","%s","%d","%s","%d","%s","%d",
-                    "%s","%s","%d","%s");
+                    "%s","%s","%d","%s","%s");
         $this->tablename="sim_window";
 	$this->xoopsDB=$xoopsDB;
 	$this->log=$log;
@@ -68,6 +69,7 @@ class Window
 		$this->description= $row['description'];
 		$this->seqno= $row['seqno'];
 		$this->isactive=$row['isactive'];
+		$this->helpurl=$row['helpurl'];
                 $this->mid=$row['mid'];
                 $this->parentwindows_id=$row['parentwindows_id'];
                $this->windowsetting=$row['windowsetting'];
@@ -124,7 +126,8 @@ class Window
                 else
                      $inactivetext="[Hidden]";
     $hyperlink="&nbsp;&nbsp;&nbsp;".
-                "<a href='javascript:showWindowsForm($window_id)' title='View Window' >$window_name</a>&nbsp;<b style='color:red'>$inactivetext</b> <a href=javascript:addChildren($window_id,$module_id)><u  style='color:black'>[Add]</u></a>";
+                "<a href='javascript:showWindowsForm($window_id)' title='View Window' >$window_name &nbsp;</a>&nbsp;<b style='color:red'>$inactivetext</b>&nbsp;&nbsp;
+	<a style='color:black' href=javascript:addChildren($window_id,$module_id)>[+]</a>";
     $result.= "<li id='$list_id' style='list-style: none;'>";
 	for($j=0;$j<$level;$j++)
             $result.= "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -184,6 +187,8 @@ public function getInputForm($module_id){
 
             <tr><td class='head'>Display</td>
                             <td class='even'><input type='checkbox' id='isactive' checked></td></tr>
+            <tr><td class='head'>Help URL</td>
+                            <td class='even'><input name='helpurl' size='70' id='helpurl'></td></tr>
              <tr><td><input id='window_id' title='window_id'  type='hidden'>
                     <input id='mid' title='mid' value='$module_id' type='hidden'>
                         </td>
@@ -196,6 +201,8 @@ public function getInputForm($module_id){
 }
 
 public function returnWindowXML(){
+header("Content-Type: text/xml");
+$this->helpurl=str_replace("&", "&#38;",$this->helpurl);
     echo <<< EOF
 <?xml version="1.0" encoding="utf-8" ?>
 <Result>
@@ -209,6 +216,7 @@ public function returnWindowXML(){
     <seqno>$this->seqno</seqno>
     <description>$this->description</description>
     <windowsetting>$this->windowsetting</windowsetting>
+    <helpurl>$this->helpurl</helpurl>
     <mid>$this->mid</mid>
 </Window>
 </Result>
@@ -221,7 +229,7 @@ public function insertWindow(){
     $arrvalue=array($this->mid,$this->windowsetting,$this->seqno,$this->description,
                     $this->parentwindows_id,$this->filename,$this->isactive,
                     $this->window_name,$this->updated,$this->updatedby,
-                    $this->updated,$this->updatedby,$this->table_name);
+                    $this->updated,$this->updatedby,$this->table_name,$this->helpurl);
     $save->InsertRecord($this->tablename,   $this->arrInsertField,
             $arrvalue,$this->arrInsertFieldType,$this->window_name,"window_id");
 
@@ -232,7 +240,7 @@ public function insertWindow(){
     $save = new Save_Data();
     $arrvalue=array($this->mid,$this->windowsetting,$this->seqno,$this->description,
                     $this->parentwindows_id,$this->filename,$this->isactive,
-                    $this->window_name,$this->updated,$this->updatedby,$this->table_name);
+                    $this->window_name,$this->updated,$this->updatedby,$this->table_name,$this->helpurl);
     return $save->UpdateRecord($this->tablename, "window_id",
                 $this->window_id,
                     $this->arrUpdateField, $arrvalue,  $this->arrUpdateFieldType,$this->window_name);

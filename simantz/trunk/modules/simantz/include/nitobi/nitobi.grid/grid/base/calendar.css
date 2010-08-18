@@ -1,0 +1,106 @@
+.base .ntb-datepicker {
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+
+.base .ntb-datepicker table,
+.ntb-datepicker-monthheader th,
+th.ntb-datepicker-dayheader,
+.base .ntb-datepicker-day{
+    background-color: #9ABFF5;
+    color: #293A4B;
+    text-align: center;
+    font-family: Helvetica,Arial,Verdana,sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.base .ntb-datepicker-monthheader th{
+    border-bottom: 1px solid #84A4D3;
+}
+
+.base a.ntb-datepicker-month, a.ntb-datepicker-year {
+    text-decoration: none;
+    color: #293A4B;
+    padding: 2px;
+}
+
+.base a.ntb-datepicker-prevmonth {
+    color: #293A4B;
+    text-decoration: none;
+
+}
+
+.base a.ntb-datepicker-nextmonth {
+    color: #293A4B;
+    text-decoration: none;
+}
+
+/*
+a.ntb-datepicker-month:hover, a.ntb-datepicker-year:hover {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #D2D2D2 #293A4B #293A4B #D2D2D2;
+    background-color: #C3C3C3;
+    padding: 1px; 
+}
+
+a.ntb-datepicker-month:active, a.ntb-datepicker-year:active {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #293A4B #D2D2D2 #D2D2D2 #293A4B;
+    background-color: #C3C3C3;
+    padding: 1px; 
+}
+*/
+
+.base .ntb-datepicker-dayheader {
+    border-top: 1px solid #AEC9F1;
+    border-bottom: 1px solid #AEC9F1;
+}
+
+.base .ntb-datepicker-day {
+    color: white;
+    border-left: 1px solid #AEC9F1;
+    border-right: 1px solid #7997C1;
+    background-color: #6782A8;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;    
+}
+
+.base .ntb-datepicker table tr {
+    height:12%;
+}
+
+.base .ntb-datepicker-lastmonth {
+}
+
+.base .ntb-datepicker-nextmonth {
+}
+
+.base .ntb-datepicker-thismonth {
+    background-color: #7591BC;
+}
+
+.base .ntb-datepicker .ntb-datepicker-currentday {
+    background-color: white;
+    text-decoration: underline;
+    color: #293A4B;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+}
+    .nitobi-hide {
+	display:none;
+}
+
+.ntb-effects-small {
+	clear:both;
+	display:block;
+	float:none;
+	height:0px;
+	//height:1px;
+	overflow:hidden;
+	width:auto;
+}

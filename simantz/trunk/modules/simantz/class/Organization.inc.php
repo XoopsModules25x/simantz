@@ -145,11 +145,11 @@ class Organization
 <A href='index.php'>Back To This Module Administration Menu</A>
 <form onsubmit="return validateOrganization()" method="post"
  action="organization.php" name="frmOrganzation">
-  <table style="text-align: left; width: 100%;" border="1"
+  <table style="text-align: left; width: 100%;" border="1" class="searchformblock"
  cellpadding="2" >
     <tbody>
       <tr>
-        <th colspan="4" rowspan="1">$header</th>
+        <td colspan="4" rowspan="1" class="searchformheader">$header</td>
       </tr>
       <tr>
         <td class='head'>Organization Code $selectorg</td>
@@ -241,8 +241,8 @@ EOF;
 
       $this->log->showLog(2,"Access updateOrganization");
      	$timestamp= date("y/m/d H:i:s", time()) ;
-
-        include_once "../../simantz/class/Save_Data.inc.php";
+	
+        include_once XOOPS_ROOT_PATH."/modules/simantz/class/Save_Data.inc.php";
           $save = new Save_Data();
 
       $arrfield=array("organization_name","organization_code","tel_1","tel_2","fax","url","email",
@@ -300,7 +300,7 @@ EOF;
         $this->log->showLog(2,"Access insertOrganization");
      	$timestamp= date("y/m/d H:i:s", time()) ;
 
-        include_once "../../simantz/class/Save_Data.inc.php";
+        include_once XOOPS_ROOT_PATH."/modules/simantz/class/Save_Data.inc.php";
           $save = new Save_Data();
    $arrfield=array("organization_name","organization_code","street1","street2",
 		"street3","postcode","city","state","country_id","tel_1","tel_2","fax",
@@ -326,7 +326,7 @@ EOF;
 
   public function deleteOrganization( $organization_id ) {
     	$this->log->showLog(2,"Warning: Performing delete organization id : $organization_id !");
-      include_once "../../simantz/class/Save_Data.inc.php";
+      include_once XOOPS_ROOT_PATH."/modules/simantz/class/Save_Data.inc.php";
           $save = new Save_Data();
           $this->fetchOrganization($organization_id);
 	if (!$save->DeleteRecord($this->tableorganization,"organization_id",$organization_id,$this->organization_code,1)){
@@ -366,7 +366,7 @@ EOF;
 		from $this->tableorganization o
 		LEFT JOIN $this->tablecountry ct on o.country_id=ct.country_id
 		LEFT JOIN $this->tablecurrency cr on o.currency_id=cr.currency_id
-		where organization_id=$organization_id";
+		where o.organization_id=$organization_id";
 	
 	$this->log->showLog(4,"Organization->fetchOrganization, before execute:" . $sql . "<br>");
 	
@@ -419,14 +419,14 @@ EOF;
 	<table>
   		<tbody>
     			<tr>
-				<th style="text-align:center;">No</th>
-				<th style="text-align:center;">Organization Code</th>
-				<th style="text-align:center;">Organization Name</th>
-				<th style="text-align:center;">Company No</th>
-				<th style="text-align:center;">Website</th>
-				<th style="text-align:center;">Email</th>
-				<th style="text-align:center;">Active</th>
-				<th style="text-align:center;">Operation</th>
+				<td class="searchformheader">No</td>
+				<td class="searchformheader">Organization Code</td>
+				<td class="searchformheader">Organization Name</td>
+				<td class="searchformheader">Company No</td>
+				<td class="searchformheader">Website</td>
+				<td class="searchformheader">Email</td>
+				<td class="searchformheader">Active</td>
+				<td class="searchformheader">Operation</td>
    	</tr>
 EOF;
 	$rowtype="";

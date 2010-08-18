@@ -128,7 +128,9 @@ public function prepareAuditHistory($category,$tablename,$primarykey,$record_id,
 public function completeAuditHistory($category,$status,$tablename,$primarykey,$record_id,$changedesc,$controlvalue){
         $this->log->showLog(2,"Access completeAuditHistory($category,$status,$tablename,$primarykey,$record_id,$changedesc,$controlvalue)");
 
-	global $xoopsDB,$uid, $uname,$_SERVER;
+	global $xoopsDB,$xoopsUser, $uname,$_SERVER;
+
+        $uid= $xoopsUser->getVar('uid');
         $fieldstring="";
         $ip=$_SERVER["REMOTE_ADDR"];
 	$updated=date("y/m/d H:i:s", time()) ;
@@ -1527,7 +1529,7 @@ $saveHandler->CompleteSave();
         $isdeleted=$o->isdeleted;
             $isdeleted=$o->isdeleted;
         if($o->allowDelete($record_id))
-        $this->DeleteRecord("sim_workflow","workflow_id",$record_id,$controlvalue,$isdeleted);
+        $this->DeleteRecord("sim_workflow","workflow_id",$record_id,$controlvalue,1);
         else
         $this->failfeedback.="Cannot delete workflow: $controlvalue <br/>";
 

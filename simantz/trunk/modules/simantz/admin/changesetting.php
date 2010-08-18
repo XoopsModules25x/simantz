@@ -73,6 +73,11 @@ system("echo '\$windowsettingautosave=\"$windowsettingautosave\";'>> ../setting.
 system("echo '\$nitobigridthemes=\"$nitobigridthemes\";'>> ../setting.php");
 system("echo '\$nitobicombothemes=\"$nitobicombothemes\";'>> ../setting.php");
 system("echo '\$selectspliter=\"$selectspliter\";'>> ../setting.php");
+
+if(get_magic_quotes_gpc()){
+$allowbrowser=str_replace("\"","",$allowbrowser);
+}
+
 if($allowbrowser!="")
 system("echo '\$allowbrowser={$allowbrowser};'>> ../setting.php");
 else

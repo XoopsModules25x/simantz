@@ -66,13 +66,38 @@ class Country
 		$this->seqno= $row['seqno'];
 		$this->citizenship=$row['citizenship'];
 		$this->isactive=$row['isactive'];
-		$this->islecturer=$row['islecturer'];
-		$this->isovertime=$row['isovertime'];
-		//$this->isfulltime=$row['isfulltime'];
-                $this->isparttime=$row['isparttime'];
 		$this->citizenship=$row['citizenship'];
    	$this->log->showLog(4,"Country->fetchCountry,database fetch into class successfully");
 	$this->log->showLog(4,"country_name:$this->country_name");
+
+	$this->log->showLog(4,"isactive:$this->isactive");
+	//$this->log->showLog(4,"isitem:$this->isitem");
+
+		return true;
+	}
+	else{
+		return false;
+	$this->log->showLog(4,"Country->fetchCountry,failed to fetch data into databases:" . mysql_error(). ":$sql");
+	}
+  } // end of member function fetchCountry
+
+  public function fetchRegion($region_id) {
+	$this->log->showLog(3,"Fetching region detail into class Country.php.<br>");
+
+	$sql="SELECT * from sim_region where region_id=$region_id";
+
+	$this->log->showLog(4,"ProductRegion->fetchRegion, before execute:" . $sql . "<br>");
+
+	$query=$this->xoopsDB->query($sql);
+
+	if($row=$this->xoopsDB->fetchArray($query)){
+		$this->region_name=$row["region_name"];
+		$this->organization_id=$row['organization_id'];
+		$this->seqno= $row['seqno'];
+		$this->isactive=$row['isactive'];
+
+   	$this->log->showLog(4,"region->fetchRegion,database fetch into class successfully");
+	$this->log->showLog(4,"region_name:$this->region_name");
 
 	$this->log->showLog(4,"isactive:$this->isactive");
 	//$this->log->showLog(4,"isitem:$this->isitem");
@@ -243,8 +268,8 @@ EOF;
 if ($insertCount > 0)
 {
     $arrfield=array("country_code", "country_name","isactive","seqno",
-                    "created","createdby","updated","updatedby","citizenship");
-    $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s','%d','%s');
+                    "created","createdby","updated","updatedby","citizenship","organization_id");
+    $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s','%d','%s','%d');
 
 // Yes there are INSERTs to perform...
  for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
@@ -258,8 +283,8 @@ if ($insertCount > 0)
                 $createdby,
                 $timestamp,
                 $createdby,
-                $saveHandler->ReturnInsertField($currentRecord,"citizenship")
-         );
+                $saveHandler->ReturnInsertField($currentRecord,"citizenship"),
+                $organization_id);
      $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "country_code");
      $save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"country_id");
   if($save->failfeedback!=""){
@@ -363,7 +388,203 @@ $saveHandler->CompleteSave();
 //	return $checkistrue;
 	}
 
-public function showLookupCountry(){
+ public function showRegion($wherestring){
+
+    include "../simantz/class/nitobi.xml.php";
+    $getHandler = new EBAGetHandler();
+
+   $this->log->showLog(3,"Load Grid with Query String=".$_SERVER['QUERY_STRING']);
+        $pagesize=$_GET["PageSize"];
+        $ordinalStart=$_GET["StartRecordIndex"];
+        $sortcolumn=$_GET["SortColumn"];
+        $sortdirection=$_GET["SortDirection"];
+    global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
+
+    $tablename="sim_region";
+    $country_id=$_GET['country_id'];
+
+
+   $this->log->showLog(2,"Access ShowCountry($wherestring)");
+    if(empty($pagesize)){
+          $pagesize=$this->defaultpagesize;
+        }
+        if(empty($ordinalStart)){
+          $ordinalStart=0;
+        }
+        if(empty($sortcolumn)){
+           $sortcolumn="seqno, region_name";
+        }
+        if(empty($sortdirection)){
+           $sortdirection="ASC";
+        }
+
+     $wherestring.= " AND country_id =".$country_id;
+
+
+     $sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
+      $this->log->showLog(4,"With SQL: $sql");
+        $query = $xoopsDB->query($sql);
+
+        $getHandler->ProcessRecords();
+        $getHandler->DefineField("region_name");
+     	$getHandler->DefineField("isactive");
+        $getHandler->DefineField("seqno");
+        $getHandler->DefineField("info");
+        $getHandler->DefineField("country_id");
+        $getHandler->DefineField("region_id");
+        $getHandler->DefineField("rh");
+
+	$currentRecord = 0; // This will assist us finding the ordinalStart position
+            $rh="odd";
+      while ($row=$xoopsDB->fetchArray($query))
+     {
+
+          if($rh=="even")
+            $rh="odd";
+          else
+            $rh="even";
+
+     	    $currentRecord = $currentRecord +1;
+            if($currentRecord > $ordinalStart){
+             $getHandler->CreateNewRecord($row['region_id']);
+             $getHandler->DefineRecordFieldValue("region_name", $row['region_name']);
+             $getHandler->DefineRecordFieldValue("isactive", $row['isactive']);
+             $getHandler->DefineRecordFieldValue("seqno", $row['seqno']);
+             $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['region_id']."&tablename=sim_region&idname=region_id&title=Region");
+             $getHandler->DefineRecordFieldValue("country_id",$row['country_id']) ;
+             $getHandler->DefineRecordFieldValue("region_id",$row['region_id']);
+             $getHandler->DefineRecordFieldValue("rh",$rh);
+             $getHandler->SaveRecord();
+             }
+      }
+    $getHandler->CompleteGet();
+          $this->log->showLog(2,"complete function showRegion()");
+    }
+
+ public function saveRegion(){
+    $this->log->showLog(2,"Access saveRegion");
+        include "../simantz/class/nitobi.xml.php";
+        include_once "../simantz/class/Save_Data.inc.php";
+
+        global $xoopsDB,$xoopsUser;
+        $saveHandler = new EBASaveHandler();
+        $saveHandler->ProcessRecords();
+        $timestamp=date("Y-m-d H:i:s",time());
+        $createdby=$xoopsUser->getVar('uid');
+        $uname=$xoopsUser->getVar('uname');
+        $uid=$xoopsUser->getVar('uid');
+
+        $organization_id=$this->defaultorganization_id;
+        $tablename="sim_region";
+
+        $save = new Save_Data();
+        $insertCount = $saveHandler->ReturnInsertCount();
+        $this->log->showLog(3,"Start Insert($insertCount records)");
+
+if ($insertCount > 0)
+{
+    $arrfield=array("country_id", "region_name","isactive","seqno",
+                    "created","createdby","updated","updatedby","organization_id");
+    $arrfieldtype=array('%d','%s','%d','%d','%s','%d','%s','%d','%d');
+
+// Yes there are INSERTs to perform...
+ for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
+ {
+
+     $arrvalue=array($saveHandler->ReturnInsertField($currentRecord, "country_id"),
+                $saveHandler->ReturnInsertField($currentRecord, "region_name"),
+                $saveHandler->ReturnInsertField($currentRecord,"isactive"),
+                $saveHandler->ReturnInsertField($currentRecord,"seqno"),
+                $timestamp,
+                $createdby,
+                $timestamp,
+                $createdby,
+                $organization_id);
+     $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "region_name");
+     $save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"region_name");
+  if($save->failfeedback!=""){
+      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
+      $this->failfeedback.=$save->failfeedback;
+  }
+  // Now we execute this query
+ }
+}
+
+$updateCount = $saveHandler->ReturnUpdateCount();
+$this->log->showLog(3,"Start update($updateCount records)");
+
+if ($updateCount > 0)
+{
+
+      $arrfield=array("region_name", "isactive","seqno",
+            "updated","updatedby");
+      $arrfieldtype=array('%s','%d','%d','%s','%d');
+ // Yes there are UPDATEs to perform...
+
+ for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
+         $this->log->showLog(3,"***updating record($currentRecord),new region_name:".
+                $saveHandler->ReturnUpdateField($currentRecord, "region_name").",id:".
+                $saveHandler->ReturnUpdateField($currentRecord, "region_id")."\n");
+                $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "region_name");
+
+ }
+
+ for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
+ {
+
+        $arrvalue=array($saveHandler->ReturnUpdateField($currentRecord, "region_name"),
+                $saveHandler->ReturnUpdateField($currentRecord,"isactive"),
+                $saveHandler->ReturnUpdateField($currentRecord,"seqno"),
+                $timestamp,
+                $createdby);
+        $this->log->showLog(3,"***updating record($currentRecord),new region_name:".
+              $saveHandler->ReturnUpdateField($currentRecord, "region_name").",id:".
+              $saveHandler->ReturnUpdateField($currentRecord,"region_id")."\n");
+
+         $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "region_name");
+
+         $save->UpdateRecord($tablename, "region_id", $saveHandler->ReturnUpdateField($currentRecord,"region_id"),
+                    $arrfield, $arrvalue, $arrfieldtype,$controlvalue);
+  if($save->failfeedback!=""){
+      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
+      $this->failfeedback.=$save->failfeedback;
+  }
+
+ }
+}
+
+$ispurge=0;
+$deleteCount = $saveHandler->ReturnDeleteCount();
+$this->log->showLog(3,"Start delete/purge($deleteCount records)");
+//include "class/Country.inc.php";
+//$o = new Country();
+
+if ($deleteCount > 0){
+  for($currentRecord = 0; $currentRecord < $deleteCount; $currentRecord++){
+    $record_id=$saveHandler->ReturnDeleteField($currentRecord);
+
+    $this->fetchRegion($record_id);
+    $controlvalue=$this->region_name;
+    $isdeleted=$this->isdeleted;
+
+    $save->DeleteRecord("sim_region","region_id",$record_id,$controlvalue,1);
+  if($save->failfeedback!=""){
+      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
+      $this->failfeedback.=$save->failfeedback;
+  }
+  }
+
+  }
+if($this->failfeedback!="")
+$this->failfeedback="Warning!<br/>\n".$this->failfeedback;
+
+$saveHandler->setErrorMessage($this->failfeedback);
+$saveHandler->CompleteSave();
+
+
+}
+
+ public function showLookupCountry(){
         $this->log->showLog(2,"Run lookup showCountry()");
         $tablename="sim_country";
     global $getHandler,$pagesize,$ordinalStart,$sortcolumn,$sortdirection,$wherestring;

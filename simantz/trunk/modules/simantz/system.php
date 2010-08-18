@@ -120,9 +120,21 @@
         $menuname=$arrperm[0];
 	$xoopsTpl->assign('xoops_pagetitle', $menuname);
 
-
         $havewriteperm=$arrperm[1];
         $windowsetting=$arrperm[2];
+        $permissionsetting=$arrperm[3];
+        $helpurl=$arrperm[4];
+        $permissionsetting=explode(",", $permissionsetting);
+
+        $totalpermissionsetting=count($permissionsetting);
+        $i=0;
+        while($i < $totalpermissionsetting){
+        eval($permissionsetting[$i].";");
+        $i++;
+        }
+//      echo $viewappraisal;
+//      echo $viewpayroll;
+ 
 
 
 	if($menuname == "")

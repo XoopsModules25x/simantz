@@ -788,8 +788,6 @@ public function showWorkflow($wherestring){
     $searchworkflow_code=$_GET['searchworkflow_code'];
     $searchworkflow_name=$_GET['searchworkflow_name'];
     $searchisactive=$_GET['searchisactive'];
-    $searchisdeleted=$_GET['searchisdeleted'];
-
 
     $this->log->showLog(2,"Access ShowWorkflow($wherestring)");
     if(empty($pagesize)){
@@ -814,10 +812,10 @@ public function showWorkflow($wherestring){
             $wherestring.= " AND isdeleted=1";
 
      if($searchworkflow_code !="")
-           $wherestring.= " AND workflow_code LIKE '".$searchworkflow_code."'";
+           $wherestring.= " AND workflow_code LIKE '%".$searchworkflow_code."%'";
 
      if($searchworkflow_name !="")
-           $wherestring.= " AND workflow_name LIKE '".$searchworkflow_name."'";
+           $wherestring.= " AND workflow_name LIKE '%".$searchworkflow_name."%'";
 
      if($searchisactive !="-")
            $wherestring.= " AND isactive =$searchisactive";

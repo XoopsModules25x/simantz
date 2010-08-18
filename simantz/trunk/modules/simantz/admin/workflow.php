@@ -588,7 +588,7 @@ default:
                                     if(issubmit_node==1)
                                         document.getElementById("issubmit_node").checked=true;
                                     else
-                                        document.getElementById("issms").checked=false;
+                                        document.getElementById("issubmit_node").checked=false;
 
                                     if(iscomplete_node==1)
                                         document.getElementById("iscomplete_node").checked=true;

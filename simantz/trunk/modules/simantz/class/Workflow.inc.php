@@ -452,7 +452,7 @@ public function getInputForm($module_id){
 }
 
 public function returnWorkflowXML(){
-
+header("Content-Type: text/xml");
     echo <<< EOF
 <?xml version="1.0" encoding="utf-8" ?>
 <Result>   

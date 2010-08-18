@@ -37,6 +37,9 @@ case "ajaxsave":
     $window->seqno=$_POST['seqno'];
     $window->parentwindows_id=$_POST['parentwindows_id'];
     $window->description=$_POST['description'];
+    $window->helpurl=str_replace("%26", "&", $_POST['helpurl']);
+
+
     if( $window->window_id>0)
             $window->updateWindow();
     else
@@ -101,7 +104,9 @@ default:
                                     document.getElementById("description").value="";
                                     document.getElementById("filename").value="";
                                     document.getElementById("table_name").value="";
+                                    document.getElementById("helpurl").checked="";
                                     document.getElementById("isactive").checked=true;
+
         }
 
         function saverecord(){
@@ -116,6 +121,8 @@ default:
                 var desc=document.getElementById("description").value;
                 var fname=document.getElementById("filename").value;
                 var tbname=document.getElementById("table_name").value;
+                var helpurl=document.getElementById("helpurl").value.replace(/&/g,"%26");
+
                 var isactive=0;
                 if(document.getElementById("isactive").checked==true)
                 isactive=1;
@@ -129,7 +136,9 @@ default:
                     "&description="+desc+
                     "&filename="+fname+
                     "&table_name="+tbname+
+                    "&helpurl="+helpurl+
                     "&isactive="+isactive;
+
             $.ajax({
                  url: "window.php",type: "POST",data: data,cache: false,
                      success: function (xml) {
@@ -168,7 +177,6 @@ default:
                                 {
 
                                     var currentwid = $(this).attr("id");
-
                                     var wname=$(this).find("window_name").text();
                                     var mid=$(this).find("mid").text();
                                     var seqno=$(this).find("seqno").text();
@@ -177,6 +185,7 @@ default:
                                     var desc=$(this).find("description").text();
                                     var fname=$(this).find("filename").text();
                                     var tbname=$(this).find("table_name").text();
+                                    var helpurl=$(this).find("helpurl").text();
                                     var isactive=$(this).find("isactive").text();
                                     document.getElementById("window_id").value=wid;
                                     document.getElementById("window_name").value=wname;
@@ -184,6 +193,7 @@ default:
                                     document.getElementById("seqno").value=seqno;
                                     document.getElementById("parentwindows_id").value=pwid;
                                     document.getElementById("windowsetting").value=wsetting;
+                                    document.getElementById("helpurl").value=helpurl;
                                     document.getElementById("description").value=desc;
                                     document.getElementById("filename").value=fname;
                                     document.getElementById("table_name").value=tbname;
@@ -217,6 +227,7 @@ default:
                    // document.getElementById("parentwindow_id").value=0;
                     document.getElementById("windowsetting").value="";
                     document.getElementById("description").value="";
+                    document.getElementById("helpurl").value="";
                     document.getElementById("filename").value="";
                     document.getElementById("isactive").checked=true;
 

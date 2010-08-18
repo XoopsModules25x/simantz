@@ -311,8 +311,9 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
   public function checkPermission($uid,$module_id,$usefilename){
         $currentdate=date("Y-m-d",time());
 	$this->log->showLog(3, "checkPermission(uid=$uid,module_id=$module_id,usefilename=$usefilename)");
-        $sql="select distinct(w.window_id) as window_id,
-		w.window_name, gsp.iswriteperm ,w.seqno,w.filename,w.windowsetting
+        $sql="select distinct(w.window_id) as window_id,w.helpurl,
+		w.window_name, gsp.iswriteperm, gsp.permissionsetting ,w.seqno,w.filename,
+            w.windowsetting,w.mid
 		from sim_groups g 
 		inner join sim_groups_users_link gul on g.groupid=gul.groupid
 		inner join sim_users u on gul.uid=u.uid
@@ -320,7 +321,7 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 		inner join sim_modules m on gp.gperm_itemid=m.mid
 		inner join sim_permission gsp on gsp.groupid=g.groupid
 		inner join sim_window w on gsp.window_id=w.window_id
-		where m.mid=$module_id and w.filename='$usefilename' and w.isdeleted=0
+		where w.mid=$module_id and w.filename='$usefilename' and w.isdeleted=0
                 and gp.gperm_name='module_read' and u.uid=$uid
                 and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by gsp.iswriteperm DESC";
       
@@ -328,11 +329,11 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 	$query=$this->xoopsDB->query($sql);
 
 	if($usefilename=='index.php')
-		return array("Home",0,"");
+		return array("Home",0,"","");
 	elseif ($row=$this->xoopsDB->fetchArray($query))
-		return array($row['window_name'],$row['iswriteperm'],$row['windowsetting']);
+		return array($row['window_name'],$row['iswriteperm'],$row['windowsetting'],$row['permissionsetting'],$row['helpurl']);
 	else
- 		return array("",0,0);
+ 		return array("",0,0,"","");
 	
  }
 

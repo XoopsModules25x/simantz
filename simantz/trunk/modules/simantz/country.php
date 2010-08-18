@@ -31,10 +31,18 @@ case "lookup": //return xml table to grid
     exit; //after return xml shall not run more code.
     break;
 case "save": //process submited xml data from grid
-
      $o->saveCountry();
-
     break;
+
+case "searchregion": //return xml table to grid
+    $wherestring=" WHERE region_id>0";
+    $o->showRegion($wherestring);
+    exit; //after return xml shall not run more code.
+    break;
+case "saveregion": //process submited xml data from grid
+     $o->saveRegion();
+    break;
+
 default:
 include "menu.php";
 $xoTheme->addStylesheet("$url/modules/simantz/include/popup.css");
@@ -49,34 +57,43 @@ $o->showSearchForm(); //produce search form, comment here to hide search form
 if($isadmin==1){
     $grIdColumn=6; //define primary key column index, it will set as readonly afterwards (count from 0)
     //    $deleteddefaultvalue_js="myGrid.getCellObject(rowNo,6).setValue(0);"; //if admin login got deleted column, during admin insert new record shall set it default =0 (not deleted)
-    $changewidth="width='300'";
+    $grIdColumnRegion=5;
+    $changewidth="width='155'";
 
 }
 else{
     $grIdColumn=5;//define primary key column index for normal user
+    $grIdColumnRegion=4;
     $deleteddefaultvalue_js="";
-        $changewidth="width='325'";
+        $changewidth="width='180'";
 }
 
 if($havewriteperm==1){ //user with write permission can edit grid, have button
 
    $permctrl=" rowinsertenabled=\"true\" rowdeleteenabled=\"true\" onbeforesaveevent=\"beforesave()\"";
-
+   $permctrlregion=" rowinsertenabled=\"true\" rowdeleteenabled=\"true\" onbeforesaveevent=\"beforesave()\"";
    $savectrl='<input name="btnAdd" onclick="addline()" value="Add New" type="button">
      <input name="btnSave" onclick="save()" value="Save" type="button">';
+   $saveregionctrl='<input name="btnAddregion" id="btnAddregion"  onclick="addlineregion()" value="Add New Region" type="button" style="display:none">
+     <input name="btnSaveregion" id="btnSaveregion" onclick="saveregion()" value="Save" type="button" style="display:none">';
     // <input name="btnDelete" onclick="onclickdeletebutton()" value="Delete" type="button">
     $alloweditgrid= "col!=$grIdColumn";
 }
 else{ //user dun have write permission, cannot save grid
     $savectrl="";
+    $saveregionctrl="";
    $permctrl=" rowinsertenabled=\"false\" rowdeleteenabled=\"false\" onbeforesaveevent=\"return false\" ";
+   $permctrlregion=" rowinsertenabled=\"false\" rowdeleteenabled=\"false\" onbeforesaveevent=\"return false\" ";
    $alloweditgrid= "false";
 }
  echo <<< EOF
 
   <script language="javascript" type="text/javascript">
 
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
+    jQuery(document).ready((function ()
+        {nitobi.loadComponent('DataboundGrid');
+         nitobi.loadComponent('DetailGrid');}
+    ));
 
     function init(){}
 
@@ -98,6 +115,23 @@ else{ //user dun have write permission, cannot save grid
 	grid.getDataSource().setGetHandlerParameter('searchcountry_name',searchcountry_name);
 	grid.getDataSource().setGetHandlerParameter('searchisactive',searchisactive);
 	grid.getDataSource().setGetHandlerParameter('searchisdeleted',searchisdeleted);
+
+        //reload grid data
+	grid.dataBind();
+
+    }
+
+     function searchregion(){
+        var grid = nitobi.getGrid("DetailGrid");
+        var country_id=document.getElementById("country_id").value;
+
+        /*
+         *only user isadmin will have element searchisdeleted (apply in every windows and records)
+         *check element is exist before submit variable to avoid javascript failure
+         */
+
+        //Submit javascript to grid with _GET method
+	grid.getDataSource().setGetHandlerParameter('country_id',country_id);
 
         //reload grid data
 	grid.dataBind();
@@ -132,12 +166,37 @@ else{ //user dun have write permission, cannot save grid
                      	 document.getElementById('msgbox').innerHTML="Record save successfully";
                          //document.getElementById('popupmessage').innerHTML="Please Wait.....";
                          search();
+                         var gridDetail = nitobi.getGrid("DetailGrid");
+                         gridDetail.dataBind();
                          popup('popUpDiv');
 		});
            return true;
         }
         else{ //save failed
         	search();
+
+                popup('popUpDiv');
+
+        	return false;
+        	}
+    }
+
+    function savedoneregion(eventArgs){
+        var grid= nitobi.getGrid('DetailGrid');
+        var dataSource =grid.getDataSource();
+        var errorMessage = dataSource.getHandlerError();
+
+        if (!errorMessage) {//save successfully
+        	         jQuery('#msgbox').fadeTo('slow', 1, function() {
+                     	 document.getElementById('msgbox').innerHTML="Record save successfully";
+                         //document.getElementById('popupmessage').innerHTML="Please Wait.....";
+                         searchregion();
+                         popup('popUpDiv');
+		});
+           return true;
+        }
+        else{ //save failed
+        	searchregion();
 
                 popup('popUpDiv');
 
@@ -162,7 +221,23 @@ else{ //user dun have write permission, cannot save grid
           // document.getElementById('popupmessage').innerHTML="Please Wait.....";
            jQuery('#msgbox').fadeTo('slow', 1, function() {});
     }
+    //if save_data have error, trigger this function
+    function showErrorregion(){
 
+        var grid= nitobi.getGrid('DetailGrid');
+        var dataSource =grid.getDataSource();
+        var errorMessage = dataSource.getHandlerError();
+
+       if (errorMessage) {
+             document.getElementById('msgbox').innerHTML="<b style=\"color:red\">"+errorMessage+"</b><br/>";
+            // document.getElementById('popupmessage').innerHTML="Please Wait.....";
+             grid.dataBind();
+         }
+         else
+           document.getElementById('msgbox').innerHTML="";
+          // document.getElementById('popupmessage').innerHTML="Please Wait.....";
+           jQuery('#msgbox').fadeTo('slow', 1, function() {});
+    }
 
     //if user click particular column, auto fall into edit mode
     function clickrecord(eventArgs){
@@ -174,6 +249,11 @@ else{ //user dun have write permission, cannot save grid
     var g= nitobi.getGrid('DataboundGrid');
         g.insertRow();
     }
+    function addlineregion(){
+    var g= nitobi.getGrid('DetailGrid');
+        g.insertRow();
+    }
+
 
     //trigger save activity from javascript
    function save()
@@ -195,8 +275,29 @@ else{ //user dun have write permission, cannot save grid
 
 	 }
       }
+    }
+
+   function saveregion()
+     {
+      if(validateEmptyregion()){
+   	if(document.getElementById("afterconfirm").value==1){  //Ask for confirmation from delete activity already, process data immediately
+	   var g= nitobi.getGrid('DetailGrid');
+	   document.getElementById("afterconfirm").value=0;
+	   g.save();
+           }
+	else{ // not yet request confirmation
+    	  if(confirm("Confirm the changes? Data will save into database immediately")){
+          //popup('popUpDiv');
+     	  var g= nitobi.getGrid('DetailGrid');
+	    document.getElementById("afterconfirm").value=0;
+	    g.save();
+	    searchregion();
+    	   }
+
+	 }
+      }
       else{
-      document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Country code and country name cannot be null</b><br/>";
+      document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Please enter Region name.</b><br/>";
 
       }
     }
@@ -213,10 +314,23 @@ else{ //user dun have write permission, cannot save grid
         alert("Please choose a row before deleting.");
         return false;
         }
+        else{
+         g.deleteCurrentRow();
+         document.getElementById("btnAddregion").style.display="none";
+         document.getElementById("btnSaveregion").style.display="none";
+        }
+    }
+
+   function onclickdeletebuttonregion(){ //when press delete button will triger this function and ask for confirmation
+   	var g= nitobi.getGrid('DetailGrid');
+        var selRow = g.getSelectedRow();
+        if(selRow==-1){// no select any row
+        alert("Please choose a row before deleting.");
+        return false;
+        }
         else
          g.deleteCurrentRow();
     }
-
 
     function checkAllowEdit(eventArgs){
 	var g= nitobi.getGrid('DataboundGrid');
@@ -227,7 +341,6 @@ else{ //user dun have write permission, cannot save grid
         return false;
         }
 
-
 //after insert a new line will automatically fill in some value here
   function setDefaultValue(eventArgs)
    {
@@ -236,6 +349,17 @@ else{ //user dun have write permission, cannot save grid
    var rowNo = r.Row;
    myGrid.getCellObject(rowNo,4).setValue(10);
         $deleteddefaultvalue_js
+   myGrid.selectCellByCoords(rowNo, 0);
+}
+
+  function setDefaultValueregion(eventArgs)
+   {
+   var myGrid = eventArgs.getSource();
+   var r = eventArgs.getRow();
+   var rowNo = r.Row;
+   getcountry_id = document.getElementById("country_id").value;
+   myGrid.getCellObject(rowNo,4).setValue(getcountry_id);
+   myGrid.getCellObject(rowNo,2).setValue(10);
    myGrid.selectCellByCoords(rowNo, 0);
 }
 
@@ -257,6 +381,13 @@ else{ //user dun have write permission, cannot save grid
         var cellObj = g.getCellValue(selRow, selCol);
       window.open(cellObj,"");
     }
+    function viewlogregion(){
+   	var g= nitobi.getGrid('DetailGrid');
+        var selRow = g.getSelectedRow();
+        var selCol = g.getSelectedColumn();
+        var cellObj = g.getCellValue(selRow, selCol);
+      window.open(cellObj,"");
+    }
     function validateEmpty(){
 
         var grid= nitobi.getGrid('DataboundGrid');
@@ -264,17 +395,32 @@ else{ //user dun have write permission, cannot save grid
         var total_row = grid.getRowCount();
         var name ="";
         var no ="";
+        var citi ="";
 
         for( var i = 0; i < total_row; i++ ) {
-        var namecell = grid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
-        var nocell = grid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
+        var namecell = grid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
+        var nocell = grid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
+        var citicell = grid.getCellObject( i, 2);//1st para : row , 2nd para : column seq
 
            name = namecell.getValue();
            no = nocell.getValue();
-           if(name=="" || no=="")
+           citi = citicell.getValue();
+           if(citi=="")
            {
             isallow = false;
+            document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Please enter Citizenship.</b><br/>";
            }
+           if(name=="")
+           {
+            isallow = false;
+            document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Please enter Country name.</b><br/>";
+           }
+           if( no=="")
+           {
+            isallow = false;
+            document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Please enter Country code.</b><br/>";
+           }
+   
         }
 
         if(isallow)
@@ -282,15 +428,63 @@ else{ //user dun have write permission, cannot save grid
         else
           return false;
     }
+    function validateEmptyregion(){
+
+        var grid= nitobi.getGrid('DetailGrid');
+        var isallow = true;
+        var total_row = grid.getRowCount();
+        var name ="";
+
+        for( var i = 0; i < total_row; i++ ) {
+        var namecell = grid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
+
+           name = namecell.getValue();
+           if(name=="")
+           {
+            isallow = false;
+           }
+        }
+        if(isallow)
+          return true;
+        else
+          return false;
+    }
+ function ChooseRegion(eventArgs)
+	{
+		var myRow = eventArgs.cell.getRow();
+		var myMasterGrid = nitobi.getComponent('DataboundGrid');
+		var country_id = myMasterGrid.getCellObject(myRow,$grIdColumn).getValue();
+
+                if(country_id!="" || country_id!="0"){
+                document.getElementById("btnAddregion").style.display="inline";
+                document.getElementById("btnSaveregion").style.display="inline";
+                }
+                else{
+                document.getElementById("btnAddregion").style.display="none";
+                document.getElementById("btnSaveregion").style.display="none";
+                }
+                if(document.getElementById("country_id").value!=country_id){
+                document.getElementById("country_id").value=country_id;
+		var myDetailGrid = nitobi.getComponent('DetailGrid');
+		myDetailGrid.getDataSource().setGetHandlerParameter('country_id', country_id);
+
+		myDetailGrid.dataBind();
+                }
+                if(country_id!=""){
+               // document.getElementById("editabled").value=1;
+                }
+
+	}
 </script>
 <br/>
 
 <div align="center">
 <table style="width:700px;">
 
-<tr><td align="left" style="height:27px;">$savectrl</td></tr>
-
-<tr><td align="center">
+<tr><td align="left" style="height:27px;">$savectrl</td>
+   <td align="left" style="height:27px;">$saveregionctrl</td></tr>
+<input type="hidden" name="country_id" id="country_id" value="">
+<tr><td align="left">
 <div>
 <ntb:grid id="DataboundGrid"
      mode="nonpaging"
@@ -298,7 +492,6 @@ else{ //user dun have write permission, cannot save grid
      $permctrl
      singleclickeditenabled="true"
      onhtmlreadyevent="dataready()"
-
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
      gethandler="country.php?action=search"
@@ -306,15 +499,17 @@ else{ //user dun have write permission, cannot save grid
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
      onafterrowinsertevent="setDefaultValue(eventArgs)"
      rowhighlightenabled="true"
-     width="943"
+     width="550"
+     height="250"
+     oncellclickevent="ChooseRegion(eventArgs)"
      onaftersaveevent="savedone(eventArgs)"
      onbeforerowdeleteevent="beforeDelete()"
      onafterrowdeleteevent="save()"
      autosaveenabled="false"
      theme="$nitobigridthemes">
  <ntb:columns>
-   <ntb:textcolumn  width="100" label="Country Code" xdatafld="country_code"  classname="{\$rh}" ></ntb:textcolumn>
-   <ntb:textcolumn width="300" label="Country Name" xdatafld="country_name"  classname="{\$rh}"></ntb:textcolumn>
+   <ntb:textcolumn  width="80" label="Country Code" xdatafld="country_code"  classname="{\$rh}" ></ntb:textcolumn>
+   <ntb:textcolumn width="145" label="Country Name" xdatafld="country_name"  classname="{\$rh}"></ntb:textcolumn>
    <ntb:textcolumn  $changewidth label="Citizenship" xdatafld="citizenship" classname="{\$rh}" ></ntb:textcolumn>
    <ntb:textcolumn label="Active" width="45" xdatafld="isactive" sortenabled="true"  classname="{\$rh}" align="center">
          <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
@@ -337,7 +532,58 @@ EOF;
 </ntb:columns>
 </ntb:grid>
     </div>
-</td></tr>
+</td>
+
+ <td align="left">
+        <ntb:grid id="DetailGrid"
+             mode="standard"
+             toolbarenabled='false'
+             $permctrlregion
+             ondatareadyevent="dataready();"
+             onhandlererrorevent="showErrorregion()"
+             keygenerator="GetNewRecordID();"
+             singleclickeditenabled="true"
+             onafterrowinsertevent="setDefaultValueregion(eventArgs)"
+             gethandler="country.php?action=searchregion"
+             savehandler="country.php?action=saveregion"
+             rowhighlightenabled="true"
+             width="350"
+             height="250"
+             onaftersaveevent="savedoneregion(eventArgs)"
+             onbeforerowdeleteevent="beforeDelete()"
+             onafterrowdeleteevent="saveregion()"
+             autosaveenabled="false"
+             theme="$nitobigridthemes"
+             >
+
+<ntb:columns>
+   <ntb:textcolumn width="180" label="Region Name" xdatafld="region_name"  classname="{\$rh}"></ntb:textcolumn>
+  
+   <ntb:textcolumn label="Active" width="45" xdatafld="isactive" sortenabled="true"  classname="{\$rh}" align="center">
+         <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
+          checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value"></ntb:checkboxeditor>
+        </ntb:textcolumn>
+   <ntb:numbercolumn maxlength="5" label="Seq No"  width="50" xdatafld="seqno" mask="###0"  classname="{\$rh}"></ntb:numbercolumn>
+EOF;
+//only admin user will see record info and isdeleted column
+if($isadmin==1)
+{
+echo<<< EOF
+<ntb:textcolumn  label="Log"   xdatafld="info"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:viewlogregion()">
+            <ntb:imageeditor imageurl="images/history.gif"></ntb:imageeditor> </ntb:textcolumn>
+EOF;
+}
+ echo <<< EOF
+      <ntb:numbercolumn   label="countryID"  width="0" xdatafld="country_id" mask="###0" sortenabled="false" editable="false"></ntb:numbercolumn>
+      <ntb:numbercolumn   label="ID"  width="0" xdatafld="region_id" mask="###0" sortenabled="false" editable="false"></ntb:numbercolumn>
+      <ntb:textcolumn  label="Del"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebuttonregion()">
+            <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>
+</ntb:columns>
+         </ntb:grid>
+
+        </td>
+
+</tr>
 <tr><td align="left">
   <input id='afterconfirm' value='0' type='hidden'>
 
