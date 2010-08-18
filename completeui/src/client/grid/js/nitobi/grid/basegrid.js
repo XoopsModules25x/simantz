@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
 nitobi.lang.defineNs("nitobi.grid");
@@ -10,7 +10,7 @@ nitobi.lang.defineNs("nitobi.grid");
 if (false)
 {
 	/**
-	 * @namespace The namespace for classes that make up 
+	 * @namespace The namespace for classes that make up
 	 * the Nitobi Grid component.
 	 * The most commonly used classes are {@link nitobi.grid.Grid}, {@link nitobi.grid.Cell},
 	 * and {@link nitobi.grid.Column}
@@ -70,13 +70,13 @@ locallivescrolling - local livescrolling
  *				&lt;ntb:e xi="15" a="Steve Lilli" b="brown" c="horse"&gt;&lt;/ntb:e&gt;
  *				&lt;ntb:e xi="16" a="Lindsay Dwana" b="cyan" c="cow"&gt;&lt;/ntb:e&gt;
  *			&lt;/ntb:data&gt;
- *		&lt;/ntb:datasource&gt;								
+ *		&lt;/ntb:datasource&gt;
  *	&lt;/ntb:datasources&gt;
  * &lt;/ntb:grid&gt;
  * </pre>
  * The <code>mode</code> attribute on the <code>ntb:grid</code> declaration defines what sort of Grid to instantiate such as
  * LiveScrolling, LocalPaging, NonPaging, or Standard.
- * To instantiate through script a specific version of the Grid class should be instantiated such as: 
+ * To instantiate through script a specific version of the Grid class should be instantiated such as:
  * <pre class="code">
  * var myGrid = new nitobi.grid.GridLiveScrolling();
  * myGrid.setPagingMode(nitobi.grid.PAGINGMODE_LIVESCROLLING);
@@ -86,7 +86,7 @@ locallivescrolling - local livescrolling
  * myGrid.bind();
  * </pre>
  * @constructor
- * @param {String} uid The unique ID of the Grid. 
+ * @param {String} uid The unique ID of the Grid.
  * @see nitobi.grid.GridLiveScrolling
  * @see nitobi.grid.GridNonpaging
  * @see nitobi.grid.GridLocalPage
@@ -260,7 +260,7 @@ nitobi.grid.Grid.prototype.properties = {
 	cellborderheight:{n:"CellBorderHeight",t:"i",d:0,p:"x"},
 	innercellborder:{n:"InnerCellBorder",t:"i",d:0,p:"x"},
 	dragfillenabled:{n:"DragFillEnabled",t:"b",d:true,p:"x"},
-	
+
 		// Events
 	oncellclickevent:{n:"OnCellClickEvent",t:"",p:"e"},
 	onbeforecellclickevent:{n:"OnBeforeCellClickEvent",t:"",p:"e"},
@@ -477,12 +477,12 @@ for (var name in nitobi.grid.Grid.prototype.properties)
    @memberOf nitobi.grid.Grid
 */
 /**
- * Initializes the component and creates all children objects of the component. This method is called implicitly 
+ * Initializes the component and creates all children objects of the component. This method is called implicitly
  * when the component is attached to a DOM element in the web page. This is primarily for use by component developers
  */
-nitobi.grid.Grid.prototype.initialize= function() 
+nitobi.grid.Grid.prototype.initialize= function()
 {
-	// Called when parent.addChild() occurs 
+	// Called when parent.addChild() occurs
 	this.fire("Preinitialize");
 	this.initializeFromCss();
 	this.createChildren(); // Each subclass overrides this method to create its own children
@@ -516,7 +516,7 @@ nitobi.grid.Grid.prototype.initializeFromCss = function()
 		if (cellBorder != null)
 			this.setCellBorder(parseInt(cellBorder.borderLeftWidth+0) + parseInt(cellBorder.borderRightWidth+0) + parseInt(cellBorder.paddingLeft+0) + parseInt(cellBorder.paddingRight+0));
 	}
-	
+
 	var cellBorder = this.getThemedClass("ntb-cell-border");
 		if (cellBorder != null)
 			this.setCellBorder(parseInt(cellBorder.borderTopWidth+0) + parseInt(cellBorder.borderBottomWidth+0) + parseInt(cellBorder.paddingTop+0) + parseInt(cellBorder.paddingBottom+0));
@@ -560,7 +560,7 @@ nitobi.grid.Grid.prototype.getThemedStyle = function(clazz, style)
  * @param {nitobi.data.DataSet} dataSet The DataSet to connect the renders to.
  * @see #connectToDataSet
  */
-nitobi.grid.Grid.prototype.connectRenderersToDataSet= function(dataset) 
+nitobi.grid.Grid.prototype.connectRenderersToDataSet= function(dataset)
 {
 	this.TopLeftRenderer.xmlDataSource = dataset;
 	this.TopCenterRenderer.xmlDataSource = dataset;
@@ -569,15 +569,15 @@ nitobi.grid.Grid.prototype.connectRenderersToDataSet= function(dataset)
 }
 
 /**
- * Connects the component to a nitobi.data.DataTable in a nitobi.data.DataSet. 
- * If the DataTable is specified then this will also call conntectToDataTable(). 
+ * Connects the component to a nitobi.data.DataTable in a nitobi.data.DataSet.
+ * If the DataTable is specified then this will also call conntectToDataTable().
  * Before a Grid can render any data it must be connected to a DataSet.
  * @param {nitobi.data.DataSet} dataSet The DataSet to connect the component to.
  * @param {nitobi.data.DataTable} dataTable The nitobi.data.DataSet to connect the component to.
  * @see #connectToDataSet
  * @private
  */
-nitobi.grid.Grid.prototype.connectToDataSet= function(dataset,table) 
+nitobi.grid.Grid.prototype.connectToDataSet= function(dataset,table)
 {
 	this.data = dataset;
 	// TODO: why is this here and when is it used?
@@ -589,11 +589,11 @@ nitobi.grid.Grid.prototype.connectToDataSet= function(dataset,table)
 }
 
 /**
- * Connects a Grid to a table as specified by the table argument. If there is 
- * no table argument it will attempt to connect a table with the id '_default'. 
- * If no table can be found it will return false.  This is also called from 
+ * Connects a Grid to a table as specified by the table argument. If there is
+ * no table argument it will attempt to connect a table with the id '_default'.
+ * If no table can be found it will return false.  This is also called from
  * conntectToDataSet if the second argument is used when calling that function.<br><br>
- * The component subscribes to the following events from the 
+ * The component subscribes to the following events from the
  * nitobi.data.DataTable:
  * &lt;ul&gt;
  * &lt;li&gt;RowCountChanged - nitobi.grid.Grid.setRowCount()&lt;/li&gt;
@@ -605,7 +605,7 @@ nitobi.grid.Grid.prototype.connectToDataSet= function(dataset,table)
  * @param {String} table The table to which the Grid should connect.
  * @type Boolean
  */
-nitobi.grid.Grid.prototype.connectToTable= function(table) 
+nitobi.grid.Grid.prototype.connectToTable= function(table)
 {
 	// Use the table as the table id if it is a string
 	if (typeof(table) == "string")
@@ -646,11 +646,11 @@ nitobi.grid.Grid.prototype.connectToTable= function(table)
 }
 
 /**
- * Ensures that the Grid is connected to a DataTable. If there is no connected 
- * DataTable it will create a new DataTable with ID "_default" and use the 
+ * Ensures that the Grid is connected to a DataTable. If there is no connected
+ * DataTable it will create a new DataTable with ID "_default" and use the
  * GetHandler, SaveHandler and DataMode properties on the Grid.
  */
-nitobi.grid.Grid.prototype.ensureConnected = function() 
+nitobi.grid.Grid.prototype.ensureConnected = function()
 {
 	// Case: nodataSet has been been defined
 	if (this.data == null) {
@@ -678,11 +678,11 @@ nitobi.grid.Grid.prototype.ensureConnected = function()
 }
 
 /**
- * Updates the component with information about a connected DataTable. This will be called when the OnStructureChangedEvent 
+ * Updates the component with information about a connected DataTable. This will be called when the OnStructureChangedEvent
  * or OnColumnsInitializedEvent is fired from the DataTable.
  * @private
  */
-nitobi.grid.Grid.prototype.updateStructure = function() 
+nitobi.grid.Grid.prototype.updateStructure = function()
 {
 	if (this.inferredColumns) {
 		this.defineColumns(this.datatable);
@@ -701,7 +701,7 @@ nitobi.grid.Grid.prototype.updateStructure = function()
  * Sets the <code>fieldMap</code> property of the Grid to match that of the connected DataTable. This is called from <code>updateStructure()</code>.
  * @private
  */
-nitobi.grid.Grid.prototype.mapColumns= function() 
+nitobi.grid.Grid.prototype.mapColumns= function()
 {
 	// TODO: This seems a bit sketchy to keep in sync if we ever use this.fieldMap
 	// if so we should be using a setter and preferably creating the connection between the two properties
@@ -711,7 +711,7 @@ nitobi.grid.Grid.prototype.mapColumns= function()
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.configureDefaults= function() 
+nitobi.grid.Grid.prototype.configureDefaults= function()
 {
 	// Note: properties should be assigned before components are attached or initialized (to avoid duplicate code execution)
 	// Assume that accessors expect that sub-components haven't been created yet.
@@ -807,7 +807,7 @@ nitobi.grid.Grid.prototype.attachDomEvents= function()
 	if (nitobi.browser.IE)
 		dGridElement.onselectstart = function() {var id =window.event.srcElement.id;if (id.indexOf('selectbox') == 0 || id.indexOf('cell') == 0) return false;};
 
-	// If it is IE we choose the entire grid to be the keyNav focused element 
+	// If it is IE we choose the entire grid to be the keyNav focused element
 	// otherwise we use a special hidden element for Firefox for foucs performance reason
 	if (nitobi.browser.IE)
 		this.keyNav = this.getScrollerContainer();
@@ -834,7 +834,7 @@ nitobi.grid.Grid.prototype.attachDomEvents= function()
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.hoverCell=function(cell) 
+nitobi.grid.Grid.prototype.hoverCell=function(cell)
 {
 	// This will check if the BG color is the expected BG color
 	// and only apply the hover if it is
@@ -854,7 +854,7 @@ nitobi.grid.Grid.prototype.hoverCell=function(cell)
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.hoverRow=function(row) 
+nitobi.grid.Grid.prototype.hoverRow=function(row)
 {
 	if (!this.isRowHighlightEnabled()) return;
 
@@ -994,7 +994,7 @@ nitobi.grid.Grid.prototype.handleCellMouseDown=function(evt)
 
 		if(this.waitt == true)
 			this.selection.selecting=true;
-                    
+
 
 		// Fire the cellclick event on the grid and column
 		var activeColumn = this.getSelectedColumnObject();
@@ -1009,7 +1009,7 @@ nitobi.grid.Grid.prototype.handleCellMouseDown=function(evt)
  */
 nitobi.grid.Grid.prototype.handleMouseUp = function(evtObj)
 {
-	// This mouseup may be due to a selection expansion - so lets just pass 
+	// This mouseup may be due to a selection expansion - so lets just pass
 	// this on to the selection mouseup handler to where it will deal with it if we are in expanding mode.
 	if (this.selection.selected()) {
 		this.getSelection().handleSelectionMouseUp(evtObj);
@@ -1023,7 +1023,7 @@ nitobi.grid.Grid.prototype.handleMouseUp = function(evtObj)
 nitobi.grid.Grid.prototype.handleHeaderMouseUp = function(evt)
 {
 	var domMouseUpCell = this.findActiveCell(evt.srcElement);
-	if (!domMouseUpCell) 
+	if (!domMouseUpCell)
 	{
 		this.focus();
 		return;
@@ -1036,7 +1036,7 @@ nitobi.grid.Grid.prototype.handleHeaderMouseUp = function(evt)
  * @private
  * Event handler for the mouse move event.
  */
-nitobi.grid.Grid.prototype.handleMouseMove = function(evt) 
+nitobi.grid.Grid.prototype.handleMouseMove = function(evt)
 {
 	this.fire("MouseMove", evt);
 }
@@ -1057,7 +1057,7 @@ nitobi.grid.Grid.prototype.handleHeaderMouseMove=function(evt) {
 
 /**
  * Calculates if the mouse if near the resize grabby
- * TODO: need to get rid of this and put in a DOM node for this 
+ * TODO: need to get rid of this and put in a DOM node for this
  * @private
  * @param {Object} evt
  * @param {Object} cell
@@ -1108,14 +1108,14 @@ nitobi.grid.Grid.prototype.handleCellMouseMove=function(evt) {
 	if (sel.selecting)
 	{
 		var button = evt.button;
-	
+
 		var coords = nitobi.html.getEventCoords(evt);
 		var x = coords.x, y = coords.y;
 		if (nitobi.browser.IE)
 			x = evt.clientX, y = evt.clientY;
 
 		//	TODO: known bug with Mozilla - evt.button is ALWAYS 0 after the button is pressed!
-		if (button == 1 || (button == 0 && !nitobi.browser.IE)) 
+		if (button == 1 || (button == 0 && !nitobi.browser.IE))
 		{
 			if (!sel.expanding) {
 				sel.redraw(cell);
@@ -1187,7 +1187,7 @@ nitobi.grid.Grid.prototype.handleMouseWheel = function(evtObj)
  * @param {Boolean} multi Indicates whether multi-row select should be used.
  * @see #selectCellByCoords
  */
-nitobi.grid.Grid.prototype.setActiveCell=function(cell,multi) 
+nitobi.grid.Grid.prototype.setActiveCell=function(cell,multi)
 {
 	// At this point if cell is null we can't do the activation of the cell
 	if (!cell) return;
@@ -1205,7 +1205,7 @@ nitobi.grid.Grid.prototype.setActiveCell=function(cell,multi)
 	// Setup the cell selection and ensure that the cell is in view.
 	this.selection.collapse(this.activeCell);
 
-	// Check if we are in a click process - if so then we need to wait to ensure cell in view 
+	// Check if we are in a click process - if so then we need to wait to ensure cell in view
 	// otherwise it can cause the selection to go into select mode.
 	if (!this.isCellClicked()) {
 		this.ensureCellInView(this.activeCell);
@@ -1216,7 +1216,7 @@ nitobi.grid.Grid.prototype.setActiveCell=function(cell,multi)
 	var row = cell.parentNode;
 	this.setActiveRow(row,multi);
 
-	// Finally focus on the cell 
+	// Finally focus on the cell
 	// NOTE: The cell is focused after the row is focused and the cell is blurred before the row is blurred ...
 	var focusEventArgs = new nitobi.grid.OnCellFocusEventArgs(this, this.getSelectedCellObject());
 	this.fire("CellFocus", focusEventArgs);
@@ -1224,7 +1224,7 @@ nitobi.grid.Grid.prototype.setActiveCell=function(cell,multi)
 }
 
 /**
- * @private 
+ * @private
  * Sets Grid properties activeCell, activeCellObject and activeColumnObject for the new active cell.
  * @param {HTMLElement} activeCell The new active cell in the Grid.
  */
@@ -1239,8 +1239,8 @@ nitobi.grid.Grid.prototype.activateCell = function(cell)
 /**
  * @private
  * Blurs the currently active cell.
- * @param {HTMLElement} oldCell The previously selected cell. When bluring the entire grid 
- * one may want to set oldCell to be null. 
+ * @param {HTMLElement} oldCell The previously selected cell. When bluring the entire grid
+ * one may want to set oldCell to be null.
  */
 nitobi.grid.Grid.prototype.blurActiveCell = function(oldCell) {
 	// Setup the oldCell property which can be null if we are clearing the grid or the new activeCell otherwise
@@ -1250,7 +1250,7 @@ nitobi.grid.Grid.prototype.blurActiveCell = function(oldCell) {
 	var blurEventArgs = new nitobi.grid.OnCellBlurEventArgs(this, this.getSelectedCellObject());
 	if (!!oldColumn)
 		if(!this.fire("CellBlur", blurEventArgs) || !nitobi.event.evaluate(oldColumn.getOnCellBlurEvent(), blurEventArgs)) return;
-	
+
 }
 
 /**
@@ -1267,7 +1267,7 @@ nitobi.grid.Grid.prototype.getRowNodes = function(row)
  * @param {HTMLElement} row The HTML element for the row to be made active.
  * @param {Boolean} multi Indicates whether multi-row select should be used.
  */
-nitobi.grid.Grid.prototype.setActiveRow=function(row,multi) 
+nitobi.grid.Grid.prototype.setActiveRow=function(row,multi)
 {
 	var Row = nitobi.grid.Row;
 
@@ -1333,8 +1333,8 @@ nitobi.grid.Grid.prototype.setActiveRow=function(row,multi)
  * {
  * 	var grid = nitobi.getGrid('grid1');
  * 	var selectedRows = grid.getSelectedRows();
- * 
- * 	for( var i = 0; i < selectedRows.length; i++ ) 
+ *
+ * 	for( var i = 0; i < selectedRows.length; i++ )
  * 	{
  * 	var xi = selectedRows[i].getAttribute("xi");
  * 	var celly = grid.getCellObject(xi, col);
@@ -1344,14 +1344,14 @@ nitobi.grid.Grid.prototype.setActiveRow=function(row,multi)
  * @type Array
  * @see #getCellObject
  */
-nitobi.grid.Grid.prototype.getSelectedRows=function() 
+nitobi.grid.Grid.prototype.getSelectedRows=function()
 {
 	return this.selectedRows;
 }
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.clearActiveRows=function() 
+nitobi.grid.Grid.prototype.clearActiveRows=function()
 {
 	for (var i=0;i<this.selectedRows.length;i++) {
 		var row=this.selectedRows[i];
@@ -1367,7 +1367,7 @@ nitobi.grid.Grid.prototype.clearActiveRows=function()
  * </p>
  * @type Array
  */
-nitobi.grid.Grid.prototype.selectAllRows=function() 
+nitobi.grid.Grid.prototype.selectAllRows=function()
 {
 	this.clearActiveRows();
 	for (var i=0;i<this.getDisplayedRowCount() ;i++ )
@@ -1385,7 +1385,7 @@ nitobi.grid.Grid.prototype.selectAllRows=function()
  * Clears any active rows in the Grid.
  * @param {nitobi.grid.Row} row The currently active row to clear.
  */
-nitobi.grid.Grid.prototype.clearActiveRow=function(row) 
+nitobi.grid.Grid.prototype.clearActiveRow=function(row)
 {
 	var rowNumber = nitobi.grid.Row.getRowNumber(row)
 	var rowNodes = nitobi.grid.Row.getRowElements(this,rowNumber);
@@ -1439,7 +1439,7 @@ nitobi.grid.Grid.prototype.findActiveCell = function(domSrcElem)
 {
 	var breakOut = 5;
 	domSrcElem == null;
-	for (var i=0; i<breakOut && domSrcElem.getAttribute; i++) 
+	for (var i=0; i<breakOut && domSrcElem.getAttribute; i++)
 	{
 		var t=domSrcElem.getAttribute('ebatype');
 		if (t=='cell' || t=='columnheader') return domSrcElem;
@@ -1449,14 +1449,14 @@ nitobi.grid.Grid.prototype.findActiveCell = function(domSrcElem)
 }
 
 /**
- * Attaches a component to the HTML DOM. If a component is created using 
- * script, this is an important method to use as 
- * it will cause the render of all unbound elements of the user-interface. 
+ * Attaches a component to the HTML DOM. If a component is created using
+ * script, this is an important method to use as
+ * it will cause the render of all unbound elements of the user-interface.
  * This is primarily for use by component developers.
- * @param {HTMLElement} parentElement The HTML DOM element where the component 
+ * @param {HTMLElement} parentElement The HTML DOM element where the component
  * will be rendered.
  */
-nitobi.grid.Grid.prototype.attachToParentDomElement= function(parentElement) 
+nitobi.grid.Grid.prototype.attachToParentDomElement= function(parentElement)
 {
 	this.UiContainer=parentElement;
 	// This event key is created in the constructor and connected to initialize
@@ -1464,7 +1464,7 @@ nitobi.grid.Grid.prototype.attachToParentDomElement= function(parentElement)
 }
 
 /**
- * Returns all the toolbars currently being used in the grid.  The grid has two 
+ * Returns all the toolbars currently being used in the grid.  The grid has two
  * toolbars named standardToolbar and pagingToolbar. The pagingToolbar is only available
  * if the grid is set to standard mode.
  * @type nitobi.ui.Toolbars
@@ -1483,10 +1483,10 @@ nitobi.grid.Grid.prototype.adjustHorizontalScrollBars = function()
 {
 	var viewableWidth = this.calculateWidth();
 	var hScrollbarContainer = $ntb("ntb-grid-hscrollshow" + this.uid);
-	
+
 	var C = nitobi.html.Css;
 	var viewport_Width = parseInt(C.getStyle(this.getScrollSurface(), "width"));
-	
+
 	if ((viewableWidth <= viewport_Width))
 	{
 		hScrollbarContainer.style.display = "none";
@@ -1501,7 +1501,7 @@ nitobi.grid.Grid.prototype.adjustHorizontalScrollBars = function()
 }
 
 /**
- * Creats all children objects of the component. These can be visual or non-visual aspects of the component such as 
+ * Creats all children objects of the component. These can be visual or non-visual aspects of the component such as
  * panels, toolbars or managers.
  * @private
  */
@@ -1516,10 +1516,10 @@ nitobi.grid.Grid.prototype.createChildren= function()
 	// Possibly call super.createChildren()
 	// Defer creating dynamic and data-driven components to commitProperties()
 
-	// Rules for adding children: 
+	// Rules for adding children:
 	// 	1. Containers must contain only UIComponents
 	//	2. UIComponents must go inside other UIComponents
-	//	3. UIComponents can contain anything 
+	//	3. UIComponents can contain anything
 	ntbAssert((this.UiContainer!=null),"Grid must have a UI Container");
 
 	if (this.UiContainer != null && this.getGridContainer() == null) {
@@ -1536,7 +1536,7 @@ nitobi.grid.Grid.prototype.createChildren= function()
 	this.subscribe("HtmlReady", L.close(ls,ls.hide));
 	this.subscribe("AfterGridResize", L.close(ls,ls.resize));
 	ls.initialize();
-	
+
 	// This is for the IE7 z-index bug!
 	if(nitobi.browser.IE7 && nitobi.lang.isStandards())
 	{
@@ -1546,7 +1546,7 @@ nitobi.grid.Grid.prototype.createChildren= function()
 	{
 		ls.attachToElement($ntb("ntb-grid-overlay" + this.uid));
 	}
-	
+
 	ls.show();
 
 //	nitobi.html.setBgImage($ntb("ntb-frozenshadow"+this.uid));
@@ -1581,7 +1581,7 @@ nitobi.grid.Grid.prototype.createChildren= function()
 
 	// Set up default key handlers - eventually move these out into editor factory
 //	var kh = function(k) {if ((k > 64 && k < 91) || (k > 47 && k < 58) || (k > 95 && k < 111) || (k > 188 && k < 191) || (k == 113) ) {_this.edit();}};
-//	var gh = function(k) {if (k==32) {var group =  _this.activeCell.getAttribute("xig");_this.toggleGroup(group);}}; 
+//	var gh = function(k) {if (k==32) {var group =  _this.activeCell.getAttribute("xig");_this.toggleGroup(group);}};
 //	this.keyHandlerFunc={"TEXT":kh,"PASSWORD":kh,"TEXTAREA":kh,"NUMBER":kh,"IMAGE":kh,"DATE":kh,"LISTBOX":kh,"LOOKUP":kh,"CHECKBOX":kh,"LINK":kh};
 
 	// Subscribe to the HtmlReady event for things like afterrowinsert etc
@@ -1591,7 +1591,7 @@ nitobi.grid.Grid.prototype.createChildren= function()
 	this.subscribe('TableConnected', L.close(sc, sc.setDataTable));
 	// Since we may already have connected a datatable to the grid we need to explicitly
 	// connect update the scroller when we create it
-	// TODO: should this be a constructor / initialize argument instead? 
+	// TODO: should this be a constructor / initialize argument instead?
 	sc.setDataTable(this.datatable);
 
 	this.initializeSelection();
@@ -1619,7 +1619,7 @@ nitobi.grid.Grid.prototype.createChildren= function()
 	vs.attachToParent(this.element, $ntb("vscroll"+this.uid));
 	vs.subscribe("ScrollByUser",L.close(this,this.scrollVertical));
 	this.subscribe("PercentHeightChanged",L.close(vs, vs.setRange)); // I had to do it this way ... context wasn't being passed properly
-	this.subscribe("ScrollVertical",L.close(vs, vs.setScrollPercent)); 
+	this.subscribe("ScrollVertical",L.close(vs, vs.setScrollPercent));
 	this.setscrollbarWidth(vs.getWidth());
 
 //	this.subscribe("PercentHeightChanged",nitobi.lang.close(this,this.vScrollbar.setRange));
@@ -1636,7 +1636,7 @@ nitobi.grid.Grid.prototype.createChildren= function()
 /**
  * Creates the toolbars collection. Toolbars are always there in case
  * the programmer calls setToolbarEnabled(true).
- * 
+ *
  * @param {nitobi.ui.Toolbars.VisibleToolbars} visibleToolbars A bitmask representing which toolbars are being shown.
  * @private
  */
@@ -1648,7 +1648,7 @@ nitobi.grid.Grid.prototype.createToolbars = function(visibleToolbars)
 	tb.setHeight(this.getToolbarHeight());
 	tb.setRowInsertEnabled(this.isRowInsertEnabled());
 	tb.setRowDeleteEnabled(this.isRowDeleteEnabled());
-	tb.attachToParent(TBContainer); 
+	tb.attachToParent(TBContainer);
 
 
 
@@ -1673,7 +1673,7 @@ nitobi.grid.Grid.prototype.resizeToolbars = function()
 }
 
 /**
- * Vertically scrolls the Grid relative to the current vertical scroll 
+ * Vertically scrolls the Grid relative to the current vertical scroll
  * position.
  * <p>
  * If the Grid is in livescrolling mode, use of this method may cause
@@ -1698,9 +1698,9 @@ nitobi.grid.Grid.prototype.scrollVerticalRelative= function(offset)
 }
 
 /**
- * Vertically scrolls the Grid to the position specfied by the percent 
- * argument. This will fire the OnScrollVerticalEvent 
- * and the OnScrollHitBottomEvent or OnScrollHitTopEvent if the scrollbar 
+ * Vertically scrolls the Grid to the position specfied by the percent
+ * argument. This will fire the OnScrollVerticalEvent
+ * and the OnScrollHitBottomEvent or OnScrollHitTopEvent if the scrollbar
  * is with 1% of the bottom or top of the data respectively.
  * <p>
  * If the Grid is in livescrolling mode, use of this method may cause
@@ -1730,7 +1730,7 @@ nitobi.grid.Grid.prototype.scrollVertical= function(percent)
 }
 
 /**
- * Horizontally scrolls the Grid relative to the current horizontal scroll 
+ * Horizontally scrolls the Grid relative to the current horizontal scroll
  * position.
  * <p>
  * Note that this differs from {@link #scrollHorizontal} in two ways.  One,
@@ -1742,7 +1742,7 @@ nitobi.grid.Grid.prototype.scrollVertical= function(percent)
  * var grid = nitobi.getComponent('grid1');
  * grid.scrollHorizontalRelative(150);
  * grid.scrollHorizontalRelative(100);	// Moves the grid 250 pixels to the right
- * @param {Number} offset The pixel amount by which to scroll the Grid with 
+ * @param {Number} offset The pixel amount by which to scroll the Grid with
  * respect to its current horizontal scroll value.
  */
 nitobi.grid.Grid.prototype.scrollHorizontalRelative= function(offset)
@@ -1754,10 +1754,10 @@ nitobi.grid.Grid.prototype.scrollHorizontalRelative= function(offset)
 }
 
 /**
- * Horizontally scrolls the Grid to the position specfied by the percent 
- * argument. This will fire the <code>OnScrollHorizontalEvent</code> 
- * and the <code>OnScrollHitLeftEvent</code> or 
- * <code>OnScrollHitRightEvent</code> if the scrollbar is with 1% of the 
+ * Horizontally scrolls the Grid to the position specfied by the percent
+ * argument. This will fire the <code>OnScrollHorizontalEvent</code>
+ * and the <code>OnScrollHitLeftEvent</code> or
+ * <code>OnScrollHitRightEvent</code> if the scrollbar is with 1% of the
  * left or right of the data respectively.
  * @example
  * var grid = nitobi.getComponent('grid1');
@@ -1799,13 +1799,13 @@ nitobi.grid.Grid.prototype.getActiveView = function()
 {
 	var C = nitobi.grid.Cell;
 	return this.Scroller.getViewportByCoords(
-		C.getRowNumber(this.activeCell), 
+		C.getRowNumber(this.activeCell),
 		C.getColumnNumber(this.activeCell));
 }
 
 /**
- * Scrolls the Grid such that the specified cell is visible. 
- * If the cell argument is specified then it will scroll to make 
+ * Scrolls the Grid such that the specified cell is visible.
+ * If the cell argument is specified then it will scroll to make
  * the provide cell visible.
  * <p>
  * <b>Example</b>
@@ -1859,11 +1859,11 @@ nitobi.grid.Grid.prototype.ensureCellInView=function(cell)
 }
 
 /**
- * If the Grid is rendered, the Grid is updated to reflect the number of rows in the Grid DataTable. The change in data rows is 
+ * If the Grid is rendered, the Grid is updated to reflect the number of rows in the Grid DataTable. The change in data rows is
  * also propagated to child object.
  * @private
  */
-nitobi.grid.Grid.prototype.updateCellRanges= function() 
+nitobi.grid.Grid.prototype.updateCellRanges= function()
 {
 	if(this.frameRendered) {
 		var rows = this.getRowCount();
@@ -1871,7 +1871,7 @@ nitobi.grid.Grid.prototype.updateCellRanges= function()
 
 		this.measure();
 		this.resizeScroller();
-		
+
 		var height = this.isToolbarEnabled()?this.getHeight()-this.getToolbarHeight():this.getHeight();
 		var hScrollbarContainer = $ntb("ntb-grid-hscrollshow" + this.uid);
 		height = height - hScrollbarContainer.clientHeight;
@@ -1891,7 +1891,7 @@ nitobi.grid.Grid.prototype.measure= function() {
 	// Don't count on it: Framework should optimize away calls to measure
 	// Start by explicitly sizing component and implement measure() later.
 
-/*	
+/*
 	this.toolbarbox.measure();
 	this.hscrollbarbox.measure();
 	this.vscrollbarbox.measure();
@@ -1908,7 +1908,7 @@ nitobi.grid.Grid.prototype.measure= function() {
  */
 nitobi.grid.Grid.prototype.measureViews= function() {
 	this.measureRows();
-	this.measureColumns();	
+	this.measureColumns();
 }
 
 /**
@@ -1948,8 +1948,8 @@ nitobi.grid.Grid.prototype.resizeScroller = function()
 {
 	var C = nitobi.html.Css;
 	var viewport_Height = parseInt(C.getStyle(this.getScrollSurface(), "height"));
-	
-	// TODO: refactor, the toolbars should not be taken into account .... that should all alredy be set in the this.getHeight property 
+
+	// TODO: refactor, the toolbars should not be taken into account .... that should all alredy be set in the this.getHeight property
 	var tbDelta=(this.getToolbars() != null && this.isToolbarEnabled() ? this.getToolbarHeight() : 0);
 	var hdrH = this.isColumnIndicatorsEnabled()?this.getHeaderHeight():0;
 	var hScrollbarContainer = $ntb("ntb-grid-hscrollshow" + this.uid);
@@ -1960,12 +1960,12 @@ nitobi.grid.Grid.prototype.resizeScroller = function()
 }
 /**
  * Resizes the grid to the specified width and height. The size specified is the outermost container size
- * of the grid including toolbars, scrollbars and borders. 
+ * of the grid including toolbars, scrollbars and borders.
  * @param {Number} width The width (in pixels) of the grid.
  * @param {Number} height The height (in pixels) of the grid.
  * @type Boolean
  */
-nitobi.grid.Grid.prototype.resize= function(width, height) 
+nitobi.grid.Grid.prototype.resize= function(width, height)
 {
 	this.setWidth(width);
 	this.setHeight(height);
@@ -1979,14 +1979,14 @@ nitobi.grid.Grid.prototype.resize= function(width, height)
 
 /**
  * Executes before a user initiated resize event occurs.
- * @param {Object} evt Event arguments 
+ * @param {Object} evt Event arguments
  * @private
  */
 nitobi.grid.Grid.prototype.beforeResize = function(evt)
 {
 	var beforeResizeEventArgs = new nitobi.base.EventArgs(this);
 	if (!nitobi.event.evaluate(this.getOnBeforeResizeEvent(), beforeResizeEventArgs)) return;
-	
+
 	this.gridResizer.startResize(this, evt);
 }
 
@@ -2002,7 +2002,7 @@ nitobi.grid.Grid.prototype.afterResize = function()
 
 /**
  * Executes after a user initiated column resize event occurs.
- * @param {Object} resizer Event arguments 
+ * @param {Object} resizer Event arguments
  * @private
  */
 nitobi.grid.Grid.prototype.afterColumnResize = function(resizer)
@@ -2013,11 +2013,11 @@ nitobi.grid.Grid.prototype.afterColumnResize = function(resizer)
 }
 
 /**
- * Resizes the grid column to the specified width. 
+ * Resizes the grid column to the specified width.
  * @param {Number} width The width (in pixels) of the column.
  * @param {Number|nitobi.grid.Column} column The index of the column to resize or the Column object.
  */
-nitobi.grid.Grid.prototype.columnResize= function(column, width) 
+nitobi.grid.Grid.prototype.columnResize= function(column, width)
 {
 	if (isNaN(width)) return;
 
@@ -2026,17 +2026,17 @@ nitobi.grid.Grid.prototype.columnResize= function(column, width)
 	column.setWidth(width);
 
 	//	TODO: this is a hack to fix a problem with the fixed column header not resizing.
-	// This was causing some hacky code to be added in EBASelection.collapse 
+	// This was causing some hacky code to be added in EBASelection.collapse
 	// see the following - tix for details.
 	// http://portal:8090/cgi-bin/trac.cgi/ticket/522
 	this.updateCellRanges();
 
 	/*
-	 * This is absolutely stupid!  Not only does IE7 have issues with properly generating CSS, 
+	 * This is absolutely stupid!  Not only does IE7 have issues with properly generating CSS,
 	 * but Firefox can't find style descriptors for styles that have both an ID and a style!
-	 * 
+	 *
 	 * TODO: File a bug in Bugzilla and remove this check when 3.1 comes out?
-	 * 
+	 *
 	 * Gecko FAIL!
 	 */
 	if (nitobi.browser.IE7 || nitobi.browser.FF3)
@@ -2061,11 +2061,11 @@ nitobi.grid.Grid.prototype.columnResize= function(column, width)
 			var surfaceStyle = C.getClass(".ntb-grid-surfacewidth"+this.uid);
 			surfaceStyle.width = (parseInt(surfaceStyle.width) + dx) + "px";
 		}
-	
+
 		// No matter what do the column class itself
 		var columnStyle = C.getClass(".ntb-column"+this.uid+"_"+(columnIndex+1));
 		columnStyle.width = (parseInt(columnStyle.width) + dx) + "px";
-	
+
 		this.adjustHorizontalScrollBars();
 	}
 
@@ -2077,7 +2077,7 @@ nitobi.grid.Grid.prototype.columnResize= function(column, width)
 
 
 /**
- * Loads the Grid Model from XML. The Model is essentially a serialization of the Grid state which contains all the property values and 
+ * Loads the Grid Model from XML. The Model is essentially a serialization of the Grid state which contains all the property values and
  * child object information.
  * @private
  */
@@ -2098,7 +2098,7 @@ nitobi.grid.Grid.prototype.initializeModel= function()
 	// Set up column definitions - Do this in XSL
 	var xDec = this.model.selectSingleNode("state/nitobi.grid.Columns");
 	if (xDec==null) {
-		var xDec=this.model.createElement("nitobi.grid.Columns");		
+		var xDec=this.model.createElement("nitobi.grid.Columns");
 		this.model.documentElement.appendChild(nitobi.xml.importNode(this.model, xDec, true));
 	}
 
@@ -2112,7 +2112,7 @@ nitobi.grid.Grid.prototype.initializeModel= function()
 	else
 	{
 		this.columnsDefined=false;
-		this.inferredColumns=true;		
+		this.inferredColumns=true;
 	}
 
 	this.model.documentElement.setAttribute("ID",this.uid);
@@ -2167,17 +2167,17 @@ nitobi.grid.Grid.prototype.bind=function()
 }
 
 /**
- * Connects the component to a DataTable. 
- * <p>If the data is located on a 
- * remote server then the GetHandler property is required to retrieve the 
- * data asynchronously from the remote server otherwise a DatasourceId is 
- * required if the data is already on the client. If the component was 
- * initialized using a declaration that contained column definitions these 
- * will be mapped to the columns in the data source using the 
- * &lt;ntb:datastructure ... /&gt; element returned from the remote data 
- * source. If there are no columns defined through either JavaScript or a 
- * declaration then the columns will be autogenerated from the data 
- * returned from the remote data source according to the 
+ * Connects the component to a DataTable.
+ * <p>If the data is located on a
+ * remote server then the GetHandler property is required to retrieve the
+ * data asynchronously from the remote server otherwise a DatasourceId is
+ * required if the data is already on the client. If the component was
+ * initialized using a declaration that contained column definitions these
+ * will be mapped to the columns in the data source using the
+ * &lt;ntb:datastructure ... /&gt; element returned from the remote data
+ * source. If there are no columns defined through either JavaScript or a
+ * declaration then the columns will be autogenerated from the data
+ * returned from the remote data source according to the
  * &lt;ntb:datastructure ... /&gt; element.
  * </p>
  * @example
@@ -2209,8 +2209,8 @@ nitobi.grid.Grid.prototype.dataBind = function()
  * 	datatable.setGetHandlerParameter("param1", "value1");
  * 	grid.dataBind();
  * }
- * @param {String} paramTableId The id of the DataTable to return. If no table ID is specified 
- * the Grid DataTable is returned. Optional. 
+ * @param {String} paramTableId The id of the DataTable to return. If no table ID is specified
+ * the Grid DataTable is returned. Optional.
  * @type nitobi.data.DataTable
  * @see nitobi.data.DataTable#setGetHandlerParameter
  * @see #dataBind
@@ -2224,7 +2224,7 @@ nitobi.grid.Grid.prototype.getDataSource=function(paramTableId)
 }
 
 /**
- * Returns the change log from the specified DataTable. 
+ * Returns the change log from the specified DataTable.
  * The change log records the rows that have been edited (insert/remove/edit).  The change log is used
  * to determine what rows to save.
  * <p>
@@ -2256,7 +2256,7 @@ nitobi.grid.Grid.prototype.getChangeLogXmlDoc=function(paramTableId)
  * @param {nitobi.data.GetCompleteEventArgs}
  * @private
  */
-nitobi.grid.Grid.prototype.getComplete=function(evtArgs) 
+nitobi.grid.Grid.prototype.getComplete=function(evtArgs)
 {
 	// This is ok here, but we should use the error handlers in table data source.
 	if(null == evtArgs.dataSource.xmlDoc)
@@ -2271,7 +2271,7 @@ nitobi.grid.Grid.prototype.getComplete=function(evtArgs)
 }
 
 /**
- * Fired when binding - to either a local or remote datasource - is complete. 
+ * Fired when binding - to either a local or remote datasource - is complete.
  * At this point the the data is rendered and the Grid is ready for use.
  */
 nitobi.grid.Grid.prototype.bindComplete=function()
@@ -2282,9 +2282,9 @@ nitobi.grid.Grid.prototype.bindComplete=function()
 	{
 		this.defineColumns(this.datatable);
 	}
-	
+
 	// TODO: this setRowCount should not be here ...
-	// TODO: But this is in conflict with grouping grid / block rendering mechanism so I am leaving it.  
+	// TODO: But this is in conflict with grouping grid / block rendering mechanism so I am leaving it.
 	this.setRowCount(this.datatable.getRemoteRowCount());
 	// The bound property indicates that events from the datasource to which
 	// we are bound will now be able to cause re-renders of our interface
@@ -2308,13 +2308,13 @@ nitobi.grid.Grid.prototype.syncWithData=function(eventArgs)
 }
 
 /**
- * Sets RowCountKnown to true and sets the RowCount to the rows argument value. 
+ * Sets RowCountKnown to true and sets the RowCount to the rows argument value.
  * This method is subscribed to the OnRowCountKnownEvent event on the DataTable.
  * @param {Number} rows
  * @see #OnRowCountKnownEvent
  * @private
  */
-nitobi.grid.Grid.prototype.finalizeRowCount= function(rows) 
+nitobi.grid.Grid.prototype.finalizeRowCount= function(rows)
 {
 	this.rowCountKnown=true;
 	this.setRowCount(rows);
@@ -2325,7 +2325,7 @@ nitobi.grid.Grid.prototype.finalizeRowCount= function(rows)
  * @param {Number} pct The percentage that the vertical scroll should be set to.
  * @see #OnPastEndOfData
  */
-nitobi.grid.Grid.prototype.adjustRowCount= function(pct) 
+nitobi.grid.Grid.prototype.adjustRowCount= function(pct)
 {
 //	alert("Past End-of-data "+ pct+" : "+this.rowCount)
 	this.scrollVertical(pct);
@@ -2335,10 +2335,10 @@ nitobi.grid.Grid.prototype.adjustRowCount= function(pct)
  * Sets the number of rows in the Grid
  * @private
  */
-nitobi.grid.Grid.prototype.setRowCount= function(rows) 
+nitobi.grid.Grid.prototype.setRowCount= function(rows)
 {
 	this.xSET("RowCount",arguments);
-	if (this.getPagingMode() == nitobi.grid.PAGINGMODE_STANDARD) 
+	if (this.getPagingMode() == nitobi.grid.PAGINGMODE_STANDARD)
 	{
 		if (this.getDataMode() == nitobi.data.DATAMODE_LOCAL)
 			this.setDisplayedRowCount(this.getRowsPerPage());
@@ -2355,7 +2355,7 @@ nitobi.grid.Grid.prototype.setRowCount= function(rows)
  * Returns the number of rows in the Grid.
  * @type Number
  */
-nitobi.grid.Grid.prototype.getRowCount= function() 
+nitobi.grid.Grid.prototype.getRowCount= function()
 {
 	return this.rowCount
 }
@@ -2363,7 +2363,7 @@ nitobi.grid.Grid.prototype.getRowCount= function()
  * Applies all measurements that were calculated in <code>measure()</code> and adjusts layout or re-renders things that need to be re-rendered.
  * @private
  */
-nitobi.grid.Grid.prototype.layout= function(columns) 
+nitobi.grid.Grid.prototype.layout= function(columns)
 {
 	if (this.prevHeight!=this.getHeight() || this.prevWidth!=this.getWidth()) {
 		this.prevHeight=this.getHeight();
@@ -2380,11 +2380,11 @@ nitobi.grid.Grid.prototype.layout= function(columns)
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.layoutFrame= function(columns) 
+nitobi.grid.Grid.prototype.layoutFrame= function(columns)
 {
 	if (!this.frameRendered) return;		//Exit if frameRendered is not true
 	if (!this.Scroller) return;				//Exit if Scroller not initialized
-	
+
 	this.minHeight=this.getMinHeight();
 	this.minWidth=this.getMinWidth();
 
@@ -2427,7 +2427,7 @@ nitobi.grid.Grid.prototype.layoutFrame= function(columns)
 	var totalH = minSH + (tbH) + (hdrH); // Not including scrollbar
 	// Calculate total that that would be required for horizontal elements (without scrolling or scaling)
 	var totalW = minSW; // Not including scrollbar
-	
+
 	var VSvisible = (totalH > maxH); // This says scrollbar is required when the rows can't be scaled smaller and the  grid can't be scaled taller
 	var HSvisible = (totalW > maxW); // This says scrollbar is required when the columns can't be scaled smaller andhe  grid can't be scaled wider
 
@@ -2443,7 +2443,7 @@ nitobi.grid.Grid.prototype.layoutFrame= function(columns)
 			// 2. Width of scrollbar (sbW)
 		// Height dimenions
 			// 1. Header height (hdrH)
-			// 2. Height of visible rows (vpH) - calculated 
+			// 2. Height of visible rows (vpH) - calculated
 			// 3. Height of scrollbar (sbH)
 			// 4. Height of toolbar (tbH)
 
@@ -2455,11 +2455,11 @@ nitobi.grid.Grid.prototype.layoutFrame= function(columns)
 }
 
 /**
- * Defines the columns to be displayed in the Grid. Depending on the type of the columns argument different methods are dispatched to initialize the list of columns. 
- * As a String this property must be a bar ("|") seperated list of the column names in the nitobi.data.DataTable to which the Grid will connect. The XmlElement must 
- * contain a list column definitions as children XML nodes. Like the String type, the Array type specifies the column names in the nitobi.data.DataTable to which the 
- * Grid will connect. If an nitobi.data.DataTable is provided as the columns argument the columns in the nitobi.data.DataTable will define the columns in the Grid. 
- * Finally, if the columns argumnet is an integer it will prepare that number of columns to be defined at a later stage. OnBeforeColumnsDefinedEvent and OnAfterColumnsDefinedEvent 
+ * Defines the columns to be displayed in the Grid. Depending on the type of the columns argument different methods are dispatched to initialize the list of columns.
+ * As a String this property must be a bar ("|") seperated list of the column names in the nitobi.data.DataTable to which the Grid will connect. The XmlElement must
+ * contain a list column definitions as children XML nodes. Like the String type, the Array type specifies the column names in the nitobi.data.DataTable to which the
+ * Grid will connect. If an nitobi.data.DataTable is provided as the columns argument the columns in the nitobi.data.DataTable will define the columns in the Grid.
+ * Finally, if the columns argumnet is an integer it will prepare that number of columns to be defined at a later stage. OnBeforeColumnsDefinedEvent and OnAfterColumnsDefinedEvent
  * are fired before and after this method is executed. This method is called from various places such as updateStructure(), commitProperties(), initializeModel(), and bindComplete().
  * @param {String | XmlElement | Array | nitobi.data.DataTable | Number} columns This is the description of the columns from which the Grid can determine the list of columns.
  * @see #OnAfterColumnsDefinedEvent
@@ -2467,7 +2467,7 @@ nitobi.grid.Grid.prototype.layoutFrame= function(columns)
  * @type XMLElement
  * @private
  */
-nitobi.grid.Grid.prototype.defineColumns= function(columns) 
+nitobi.grid.Grid.prototype.defineColumns= function(columns)
 {
 	this.fire("BeforeColumnsDefined"); // Everything other than the frame should be cleared
 	this.resetColumns();
@@ -2508,11 +2508,11 @@ nitobi.grid.Grid.prototype.defineColumns= function(columns)
 }
 
 /**
- * Defines the columns to be displayed in the Grid. The XMLElement must contain 
+ * Defines the columns to be displayed in the Grid. The XMLElement must contain
  * a list column definitions as children XML nodes and follow the Grid tag reference for the &lt;ntb:columns&gt; element.
  * @private
  */
-nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns) 
+nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 {
 	if (columns == null || columns.childNodes.length == 0)
 	{
@@ -2545,12 +2545,12 @@ nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 	//	intitializeModelFromDeclaration is called immediately prior to this method
 		var fL=this.getFrozenLeftColumnCount();
 
-		// If the state of the grid has not been saved, we should have 0 columns 
+		// If the state of the grid has not been saved, we should have 0 columns
 		// in the model and go off the declaration.
-		if (originalCols == 0) 
+		if (originalCols == 0)
 		{
 			var cols = columnDefinitionsArray.length;
-			for (var i=0; i<cols;i++) 
+			for (var i=0; i<cols;i++)
 			{
 				var col = columnDefinitionsArray[i];
 
@@ -2568,14 +2568,14 @@ nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 
 				// Column editor name shows up in the column def as "type" and "editor"
 				var columnEditorNames = {
-								"ntb:numbereditor":"EBANumberEditor", 
-								"ntb:textareaeditor":"EBATextareaEditor", 
-								"ntb:imageeditor":"EBAImageEditor", 
-								"ntb:linkeditor":"EBALinkEditor", 
-								"ntb:dateeditor":"EBADateEditor", 
-								"ntb:lookupeditor":"EBALookupEditor", 
-								"ntb:listboxeditor":"EBAListboxEditor", 
-								"ntb:passwordeditor":"EBAPasswordEditor", 
+								"ntb:numbereditor":"EBANumberEditor",
+								"ntb:textareaeditor":"EBATextareaEditor",
+								"ntb:imageeditor":"EBAImageEditor",
+								"ntb:linkeditor":"EBALinkEditor",
+								"ntb:dateeditor":"EBADateEditor",
+								"ntb:lookupeditor":"EBALookupEditor",
+								"ntb:listboxeditor":"EBAListboxEditor",
+								"ntb:passwordeditor":"EBAPasswordEditor",
 								"ntb:checkboxeditor":"EBACheckboxEditor"};
 
 				if (editorNode != null) {
@@ -2595,7 +2595,7 @@ nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 
 				// Looks for Datasource attributes on the column and parses it
 				// into a real datatable object.
- 				this.defineColumnDatasource(e); 
+ 				this.defineColumnDatasource(e);
 
 				// By now ALL attributes are set.
 				//	Except for maybe the DatasourceId
@@ -2617,7 +2617,7 @@ nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 						e.setAttribute("DatasourceId", datasourceId);
 					}
 
-				
+
 					var dt = new nitobi.data.DataTable('local', this.getPagingMode() == nitobi.grid.PAGINGMODE_LIVESCROLLING,{GridId:this.getID()},{GridId:this.getID()}, this.isAutoKeyEnabled());
 					dt.initialize(datasourceId, gethandler, null);
 					dt.async = false;
@@ -2631,7 +2631,7 @@ nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 					var sEditor = e.getAttribute("editor")
 					var firstRow = null;
 					var lastRow = null;
-					// If this i a lookup we just want 1 record - or even none - just for the schema information 
+					// If this i a lookup we just want 1 record - or even none - just for the schema information
 					if (e.getAttribute("editor") == "LOOKUP")
 					{
 						// Get the first row of the data just to do the field mapping.
@@ -2666,7 +2666,7 @@ nitobi.grid.Grid.prototype.defineColumnsFromXml= function(columns)
 			this.Declaration.datasources = nitobi.xml.createXmlDoc(oldEditorDatasources.xml);
 		}
 
-	// We use '//' in our xpath because the old columns will be enclosed in an ntb:grid 
+	// We use '//' in our xpath because the old columns will be enclosed in an ntb:grid
 	// object, but our new columns will be in an ntb:columns object.
 	return xDec;
 }
@@ -2760,7 +2760,7 @@ nitobi.grid.Grid.prototype.defineColumnDatasource = function(xColumnModel)
 /*
 nitobi.grid.Grid.prototype.defineColumnEditor = function(xColumnModel, xColumnDeclaration)
 {
-	var len = xColumnDeclaration.childNodes.length; 
+	var len = xColumnDeclaration.childNodes.length;
 	if (len > 0)
 	{
 		var xEditorNode = xColumnDeclaration.selectSingleNode("ntb:texteditor|ntb:numbereditor|ntb:textareaeditor|ntb:imageeditor|ntb:linkeditor|ntb:dateeditor|ntb:lookupeditor|ntb:listboxeditor|ntb:checkboxeditor|ntb:passwordeditor");
@@ -2779,7 +2779,7 @@ nitobi.grid.Grid.prototype.defineColumnEditor = function(xColumnModel, xColumnDe
 				sEditor = 'EBALinkEditor';
 			} else if (sNodeName.indexOf("dateeditor") != -1) {
 				sEditor = 'EBADateEditor';
-			} else if (sNodeName.indexOf("lookupeditor") != -1) { 
+			} else if (sNodeName.indexOf("lookupeditor") != -1) {
 				sEditor = 'EBALookupEditor';
 			} else if (sNodeName.indexOf("listboxeditor") != -1) {
 				sEditor = 'EBAListboxEditor';
@@ -2791,7 +2791,7 @@ nitobi.grid.Grid.prototype.defineColumnEditor = function(xColumnModel, xColumnDe
 
 			this.setModelDefaults(xColumnModel, xEditorNode, "interfaces/interface[@name='"+sEditor+"']/properties/property");
 			this.setModelDefaults(xColumnModel, xEditorNode, "interfaces/interface[@name='"+sEditor+"']/events/event");
-	
+
 			xColumnModel.setAttribute("type", sNodeName.substring(4,sNodeName.indexOf("editor")).toUpperCase());
 			xColumnModel.setAttribute("editor", sNodeName.substring(4,sNodeName.indexOf("editor")).toUpperCase());
 		}
@@ -2820,7 +2820,7 @@ nitobi.grid.Grid.prototype.defineColumnEditor = function(xColumnModel, xColumnDe
  * Defines the Grid columns from the information in a nitobi.data.DataTable. This can be used to infer the columns in a grid based on the columns that exist in the DataTable.
  * @private
  */
-nitobi.grid.Grid.prototype.defineColumnsFromData= function(datatable) 
+nitobi.grid.Grid.prototype.defineColumnsFromData= function(datatable)
 {
 	if (datatable == null)
 	{
@@ -2858,16 +2858,16 @@ nitobi.grid.Grid.prototype.defineColumnsFromData= function(datatable)
  * Defines the Grid columns from a bar ("|") separated list of columns. The string value for each column is used for the label as well as the xdatafld binding property.
  * @private
  */
-nitobi.grid.Grid.prototype.defineColumnsFromString= function(columns) 
+nitobi.grid.Grid.prototype.defineColumnsFromString= function(columns)
 {
-	return this.defineColumnsFromArray(columns.split("|"));	
+	return this.defineColumnsFromArray(columns.split("|"));
 }
 /**
- * Defines the Grid columns from an array of either string values or nitobi.components.grid.Column objects. 
+ * Defines the Grid columns from an array of either string values or nitobi.components.grid.Column objects.
  * It will also accept structs with the same field names that are in the nitobi.components.grid.Column class such as name, label, width, columntype, editortype, mask, initial.
  * @private
  */
-nitobi.grid.Grid.prototype.defineColumnsFromArray= function(columns) 
+nitobi.grid.Grid.prototype.defineColumnsFromArray= function(columns)
 {
 	var cols = columns.length;
 	var colDefs = this.defineColumnsCollection(cols);
@@ -2906,7 +2906,7 @@ nitobi.grid.Grid.prototype.defineColumnsFromArray= function(columns)
 		}
 	}
 	this.setColumnCount(cols);
-	return colDefs;	
+	return colDefs;
 }
 
 /**
@@ -2914,7 +2914,7 @@ nitobi.grid.Grid.prototype.defineColumnsFromArray= function(columns)
  * XPath query in the DataTable for the column with that name.
  * @private
  */
-nitobi.grid.Grid.prototype.defineColumnBindings = function() 
+nitobi.grid.Grid.prototype.defineColumnBindings = function()
 {
 	//	If the columns are defined in the declaration we need to loop through and set
 	//	the mappings from friendly column names like "ProductName" to @a etc.
@@ -3024,7 +3024,7 @@ nitobi.grid.Grid.prototype.formatBinding = function(element, attName, xslt)
  * @private
  * @param {Number} cols The number of columns that are going to be defined.
  */
-nitobi.grid.Grid.prototype.defineColumnsCollection= function(cols) 
+nitobi.grid.Grid.prototype.defineColumnsCollection= function(cols)
 {
 	// Get the existing columns collection
 	var xDec = this.model.selectSingleNode("state/nitobi.grid.Columns");
@@ -3048,7 +3048,7 @@ nitobi.grid.Grid.prototype.defineColumnsCollection= function(cols)
  * Removes all the column definitions from the Grid.
  * @private
  */
-nitobi.grid.Grid.prototype.resetColumns=function() 
+nitobi.grid.Grid.prototype.resetColumns=function()
 {
 	// Delete existing cols
 	this.fire("BeforeClearColumns");
@@ -3071,7 +3071,7 @@ nitobi.grid.Grid.prototype.resetColumns=function()
  * If there are columns defined, renders the header of each column in the Grid.
  * @private
  */
-nitobi.grid.Grid.prototype.renderHeaders=function() 
+nitobi.grid.Grid.prototype.renderHeaders=function()
 {
 	// If there are no column definitions then dont even try and render the columns...
 	if (this.getColumnDefinitions().length > 0)
@@ -3104,7 +3104,7 @@ nitobi.grid.Grid.prototype.renderHeaders=function()
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.initializeSelection = function() 
+nitobi.grid.Grid.prototype.initializeSelection = function()
 {
 	var sel = new nitobi.grid.Selection(this, this.isDragFillEnabled());
 	sel.setRowHeight(this.getRowHeight());
@@ -3165,13 +3165,13 @@ nitobi.grid.Grid.prototype.afterExpandSelection = function(evt)
 				// Strip off the final newline character
 				if (origData.lastIndexOf("\n") == origData.length-1)
 					origData = origData.substring(0, origData.length-1);
-	
+
 				var rep = (Math.floor((sel.getHeight() - !expand) / sel.expandStartHeight))
 				for (var i=0; i<rep; i++)
 					data += origData + (!nitobi.browser.IE?"\n":"");
 				origDataArr = origData.split("\n");
 				var mod = (sel.getHeight() - !expand) % sel.expandStartHeight;
-	
+
 				var val = "";
 
 				if (expandDown) {
@@ -3187,7 +3187,7 @@ nitobi.grid.Grid.prototype.afterExpandSelection = function(evt)
 				}
 
 				pasteClipBoard.value = val;
-	
+
 				this.pasteDataReady(pasteClipBoard);
 			}
 		}
@@ -3210,29 +3210,29 @@ nitobi.grid.Grid.prototype.afterExpandSelection = function(evt)
 
 				// Get the number of cells that are being expanded that are a fraction of a repeat block
 				var mod = (sel.getWidth() - !expand) % sel.expandStartWidth;
-	
+
 				var newline = (!nitobi.browser.IE?"\n":"\r\n");
 				// Strip off the final newline character
 				if (origData.lastIndexOf(newline) == origData.length-newline.length)
 					origData = origData.substring(0, origData.length-newline.length);
-	
+
 				// Get rid of any \r characters
 				var origDataArr = origData.replace(/\r/g,"").split("\n");
 				var data = new Array(origDataArr.length);
 				var rep = (Math.floor((sel.getWidth() - !expand) / sel.expandStartWidth));
-	
+
 				// Iterate over each row in the original data and build the output
 				for (var i=0; i<origDataArr.length; i++)
 				{
 					// Now append on any data beyond the end from the mod
 					var origDataLineArr = origDataArr[i].split("\t");
-	
+
 					// Iterate over the number of times the full selection is repeated
 					for (var j=0; j<rep; j++) {
 						// The output data for a row is just the already generated data plus the the original data for that row again.
 						data[i] = (data[i]==null?[]:data[i]).concat(origDataLineArr);
 					}
-	
+
 					if (mod != 0) {
 						// If we are expanding right
 						if (expandRight) {
@@ -3244,7 +3244,7 @@ nitobi.grid.Grid.prototype.afterExpandSelection = function(evt)
 					}
 					data[i] = data[i].join("\t");
 				}
-	
+
 				pasteClipBoard.value = data.join("\n") + "\n";
 				this.pasteDataReady(pasteClipBoard);
 			}
@@ -3256,14 +3256,14 @@ nitobi.grid.Grid.prototype.afterExpandSelection = function(evt)
 }
 
 /**
- * Calculates the height of the rows in the Grid. If the start and end 
+ * Calculates the height of the rows in the Grid. If the start and end
  * arguments are defined then it will calculate the height of those rows only.
  * @param {Number} start The zero based start row index.
  * @param {Number} end The end row index.
  * @type Number
  * @private
  */
-nitobi.grid.Grid.prototype.calculateHeight = function(start, end) 
+nitobi.grid.Grid.prototype.calculateHeight = function(start, end)
 {
 	start = (start != null)?start:0;
 	var numRows = this.getDisplayedRowCount();
@@ -3272,14 +3272,14 @@ nitobi.grid.Grid.prototype.calculateHeight = function(start, end)
 }
 
 /**
- * Calculates the width of the columns in the Grid. If the start and end 
+ * Calculates the width of the columns in the Grid. If the start and end
  * arguments are defined then it will calculate the width of those columns only.
  * @param {Number} start The zero based start column index.
  * @param {Number} end The end column index.
  * @type Number
  * @private
  */
-nitobi.grid.Grid.prototype.calculateWidth= function(start, end) 
+nitobi.grid.Grid.prototype.calculateWidth= function(start, end)
 {
 	var colDefs = this.getColumnDefinitions();
 	var cols = colDefs.length;
@@ -3302,10 +3302,10 @@ nitobi.grid.Grid.prototype.maximize = function()
 	// TODO: this should probably be parentNode rather than offsetParent?
  	var x,y;
 	var off_p = this.element.offsetParent;
-	
+
 	x = off_p.clientWidth;
 	y = off_p.clientHeight;
-	
+
 	this.resize(x,y);
 }
 
@@ -3351,7 +3351,7 @@ nitobi.grid.Grid.prototype.editorDataReady= function(column)
 			}
 		}
 		column.setAttribute("Initial", initial);
-	}	
+	}
 
 //	ntbAssert((displayFields.length != 1 && displayFields[0] != ''), 'There is no display field defined for a column of type lookup or listbox');
 
@@ -3479,7 +3479,7 @@ function _gridlist.prototype.calcSummary()
 				if (cols[m].type == "FORMULA")
 				{
 					var xslfld = this.fieldmap[curfld]+"";
-					if (xVal != null && !gEsc) 
+					if (xVal != null && !gEsc)
 					{
 						var xk = this.getKey(i);
 						xNode = this.oXML.documentElement.selectSingleNode("*[@xk = '"+xk+"']");
@@ -3533,7 +3533,7 @@ nitobi.grid.Grid.prototype.headerClicked= function(nColumn)
  * to reduce the set of data rendered in the Grid. By default there are no filters applied.
  * @private
  */
-nitobi.grid.Grid.prototype.addFilter= function() 
+nitobi.grid.Grid.prototype.addFilter= function()
 {
 	this.dataTable.addFilter(arguments);
 }
@@ -3541,7 +3541,7 @@ nitobi.grid.Grid.prototype.addFilter= function()
  * Clears exisitng filters on the grid data.
  * @private
  */
-nitobi.grid.Grid.prototype.clearFilter=function() 
+nitobi.grid.Grid.prototype.clearFilter=function()
 {
 	this.dataTable.clearFilter();
 }
@@ -3573,9 +3573,9 @@ nitobi.grid.Grid.prototype.setSortStyle = function(sortCol, sortDir, unset)
 
 /**
  * Re-sorts the grid data by the specified column.
- * By default the data is sorted in ascending order first. When sort is 
- * called on a column a second time, the data is sorted in descending 
- * order. Column sorting is alphabetical unless the data type for the 
+ * By default the data is sorted in ascending order first. When sort is
+ * called on a column a second time, the data is sorted in descending
+ * order. Column sorting is alphabetical unless the data type for the
  * column is NUMBER or DATE.
  * <p>
  * <b>Example</b>
@@ -3588,7 +3588,7 @@ nitobi.grid.Grid.prototype.setSortStyle = function(sortCol, sortDir, unset)
  * @param {Number} sortCol The index of the column to sort on, starting at 0.
  * @param {String} sortDir The direction to sort the column by. Values are "Asc" and "Desc".
  */
-nitobi.grid.Grid.prototype.sort=function(sortCol,sortDir) 
+nitobi.grid.Grid.prototype.sort=function(sortCol,sortDir)
 {
 	ntbAssert(typeof(sortCol)!="undefined","No column to sort.");
 
@@ -3647,7 +3647,7 @@ nitobi.grid.Grid.prototype.handleAfterSort = function(headerColumn)
  */
 nitobi.grid.Grid.prototype.handleDblClick = function(evt)
 {
-	// TODO: pass the cell that was clicked on ... 
+	// TODO: pass the cell that was clicked on ...
 	var cell = this.activeCellObject;
 	var col = this.activeColumnObject;
 	var dblClickEventArgs = new nitobi.grid.OnCellDblClickEventArgs(this, cell);
@@ -3656,12 +3656,12 @@ nitobi.grid.Grid.prototype.handleDblClick = function(evt)
 /**
  * Clears the data from the connected DataTable if the DataMode is not local.
  * This is used in server side data sources (LiveScrolling and Standard paging)
- * to cause a re-GET of the data from the server. 
+ * to cause a re-GET of the data from the server.
  * @private
  */
 nitobi.grid.Grid.prototype.clearData = function()
 {
-	if(this.getDataMode()!="local") 
+	if(this.getDataMode()!="local")
 	{
 		this.datatable.flush();
 	}
@@ -3745,8 +3745,8 @@ nitobi.grid.Grid.prototype.mapToHtml= function(oNode)
 }
 
 /**
- * Generates the component CSS based on the current state of the component. 
- * This can be important to do such that changes to layout properties 
+ * Generates the component CSS based on the current state of the component.
+ * This can be important to do such that changes to layout properties
  * (such as positioning and sizing) take effect.
  * <p>
  * <b>Example:</b>  Dynamically resize the Grid
@@ -3766,7 +3766,7 @@ nitobi.grid.Grid.prototype.mapToHtml= function(oNode)
  * @see #setHeight
  * @private
  */
-nitobi.grid.Grid.prototype.generateCss= function() 
+nitobi.grid.Grid.prototype.generateCss= function()
 {
 	this.generateFrameCss();
 //	this.generateColumnCss();
@@ -3775,7 +3775,7 @@ nitobi.grid.Grid.prototype.generateCss= function()
 /**
  * @private
  */
-nitobi.grid.Grid.prototype.generateColumnCss= function() 
+nitobi.grid.Grid.prototype.generateColumnCss= function()
 {
 	this.generateCss(); // Remove this once the real generateColumnCss code has been written
 }
@@ -3813,7 +3813,7 @@ nitobi.grid.Grid.prototype.generateFrameCss= function()
 	{
 		this.oldFrameCss = newCss;
 
-		if (nitobi.browser.SAFARI || nitobi.browser.CHROME) 
+		if (nitobi.browser.SAFARI || nitobi.browser.CHROME)
 		{
 			this.generateFrameCssSafari();
 		}
@@ -3842,7 +3842,7 @@ nitobi.grid.Grid.prototype.generateFrameCss= function()
 
 }
 
-nitobi.grid.Grid.prototype.generateFrameCssSafari = function() 
+nitobi.grid.Grid.prototype.generateFrameCssSafari = function()
 {
 	// TODO: This needs to be one way in all browsers. I think we can do the normal XSLT way in Safari.
 	var ss = document.styleSheets[0];
@@ -3881,7 +3881,7 @@ nitobi.grid.Grid.prototype.generateFrameCssSafari = function()
 		addRule(ss, ".ntb-input-border", "table-layout:fixed;overflow:hidden;position:absolute;z-index:2000;top:-2000px;left:-2000px;;");
 		addRule(ss, ".ntb-column-resize-surface", "filter:alpha(opacity=1);background-color:white;position:absolute;visibility:hidden;top:0;left:0;width:100;height:100;z-index:800;");
 		addRule(ss, ".ntb-column-indicator", "overflow:hidden;white-space: nowrap;");
-	} 
+	}
 	this.rules["#grid"+u] = addRule(ss, "#grid"+u, "overflow:hidden;text-align:left;-moz-user-select: none;-khtml-user-select: none;user-select: none;"+(nitobi.browser.IE?"position:relative;":""));
 	this.rules["#grid"+u].style.height = height + "px";
 	this.rules["#grid"+u].style.width = width + "px";
@@ -3938,13 +3938,13 @@ nitobi.grid.Grid.prototype.clearSurfaces= function() {
 	// Added this to ensure that the Scroller blank surface is the correct size.
 	this.updateCellRanges();
 
-	// When the surface is cleared we need to also clear any cached cells 
+	// When the surface is cleared we need to also clear any cached cells
 	this.cachedCells = {};
 }
 
 /**
- * Renders the Grid with no columns or data. Before the frame can be rendered the Grid must be attached to an 
- * HtmlElement through either the declaration or using the attachToParentDomElement() method. 
+ * Renders the Grid with no columns or data. Before the frame can be rendered the Grid must be attached to an
+ * HtmlElement through either the declaration or using the attachToParentDomElement() method.
  * The frame must be rendered before any columns or data can be rendered.
  * @private
  */
@@ -3980,11 +3980,11 @@ nitobi.grid.Grid.prototype.renderMiddle= function()
 }
 
 /**
- * Refreshes the data in the Grid. Any unsaved changes to data in the Grid can be 
- * lost by refreshing the data. The OnBeforeRefreshEvent and 
- * OnAfterRefreshEvent are both fired. Clears all the data that is stored 
- * by the Grid, and gets the current page of data from the server. Any 
- * changes made by the user will be deleted. Call save first if you don't 
+ * Refreshes the data in the Grid. Any unsaved changes to data in the Grid can be
+ * lost by refreshing the data. The OnBeforeRefreshEvent and
+ * OnAfterRefreshEvent are both fired. Clears all the data that is stored
+ * by the Grid, and gets the current page of data from the server. Any
+ * changes made by the user will be deleted. Call save first if you don't
  * want these changes to be lost.
  */
 nitobi.grid.Grid.prototype.refresh= function()
@@ -4007,7 +4007,7 @@ nitobi.grid.Grid.prototype.refresh= function()
 }
 
 /**
- * Event handler that is fired after a refresh of the data in the Grid is 
+ * Event handler that is fired after a refresh of the data in the Grid is
  * complete. Fires the <code>AfterRefresh</code> event
  * @private
  */
@@ -4031,7 +4031,7 @@ nitobi.grid.Grid.prototype.clear = function()
 /**
  * Event handler for the context menu event.
  * @param {Event} evt The Event object.
- * @param {HTMLElement} obj The HTML element that the context menu event 
+ * @param {HTMLElement} obj The HTML element that the context menu event
  * occured on.
  * @private
  */
@@ -4068,7 +4068,7 @@ nitobi.grid.Grid.prototype.handleKeyPress = function(evt) {
 
 	nitobi.html.cancelEvent(evt);
 	return false;
-} 
+}
 
 /**
  * Event handler for the key up event.
@@ -4089,7 +4089,7 @@ nitobi.grid.Grid.prototype.handleKeyUp = function(evt) {
 /**
  * Event handler for the key down event.
  * @param {Event} evt The Event object.
- * @param {HTMLElement} obj The HTML element that the context menu event 
+ * @param {HTMLElement} obj The HTML element that the context menu event
  * occured on.
  * @private
  */
@@ -4160,8 +4160,8 @@ nitobi.grid.Grid.prototype.handleKey = function(evt, obj)
 			break;
 
 
-		//	select down 
-		case 296: 
+		//	select down
+		case 296:
 			this.reselect(0,1);
 			break;
 		//	select up
@@ -4218,8 +4218,8 @@ nitobi.grid.Grid.prototype.handleKey = function(evt, obj)
 		case 548:
 			break;
 
-		//down 
-		case 13: 
+		//down
+		case 13:
 			var et = this.getEnterTab().toLowerCase();
 			var horiz = 0;
 			var vert = 1;
@@ -4245,7 +4245,7 @@ nitobi.grid.Grid.prototype.handleKey = function(evt, obj)
 			}
 			this.move(horiz, vert);
 			break;
-		case 40: 
+		case 40:
 			this.move(0,1);
 			break;
 		//up
@@ -4255,7 +4255,7 @@ nitobi.grid.Grid.prototype.handleKey = function(evt, obj)
 			break;
 		//left
 		case 265:
-		case 37: 
+		case 37:
 			this.move(-1,0);
 			break;
 		//right
@@ -4366,7 +4366,7 @@ nitobi.grid.Grid.prototype.edit= function(evt)
 	var initialChar = "";
 	var keyCodeOffset = null;
 
-	// TODO: Generalize this so people can easily hook into keycodes...  
+	// TODO: Generalize this so people can easily hook into keycodes...
 	//[A - Z] shift or [0-9] no shift
 	if ((shift && (keyVal > 64) && (keyVal < 91)) || (!shift && ((keyVal > 47) && (keyVal < 58))))
 		keyCodeOffset = 0;
@@ -4382,15 +4382,15 @@ nitobi.grid.Grid.prototype.edit= function(evt)
 		else if ((keyVal > 186) && (keyVal < 188))
 			keyCodeOffset = -126;
 	}
-	else {// TODO: currently we dont support any special characters ... 
+	else {// TODO: currently we dont support any special characters ...
 	}
 
 	if (keyCodeOffset != null)
 		initialChar = String.fromCharCode(keyVal + keyCodeOffset);
 
-	if( (!ctrl) && 
+	if( (!ctrl) &&
 		/*what does it matter if there is an initialChar? */
-		("" != initialChar) || 
+		("" != initialChar) ||
 		(keyVal == 113)|| // F2
 		(keyVal == 0)|| // double click (IE)
 		(keyVal == null) || // double click (Moz) - this should really be 0, but something funny's hapening with Moz
@@ -4411,7 +4411,7 @@ nitobi.grid.Grid.prototype.edit= function(evt)
 		}
 	} else {
 		// do not set active cell for other keys such as tab
-		return;	
+		return;
 	}
 }
 
@@ -4424,7 +4424,7 @@ nitobi.grid.Grid.prototype.edit= function(evt)
  */
 nitobi.grid.Grid.prototype.editComplete= function(editCompleteEventArgs) {
 	//	update the value in the grid
-	//	update the value in the datasource 
+	//	update the value in the datasource
 	var cell=editCompleteEventArgs.cell;
 	var column = cell.getColumnObject();
 	var newValue = editCompleteEventArgs.databaseValue;
@@ -4456,7 +4456,7 @@ nitobi.grid.Grid.prototype.editComplete= function(editCompleteEventArgs) {
 	// TODO: Remove this and fix editing tab key press stuff
 	try {
 		this.focus();
-	} 
+	}
 	catch (e) {
 	}
 }
@@ -4490,7 +4490,7 @@ nitobi.grid.Grid.prototype.selectCellByCoords= function(row,column) {
 }
 
 /**
- * Activates the cell at the row / column coordinates. This method is used 
+ * Activates the cell at the row / column coordinates. This method is used
  * by {@link #selectCellByCoords}.
  * @param {Number} row The row number of the cell to activate.
  * @param {Number} column The column number of the cell to activate.
@@ -4505,10 +4505,10 @@ nitobi.grid.Grid.prototype.setPosition= function(row,column)
 }
 
 /**
- * Sends a save request to the server with any data from the Grid that 
- * has been changed.  If there are no changes to the local data there 
- * will be no data sent to the server.  The <code>OnBeforeSaveEvent</code> 
- * is fired prior to the data being sent to the server and the 
+ * Sends a save request to the server with any data from the Grid that
+ * has been changed.  If there are no changes to the local data there
+ * will be no data sent to the server.  The <code>OnBeforeSaveEvent</code>
+ * is fired prior to the data being sent to the server and the
  * <code>OnAfterSaveEvent</code> is fired after the save has completed.
  * <p>
  * Calling this method is the same as clicking the save button in the
@@ -4527,7 +4527,7 @@ nitobi.grid.Grid.prototype.setPosition= function(row,column)
  */
 nitobi.grid.Grid.prototype.save = function()
 {
-	// Debated on whether to put his in the table.save. Decided that save 
+	// Debated on whether to put his in the table.save. Decided that save
 	// really must mean SAVE, and that this save will only save if required. JG
 	if (this.datatable.log.selectNodes("//"+nitobi.xml.nsPrefix+"data/*").length == 0)
 		return;
@@ -4593,7 +4593,7 @@ nitobi.grid.Grid.prototype.blur=function()
 {
 	//	This clears the grid selection and row highlights
 
-	// TODO: call something like blurActiveRow as well so that the row blur events are called 
+	// TODO: call something like blurActiveRow as well so that the row blur events are called
 	// and that should also clear the active rows
 
 	// Clear the row highlights
@@ -4638,7 +4638,7 @@ nitobi.grid.Grid.prototype.getColumnInnerTemplate= function(col) {
 }
 
 /**
- * Pre-generates the XSL templates for rendering data in the Grid. This is required when changes to the data structure in the 
+ * Pre-generates the XSL templates for rendering data in the Grid. This is required when changes to the data structure in the
  * DataTable are made and is called from the bind() method if required.
  * @private
  */
@@ -4696,8 +4696,8 @@ nitobi.grid.Grid.prototype.makeXSL= function() {
 }
 
 /**
- * Renders the data in the Grid. This differs from <code>refresh()</code> 
- * in that refresh will re-retrieve the data from the server as well as 
+ * Renders the data in the Grid. This differs from <code>refresh()</code>
+ * in that refresh will re-retrieve the data from the server as well as
  * re-render the data.
  */
 nitobi.grid.Grid.prototype.render = function()
@@ -4710,7 +4710,7 @@ nitobi.grid.Grid.prototype.render = function()
 /**
  * @ignore
  */
-nitobi.grid.Grid.prototype.refilter = nitobi.grid.Grid.prototype.render; 
+nitobi.grid.Grid.prototype.refilter = nitobi.grid.Grid.prototype.render;
 
 /**
  * Returns an XmlElementList containing the definitions of the columns in the Grid. The column definitions are the XML serialization of the nitobi.components.grid.Column objects.
@@ -4759,11 +4759,11 @@ nitobi.grid.Grid.prototype.initializeModelFromDeclaration = function()
  */
 nitobi.grid.Grid.prototype.setModelValues = function(xModelNode, xDeclarationNode)
 {
-	// For the declaration node iterate over the attributes and try to find corresponding 
+	// For the declaration node iterate over the attributes and try to find corresponding
 	// attributes in the xColumnProps hash for the column, the specific column type, and the editor.
 	var columnDataType = xModelNode.getAttribute("DataType");
 	var columnEditorType = xModelNode.getAttribute("type").toLowerCase();
-	
+
 	// First do the column and specific column type
 	var columnProperties = xDeclarationNode.attributes;
 	for (var j=0; j < columnProperties.length; j++)
@@ -4826,7 +4826,7 @@ nitobi.grid.Grid.prototype.insertAfterCurrentRow= function()
 	if (this.activeCell)
 	{
 		var rowNumber = nitobi.grid.Cell.getRowNumber(this.activeCell);
-		this.insertRow(rowNumber+1);
+		this.insertRow(rowNumber+2);
 	}
 	else
 	{
@@ -4836,17 +4836,17 @@ nitobi.grid.Grid.prototype.insertAfterCurrentRow= function()
 
 /**
  * Adds a new row of data to the grid.
- * <P>Rows can also be inserted by the user by pressing the 
+ * <P>Rows can also be inserted by the user by pressing the
  * Insert key or by clicking on the toolbar icon.
  * </P>
- * <P>When rows are 
+ * <P>When rows are
  * added to the grid, a new XML row node is added to the XML datasource.
- * In addition, a new node is added to the XML updategram which 
+ * In addition, a new node is added to the XML updategram which
  * will be transmitted back to the server when the data is saved.
  * </P>
  * @param {Number} rowIndex A row will be inserted after the row at this index
  */
-nitobi.grid.Grid.prototype.insertRow= function(rowIndex) 
+nitobi.grid.Grid.prototype.insertRow= function(rowIndex)
 {
 	var rows = parseInt(this.getDisplayedRowCount());
 	var xi = 0;
@@ -4904,6 +4904,8 @@ nitobi.grid.Grid.prototype.insertRow= function(rowIndex)
 	}
 	this.clearSurfaces();
 
+
+
 	this.datatable.createRecord(defaultRow,xi);
 
 	// TODO: should this be setRowCount instead?
@@ -4917,7 +4919,7 @@ nitobi.grid.Grid.prototype.insertRow= function(rowIndex)
 }
 
 /**
- * Event handler that is fired when after a row is inserted into the Grid and (if autosave is enabled) the data is saved to the server. 
+ * Event handler that is fired when after a row is inserted into the Grid and (if autosave is enabled) the data is saved to the server.
  * Fires the <code>AfterRowInsert</code> event
  * @param {Number} xi The index of the inserted row.
  * @private
@@ -4949,26 +4951,26 @@ nitobi.grid.Grid.prototype.deleteCurrentRow= function()
 nitobi.grid.Grid.prototype.deleteSelectedRows= function()
 {
 	var eventArgs = new nitobi.grid.OnBeforeRowDeleteEventArgs(this,this.getSelectedRows());
-	if (!this.isRowDeleteEnabled() || !this.fire("BeforeRowDelete",eventArgs)) 
+	if (!this.isRowDeleteEnabled() || !this.fire("BeforeRowDelete",eventArgs))
 	{
 		return;
 	}
 
     var selectedRows = this.getSelectedRows();
-	
+
 	var xiList = [];
 	for (row in selectedRows) {
 		xiList.push(parseInt(selectedRows[row].getAttribute('xi')));
 	}
 	xiList.sort(function(a,b){return a-b});
-	
+
 	this.clearSurfaces();
 
 	var rows = this.getDisplayedRowCount();
 
 	// deleteRecord can throw an exception, which stops grid being repopulated (after this.clearSurfaces())
 	// now exception is caught, and grid display is restored
-	try { 
+	try {
 		this.datatable.deleteRecordsArray(xiList);
 
 		// TODO: should this be set here since it will be updated by the RowCountChanged event from the DataTable.
@@ -4985,11 +4987,11 @@ nitobi.grid.Grid.prototype.deleteSelectedRows= function()
 }
 /**
  * Deletes the row containing the cell referenced by the activeCell property.
- * <P>When rows are deleted from the grid, the corresponding XML record 
- * node is also deleted from the bound DataTable.</P><P>An XML updategram is 
- * created by the DataTable when a row is deleted. This updategram is sent to the 
- * server when the save() method is called to instruct the server to delete the 
- * corresponding record from the database.</P><P>Rows may also be deleted by pressing 
+ * <P>When rows are deleted from the grid, the corresponding XML record
+ * node is also deleted from the bound DataTable.</P><P>An XML updategram is
+ * created by the DataTable when a row is deleted. This updategram is sent to the
+ * server when the save() method is called to instruct the server to delete the
+ * corresponding record from the database.</P><P>Rows may also be deleted by pressing
  * the Delete key or by clicking on the toolbar Delete icon.</P>
  * @example
  * var grid = nitobi.getComponent('grid1');
@@ -5006,8 +5008,8 @@ nitobi.grid.Grid.prototype.deleteRow= function(index)
 	ntbAssert(index>=0,"Must specify a row to delete.");
 
 	var eventArgs = new nitobi.grid.OnBeforeRowDeleteEventArgs(this,this.getRowObject(index));
-	
-	if (!this.isRowDeleteEnabled() || !this.fire("BeforeRowDelete",eventArgs)) 
+
+	if (!this.isRowDeleteEnabled() || !this.fire("BeforeRowDelete",eventArgs))
 	{
 		return;
 	}
@@ -5015,12 +5017,12 @@ nitobi.grid.Grid.prototype.deleteRow= function(index)
 	this.clearSurfaces();
 
 	var rows = this.getDisplayedRowCount();
-	
+
 	// deleteRecord can throw an exception, which stops grid being repopulated (after this.clearSurfaces())
 	// now exception is caught, and grid display is restored
-	try { 
+	try {
 		this.datatable.deleteRecord(index);
-		
+
 		// TODO: should this be set here since it will be updated by the RowCountChanged event from the DataTable.
 		// Should we be calling setRowCount???
 		rows--;
@@ -5054,7 +5056,7 @@ nitobi.grid.Grid.prototype.page= function(dir)
 }
 
 /**
- * Moves the active cell by the relative amounts specified by the 
+ * Moves the active cell by the relative amounts specified by the
  * horizontal and vertical arguments.
  * @example
  * var grid = nitobi.getComponent('grid1');
@@ -5143,11 +5145,11 @@ nitobi.grid.Grid.prototype.GetPage= function(functionReplacedByLowercasegetPage)
 }
 
 /**
- * Loads the specified page of data from the server and displays it. 
- * Since the server request is asynchronous, this call will return 
- * immediately.  Additionally, if the page already exists in the cache, 
- * no server request will occur. To determine when the page has loaded see 
- * setOnAfterPagingEvent. 
+ * Loads the specified page of data from the server and displays it.
+ * Since the server request is asynchronous, this call will return
+ * immediately.  Additionally, if the page already exists in the cache,
+ * no server request will occur. To determine when the page has loaded see
+ * setOnAfterPagingEvent.
  * <p><b>N.B.</b>:  This function is only used in the standard paging mode.</p>
  * @example
  * &#102;unction fivePagesForward()
@@ -5176,7 +5178,7 @@ nitobi.grid.Grid.prototype.getSelectedRow= function(rel) {
 			}
 		}
 		return nRow;
-	} catch (err) 
+	} catch (err)
 	{
 		_ntbAssert(false,err.message);
 	}
@@ -5221,8 +5223,8 @@ nitobi.grid.Grid.prototype.getRowObject= function(paneNumber, rowIdNum)
 
 /**
  * Returns the column index of the Column to which the active cell belongs.
- * <P>Columns are numbered from left to right starting at 0. If the first n columns are frozen (locked so that they remain visible when 
- * the user scrolls left and right), the rel parameter can be set to true to obtain the absolute column index. Otherwise the getColumn method returns the column 
+ * <P>Columns are numbered from left to right starting at 0. If the first n columns are frozen (locked so that they remain visible when
+ * the user scrolls left and right), the rel parameter can be set to true to obtain the absolute column index. Otherwise the getColumn method returns the column
  * index for column within the set of unfrozen columns.</P>
  * @param {Boolean} rel Specifies whether to compensate for frozen columns.
  * @type Number
@@ -5239,7 +5241,7 @@ nitobi.grid.Grid.prototype.getSelectedColumn= function(rel) {
 			}
 		}
 		return nCol;
-	} catch (err) 
+	} catch (err)
 	{
 		_ntbAssert(false,err.message);
 	}
@@ -5267,12 +5269,12 @@ nitobi.grid.Grid.prototype.getSelectedColumnObject= function() {
  * Returns the number of columns in the Grid.
  * @type Number
  */
-nitobi.grid.Grid.prototype.columnCount= function() 
+nitobi.grid.Grid.prototype.columnCount= function()
 {
 	try {
 		var dataItems = this.getColumnDefinitions();
 		return dataItems.length;
-	} catch (err) 
+	} catch (err)
 	{
 		_ntbAssert(false,err.message);
 	}
@@ -5292,7 +5294,7 @@ nitobi.grid.Grid.prototype.columnCount= function()
  * @type nitobi.grid.Cell
  * @see nitobi.grid.Cell#setValue
  */
-nitobi.grid.Grid.prototype.getCellObject= function(row,col) 
+nitobi.grid.Grid.prototype.getCellObject= function(row,col)
 {
 	// col could be either string or number so we need to keep both the string and number versions in the cache ...
 	var origCol = col;
@@ -5317,12 +5319,12 @@ nitobi.grid.Grid.prototype.getCellObject= function(row,col)
 }
 
 /**
- * Provides a shortcut to getting the <i>displayed</i> value of a Cell at the 
- * specified coordinates. Generally the cell content can also be obtained 
- * from the XML document bound to the grid, but the values may vary. 
- * For example, if a grid uses a Listbox editor for a particular cell, 
- * the XML will contain the key value where getCellText will return the 
- * actual text value displayed in the cell. One can also access the value 
+ * Provides a shortcut to getting the <i>displayed</i> value of a Cell at the
+ * specified coordinates. Generally the cell content can also be obtained
+ * from the XML document bound to the grid, but the values may vary.
+ * For example, if a grid uses a Listbox editor for a particular cell,
+ * the XML will contain the key value where getCellText will return the
+ * actual text value displayed in the cell. One can also access the value
  * of a Cell through the Cell object itself.
  * <p>
  * <b>Example</b>:  The difference between getCellText and {@link #getCellValue}
@@ -5348,7 +5350,7 @@ nitobi.grid.Grid.prototype.getCellText = function(row,col)
 	return this.getCellObject(row, col).getHtml();
 }
 /**
- * Provides a shortcut to geting the value of a Cell at the specified 
+ * Provides a shortcut to geting the value of a Cell at the specified
  * coordinates.
  * <p>
  * <b>Example</b>:  The difference between getCellValue and {@link #getCellText}
@@ -5374,11 +5376,11 @@ nitobi.grid.Grid.prototype.getCellValue = function(row,col)
 }
 
 /**
- * <P>Returns the HTMLElement of the cell in the Grid at the specified 
- * coordinates. The cell is represented in HTML as a &lt;DIV&gt; 
- * with xi, col, colAttr, and value attributes containing the cell row 
- * number, the cell column number, the column XML attribute name, and 
- * the raw cell value. The innerHTML property of the cell element will 
+ * <P>Returns the HTMLElement of the cell in the Grid at the specified
+ * coordinates. The cell is represented in HTML as a &lt;DIV&gt;
+ * with xi, col, colAttr, and value attributes containing the cell row
+ * number, the cell column number, the column XML attribute name, and
+ * the raw cell value. The innerHTML property of the cell element will
  * contain the displayed value for the cell.</P>
  * @example
  * &#102;unction scrollToCell(row, col)
@@ -5402,7 +5404,7 @@ nitobi.grid.Grid.prototype.getCellElement= function(row, column)
  * @param {Number} xi The index of the Row to retrieve.
  * @type nitobi.grid.Row
  */
-nitobi.grid.Grid.prototype.getSelectedRowObject= function(xi) 
+nitobi.grid.Grid.prototype.getSelectedRowObject= function(xi)
 {
 	var obj = null;
 	var r = nitobi.grid.Cell.getRowNumber(this.activeCell);
@@ -5426,7 +5428,7 @@ nitobi.grid.Grid.prototype.getSelectedRowObject= function(xi)
  * @param {Number} index The zero based index of the Column to return the object of.
  * @type nitobi.grid.Column
  */
-nitobi.grid.Grid.prototype.getColumnObject= function(index) 
+nitobi.grid.Grid.prototype.getColumnObject= function(index)
 {
 	ntbAssert(index >= 0,"Invalid column accessed.");
 
@@ -5439,7 +5441,7 @@ nitobi.grid.Grid.prototype.getColumnObject= function(index)
 			var dataType = this.getColumnDefinitions()[index].getAttribute('DataType');
 			switch (dataType)
 			{
-				case "number": 
+				case "number":
 					column = new nitobi.grid.NumberColumn(this, index);
 					break;
 				case "date":
@@ -5481,14 +5483,14 @@ nitobi.grid.Grid.prototype.getSelectedCellObject= function() {
 	{
 		// Failover to use the activeCell - this can likely be removed
 		obj = this.activeCell; //this.Scroller.activeView.activeCell;
-		if (obj != null)		
+		if (obj != null)
 		{
 			var Cell = nitobi.grid.Cell;
 			var r = Cell.getRowNumber(obj)
 			var c = Cell.getColumnNumber(obj)
 			obj = this.getCellObject(r,c);
 		}
-	}	
+	}
 	return obj;
 }
 
@@ -5501,7 +5503,7 @@ nitobi.grid.Grid.prototype.autoAddRow= function()
 {
 	if (this.activeCell.innerText.replace(/\s/g,"") != "" && this.autoAdd ) {
 		this.deactivateCell();
-		if (this.active == "Y") 
+		if (this.active == "Y")
 			this.freezeCell();
 		eval(this.getOnRowBlurEvent());
 		this.insertRow();
@@ -5517,7 +5519,7 @@ nitobi.grid.Grid.prototype.autoAddRow= function()
  * @param {Number} newVal The number of rows currently displayed in the Grid.
  * @private
  */
-nitobi.grid.Grid.prototype.setDisplayedRowCount= function(newVal) 
+nitobi.grid.Grid.prototype.setDisplayedRowCount= function(newVal)
 {
 	ntbAssert(!isNaN(newVal),"displayed row was set to nan");
 	if (this.Scroller)
@@ -5538,7 +5540,7 @@ nitobi.grid.Grid.prototype.getDisplayedRowCount = function()
 	return this.displayedRowCount;
 }
 
-nitobi.grid.Grid.prototype.getToolsContainer = function() 
+nitobi.grid.Grid.prototype.getToolsContainer = function()
 {
 	this.toolsContainer = this.toolsContainer || document.getElementById("ntb-grid-toolscontainer"+this.uid);
 	return this.toolsContainer;
@@ -5641,9 +5643,9 @@ nitobi.grid.Grid.prototype.getColumnMap = function(firstColumn,lastColumn)
 }
 
 /**
- * Attempts to paste the data that is currently in the native operating 
- * systems "clipboard" into the Grid. The data must be in tab seperated 
- * format to properly be pasted into the Grid. OnBeforePasteEvent and 
+ * Attempts to paste the data that is currently in the native operating
+ * systems "clipboard" into the Grid. The data must be in tab seperated
+ * format to properly be pasted into the Grid. OnBeforePasteEvent and
  * OnAfterPasteEvent are fired.
  * @example
  * &#102;unction copyBlockTo(startRow, startColumn, endRow, endColumn, destRow)
@@ -5669,7 +5671,7 @@ nitobi.grid.Grid.prototype.paste = function()
 }
 
 /**
- * Handles the onkeyup event in the "clipboard" and attempts to merge the pasted data into the DataTable to which the Grid is connected. 
+ * Handles the onkeyup event in the "clipboard" and attempts to merge the pasted data into the DataTable to which the Grid is connected.
  * If the pasted crosses over rows that are not in the DataTable then the DataTable needs to retrieve that data from the server before it can be
  * merged. The retrieval of the data is asynchronous and once complete the pasteComplete() method is called.
  * @param {Object} pasteClipBoard  The paste clibboard is actually an HTML textarea element.
@@ -5724,21 +5726,21 @@ nitobi.grid.Grid.prototype.pasteDataReady = function(pasteClipBoard)
 
 		var clipboardValue = pasteClipBoard.value;
 		var preMergedEbaXml = null;
-		
+
 
 		if(this.mode == nitobi.grid.PAGINGMODE_STANDARD)
 		{
 			var lastVisibleRow = this.datatable.getRowNodes().length -1;
 			//console.log('End row: ' + endRow + ' Last visible row: ' + lastVisibleRow);
-			
-			// create records 
+
+			// create records
 			if(endRow > lastVisibleRow)
 			{
 				var numRowsToInsert = endRow - lastVisibleRow;
 				for(var j=0;j<numRowsToInsert;j++)
 				{
 					var defaultRow = this.datatable.getTemplateNode();
-		
+
 					for (var i = 0; i < this.columnCount(); i++)
 					{
 						var columnObject = this.getColumnObject(i);
@@ -5779,9 +5781,9 @@ nitobi.grid.Grid.prototype.pasteDataReady = function(pasteClipBoard)
 					this.datatable.createRecord(defaultRow,lastVisibleRow + j + 1);
 				}
 			}
-			
+
 		}
-		
+
 		if (clipboardValue.substr(0,1)=="<") {
 			// Reasoning: if < is the first character then this is likely an HTML table
 			preMergedEbaXml = nitobi.data.FormatConverter.convertHtmlTableToEbaXml(clipboardValue, columnList, startRow);
@@ -5809,9 +5811,9 @@ nitobi.grid.Grid.prototype.pasteComplete = function(preMergedEbaXml,startRow,end
 }
 
 /**
- * Event handler that fires after data has been pasted into the Grid. 
+ * Event handler that fires after data has been pasted into the Grid.
  * Fires the <code>AfterPaste</code> event
- * @param {nitobi.grid.OnPasteEventArgs} eventArgs The paste operation event 
+ * @param {nitobi.grid.OnPasteEventArgs} eventArgs The paste operation event
  * arguments.
  * @private
  */
@@ -5821,10 +5823,10 @@ nitobi.grid.Grid.prototype.handleAfterPaste = function(eventArgs)
 }
 
 /**
- * Creates a hidden textarea if it does not already exist. This hidden textarea is used as our "clipboard" by capturing keypress events and then 
+ * Creates a hidden textarea if it does not already exist. This hidden textarea is used as our "clipboard" by capturing keypress events and then
  * assigning focus to the clipboard before the actual keydown event fires causing the clipboard information to be either pasted or copied.
  * @private
- * @type Clipboard 
+ * @type Clipboard
  */
 nitobi.grid.Grid.prototype.getClipboard = function()
 {
@@ -5884,18 +5886,18 @@ nitobi.grid.Grid.prototype.fire=function(evt,args){
  * </code></pre>
  * </div>
  * <p>
- * Notice that the event we are subscribing to does not specify the "On" 
+ * Notice that the event we are subscribing to does not specify the "On"
  * or "Event" parts of the name.
  * </p>
- * @param {String} evt A event string identifier or key for the given 
- * event. This value is the event name without the "On" and "Event" parts 
- * of the name, for example, the key for the OnDataReadyEvent is becomes 
+ * @param {String} evt A event string identifier or key for the given
+ * event. This value is the event name without the "On" and "Event" parts
+ * of the name, for example, the key for the OnDataReadyEvent is becomes
  * "DataReady".
- * @param {Function} func A reference to the Function object that should 
+ * @param {Function} func A reference to the Function object that should
  * be called when the event is fired.
- * @param {Object} context A reference to the Object that the Function 
- * should be called in the context of. When writing object oriented 
- * JavaScript the reference to the Function must also have some context 
+ * @param {Object} context A reference to the Object that the Function
+ * should be called in the context of. When writing object oriented
+ * JavaScript the reference to the Function must also have some context
  * in which it is to be executed.
  * @see nitobi.grid.Grid#subscribeOnce
  * @see nitobi.grid.Grid#unsubscribe
@@ -5911,7 +5913,7 @@ nitobi.grid.Grid.prototype.subscribe=function(evt,func,context){
 }
 
 /**
- * Subscribe to an event only once.  That is, the handler is only fired 
+ * Subscribe to an event only once.  That is, the handler is only fired
  * once and then automatically unregistered.
  * <p>
  * <b>Example</b>:  Load the grid and subscribe to the OnHtmlReadyEvent
@@ -5923,7 +5925,7 @@ nitobi.grid.Grid.prototype.subscribe=function(evt,func,context){
  * 	var grid = nitobi.loadComponent('grid1');
  * 	grid.subscribeOnce("HtmlReady", handleHtmlEvent, null, new Array(grid));
  * }
- * 
+ *
  * &#102;unction handleHtmlEvent(gridObj)
  * {
  * 	gridObj.selectCellByCoords(0,0);
@@ -5953,7 +5955,7 @@ nitobi.grid.Grid.prototype.subscribeOnce = function(evt, func, context, params)
 /**
  * Unsubscribes an event from Grid.
  * @param {String} evt The event name without the "On" prefix and "Event" suffix.
- * @param {Number} guid The unique ID of the event as returned by the subscribe method. 
+ * @param {Number} guid The unique ID of the event as returned by the subscribe method.
  * If the event is defined through the declaration the unique ID can be accessed through the grid API such as grid.OnHtmlReadyEvent.
  */
 nitobi.grid.Grid.prototype.unsubscribe=function(evt,guid)
@@ -5962,7 +5964,7 @@ nitobi.grid.Grid.prototype.unsubscribe=function(evt,guid)
 }
 
 /**
- * Fired when the page is unloaded. The Grid is repsonsible for disposing of all its child objects such that 
+ * Fired when the page is unloaded. The Grid is repsonsible for disposing of all its child objects such that
  * there is no memory leak in Internet Explorer from circular DOM / JS references.
  * @private
  */
@@ -6017,4 +6019,3 @@ nitobi.grid.Grid.prototype.dispose = function()
 nitobi.Grid = nitobi.grid.Grid;
 
 /**#@-*/
-
