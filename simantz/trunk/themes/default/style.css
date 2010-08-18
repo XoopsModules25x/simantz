@@ -896,7 +896,7 @@ li#pendingno {
 }
 
 #idApprovalTotal {
-	color: #fff!important;
+	color: red!important;
 }
 
 /*End of Module list bar*/
