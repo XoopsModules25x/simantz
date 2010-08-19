@@ -261,7 +261,7 @@ public function element_staticText($data){
 public function element_image($data){
 	$imagepath=$data->imageExpression;
 	//$imagepath= substr($data->imageExpression, 1, -1);
-	//$imagetype= substr($imagepath,-3);
+	$imagetype= substr($imagepath,-3);
 
 	switch($data[scaleImage])
 	{
@@ -896,8 +896,15 @@ public function display($arraydata,$y_axis=0,$fielddata=false){
 	elseif($arraydata["type"]=="Image")
 	{
 	 $path=$this->analyse_expression($arraydata["path"]);
-	$imgtype=substr($path,-3);
-
+	 $imgtype=substr($path,-3);
+        
+         if(strpos($_SERVER['HTTP_USER_AGENT'], "MSIE")){
+          if($imgtype=="jpg")
+             $imgtype="jpeg";
+         }
+       
+        // $path=XOOPS_ROOT_PATH."/modules/hr/".$path;
+       // echo "$path";
 	$this->pdf->Image($path,$arraydata["x"]+$this->arrayPageSetting["leftMargin"],$arraydata["y"]+$y_axis,$arraydata["width"],$arraydata["height"],$imgtype,$arraydata["link"]);}
 
 	elseif($arraydata["type"]=="SetTextColor")

@@ -782,9 +782,7 @@ class WorkflowAPI
     public function sendWorkflowSMS(){
         global $sendsmsgroup;
 
-
         $this->log->showLog(4,"run sendWorkflowSMS with isemail : $this->issms");
-
         if($this->issms == 1){
 
         if($this->isGroup($sendsmsgroup)){
@@ -809,15 +807,21 @@ class WorkflowAPI
      * check group
      */
     public function isGroup($group_name){
-     $sql = "select u.name, g.name as g_name from sim_users u, sim_groups g, sim_groups_users_link ug where u.uid=ug.uid and g.groupid=ug.groupid and u.uid=$this->createdby";
+    global $uid;
+
+     $sql = "select u.name, g.name as g_name from sim_users u, sim_groups g, sim_groups_users_link ug where u.uid=ug.uid and g.groupid=ug.groupid and u.uid=$uid";
      $rs = $this->xoopsDB->query($sql);
      $allow = false;
+     $this->log->showLog(4,"Start run check smsgroup : $sql");
+
      while ($row=$this->xoopsDB->fetchArray($rs)){
 
          if($row['g_name']==$group_name){
              $allow = true;
          }
+          $this->log->showLog(4,"run check smsgroup : ".$row['g_name']);
      }
+
      return $allow;
     }
 
