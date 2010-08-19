@@ -3,7 +3,7 @@
 // Created by kaotik													
 
 $modversion['name'] = _MI_SIMITFRAMEWORK_NAME;
-$modversion['version'] = 0.90;
+$modversion['version'] = 2010.08;
 $modversion['description'] = _MI_SIMITFRAMEWORK_DESC;
 $modversion['author'] = "KS Tan (kstan@simit.com.my)";
 $modversion['credits'] = "Sim IT Sdn. Bhd.";

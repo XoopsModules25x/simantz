@@ -1,4 +1,5 @@
 SET FOREIGN_KEY_CHECKS=0;
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 INSERT INTO sim_country (country_id, country_code, country_name, citizenship, isactive, seqno, created, createdby, updated, updatedby, isdeleted) VALUES
 (0, '--', '', '', 0, 0, '0000-00-00 00:00:00', 0, '0000-00-00 00:00:00', 0, 0);
 UPDATE sim_country set country_id=country_id-1;
