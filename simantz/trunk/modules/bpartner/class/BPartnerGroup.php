@@ -76,6 +76,7 @@ class BPartnerGroup
 //        "<a onclick=document.getElementById(\"searchisdeleted\").click() title=\"Show deleted records.\">Show Deleted Only</a>";
 
   echo <<< EOF
+   <br>
           <form name="frmBPartnergroup">
 <table style="width:100%;" >
  <tr>
