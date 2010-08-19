@@ -3,7 +3,7 @@
 // Created by kaotik													
 
 $modversion['name'] = "bpartner Module";
-$modversion['version'] = 0.90;
+$modversion['version'] = 2010.08;
 $modversion['description'] = "This is a customized system system";
 $modversion['author'] = "S Marhan (marhan@simit.com.my)";
 $modversion['credits'] = "Sim IT Sdn. Bhd.";
