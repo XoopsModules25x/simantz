@@ -255,11 +255,11 @@ _5d=_5b.tagName.toLowerCase();
 }while((_5d!=_5c)&&(_5b!=null));
 return _5b;
 };
-nitobi.lang.defineNs("nitobi.drawing");
-nitobi.drawing.rgb=function(r,g,b){
+nitobi.lang.defineNs("nitobi.drawing_combo");
+nitobi.drawing_combo.rgb=function(r,g,b){
 return "#"+((r*65536)+(g*256)+b).toString(16);
 };
-nitobi.drawing.align=function(_61,_62,_63,oh,ow,oy,ox,_68){
+nitobi.drawing_combo.align=function(_61,_62,_63,oh,ow,oy,ox,_68){
 oh=oh||0;
 ow=ow||0;
 oy=oy||0;
@@ -337,20 +337,20 @@ src2.style.height=sh;
 src2.style.width=sw;
 }
 };
-nitobi.drawing.align.SAMEHEIGHT=268435456;
-nitobi.drawing.align.SAMEWIDTH=16777216;
-nitobi.drawing.align.ALIGNTOP=1048576;
-nitobi.drawing.align.ALIGNBOTTOM=65536;
-nitobi.drawing.align.ALIGNLEFT=4096;
-nitobi.drawing.align.ALIGNRIGHT=256;
-nitobi.drawing.align.ALIGNMIDDLEVERT=16;
-nitobi.drawing.align.ALIGNMIDDLEHORIZ=1;
-nitobi.drawing.alignOuterBox=function(_78,_79,_7a,oh,ow,oy,ox,_7f){
+nitobi.drawing_combo.align.SAMEHEIGHT=268435456;
+nitobi.drawing_combo.align.SAMEWIDTH=16777216;
+nitobi.drawing_combo.align.ALIGNTOP=1048576;
+nitobi.drawing_combo.align.ALIGNBOTTOM=65536;
+nitobi.drawing_combo.align.ALIGNLEFT=4096;
+nitobi.drawing_combo.align.ALIGNRIGHT=256;
+nitobi.drawing_combo.align.ALIGNMIDDLEVERT=16;
+nitobi.drawing_combo.align.ALIGNMIDDLEHORIZ=1;
+nitobi.drawing_combo.alignOuterBox=function(_78,_79,_7a,oh,ow,oy,ox,_7f){
 oh=oh||0;
 ow=ow||0;
 oy=oy||0;
 ox=ox||0;
-nitobi.drawing.align(_78,_79,_7a,oh,ow,oy,ox,_7f);
+nitobi.drawing_combo.align(_78,_79,_7a,oh,ow,oy,ox,_7f);
 };
 nitobi.lang.defineNs("nitobi.combo");
 nitobi.combo.Button=function(_80,_81){
