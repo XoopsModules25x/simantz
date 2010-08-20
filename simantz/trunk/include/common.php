@@ -305,7 +305,9 @@ if (file_exists('./xoops_version.php')) {
 xoops_getActiveModules();
 
 $xoopsLogger->stopTime('XOOPS Boot');
-$xoopsLogger->startTime('Module init');
-
-$xoopsPreload->triggerEvent('core.include.common.end');
+$xoopsLogger->startTime('Module init');s
+/*developer: Yang Dihormati Encik Marhan marhan@simit.com.my 20-08-2010
+Comment below line to fix ajax cause browser become blank page)*/
+//$xoopsPreload->triggerEvent('core.include.common.end');
+/* End customization 20-08-2010*/
 ?>
