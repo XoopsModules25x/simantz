@@ -54,7 +54,7 @@ public function convertArrayToNumber(){
 public function sendsms(){
    // echo "owner_id=$this->smsowner_id&password=$this->smspassword&sender_name=$this->smssender_name&lang_type=$this->lang_type&subscriber_num=$this->subscriber_number&msg=$this->message <br>";
 
-    echo "Balance Credit:";
+    //echo "Balance Credit:";
 	$curl_connection = curl_init($this->smsurl);
 	curl_setopt($curl_connection, CURLOPT_CONNECTTIMEOUT, 30);
 	curl_setopt($curl_connection, CURLOPT_USERAGENT,
@@ -68,16 +68,16 @@ public function sendsms(){
 	 $result= curl_exec ($curl_connection);
  	curl_close ($curl_connection);
     
-    $curl_connection=curl_init( $this->urlchecksmsbalance);
-	curl_setopt($curl_connection, CURLOPT_USERAGENT,
-		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
-	 curl_setopt($curl_connection, CURLOPT_RETURNTRANSFER, false);
-	 curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
-     curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
-	 $result= curl_exec ($curl_connection);
- 	 curl_close ($curl_connection);
+//    $curl_connection=curl_init( $this->urlchecksmsbalance);
+//	curl_setopt($curl_connection, CURLOPT_USERAGENT,
+//		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
+//	 curl_setopt($curl_connection, CURLOPT_RETURNTRANSFER, false);
+//	 curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
+//     curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
+//	 $result= curl_exec ($curl_connection);
+// 	 curl_close ($curl_connection);
      sleep(5);
-     echo " SMS";
+//     echo " SMS";
   }
 
 
