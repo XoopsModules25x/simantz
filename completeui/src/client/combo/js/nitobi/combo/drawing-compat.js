@@ -2,12 +2,12 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
-nitobi.lang.defineNs("nitobi.drawing");
+nitobi.lang.defineNs("nitobi.drawing_combo");
 
-nitobi.drawing.rgb = function(r,g,b) 
+nitobi.drawing_combo.rgb = function(r,g,b)
 {
   	return "#"+((r*65536)+(g*256)+b).toString(16);
 }
@@ -22,7 +22,7 @@ nitobi.drawing.rgb = function(r,g,b)
  * @param {Number} oy The left offset for the target HtmlElement.
  * @param {Number} ox The top offset for the target HtmlElement.
  */
-nitobi.drawing.align = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show)
+nitobi.drawing_combo.align = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show)
 {
 	oh=oh || 0;
 	ow=ow || 0;
@@ -90,7 +90,7 @@ nitobi.drawing.align = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show
 		tgt.style.height=th;
 		tgt.style.width=tw;
 
-		if (document.getBoundingClientRect) { 
+		if (document.getBoundingClientRect) {
 			sd=source.getBoundingClientRect();
 			st=sd.top;
 			sb=sd.bottom;
@@ -99,15 +99,15 @@ nitobi.drawing.align = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show
 			sh=Math.abs(sb-st);
 			sw=Math.abs(sr-sl);
 		}
-		if (document.getBoxObjectFor) { 
-			sd = document.getBoxObjectFor(source); 
+		if (document.getBoxObjectFor) {
+			sd = document.getBoxObjectFor(source);
 	//		st=sd.y;
 	//		sl=sd.x;
 			st=sd.screenY;
 			sl=sd.screenX;
 			sw=sd.width;
 			sh=sd.height;
-		}  
+		}
 
 		src2.style.top=st-2;
 		src2.style.left=sl-2;
@@ -119,34 +119,34 @@ nitobi.drawing.align = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show
 /**
  * Bit mask for aligning two HtmlElements with the same height.
  */
-nitobi.drawing.align.SAMEHEIGHT				=0x10000000;
+nitobi.drawing_combo.align.SAMEHEIGHT				=0x10000000;
 /**
  * Bit mask for aligning two HtmlElements with the same width.
  */
-nitobi.drawing.align.SAMEWIDTH				=0x01000000;
+nitobi.drawing_combo.align.SAMEWIDTH				=0x01000000;
 /**
  * Bit mask for aligning two HtmlElements to the same top edge.
  */
-nitobi.drawing.align.ALIGNTOP				=0x00100000;
+nitobi.drawing_combo.align.ALIGNTOP				=0x00100000;
 /**
  * Bit mask for aligning two HtmlElements to the same bottom edge.
  */
-nitobi.drawing.align.ALIGNBOTTOM			=0x00010000;
+nitobi.drawing_combo.align.ALIGNBOTTOM			=0x00010000;
 /**
  * Bit mask for aligning two HtmlElements to the same left edge.
  */
-nitobi.drawing.align.ALIGNLEFT				=0x00001000;
+nitobi.drawing_combo.align.ALIGNLEFT				=0x00001000;
 /**
  * Bit mask for aligning two HtmlElements to the same right edge.
  */
-nitobi.drawing.align.ALIGNRIGHT				=0x00000100;
+nitobi.drawing_combo.align.ALIGNRIGHT				=0x00000100;
 /**
  * Bit mask for aligning two HtmlElements to the same height.
  */
-nitobi.drawing.align.ALIGNMIDDLEVERT		=0x00000010;
-nitobi.drawing.align.ALIGNMIDDLEHORIZ		=0x00000001;
+nitobi.drawing_combo.align.ALIGNMIDDLEVERT		=0x00000010;
+nitobi.drawing_combo.align.ALIGNMIDDLEHORIZ		=0x00000001;
 
-nitobi.drawing.alignOuterBox = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show)
+nitobi.drawing_combo.alignOuterBox = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show)
 {
 	oh=oh || 0;
 	ow=ow || 0;
@@ -172,5 +172,5 @@ nitobi.drawing.alignOuterBox = function(source,target,AlignBit_HWTBLRCM,oh,ow,oy
 		ox = ox + borderLeft - borderLeftTarget;
 	}
 */
-	nitobi.drawing.align(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show);
+	nitobi.drawing_combo.align(source,target,AlignBit_HWTBLRCM,oh,ow,oy,ox,show);
 }
