@@ -8754,7 +8754,11 @@ dp.setSelectedDate(nitobi.base.DateMath.parseIso8601(this.control.value));
 dp.render();
 dp.getCalendar().getHtmlNode().style.overflow="visible";
 dp.getCalendar().getHtmlNode().style.width="182px";
+if(nitobi.browser.MOZ){
+nitobi.html.Css.setStyle(dp.getCalendar().getHtmlNode(),"position","absolute");
+}else{
 nitobi.html.Css.setStyle(dp.getCalendar().getHtmlNode(),"position","fixed");
+}
 }
 this.ignoreBlur=true;
 nitobi.ui.Effects.setVisible(this.pickerDiv,!this.isPickerVisible,"none",this.setVisibleComplete,this);
