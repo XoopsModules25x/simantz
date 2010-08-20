@@ -780,11 +780,11 @@ class WorkflowAPI
      */
 
     public function sendWorkflowSMS(){
-        global $sendsmsgroup;
+        global $sendsmsgroup,$smsid,$smspassword;
 
         $this->log->showLog(4,"run sendWorkflowSMS with isemail : $this->issms");
         if($this->issms == 1){
-
+if($smsid!="" && $smspassword!=""){
         if($this->isGroup($sendsmsgroup)){
         include_once "../simantz/class/SendMessage.php.inc";
         $m=new SendMessage();
@@ -798,6 +798,8 @@ class WorkflowAPI
         }else{
         //redirect_header("student.php?action=search",$pausetime,"You do not have a permission to send SMS");
         }
+}
+
 
         }
 

@@ -261,7 +261,7 @@ public function element_staticText($data){
 public function element_image($data){
 	$imagepath=$data->imageExpression;
 	//$imagepath= substr($data->imageExpression, 1, -1);
-	$imagetype= substr($imagepath,-3);
+	//$imagetype= substr($imagepath,-3);
 
 	switch($data[scaleImage])
 	{
