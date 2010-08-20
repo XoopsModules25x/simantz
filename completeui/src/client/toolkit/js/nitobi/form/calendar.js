@@ -2,7 +2,7 @@
  * Nitobi Complete UI 1.0
  * Copyright(c) 2008, Nitobi
  * support@nitobi.com
- * 
+ *
  * http://www.nitobi.com/license
  */
 /**
@@ -16,7 +16,7 @@ nitobi.form.Calendar = function()
 	nitobi.form.Calendar.baseConstructor.call(this);
 
 	var div = nitobi.html.createElement('div');
-	div.innerHTML = 
+	div.innerHTML =
 			"<table border='0' cellpadding='0' cellspacing='0' style='table-layout:fixed;' class='ntb-input-border'><tr><td>" +
 			"<input id='ntb-datepicker-input' type='text' maxlength='255' style='width:100%;' />" +
 			"</td><td class='ntb-datepicker-button'><a id='ntb-datepicker-button' href='#' onclick='return false;'></a></td></tr><tr><td colspan='2' style='width:1px;height:1px;position:relative;'><!-- --></td></tr><colgroup><col></col><col style='width:20px;'></col></colgroup></table>";
@@ -65,7 +65,7 @@ nitobi.form.Calendar.prototype.initialize = function()
  * @private
  */
 nitobi.form.Calendar.prototype.bind = function(owner, cell, initialKeyChar)
-{	
+{
 	this.isPickerVisible = false;
 	nitobi.html.Css.addClass(this.pickerDiv, NTB_CSS_HIDE);
 
@@ -95,7 +95,7 @@ nitobi.form.Calendar.prototype.mimic = function()
 	var tableWidth = this.placeholder.offsetWidth;
 	var iconWidth = this.placeholder.rows[0].cells[1].offsetWidth;
 	this.control.style.width = tableWidth - iconWidth - (document.compatMode == "BackCompat"?0:8) + "px";
-	
+
 	this.selectText();
 }
 
@@ -121,7 +121,12 @@ nitobi.form.Calendar.prototype.handleClick = function(evt)
 		dp.render();
 		dp.getCalendar().getHtmlNode().style.overflow = "visible";
 		dp.getCalendar().getHtmlNode().style.width = "182px";
-		nitobi.html.Css.setStyle(dp.getCalendar().getHtmlNode(), "position", "fixed");
+                if(nitobi.browser.MOZ){
+                    nitobi.html.Css.setStyle(dp.getCalendar().getHtmlNode(), "position", "absolute");
+                }else{
+                    nitobi.html.Css.setStyle(dp.getCalendar().getHtmlNode(),"position","fixed");
+                }
+
 	}
 
 	this.ignoreBlur = true;
@@ -133,7 +138,7 @@ nitobi.form.Calendar.prototype.handleClick = function(evt)
  * @private
  * Handles the <code>mouseup</code> event on the calendar button.
  */
-nitobi.form.Calendar.prototype.handleMouseUp = function(evt) 
+nitobi.form.Calendar.prototype.handleMouseUp = function(evt)
 {
 
         this.control.focus();
@@ -193,4 +198,3 @@ nitobi.form.Calendar.prototype.dispose = function()
 	this.owner = null;
 	this.cell = null;
 }
-
