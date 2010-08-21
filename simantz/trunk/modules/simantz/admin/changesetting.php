@@ -24,7 +24,9 @@ $nitobigridthemes=$_POST['nitobigridthemes'];
 $nitobicombothemes=$_POST['nitobicombothemes'];
 $selectspliter=$_POST['selectspliter'];
 $allowbrowser=$_POST['allowbrowser'];
-$defaultcurrency=$_POST['defaultcurrency'];
+$sendsmsgroup=$_POST['sendsmsgroup'];
+$uploadpath=$_POST['uploadpath'];
+
 /*
 if(PHP_OS=='WINNT'){
 
@@ -82,7 +84,10 @@ if($allowbrowser!="")
 system("echo '\$allowbrowser={$allowbrowser};'>> ../setting.php");
 else
 system("echo '\$allowbrowser=array();'>> ../setting.php");
-system("echo '\$defaultcurrency=\"$defaultcurrency\";'>> ../setting.php");
+
+system("echo '\$sendsmsgroup=\"$sendsmsgroup\";'>> ../setting.php");
+system("echo '\$uploadpath=\"$uploadpath\";'>> ../setting.php");
+
 system("echo '?>'>> ../setting.php");
 //}
 //echo "/****************<br>This is writing event <br>*********/";
@@ -152,10 +157,12 @@ echo <<< EOF
 <tr><td class='head' $aligncenter>Allow Browser (Developer only)</td>
 	<td class='odd' $aligncenter><textarea name="allowbrowser" cols="40" rows="3">$allowbrowsertext</textarea><br/>
 		* array() for support all browser, define array("Firefox/3.6") will support all firefox 3.6</td></tr>
-<tr><td class='head' $aligncenter>Default Currency</td>
-	<td class='odd' $aligncenter><input name="defaultcurrency" value="$defaultcurrency"></td></tr>
 
-<tr><td class='head' $aligncenter></td>
+<tr><td class='head' $aligncenter>Send SMS Group Name</td>
+	<td class='odd' $aligncenter><input name="sendsmsgroup" value="$sendsmsgroup"></td></tr>
+<tr><td class='head' $aligncenter>Upload Path</td>
+	<td class='odd' $aligncenter><input name="uploadpath" value="$uploadpath"></td></tr>
+
 <tr><td><input type="reset" name="reset" value="reset"></td>
 <td><input type="submit" name="savesetting" value="Save">
 </td></tr>
