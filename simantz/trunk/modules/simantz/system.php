@@ -142,6 +142,7 @@
 			"<b style='color:red'>You don't have permission to access this page, back to home.</b> ");
         
 	$o->fetchOrganization($defaultorganization_id);
+        $defcountrycode=$o->country_code;
 	$defcurrencycode=$o->currency_code;
 	$defaultcurrency_id=$o->currency_id;
 		$log->showLog(3,"end system.php.");

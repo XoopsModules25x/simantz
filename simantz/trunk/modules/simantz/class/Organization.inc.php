@@ -396,6 +396,7 @@ EOF;
 		$this->isactive=$row['isactive'];
 		$this->country_id=$row['country_id'];
 		$this->country_name=$row['country_name'];
+                $this->country_code=$row['country_code'];
 		$this->currency_name=$row['currency_name'];
 		$this->companyno=$row['companyno'];
 		$this->currency_id=$row['currency_id'];
