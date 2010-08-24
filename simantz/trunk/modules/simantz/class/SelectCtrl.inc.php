@@ -343,7 +343,7 @@ public function getSelectMaritalStatus($id,$showNull='N') {
 	return $selectctl;
   }
 
-public function getSelectLeavetype($id,$showNull='N') {
+public function getSelectLeavetype($id,$showNull='N',$wherestr) {
 
 	$sql="SELECT leavetype_id,leavetype_name from sim_hr_leavetype where (leavetype_id='$id'
 		OR leavetype_id>0) and isactive='1' $wherestr
