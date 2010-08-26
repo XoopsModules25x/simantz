@@ -587,15 +587,58 @@ EOF;
 //        include_once "../hr/class/Employee.php";
 //        $emp = new Employee();
 //
-//        $hod_uid = $emp->getHODDepartmentID($this->createdby);
-//        /* end */
-//      return $parameter_array = array(
-//                                '{own_uid}'=>$this->createdby,
-//                                '{hod_uid}'=>$hod_uid,
-//                                '{email_list}'=>'',
-//                                '{sms_list}'=>'',
-//                                '{bypassapprove}'=>false
-//                                    );
+
+    switch ($this->window_workflow){
+
+     CASE  "LEAVE":
+        include_once "../hr/class/Leave.php";
+        $lev = new Leave();
+        return $lev->defineWorkflowParameter();
+     break;
+
+     CASE  "GENERCLAIM":
+
+        include_once "../hr/class/Generalclaim.php";
+        $gen = new Generalclaim();
+               $gen->generalclaim_id=$this->primarykey_value;
+        return $gen->defineWorkflowParameter();
+     break;
+
+     CASE  "MEDICCLAIM":
+
+        include_once "../hr/class/Medicalclaim.php";
+        $me = new Medicalclaim();
+               $me->medicalclaim_id=$this->primarykey_value;
+        return $me->defineWorkflowParameter();
+     break;
+
+      CASE  "OVERCLAIM":
+
+        include_once "../hr/class/Overtimeclaim.php";
+        $ov = new Overtimeclaim_id();
+               $ov->overtimeclaim_id=$this->primarykey_value;
+        return $ov->defineWorkflowParameter();
+     break;
+
+      CASE  "TRAVECLAIM":
+
+        include_once "../hr/class/Travellingclaim.php";
+        $tr = new Travellingclaim();
+               $tr->travellingclaim_id=$this->primarykey_value;
+        return $tr->defineWorkflowParameter();
+     break;
+ 
+      CASE  "LEAVEADJ":
+
+        include_once "../hr/class/Leaveadjustment.php";
+        $led = new Leaveadjustment();
+               $led->leaveadjustment_id=$this->primarykey_value;
+        return $led->defineWorkflowParameter();
+     break;
+
+     default:
+         break;
+    }
 
   }
 
@@ -705,7 +748,7 @@ echo <<< EOF
 
 
      <form method="post" id="idLeaveForm" action="approvallist.php" name="frmLeave" >
-    <input type="hidden" id="action" name="action" value="next_node">
+    <input type="hidden" id="action" name="action" value="next_node"> 
     <input type="hidden" id="primarykey_value" name="primarykey_value" value="$primarykey_value">
     <input type="hidden" id="primarykey_name" name="primarykey_name" value="$primarykey_name">
     <input type="hidden" id="tablename" name="tablename" value="$tablename">

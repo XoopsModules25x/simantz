@@ -73,7 +73,7 @@ $o->updated=date("y/m/d H:i:s", time()) ;
 $o->created=date("y/m/d H:i:s", time()) ;
 $o->isAdmin=$xoopsUser->isAdmin();
 $o->currentdate=date("Y-m-d", time()) ;
-
+$uid=$xoopsUser->getVar('uid');
 $o->start_date=$_POST['start_date'];
 $o->end_date=$_POST['end_date'];
 $o->startctrl=$dp->show("start_date");
@@ -146,6 +146,7 @@ $o->defineHeaderButton();
     break;
 
     case "approvalwindows":
+
         $o->approvalwindows($o->primarykey_value,$o->primarykey_name,$o->tablename,$o->window_workflow,$o->workflowtransaction_id);
         exit;
     break;
