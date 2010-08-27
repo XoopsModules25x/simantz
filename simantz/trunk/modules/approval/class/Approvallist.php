@@ -727,7 +727,7 @@ EOF;
             $primarykey_name = $row['primarykey_name'];
             $tablename = $row['tablename'];
             $hyperlink = $row['hyperlink'];
-
+            $this->window_workflow = $workflow_code;
 
             $sqldetails = sprintf("SELECT * FROM sim_workflowtransaction WHERE workflowtransaction_id = %d ",$workflowtransaction_id);
 
@@ -737,9 +737,13 @@ EOF;
                 $workflowtransaction_description = $rowdetails['workflowtransaction_description'];
             }
         }
+        $this->parameter_array = $this->defineWorkflowParameter();
         $workflowtransaction_description = str_replace("\n","<br>",$workflowtransaction_description);
         $viewdetails = "$hyperlink?action=edit&$primarykey_name=$primarykey_value";
 
+//        foreach($this->parameter_array as $id){
+//           $this->log->showLog(4," parameter_array SQL: $sql");
+//        }
         $workflowbtn = $workflowapi->getWorkflowButton($workflow_code,$primarykey_value,"idLeaveForm","action",$this->parameter_array,"ajax",$person_id);
         $workflow_history = $workflowapi->showWorkflowHistory($workflow_code,$primarykey_value);//show workflow history in html
 
@@ -762,7 +766,7 @@ echo <<< EOF
             <tr>
 
             <tr>
-            <td class="searchformheader" align="center" colspan="2">$window_workflow Approval</td>
+            <td class="searchformheader" align="center" colspan="2"> Approval </td>
             </tr>
             <tr>
             <td><a href="$viewdetails" target="_blank" title="View Details">View Details <img src="images/zoom.png"></a></td>

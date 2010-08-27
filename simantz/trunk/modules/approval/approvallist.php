@@ -93,6 +93,7 @@ $o->failfeedback = "";
 /* define workflow API */
 $workflowapi = new WorkflowAPI();
 $o->parameter_array = $o->defineWorkflowParameter();
+
 /* end */
 
 $o->defineHeaderButton();
