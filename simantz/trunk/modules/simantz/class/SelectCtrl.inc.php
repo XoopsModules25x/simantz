@@ -546,6 +546,30 @@ public function getSelectWorkflowStatus($id,$showNull='N') {
 	return $selectctl;
   }
 
+public function getSelectTracking($id,$showNull='N',$wherestr="") {
+
+	$sql=sprintf("SELECT * FROM sim_simbiz_track where track_id > 0 AND isactive = 1 $wherestr
+		order by seqno ASC,track_name ASC",$id);
+
+	if ($showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null</OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$track_id=$row['track_id'];
+		$track_name=$row['track_name'];
+		if($id==$track_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$track_id' $selected>$track_name</OPTION>";
+
+	}
+
+	return $selectctl;
+  }
+
 }
 
 ?>
