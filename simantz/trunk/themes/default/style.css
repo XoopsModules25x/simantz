@@ -1248,3 +1248,94 @@ width: 100px;
 vertical-align: bottom;
 }
 /* end index HR */
+
+/* start grid journal */
+tr.journalParent td {
+	background-color: #efd86d;
+	font-size: 9pt;
+        vertical-align:middle;
+        font-weight : bold !important;
+        border-top:2px solid #ba7842 !important;
+}
+
+tr.journalChild td {
+        background-color: #ffe980;
+	font-size: 9pt;
+	vertical-align:middle;
+	padding-left:4px !important;
+        padding-right:0px !important;
+}
+
+.journalParent{
+	background-color: #efd86d;
+	font-size: 9pt;
+        vertical-align:middle;
+        font-weight : bold !important;
+        border-top:2px solid #ba7842 !important;
+
+}
+
+.journalChild{
+        background-color: #ffe980;
+	font-size: 9pt;
+	vertical-align:middle;
+	padding-left:4px !important;
+
+}
+
+.tblFinalTotal{
+    /*width : 400px;*/
+    padding : 10px;
+}
+
+.finalTotalRow1{
+    height : 30px;
+}
+
+.tdFinalTotal{
+    width : 40%;
+}
+
+.td1FinalTotal{
+    width : 30%;
+    text-align : right;
+}
+.td2FinalTotal{
+    width : 15%;
+    text-align : right;
+}
+.td3FinalTotal{
+    width : 15%;
+    text-align : right;
+}
+
+.finalTotalRow2{
+    height : 40px;
+}
+.td1FinalTotal2{
+    text-align : right;
+    font-weight : bold;
+    vertical-align : middle;
+    border-top : 2px solid #ba7842;
+    border-bottom : 2px solid #ba7842;
+}
+.td2FinalTotal2{
+    text-align : right;
+    font-weight : bold;
+    vertical-align : middle;
+    border-top : 2px solid #ba7842;
+    border-bottom : 2px solid #ba7842;
+}
+.td3FinalTotal2{
+    text-align : right;
+    font-weight : bold;
+    vertical-align : middle;
+    border-top : 2px solid #ba7842;
+    border-bottom : 2px solid #ba7842;
+}
+
+.statusmsg{
+    color:red;
+    font-weight:bold;
+}
+/* end */
