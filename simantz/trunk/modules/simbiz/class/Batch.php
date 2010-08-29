@@ -83,7 +83,7 @@ class Batch
    * @access public
    */
   public function getInputForm( $type,  $batch_id,$token  ) {
-    global $defaultorganization_id,$workflowapi,$uid,$showOrganization,$havewriteperm,$defaultcurrency;
+    global $defaultorganization_id,$workflowapi,$uid,$showOrganization,$havewriteperm,$defcurrencycode;
 
     
         $this->getIncludeFileMenu();
@@ -575,9 +575,9 @@ $noperm
         </tr>
 
         <tr>
-        <td class="head">Total Debit ($defaultcurrency) </td>
+        <td class="head">Total Debit ($defcurrencycode) </td>
         <td class="even"><input id='totaldebit' name='totaldebit' value="$this->totaldebit" size='15' readonly></td>
-        <td class="head">Total Credit ($defaultcurrency) </td>
+        <td class="head">Total Credit ($defcurrencycode) </td>
         <td class="even" colspan="3"><input id='totalcredit' name='totalcredit' value="$this->totalcredit" size='15' readonly></td>
         </tr>
             
@@ -1270,7 +1270,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
   }
 
   public function saveBatchAjax(){
-        global $defaultorganization_id,$selectspliter,$xoopsUser,$defaultcurrency_id;
+        global $defaultorganization_id,$selectspliter,$xoopsUser,$defcurrencycode_id;
         $uname=$xoopsUser->getVar('uname');
         include_once "../simantz/class/Save_Data.inc.php";
         $save = new Save_Data();
@@ -1666,7 +1666,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
 
  //   Start Batchline Section
   public function getBatchlineform(){
-    global $nitobigridthemes,$isadmin,$havewriteperm,$action,$uid,$defaultcurrency,$defaultorganization_id,$iseditbpartner;
+    global $nitobigridthemes,$isadmin,$havewriteperm,$action,$uid,$defcurrencycode,$defaultorganization_id,$iseditbpartner;
 
     $this->allowedit = 1;
 
@@ -2426,9 +2426,9 @@ echo <<< EOF
     <ntb:textcolumn classname="{\$rh}" label="Doc No." width="70" xdatafld="document_no" sortenabled="false" editable="true"></ntb:textcolumn>
     <ntb:textcolumn classname="{\$rh}" label="Memo"  width="125"  xdatafld="linedesc" sortenabled="false"><ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
         
-    <ntb:numbercolumn classname="{\$rh}" label="Debit($defaultcurrency)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_debit" sortenabled="false"></ntb:numbercolumn>
+    <ntb:numbercolumn classname="{\$rh}" label="Debit($defcurrencycode)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_debit" sortenabled="false"></ntb:numbercolumn>
 
-    <ntb:numbercolumn classname="{\$rh}" label="Credit($defaultcurrency)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_credit" sortenabled="false"></ntb:numbercolumn>
+    <ntb:numbercolumn classname="{\$rh}" label="Credit($defcurrencycode)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_credit" sortenabled="false"></ntb:numbercolumn>
 
     <ntb:textcolumn classname="{\$rh}" width="50" label="Branch"  xdatafld="organization_cell" sortenabled="false" initial="$defaultorganization_id">
     <ntb:lookupeditor delay="1000" gethandler="batch.php?action=getbranchlist" displayfields="organization_code" valuefield="organization_id" ></ntb:lookupeditor>
@@ -2630,7 +2630,7 @@ EOF;
             include "../simantz/class/nitobi.xml.php";
             include_once "../simantz/class/Save_Data.inc.php";
 
-            global $xoopsDB,$xoopsUser,$defaultcurrency_id;
+            global $xoopsDB,$xoopsUser,$defcurrencycode_id;
             $saveHandler = new EBASaveHandler();
             $saveHandler->ProcessRecords();
             $timestamp=date("Y-m-d H:i:s",time());
@@ -2690,7 +2690,7 @@ EOF;
                     $amt,
                     $amt,
                     $saveHandler->ReturnUpdateField($currentRecord,"tax_cell"),
-                    $defaultcurrency_id,
+                    $defcurrencycode_id,
                     $saveHandler->ReturnUpdateField($currentRecord,"document_no2"),
                     $saveHandler->ReturnUpdateField($currentRecord,"accounts_cell"),
                     $this->multiplyconversion,
@@ -2788,7 +2788,7 @@ EOF;
                     $amt,
                     $amt,
                     $saveHandler->ReturnInsertField($currentRecord,"tax_cell"),
-                    $defaultcurrency_id,
+                    $defcurrencycode_id,
                     $saveHandler->ReturnInsertField($currentRecord,"document_no2"),
                     $saveHandler->ReturnInsertField($currentRecord,"accounts_cell"),
                     $this->multiplyconversion,
@@ -2845,7 +2845,7 @@ EOF;
                     $amt,
                     $amt,
                     $saveHandler->ReturnInsertField($currentRecord,"tax_cell"),
-                    $defaultcurrency_id,
+                    $defcurrencycode_id,
                     $saveHandler->ReturnInsertField($currentRecord,"document_no2"),
                     $saveHandler->ReturnInsertField($currentRecord,"accounts_cell"),
                     $this->multiplyconversion,
