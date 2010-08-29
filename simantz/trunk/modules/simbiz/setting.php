@@ -27,5 +27,6 @@ $epf_account="45";
 $totalworkingday="365";
 $totalworkinghour="8";
 $sendsmsgroup="sendsmsgroup";
+$iseditbpartner="Y";
 $orgreportheader="SIM IT SDN BHD (792899-U)";
 ?>
