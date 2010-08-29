@@ -2982,7 +2982,7 @@ public function getSelectAccount($wherestring) {
         }
 
         if(empty($sortcolumn)){
-           $sortcolumn="accounts_name";
+           $sortcolumn="accountcode_full";
         }
 
         if(empty($sortdirection)){
@@ -3005,7 +3005,7 @@ public function getSelectAccount($wherestring) {
             if($currentRecord > $ordinalStart){
                        $getHandler->CreateNewRecord($row["accounts_id"]);
                        $getHandler->DefineRecordFieldValue("accounts_id", $row["accounts_id"]);
-                       $getHandler->DefineRecordFieldValue("accounts_name", $row["accounts_code"]." - ".$row["accounts_name"] );
+                       $getHandler->DefineRecordFieldValue("accounts_name", $row["accountcode_full"]." - ".$row["accounts_name"] );
                        $getHandler->SaveRecord();
            //  $getHandler->CompleteGet();
 
