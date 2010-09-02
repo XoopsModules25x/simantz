@@ -3,7 +3,7 @@
 	include "../simantz/system.php";
       include_once '../simantz/setting.php';
 	include "setting.php";
-	include "setting.php";
+
 	
 	$break=explode('/',$_SERVER['SCRIPT_NAME']);
 	$usefilename=$break[count($break)-1];
