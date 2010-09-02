@@ -37,7 +37,7 @@ class Period
  
   public function fetchPeriod( $period_id) {
 	$this->log->showLog(3,"Fetching period detail into class Period.php.");
-	$sql="SELECT period_id,period_name,period_year,period_month,isactive,defaultlevel,isdeleted from sim_period
+	 $sql="SELECT period_id,period_name,period_year,period_month,isactive,seqno from sim_period
 			where period_id=$period_id";
 	$this->log->showLog(4,"Period->fetchPeriod, before execute:" . $sql . "<br>");
 	$query=$this->xoopsDB->query($sql);
@@ -45,7 +45,7 @@ class Period
 		$this->period_name=$row["period_name"];
 		$this->period_month=$row["period_month"];
 		$this->period_year=$row["period_year"];
-		$this->defaultlevel= $row['defaultlevel'];
+		$this->seqno= $row['seqno'];
                 $this->isdeleted=$row['isdeleted'];
 		$this->isactive=$row['isactive'];
    	$this->log->showLog(4,"Period->fetchPeriod,database fetch into class successfully");
@@ -356,13 +356,14 @@ $getHandler->completeGet();
     }
 
   public function getPeriodArray($periodfrom_id,$periodto_id){
+      global $tableperiod;
            $this->fetchPeriod($periodfrom_id);
-            $periodfrom=$this->period_name;
+          $periodfrom=$this->period_name;
 
            $this->fetchPeriod($periodto_id);
-           $periodto=$this->period_name;
+          $periodto=$this->period_name;
 
-        $sql="SELECT period_id,period_name from $this->tableperiod
+        $sql="SELECT period_id,period_name from $tableperiod
                 where period_name between '$periodfrom' and '$periodto' order by period_name ASC";
           $query=$this->xoopsDB->query($sql);
           $data=array();

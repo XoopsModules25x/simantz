@@ -42,6 +42,7 @@ public function getSelectModule($id,$showNull='Y',$controlname="mid",$controlid=
 
 public function selectionOrg($uid,$id,$showNull='N',$onchangefunction="location.href='index.php?switchorg=Y&defaultorganization_id='+this.value",$ishide='N'){
         global $tablegroups_users_link,$tableorganization ;
+        
 	$this->log->showLog(3,"Retrieve available organization (select organization_id: $id) to employee_id : $uid, ishide=$ishide");
 	$sql="SELECT distinct(organization_id) as organization_id,organization_code from $tableorganization o
 		INNER JOIN  $tablegroups_users_link ug on o.groupid=ug.groupid where o.organization_id>0 and isactive=1";
@@ -567,6 +568,36 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
 
 	}
 
+	return $selectctl;
+  }
+
+
+ public function getSelectUsers($id,$showNull='N',$onchangefunction="",$ctrlname="uid",$wherestr='') {
+	global $defaultorganization_id,$tableusers;
+
+
+	$sql="SELECT uid, uname from $tableusers where (uid=$id
+		OR uid>0) and uid>0
+		order by uname ;";
+	$this->log->showLog(4,"getSelectUsername With SQL: $sql");
+	//$selectctl="<SELECT name='$ctrlname' $onchangefunction>";
+	if ($showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$uid=$row['uid'];
+		$uname=$row['uname'];
+		if($id==$uid)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$uid' $selected>$uname</OPTION>";
+
+	}
+
+	//$selectctl=$selectctl . "</SELECT>";
 	return $selectctl;
   }
 

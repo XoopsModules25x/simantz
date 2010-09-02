@@ -160,7 +160,7 @@ EOF;
 
 public function getInputForm($module_id){
 
-    $optionlist=$this->getSelectWindows(0,$module_id);
+    $optionlist=$this->getSelectWindows(0,$module_id,"Y");
     return "
         <A href=javascript:addNew()>[Add New]</a><br/>
     <form onsubmit='return false'>
@@ -256,7 +256,7 @@ public function deleteWindow($window_id){
 
 }
 
-public function getSelectWindows($id,$mid){
+public function getSelectWindows($id,$mid,$showNull="N"){
     $sql="SELECT * FROM $this->tablename w where mid=$mid and (isactive=1 or window_id=$id or window_id=0) order by seqno";
     $query=$this->xoopsDB->query($sql);
     $result="";
@@ -265,6 +265,9 @@ public function getSelectWindows($id,$mid){
     $window_id=$row['window_id'];
     $window_name=$row['window_name'];
     $selected="";
+
+    if($showNull=="Y")
+    $result.="<option value='0' >Null</option>";
     if($id==$window_id)
         $selected="SELECTED='SELECTED'";
     $result.="<option value='$window_id' $selected>$window_name</option>";
