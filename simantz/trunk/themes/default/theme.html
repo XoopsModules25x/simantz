@@ -251,9 +251,10 @@ echo <<< EOF
 	document.getElementById('idApprovalTotal').innerHTML = "$approval_status";
 	var menubar=document.getElementById('navbarCP');
 
-	if(menubar==null)
+	if(menubar==null){
 	document.getElementById('menubartr').style.display="none";
-
+        document.getElementById('xo-globalnav').style.display="none";
+    }
 	}catch (error) {
 	}
 
