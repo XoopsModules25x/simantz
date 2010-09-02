@@ -204,7 +204,7 @@ $originalamtctrl
       </tr>
       <tr>
         <td class="head">Currency $mandatorysign</td>
-        <td class="even">$this->currencyctrl</td>
+        <td class="even"><select name='currency_id' id='currency_id'>$this->currencyctrl</select></td>
         <td class="head">Exchange Rate $mandatorysign</td>
         <td class="even"><input name='exchangerate' value="$this->exchangerate" onchange='amt.value=parseFloat(this.value*originalamt.value).toFixed(2)' size="10">
 	Local Amount : 
@@ -649,7 +649,7 @@ echo <<< EOF
     </tr>
     <tr>
       <td class='head'>Currency</td>
-      <td class='even'>$this->currencyctrl</td>
+      <td class='even'><select name="currency_id">$this->currencyctrl</select></td>
       <td class='head'>Prepared By (Ali%, %Ahmad%, Ali%Ahmad)</td>
       <td class='even'><input name='preparedby' value="$this->preparedby"></td>
     </tr>
@@ -864,5 +864,198 @@ return "$firstrecord &nbsp;&nbsp;&nbsp; $prevrecord &nbsp;&nbsp;&nbsp;
         $nextrecord &nbsp;&nbsp;&nbsp; $lastrecord";
 }
 
+
+public function showJavascript(){
+
+    echo <<< EOF
+<script type="text/javascript">
+
+	function getTypeNo(paymentvoucher_type){
+
+	var arr_fld=new Array("action","paymentvoucher_type");//name for POST
+	var arr_val=new Array("gettypeno",paymentvoucher_type);//value for POST
+
+	getRequest(arr_fld,arr_val);
+	}
+
+	function saveRecord(){
+
+	if(validatePaymentVoucher())
+	document.forms['frmPaymentVoucher'].submit();
+
+	}
+
+	function calculateSummary(){
+	var exchangerate = document.forms['frmPaymentVoucher'].exchangerate.value;
+
+	var i=0;
+	var total_amt = 0;
+	while(i< document.forms['frmPaymentVoucher'].elements.length){
+		var ctlname = document.forms['frmPaymentVoucher'].elements[i].name;
+		var data = document.forms['frmPaymentVoucher'].elements[i].value;
+
+		if(ctlname.substring(0,7)=="lineamt"){
+		total_amt = parseFloat(total_amt) + parseFloat(data);
+
+		}
+
+		i++;
+
+	}
+
+	document.forms['frmPaymentVoucher'].originalamt.value = parseFloat(total_amt).toFixed(2);
+	document.forms['frmPaymentVoucher'].amt.value = parseFloat(parseFloat(exchangerate)*parseFloat(total_amt)).toFixed(2);
+	}
+
+	function validateAmount(){
+
+	var i=0;
+	while(i< document.forms['frmPaymentVoucher'].elements.length){
+		var ctlname = document.forms['frmPaymentVoucher'].elements[i].name;
+		var data = document.forms['frmPaymentVoucher'].elements[i].value;
+
+		if(ctlname.substring(0,7)=="lineamt"){
+
+			if(!IsNumeric(data))
+				{
+					alert (ctlname + ":" + data + ":is not numeric, please insert appropriate +ve value!");
+					document.forms['frmPaymentVoucher'].elements[i].style.backgroundColor = "#FF0000";
+					document.forms['frmPaymentVoucher'].elements[i].focus();
+					return false;
+				}
+				else
+				document.forms['frmPaymentVoucher'].elements[i].style.backgroundColor = "#FFFFFF";
+
+
+		}
+
+		i++;
+
+	}
+	return true;
+	}
+
+	function showHideDesc(i){
+	var descctrl=document.getElementById("linedescription"+i);
+	if(descctrl.style.display=="none")
+		descctrl.style.display="";
+	else
+		descctrl.style.display="none";
+
+	}
+	function autofocus(){
+	document.frmPaymentVoucher.paymentvoucher_date.focus();
+	document.frmPaymentVoucher.paymentvoucher_date.select();
+	}
+
+
+	function validatePaymentVoucher(){
+
+	/*	var documentno=document.forms['frmPaymentVoucher'].paymentvoucher_no.value;
+		var paidto=document.forms['frmPaymentVoucher'].paidto.value;
+		var exchangerate=document.forms['frmPaymentVoucher'].exchangerate.value;
+		var divbpartner =document.getElementById("divbpartner");
+		var bpartnerctrl = document.getElementById("bpartner_id2") ? document.getElementById("bpartner_id2") : false;
+
+		if(bpartnerctrl==false)
+			alert('no bpartner');
+		else
+			alert('have bpartner');
+*/
+		var documentno=document.forms['frmPaymentVoucher'].paymentvoucher_no.value;
+		var paidto=document.forms['frmPaymentVoucher'].paidto.value;
+		var exchangerate=document.forms['frmPaymentVoucher'].exchangerate.value;
+		var accountsfrom=document.forms['frmPaymentVoucher'].accountsfrom_id.value;
+		//var bpartner_id2=document.forms['frmPaymentVoucher'].bpartner_id2.value;
+		//var accountsto=document.forms['frmPaymentVoucher'].accountsto_id.value;
+		var originalamt=document.forms['frmPaymentVoucher'].originalamt.value;
+
+		if(confirm("Save record?")){
+
+		if(documentno=="" || accountsfrom==0){
+		alert("Please make sure PaymentVoucher No, From Accounts is filled in.");
+		return false;
+		}else{
+
+			if(!IsNumeric(exchangerate) || !IsNumeric(originalamt)){
+			alert("Please make sure Exchange Rate and Amount filled in with numeric.");
+			return false;
+			}else{
+			var paymentvoucher_date=document.forms['frmPaymentVoucher'].paymentvoucher_date.value;
+			if(!isDate(paymentvoucher_date)){
+			return false;
+			}else{
+
+			if(validateAmount())
+			return true;
+			else
+			return false;
+			}
+			}
+		}
+
+		}else
+			return false;
+	}
+
+	function reloadAccountFrom(accounts_id){
+
+	var arr_fld=new Array("action","accounts_id");//name for POST
+	var arr_val=new Array("refreshaccountsfrom",accounts_id);//value for POST
+
+	getRequest(arr_fld,arr_val);
+
+	}
+	function reloadAccountTo(accounts_id,line){
+
+	 var data="action="+"getaccountinfo"+
+                    "&accounts_id="+accounts_id;
+
+            $.ajax({
+                 url:"paymentvoucher.php",type: "POST",data: data,cache: false,
+                     success: function (xml)
+                     {
+                        $("#linebpartner_id"+line).html(xml);
+                     }
+                   });
+
+	}
+	function refreshCurrency(currency_id){
+
+	var arr_fld=new Array("action","currency_id");//name for POST
+	var arr_val=new Array("refreshcurrency",currency_id);//value for POST
+
+	getRequest(arr_fld,arr_val);
+
+
+	}
+
+	function changePaidFrom(ctrl){
+
+		try {
+		var selected_text =ctrl.options[ctrl.selectedIndex].text;
+		document.forms['frmPaymentVoucher'].paidto.value=selected_text;
+		document.forms['frmPaymentVoucher'].bpartner_id.value=ctrl.value;
+		}catch (error) {
+		document.forms['frmPaymentVoucher'].paidto.value="";
+		}
+
+	}
+
+	function changePaidTo(ctrl){
+		try {
+		var selected_text =ctrl.options[ctrl.selectedIndex].text;
+		document.forms['frmPaymentVoucher'].paidto.value=selected_text;
+		//document.forms['frmPaymentVoucher'].bpartner_id.value=ctrl.value;
+		}catch (error) {
+		document.forms['frmPaymentVoucher'].paidto.value="";
+		}
+
+
+	}
+</script>
+
+EOF;
+}
 } // end of ClassPaymentVoucher
 ?>

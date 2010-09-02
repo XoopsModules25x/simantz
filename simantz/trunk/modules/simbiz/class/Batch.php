@@ -1051,6 +1051,7 @@ echo <<< EOF
 
  }));
 </script>
+        <form onsubmit="search();return false;">
     <table >
         <tr height="100px">
             <td width="70%" class="headerSearchTdTable">
@@ -1095,7 +1096,7 @@ echo <<< EOF
                 </tr>
                 
                 <tr>
-                <td colspan="2"><input type="button" value="Search" onclick="search()"></td>
+                <td colspan="2"><input type="submit" value="Search"></td>
                 <td colspan="2"></td>
                 </tr>
 
@@ -1108,6 +1109,7 @@ echo <<< EOF
             </td>
         </tr>
     </table>
+    </form>
 EOF;
 
   }
@@ -1250,7 +1252,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
 
   public function getTrackName(){
 
-    $sql = "SELECT * FROM sim_simbiz_trackheader ";
+    $sql = "SELECT * FROM sim_simbiz_trackheader where trackheader_id >0";
 
         $query = $this->xoopsDB->query($sql);
         

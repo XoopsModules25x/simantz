@@ -3,7 +3,7 @@
 	include_once "system.php";
 	//include_once "../system/class/Organization.php";
 	include_once "../simantz/class/Period.inc.php";
-	include_once "../simantz/class/BPartner.php";
+	include_once "../bpartner/class/BPartner.php";
 	//include_once "class/Accounts.php";
 
 	$org = new Organization();
@@ -399,7 +399,7 @@ if ($_POST){
 	$originalamt=$row['originalamt'];
 	
 
-	  $bp->fetchBPartner($bpartner_id);
+	  $bp->fetchBpartnerData($bpartner_id);
 	  $pdf->AddPage();
 	  $pdf->printotal=false;
 

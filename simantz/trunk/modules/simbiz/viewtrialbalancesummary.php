@@ -1,7 +1,7 @@
 <?php
-include_once('../simantz/class/fpdf/fpdf.php');
+
 include_once "system.php";
-$org = new Organization();
+include_once('../simantz/class/fpdf/fpdf.php');
 	$header=array("No","A/C No","A/C Name","A/C Group","Debit","Credit");
    	$w=array(15,20,75,30,25,25);
 
@@ -51,14 +51,9 @@ class PDF extends FPDF
   public $imagewidth=60;
 
 function Header()
-{	global $header,$w,$organization_code;
+{	global $header,$w;
 	$this->Image($this->imagepath, $this->marginx ,$this->marginx , $this->imagewidth , '' , $this->imagetype , '');
 	$this->Ln();
-        /* set organization text */
-        $this->SetFont('Times','',8);
-        $this->SetXY(10,10);
-	$this->Cell(100,6,"Organization : $organization_code",0,0,'L');
-        /* end */
 	$this->SetFont('Times','B',20);
 	$this->Rect($this->marginx,$this->marginy,$this->headerrectwith,$this->headerrectheight);
 	$this->SetXY($this->headertitlex,$this->marginy);
@@ -118,13 +113,6 @@ $wherestr="";
 	$pdf->AliasNbPages();
 	$pdf->SetAutoPageBreak(true ,$pdf->pagefooterheight +1 );
 
-        $organization_id=$_REQUEST['organization_id'];
-
-	$org->fetchOrganization($organization_id);
-	$companyno=$org->companyno;
-	$orgname=$org->organization_name;
-        $organization_code=$org->organization_code;
-
 	$pdf->datefrom=$_POST['datefrom'];
 	$pdf->dateto=$_POST['dateto'];
 //	$pdf->accounts_codefrom=getAccountsID($_POST['accounts_codefrom']);
@@ -143,37 +131,60 @@ $wherestr="";
 		$pdf->accounts_codeto="9999999";
 
 
-	$wherestr="(b.batchdate between '$pdf->datefrom' AND '$pdf->dateto') AND 
-			 ( a.accountcode_full LIKE '$pdf->accounts_codeto%' OR
-				a.accountcode_full between '$pdf->accounts_codefrom%' AND '$pdf->accounts_codeto%' )
-			and b.batch_id>0 and b.batchno>=0 and a.accounts_id>0 and b.iscomplete=1 ";
+	$wherestr="
+			
+		a.accounts_id>0  and c.classtype <> '8M' ";
 	
 	//if($pdf->bpartner_id > 0)
 	//$wherestr .= " and t.bpartner_id = $pdf->bpartner_id ";
 
 	$pdf->SetFont('Arial','',10);
+//
+	$sql="SELECT p.accounts_id, p.accountcode_full,p.accounts_name,p.accountgroup_name, 
+		p.classtype,p.amt FROM (
+		SELECT a.accounts_id, a.accountcode_full,
+		case when a.account_type <> 6 THEN a.accounts_name 
+		when a.account_type =6 and (SELECT sum(t1.amt) from $tabletransaction t1 inner join $tablebatch b1 on b1.batch_id=t1.batch_id where b1.iscomplete=1 and b1.batchdate < '$pdf->datefrom' and 		t1.accounts_id=a.accounts_id)  > 0 then 'Accumulated Losses'
+		when a.account_type =6 and (SELECT sum(t1.amt) from $tabletransaction t1 inner join $tablebatch b1 on b1.batch_id=t1.batch_id where b1.iscomplete=1 and b1.batchdate < '$pdf->datefrom' and 		t1.accounts_id=a.accounts_id)  <= 0 then 'Accumulated Earning' END as  accounts_name 
 
-	$sql="SELECT a.accounts_id, a.accountcode_full,a.accounts_name,g.accountgroup_name, sum(t.amt) as amt 
-		FROM $tablebatch b 
-		INNER JOIN $tabletransaction t on b.batch_id=t.batch_id and t.branch_id = $organization_id
-		INNER JOIN $tableaccounts a on a.accounts_id=t.accounts_id
+
+,g.accountgroup_name, 
+		c.classtype, case when c.classtype in ('5A','6L','7E') and a.account_type<>6  THEN
+			(SELECT sum(t1.amt) from $tabletransaction t1 inner join $tablebatch b1 on b1.batch_id=t1.batch_id where b1.iscomplete=1 and b1.batchdate <=
+		 '$pdf->dateto' and t1.accounts_id=a.accounts_id) 
+	when a.account_type = 6 THEN
+	(SELECT sum(t1.amt) from $tabletransaction t1 inner join $tablebatch b1 on b1.batch_id=t1.batch_id where b1.iscomplete=1 and b1.batchdate < '$pdf->datefrom' and 		t1.accounts_id=a.accounts_id) 
+	else
+			(SELECT sum(t1.amt) from $tabletransaction t1 inner join $tablebatch b1 on b1.batch_id=t1.batch_id where b1.iscomplete=1 and b1.batchdate BETWEEN '$pdf->datefrom' AND '$pdf->dateto' and t1.accounts_id=a.accounts_id) END
+		 as amt 
+		FROM $tableaccounts a 
 		INNER JOIN $tableaccountgroup g on a.accountgroup_id=g.accountgroup_id 
+		INNER JOIN $tableaccountclass c on g.accountclass_id=c.accountclass_id
+	
 		WHERE $wherestr  group by a.accounts_id, a.accounts_code,a.accounts_name ,g.accountgroup_name
-		order by a.accountcode_full,a.accounts_name,g.accountgroup_name";	
+		order by a.accountcode_full,a.accounts_name,g.accountgroup_name ) p 
+		where p.amt<>0
+		order by p.accountcode_full,p.accounts_name,p.accountgroup_name";	
 	
 
 
 	$query=$xoopsDB->query($sql);
+
 	$totaldebit = 0;
 	$totalcredit =0;
 
 	while($row=$xoopsDB->fetchArray($query)){
+
 		$i++;
 		$accountcode_full=$row['accountcode_full'];
 		$accounts_id=$row['accounts_id'];
 		$accounts_name=$row['accounts_name'];
+		$classtype=$row['classtype'];
 		$accountgroup_name=$row['accountgroup_name'];
+
 		$amt=$row['amt'];
+		
+		
 		if($amt>=0){
 			$debitamt=$amt;
 			$creditamt=0;
@@ -193,8 +204,8 @@ $wherestr="";
 		$pdf->Cell($w[1],$pdf->tabletextheight,$accountcode_full,0,0,'L');
 		$pdf->Cell($w[2],$pdf->tabletextheight,"$accounts_name",0,0,'L');
 		$pdf->Cell($w[3],$pdf->tabletextheight,$accountgroup_name,0,0,'L');
-		$pdf->Cell($w[4],$pdf->tabletextheight,$debitamt,0,0,'R');
-		$pdf->Cell($w[5],$pdf->tabletextheight,$creditamt,0,0,'R');
+		$pdf->Cell($w[4],$pdf->tabletextheight,number_format($debitamt,2),0,0,'R');
+		$pdf->Cell($w[5],$pdf->tabletextheight,number_format($creditamt,2),0,0,'R');
 
 
 //		$log->showLog(5,"$accountcode_full");
@@ -208,9 +219,9 @@ $wherestr="";
 		$pdf->Cell($w[3],$pdf->tabletextheight,"","TB",0,'L');
 		$pdf->Cell($w[4],$pdf->tabletextheight,number_format($totaldebit,2),"TB",0,'R');
 		$pdf->Cell($w[5],$pdf->tabletextheight,number_format($totalcredit,2),"TB",0,'R');
-	//$pdf->AddPage();
+		$pdf->Ln();
 	//$pdf->BasicTable($data);
-	
+	//		$pdf->SetX($pdf->marginx);
 	//$pdf->MultiCell(0,5,$sql,1,'C');
 	//display pdf
 	//$pdf->Output("doc.pdf","D");

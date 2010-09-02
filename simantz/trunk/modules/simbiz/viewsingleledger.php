@@ -263,7 +263,12 @@ if (isset($_POST["submit"]) ){
 
 //		order by a.accountcode_full,b.batchdate,b.batchno,t.seqno,t.reference_id desc
 	//get required data
-	$sql="SELECT a.batchdate,a.batchno,a.accountcode_full,a.accounts_id,a.accounts_name,a.document_no,a.amt,
+                $filterorg="";
+                if( $organization_id>0){
+                   $filterorg=" and t.branch_id = $organization_id ";
+                     $filterorg2=" and t2.branch_id = $organization_id ";
+                }
+	 $sql="SELECT a.batchdate,a.batchno,a.accountcode_full,a.accounts_id,a.accounts_name,a.document_no,a.amt,
 		a.refamt,a.refaccounts_name,a.refaccounts_code,a.batch_id,a.bpartner_name,a.refbpartner_name,a.bpartner_id,
 		a.refbpartner_id,a.refaccounts_id,a.document_no2,a.refdocument_no2,a.linedesc,a.accountgroup_name
 		FROM (
@@ -272,10 +277,10 @@ if (isset($_POST["submit"]) ){
 		bp.bpartner_name,bp2.bpartner_name as refbpartner_name,bp.bpartner_id,bp2.bpartner_id as refbpartner_id,
 		a2.accounts_id as refaccounts_id,t.document_no2,t2.document_no2 as refdocument_no2,t.linedesc,ag2.accountgroup_name
 		FROM $tablebatch b  
-		INNER JOIN $tabletransaction t on b.batch_id=t.batch_id and t.branch_id = $organization_id
+		INNER JOIN $tabletransaction t on b.batch_id=t.batch_id $filterorg
 		INNER JOIN $tablebpartner bp on t.bpartner_id=bp.bpartner_id  
 		INNER JOIN $tableaccounts a on a.accounts_id=t.accounts_id 
-		INNER JOIN $tabletransaction t2 on t.reference_id=t2.trans_id and t2.branch_id = $organization_id
+		INNER JOIN $tabletransaction t2 on t.reference_id=t2.trans_id $filterorg2
 		INNER JOIN $tablebpartner bp2 on t2.bpartner_id=bp2.bpartner_id  
 		INNER JOIN $tableaccounts a2 on a2.accounts_id=t2.accounts_id
 		INNER JOIN $tableaccountgroup ag2 on a.accountgroup_id=ag2.accountgroup_id
@@ -287,10 +292,10 @@ if (isset($_POST["submit"]) ){
 		bp2.bpartner_name,bp.bpartner_name as refbpartner_name,bp2.bpartner_id,bp.bpartner_id as refbpartner_id,
 		a.accounts_id as refaccounts_id,t2.document_no2,t.document_no2 as refdocument_no2,t.linedesc,ag2.accountgroup_name
 		FROM $tablebatch b  
-		INNER JOIN $tabletransaction t on b.batch_id=t.batch_id and t.branch_id = $organization_id
+		INNER JOIN $tabletransaction t on b.batch_id=t.batch_id  $filterorg
 		INNER JOIN $tablebpartner bp on t.bpartner_id=bp.bpartner_id  
 		INNER JOIN $tableaccounts a on a.accounts_id=t.accounts_id 
-		INNER JOIN $tabletransaction t2 on t.reference_id=t2.trans_id and t2.branch_id = $organization_id
+		INNER JOIN $tabletransaction t2 on t.reference_id=t2.trans_id $filterorg2
 		INNER JOIN $tablebpartner bp2 on t2.bpartner_id=bp2.bpartner_id  
 		INNER JOIN $tableaccounts a2 on a2.accounts_id=t2.accounts_id
 		INNER JOIN $tableaccountgroup ag2 on a2.accountgroup_id=ag2.accountgroup_id

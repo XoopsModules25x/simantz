@@ -211,8 +211,7 @@ global $defcurrencycode;
 	<td class="head">Business Partner Account</td>
 	<td class="even" >$this->bpartneraccountsctrl</td>
 	<td class="head">Business Partner $mandatorysign</td>
-        <td class="even" ><div id='divbpartner'> $this->bpartnerctrl</div> 
-			<input name='bpartner_id' id='bpartner_id' type='hidden' value="$this->bpartner_id"></td>
+        <td class="even" ><select name="bpartner_id" id="bpartner_id" onchange='changeBPartner(this.value)'>$this->bpartnerctrl</select></td>
 	<!--<td class="head">Effected Account</td>
 	<td class="even" >$this->accountsctrla</td>-->
       </tr>
@@ -225,7 +224,7 @@ global $defcurrencycode;
       </tr>
   <tr>
 	<td class="head">Currency $mandatorysign</td>
-        <td class="even" >$this->currencyctrl <input type='button' name='btnRecalculate' onclick='calculatesummary()' value='Recalculate Total'>
+        <td class="even" ><select name="currency_id" id="currency_id">$this->currencyctrl</select> <input type='button' name='btnRecalculate' onclick='calculatesummary()' value='Recalculate Total'>
 	<td class="head">Exchange Rate</td>
 	<td class="even" ><input maxlength="30" size="20" name='exchangerate' value="$this->exchangerate">
 		Local Amount: $defcurrencycode<input maxlength="30" size="20" name='amt' value="$this->amt" readonly='readonly'></td>
@@ -723,7 +722,7 @@ echo <<< EOF
         <td class="even" ><SELECT name='documenttype'><option value='0'>Null</option>
 				<option value='1'>Debit Note</option><option value='2'>Credit Note</option></SELECT>
         <td class="head">Currency</td>
-	<td class="even">$this->currencyctrl</td>
+	<td class="even"><select name="currency_id">$this->currencyctrl</select></td>
 
 	</td>
       </tr> 
@@ -731,7 +730,7 @@ echo <<< EOF
 	<td class="head">Business Partner Account</td>
         <td class="even">$this->bpartneraccountsctrl</td>
 	<td class="head">Business Partner</td>
-        <td class="even">$this->bpartnerctrl</td>
+        <td class="even"><select name="bpartner_id">$this->bpartnerctrl</select></td>
         <!--<td class="head">Effected Account</td>
 	<td class="even">$this->accountsctrla</td>-->
 	</td>
@@ -889,11 +888,167 @@ EOF;
 	
 	}
 
+public function showJavascript(){
+
+echo <<< EOF
+<script type="text/javascript">
+
+	function saveRecord(){
+
+	if(validateDebitCreditNote())
+	document.forms['frmDebitCreditNote'].submit();
+
+	}
+
+	function autofocus(){
+	document.frmDebitCreditNote.document_date.focus();
+	document.frmDebitCreditNote.document_date.select();
+	}
 
 
-/*  public function getZommCtrl($controlname,$filename){
 
-  }
-*/
+	function calculatesummary(){
+		itemqty=parseFloat(document.getElementById("itemqty").value);
+
+		exchangerate=document.forms['frmDebitCreditNote'].exchangerate.value
+		var totaltonnage=0;
+		var totaloritonnage=0;
+		var amt=0;
+
+		for(i=0;i<itemqty;i++){
+
+			amt=amt+parseFloat(document.getElementById("lineamt"+i).value);
+		}
+		amt=amt.toFixed(2);
+		document.forms['frmDebitCreditNote'].originalamt.value=amt;
+		document.forms['frmDebitCreditNote'].amt.value=(amt* parseFloat(exchangerate)).toFixed(2);
+
+		}
+
+	function showHideDesc(i){
+		var descctrl=document.getElementById("linedescription"+i);
+		if(descctrl.style.display=="none")
+			descctrl.style.display="";
+		else
+			descctrl.style.display="none";
+
+	}
+
+	function gotoAction(action){
+	document.forms['frmDebitCreditNote'].action.value = action;
+	document.forms['frmDebitCreditNote'].submit();
+	}
+
+	function reloadBPartnerAccount(bpartneraccounts_id){
+	var arr_fld=new Array("action","bpartneraccounts_id");//name for POST
+	var arr_val=new Array("refreshbpartneraccounts",bpartneraccounts_id);//value for POST
+
+	getRequest(arr_fld,arr_val);
+	}
+
+	function changeBPartner(bpartner_id){
+	document.forms['frmDebitCreditNote'].bpartner_id.value=bpartner_id;
+	}
+	function validateDebitCreditNote(){
+		var action = document.forms['frmDebitCreditNote'].action.value;
+
+		if(action == "edit")
+		calculatesummary();
+
+		var date=document.forms['frmDebitCreditNote'].document_date.value;
+		var no=document.forms['frmDebitCreditNote'].document_no.value;
+		var documenttype=document.forms['frmDebitCreditNote'].documenttype.value;
+		var bpartner_id=document.forms['frmDebitCreditNote'].bpartner_id.value;
+		var exchangerate=document.forms['frmDebitCreditNote'].exchangerate.value;
+
+		if(confirm("Save record?")){
+		if(no =="" ||   date=="" || bpartner_id==0 || documenttype == 0){
+			alert('Please make sure Document No, Date, Type and supplier is fill with appropriate value before you save the record.');
+			return false;
+		}else{
+			if(!IsNumeric(exchangerate)){
+			alert("Exchange Rate is not numeric, please insert appropriate +ve value!");
+			return false;
+			}
+
+			if(action == "update"){
+			var i=0;
+			while(i< document.forms['frmDebitCreditNote'].elements.length){
+				var ctlname = document.forms['frmDebitCreditNote'].elements[i].name;
+				var data = document.forms['frmDebitCreditNote'].elements[i].value;
+
+				if(ctlname.substring(0,13)=="lineunitprice" || ctlname.substring(0,7)=="lineqty" || ctlname=="exchangerate" ){
+
+					if(!IsNumeric(data))
+						{
+							alert (ctlname + ":" + data + ":is not numeric, please insert appropriate +ve value!");
+							document.forms['frmDebitCreditNote'].elements[i].style.backgroundColor = "#FF0000";
+							document.forms['frmDebitCreditNote'].elements[i].focus();
+							return false;
+						}
+						else
+						document.forms['frmDebitCreditNote'].elements[i].style.backgroundColor = "#FFFFFF";
+
+
+				}
+
+				i++;
+
+			}
+			}
+		return true;
+		}
+
+		}
+		else
+			return false;
+	}
+
+	function refreshUnitPrice(currency_id){
+	//bpartner,species_id,girth
+	var arr_fld=new Array("action","currency_id");//name for POST
+	var arr_val=new Array("refreshunitprice",currency_id);//value for POST
+
+	getRequest(arr_fld,arr_val);
+	}
+
+	function reloadDocumentNo(id,documenttype){
+	var arr_fld=new Array("action","debitcreditnote_id","documenttype");//name for POST
+	var arr_val=new Array("getnewdocumentno",id,documenttype);//value for POST
+	if(documenttype !=0 && id <=0){
+        	 var data="action="+"getnewdocumentno"+
+                    "&debitcreditnote_id="+id+
+                    "&documenttype="+documenttype;
+
+            $.ajax({
+                 url:"debitcreditnote.php",type: "POST",data: data,cache: false,
+                     success: function (xml)
+                     {  
+                      jsonObj = eval( '(' + xml + ')');
+
+                                document.frmDebitCreditNote.debitcreditnote_prefix.value=jsonObj.prefix_doc;
+                        	document.frmDebitCreditNote.document_no.value= jsonObj.new_no;
+
+                     }
+                   });
+
+
+        }
+	else
+		document.forms['frmDebitCreditNote'].document_no.value="";
+	}
+
+	function calculateLine(i){
+			var amt=parseFloat(document.getElementById("lineunitprice"+i).value)*parseFloat(document.getElementById("lineqty"+i).value);
+			document.getElementById("lineamt"+i).value=amt.toFixed(2);
+	}
+
+
+</script>
+
+EOF;
+
+}
+
 } // end of ClassDebitCreditNote
 ?>

@@ -49,9 +49,8 @@ class Receipt
    * @access public
    */
   public function getInputForm( $type,  $receipt_id,$token  ) {
-      global $prefix_rcpt;
+      global $prefix_rcpt,$mandatorysign;
       
-		$mandatorysign="<b style='color:red'>*</b>";
 
     	$header=""; // parameter to display form header
 	$action="";
@@ -179,14 +178,14 @@ $originalamtctrl
       </tr>
       <tr>
         <td class="head">From Accounts</td>
-        <td class="even">$this->accountsfromctrl <div id='divbpartner'> $this->bpartnerctrl</div> 
+        <td class="even">$this->accountsfromctrl <select name="bpartner_id" id="bpartner_id"> $this->bpartnerctrl</select></div>
 			<input name='bpartner_id_bc' id='bpartner_id_bc' type='hidden' value="$this->bpartner_id"></td>
         <td class="head">Paid From $mandatorysign</td>
         <td class="even"><input name='paidfrom' value="$this->paidfrom" id='paidfrom'></td>
       </tr>
       <tr>
         <td class="head">Currency $mandatorysign</td>
-        <td class="even">$this->currencyctrl</td>
+        <td class="even"><select name="currency_id">$this->currencyctrl</select></td>
         <td class="head">Exchange Rate $mandatorysign</td>
         <td class="even"><input name='exchangerate' value="$this->exchangerate" onchange='amt.value=parseFloat(this.value*originalamt.value).toFixed(2)' size="10">
 	Local Amount : 
@@ -625,11 +624,11 @@ echo <<< EOF
       <td class='head'>Paid From(Ali%, %Ahmad%, Ali%Ahmad)</td>
       <td class='even'><input name='paidfrom' value="$this->paidfrom"></td>
       <td class='head'>Company</td>
-      <td class='even'>$this->bpartnerctrl</td>
+      <td class='even'><select name='bpartner_id' id='bpartner_id'>$this->bpartnerctrl</select></td>
     </tr>
     <tr>
       <td class='head'>Currency</td>
-      <td class='even'>$this->currencyctrl</td>
+      <td class='even'><select id="currency_id" name="currency_id">$this->currencyctrl</select></td>
       <td class='head'>Received By (Ali%, %Ahmad%, Ali%Ahmad)</td>
       <td class='even'><input name='receivedby' value="$this->receivedby"></td>
     </tr>
@@ -774,5 +773,215 @@ public function genWhereString(){
 	}
 
 
+public function showJavascript(){
+
+    echo <<< EOF
+<script type="text/javascript">
+
+	function printPDF(){
+		var i = 0;
+		var checkedbtn = 0;
+		while(i< document.forms['frmSearchList'].elements.length){
+		var ctlname = document.forms['frmSearchList'].elements[i].name;
+		var data = document.forms['frmSearchList'].elements[i].checked;
+
+
+
+		if(ctlname.substring(0,8)=="isselect"){
+
+			if(data == true){
+			//var salesinvoice_id = document.forms['frmSearchList'].elements[i+1].value;
+			//window.open("viewsalesinvoice.php?salesinvoice_id="+salesinvoice_id);
+			checkedbtn = 1;
+			}
+
+		}
+		i++;
+		}
+
+		if(checkedbtn == 0){
+		alert("Please Select Invoice.");
+		return false;
+		}else{
+		document.forms['frmSearchList'].submit();
+		}
+	}
+
+	function selectAll(val){
+
+		var i = 0;
+		while(i< document.forms['frmSearchList'].elements.length){
+		var ctlname = document.forms['frmSearchList'].elements[i].name;
+
+		if(ctlname.substring(0,8)=="isselect"){
+
+		document.forms['frmSearchList'].elements[i].checked = val;
+
+		}
+		i++;
+		}
+	}
+
+	function saveRecord(){
+
+	if(validateReceipt())
+	document.forms['frmReceipt'].submit();
+
+	}
+
+	function calculateSummary(){
+	var exchangerate = document.forms['frmReceipt'].exchangerate.value;
+
+	var i=0;
+	var total_amt = 0;
+	while(i< document.forms['frmReceipt'].elements.length){
+		var ctlname = document.forms['frmReceipt'].elements[i].name;
+		var data = document.forms['frmReceipt'].elements[i].value;
+
+		if(ctlname.substring(0,7)=="lineamt"){
+		total_amt = parseFloat(total_amt) + parseFloat(data);
+
+		}
+
+		i++;
+
+	}
+
+	document.forms['frmReceipt'].originalamt.value = parseFloat(total_amt).toFixed(2);
+	document.forms['frmReceipt'].amt.value = parseFloat(parseFloat(exchangerate)*parseFloat(total_amt)).toFixed(2);
+	}
+
+	function validateAmount(){
+
+	var i=0;
+	while(i< document.forms['frmReceipt'].elements.length){
+		var ctlname = document.forms['frmReceipt'].elements[i].name;
+		var data = document.forms['frmReceipt'].elements[i].value;
+
+		if(ctlname.substring(0,7)=="lineamt"){
+
+			if(!IsNumeric(data))
+				{
+					alert (ctlname + ":" + data + ":is not numeric, please insert appropriate +ve value!");
+					document.forms['frmReceipt'].elements[i].style.backgroundColor = "#FF0000";
+					document.forms['frmReceipt'].elements[i].focus();
+					return false;
+				}
+				else
+				document.forms['frmReceipt'].elements[i].style.backgroundColor = "#FFFFFF";
+
+
+		}
+
+		i++;
+
+	}
+	return true;
+	}
+
+	function showHideDesc(i){
+	var descctrl=document.getElementById("linedescription"+i);
+	if(descctrl.style.display=="none")
+		descctrl.style.display="";
+	else
+		descctrl.style.display="none";
+
+	}
+	function autofocus(){
+	document.frmReceipt.receipt_date.focus();
+	document.frmReceipt.receipt_date.select();
+	}
+
+
+	function validateReceipt(){
+
+	/*	var documentno=document.forms['frmReceipt'].receipt_no.value;
+		var paidfrom=document.forms['frmReceipt'].paidfrom.value;
+		var exchangerate=document.forms['frmReceipt'].exchangerate.value;
+		var divbpartner =document.getElementById("divbpartner");
+		var bpartnerctrl = document.getElementById("bpartner_id2") ? document.getElementById("bpartner_id2") : false;
+
+		if(bpartnerctrl==false)
+			alert('no bpartner');
+		else
+			alert('have bpartner');
+*/
+		var documentno=document.forms['frmReceipt'].receipt_no.value;
+		var paidfrom=document.forms['frmReceipt'].paidfrom.value;
+		var exchangerate=document.forms['frmReceipt'].exchangerate.value;
+		var accountsfrom=document.forms['frmReceipt'].accountsfrom_id.value;
+		//var bpartner_id2=document.forms['frmReceipt'].bpartner_id2.value;
+		//var accountsto=document.forms['frmReceipt'].accountsto_id.value;
+		var originalamt=document.forms['frmReceipt'].originalamt.value;
+
+		if(confirm("Save record?")){
+
+		if(documentno=="" || accountsfrom==0){
+		alert("Please make sure Receipt No, From Accounts is filled in.");
+		return false;
+		}else{
+
+			if(!IsNumeric(exchangerate) || !IsNumeric(originalamt)){
+			alert("Please make sure Exchange Rate and Amount filled in with numeric.");
+			return false;
+			}else{
+			var receipt_date=document.forms['frmReceipt'].receipt_date.value;
+			if(!isDate(receipt_date)){
+			return false;
+			}else{
+
+			if(validateAmount())
+			return true;
+			else
+			return false;
+			}
+			}
+		}
+
+		}else
+			return false;
+	}
+
+	function reloadAccountFrom(accounts_id){
+
+	var arr_fld=new Array("action","accounts_id");//name for POST
+	var arr_val=new Array("refreshaccountsfrom",accounts_id);//value for POST
+
+	getRequest(arr_fld,arr_val);
+
+	}
+	function reloadAccountTo(accounts_id,line){
+
+	var arr_fld=new Array("action","accounts_id","line");//name for POST
+	var arr_val=new Array("refreshaccountsto",accounts_id,line);//value for POST
+
+	getRequest(arr_fld,arr_val);
+
+	}
+	function refreshCurrency(currency_id){
+
+	var arr_fld=new Array("action","currency_id");//name for POST
+	var arr_val=new Array("refreshcurrency",currency_id);//value for POST
+
+	getRequest(arr_fld,arr_val);
+
+
+	}
+
+	function changePaidFrom(ctrl){
+
+		try {
+		var selected_text =ctrl.options[ctrl.selectedIndex].text;
+		document.forms['frmReceipt'].paidfrom.value=selected_text;
+		document.forms['frmReceipt'].bpartner_id.value=ctrl.value;
+		}catch (error) {
+		document.forms['frmReceipt'].paidfrom.value="";
+		}
+
+	}
+</script>
+
+EOF;
+}
 } // end of ClassReceipt
 ?>

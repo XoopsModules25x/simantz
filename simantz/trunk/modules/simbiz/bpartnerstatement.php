@@ -168,7 +168,7 @@ idShowBalance
 			<td class='head'>Period To</td><td class='even'><select name="periodto_id">$periodtoctrl</select></td>
 		</tr>
 		<tr  id='tds'>
-			<td class='head'>Business Partner</td><td class='even'  colspan='3'>$bpartnerctrl
+			<td class='head'>Business Partner</td><td class='even'  colspan='3'><select id='bpartner_id'name='bpartner_id'>$bpartnerctrl</select>
 			 <input type='hidden' name="checkbox_array[0]" value='on'>
 </td>
 		</tr>

@@ -51,7 +51,7 @@
    $headerorgseparator=2; //Space below organization info
 
 
-   $reporttitle = "Income Statement";
+   $reporttitle = "Balance Sheet";
    $reporttitlefont="Times";
    $reporttitlefontsize="10";
    $reporttitlefontheight="5";

@@ -1,12 +1,11 @@
 <?php
 include "system.php";
-include "menu.php";
-include_once 'class/Log.php';
-include_once 'class/Receipt.php';
-include_once 'class/ReceiptLine.php';
-include_once 'class/SelectCtrl.php';
+
+include_once '../simbiz/class/Receipt.php';
+include_once '../simbiz/class/ReceiptLine.php';
 include_once "../simantz/class/datepicker/class.datepicker.php";
-include_once '../system/class/Currency.php';
+include_once '../simantz/class/Currency.inc.php';
+
 $cur = new Currency();
 //include_once "../system/class/Period.php";
 $dp=new datepicker($url);
@@ -14,226 +13,14 @@ $dp->dateFormat='Y-m-d';
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 
-$log = new Log();
 $o = new Receipt();
 $pl = new ReceiptLine();
 $s = new XoopsSecurity();
-$ctrl= new SelectCtrl();
 $orgctrl="";
 
 
 $action="";
-//marhan add here --> ajax
-echo "<iframe src='receipt.php' name='nameValidate' id='idValidate' style='display:none' ></iframe>";
-echo "<div id='simit'><form name='frmValidate' target='nameValidate' method='POST'></form></div>";
-////////////////////
-echo <<< EOF
-<script type="text/javascript">
 
-	function printPDF(){
-		var i = 0;
-		var checkedbtn = 0;
-		while(i< document.forms['frmSearchList'].elements.length){
-		var ctlname = document.forms['frmSearchList'].elements[i].name; 
-		var data = document.forms['frmSearchList'].elements[i].checked;
-		
-
-		
-		if(ctlname.substring(0,8)=="isselect"){
-		
-			if(data == true){
-			//var salesinvoice_id = document.forms['frmSearchList'].elements[i+1].value;	
-			//window.open("viewsalesinvoice.php?salesinvoice_id="+salesinvoice_id);
-			checkedbtn = 1;
-			}
-		
-		}
-		i++;
-		}
-
-		if(checkedbtn == 0){
-		alert("Please Select Invoice.");
-		return false;
-		}else{
-		document.forms['frmSearchList'].submit();
-		}
-	}
-
-	function selectAll(val){
-		
-		var i = 0;
-		while(i< document.forms['frmSearchList'].elements.length){
-		var ctlname = document.forms['frmSearchList'].elements[i].name; 
-	
-		if(ctlname.substring(0,8)=="isselect"){
-		
-		document.forms['frmSearchList'].elements[i].checked = val;
-		
-		}
-		i++;
-		}
-	}
-
-	function saveRecord(){
-
-	if(validateReceipt())
-	document.forms['frmReceipt'].submit();
-
-	}
-
-	function calculateSummary(){
-	var exchangerate = document.forms['frmReceipt'].exchangerate.value;
-
-	var i=0;
-	var total_amt = 0;
-	while(i< document.forms['frmReceipt'].elements.length){
-		var ctlname = document.forms['frmReceipt'].elements[i].name; 
-		var data = document.forms['frmReceipt'].elements[i].value;
-	
-		if(ctlname.substring(0,7)=="lineamt"){
-		total_amt = parseFloat(total_amt) + parseFloat(data);
-				
-		}
-		
-		i++;
-		
-	}
-	
-	document.forms['frmReceipt'].originalamt.value = parseFloat(total_amt).toFixed(2);
-	document.forms['frmReceipt'].amt.value = parseFloat(parseFloat(exchangerate)*parseFloat(total_amt)).toFixed(2);
-	}
-
-	function validateAmount(){
-
-	var i=0;
-	while(i< document.forms['frmReceipt'].elements.length){
-		var ctlname = document.forms['frmReceipt'].elements[i].name; 
-		var data = document.forms['frmReceipt'].elements[i].value;
-	
-		if(ctlname.substring(0,7)=="lineamt"){
-		
-			if(!IsNumeric(data))
-				{
-					alert (ctlname + ":" + data + ":is not numeric, please insert appropriate +ve value!");
-					document.forms['frmReceipt'].elements[i].style.backgroundColor = "#FF0000";
-					document.forms['frmReceipt'].elements[i].focus();
-					return false;
-				}	
-				else
-				document.forms['frmReceipt'].elements[i].style.backgroundColor = "#FFFFFF";
-				
-				
-		}
-		
-		i++;
-		
-	}
-	return true;
-	}
-
-	function showHideDesc(i){
-	var descctrl=document.getElementById("linedescription"+i);
-	if(descctrl.style.display=="none")
-		descctrl.style.display="";
-	else
-		descctrl.style.display="none";
-
-	}
-	function autofocus(){
-	document.frmReceipt.receipt_date.focus();
-	document.frmReceipt.receipt_date.select();
-	}
-
-
-	function validateReceipt(){
-		
-	/*	var documentno=document.forms['frmReceipt'].receipt_no.value;
-		var paidfrom=document.forms['frmReceipt'].paidfrom.value;
-		var exchangerate=document.forms['frmReceipt'].exchangerate.value;
-		var divbpartner =document.getElementById("divbpartner");
-		var bpartnerctrl = document.getElementById("bpartner_id2") ? document.getElementById("bpartner_id2") : false;
-		
-		if(bpartnerctrl==false)
-			alert('no bpartner');
-		else
-			alert('have bpartner');
-*/
-		var documentno=document.forms['frmReceipt'].receipt_no.value;
-		var paidfrom=document.forms['frmReceipt'].paidfrom.value;
-		var exchangerate=document.forms['frmReceipt'].exchangerate.value;
-		var accountsfrom=document.forms['frmReceipt'].accountsfrom_id.value;
-		//var bpartner_id2=document.forms['frmReceipt'].bpartner_id2.value;
-		//var accountsto=document.forms['frmReceipt'].accountsto_id.value;
-		var originalamt=document.forms['frmReceipt'].originalamt.value;
-	
-		if(confirm("Save record?")){
-
-		if(documentno=="" || accountsfrom==0){
-		alert("Please make sure Receipt No, From Accounts is filled in.");
-		return false;
-		}else{
-			
-			if(!IsNumeric(exchangerate) || !IsNumeric(originalamt)){
-			alert("Please make sure Exchange Rate and Amount filled in with numeric.");
-			return false;
-			}else{
-			var receipt_date=document.forms['frmReceipt'].receipt_date.value;
-			if(!isDate(receipt_date)){
-			return false;
-			}else{
-
-			if(validateAmount())
-			return true;
-			else
-			return false;
-			}
-			}
-		}
-
-		}else
-			return false;
-	}
-
-	function reloadAccountFrom(accounts_id){
-
-	var arr_fld=new Array("action","accounts_id");//name for POST
-	var arr_val=new Array("refreshaccountsfrom",accounts_id);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-
-	}
-	function reloadAccountTo(accounts_id,line){
-
-	var arr_fld=new Array("action","accounts_id","line");//name for POST
-	var arr_val=new Array("refreshaccountsto",accounts_id,line);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-
-	}
-	function refreshCurrency(currency_id){
-
-	var arr_fld=new Array("action","currency_id");//name for POST
-	var arr_val=new Array("refreshcurrency",currency_id);//value for POST
-
-	getRequest(arr_fld,arr_val);
-
-
-	}
-
-	function changePaidFrom(ctrl){
-		
-		try {
-		var selected_text =ctrl.options[ctrl.selectedIndex].text;
-		document.forms['frmReceipt'].paidfrom.value=selected_text;
-		document.forms['frmReceipt'].bpartner_id.value=ctrl.value;
-		}catch (error) {
-		document.forms['frmReceipt'].paidfrom.value="";
-		}
-		
-	}
-</script>
-
-EOF;
 
 $o->receipt_id=0;
 if (isset($_POST['action'])){
@@ -426,19 +213,23 @@ break;
 	//when user request to edit particular organization
   case "edit" :
 	if($o->fetchReceipt($o->receipt_id)){
+                include "menu.php";
+   $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
+    $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
+      $o->showJavascript();
 		//create a new token for editing a form
 		$token=$s->createToken($tokenlife,"CREATE_ACG"); 
 		$o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
 
-		include_once "class/Accounts.php";
+		include_once "../simbiz/class/Accounts.php";
 		$acc= new Accounts();
 		$acc->fetchAccounts($o->accountsfrom_id);
 
 		if($acc->account_type==2)
-		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
+		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (debtoraccounts_id = $o->accountsfrom_id and isdebtor=1) ",'N',"bpartner_id");
 		elseif( $acc->account_type==3)
-		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
+		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
 		
 
@@ -455,7 +246,7 @@ break;
 
 
 
-		$o->accountsfromctrl=$ctrl->getSelectAccounts($o->accountsfrom_id,'Y',"onchange='reloadAccountFrom(this.value)' ",
+		$o->accountsfromctrl=$simbizctrl->getSelectAccounts($o->accountsfrom_id,'Y',"onchange='reloadAccountFrom(this.value)' ",
 			"accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
 
 		//$o->accountstoctrl=$ctrl->getSelectAccounts($o->accountsto_id,'Y',"onchange='reloadAccountTo(this.value)'",
@@ -675,16 +466,19 @@ echo <<< EOF
 EOF;
   break;
   case "showSearchForm":
+                include "menu.php";
 
 	$o->iscomplete = "";
 
-	$o->accountsfromctrl=$ctrl->getSelectAccounts(0,'Y',"","accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
+	$o->accountsfromctrl=$simbizctrl->getSelectAccounts(0,'Y',"","accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
 	//$o->accountstoctrl=$ctrl->getSelectAccounts(0,'Y',"","accountsto_id","and (account_type=4 or account_type=7)");
 	$o->currencyctrl=$ctrl->getSelectCurrency(0,'Y');
-	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y');
+	$o->bpartnerctrl=$simbizctrl->getSelectBPartner(0,'Y');
 	$o->showSearchForm();
   break;
   case "search":
+                      include "menu.php";
+
 	$o->datefrom=$_POST['datefrom'];
 	$o->dateto=$_POST['dateto'];
 	$o->receiptfrom_no=$_POST['receiptfrom_no'];
@@ -694,23 +488,28 @@ EOF;
 	if($o->currency_id == "")
 	$o->currency_id = 0;
 
-	$o->accountsfromctrl=$ctrl->getSelectAccounts($o->accountsfrom_id,'Y',"","accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
+	$o->accountsfromctrl=$simbizctrl->getSelectAccounts($o->accountsfrom_id,'Y',"","accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
 	//$o->accountstoctrl=$ctrl->getSelectAccounts($o->accountsto_id,'Y',"","accountsto_id","and (account_type=4 or account_type=7)");
 	$o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'Y');
-	$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y');
+	$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'Y');
 	$o->showSearchForm();
 	$wherestr=$o->genWhereString();
 	$o->showReceiptTable("WHERE f.receipt_id>0 and f.organization_id=$defaultorganization_id $wherestr","ORDER BY f.receipt_no");	
 
   break;
   default :
+      
+     include "menu.php";
+   $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
+    $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
+      $o->showJavascript();
 	$token=$s->createToken($tokenlife,"CREATE_ACG");
 	$o->orgctrl=$ctrl->selectionOrg($o->createdby,$defaultorganization_id,'N',"",'Y');
 	//$o->accounclassctrl=$ctrl->getAccClass(0,'N');
-	$o->accountsfromctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountFrom(this.value)'","accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
+	$o->accountsfromctrl=$simbizctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountFrom(this.value)'","accountsfrom_id","and (account_type=1 OR account_type=2 OR account_type=3)");
 	//$o->accountstoctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountTo(this.value)'","accountsto_id","and (account_type=4 or account_type=7)");
 	$o->currencyctrl=$ctrl->getSelectCurrency($defaultcurrency_id,'N',"currency_id","","onchange='refreshCurrency(this.value)'");
-//	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y',"style='display:none' onchange='changePaidFrom(this.selectedIndex)'");
+	$o->bpartnerctrl="<option value='0'>Null</option>";
 	//echo "<input name='bpartner_id' value='0' type='hidden'>";
 	$o->receivedby=$xoopsUser->getVar("name");
 	$o->getInputForm("new",0,$token);

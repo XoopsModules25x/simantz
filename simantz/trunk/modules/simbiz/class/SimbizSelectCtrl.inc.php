@@ -214,14 +214,15 @@ $selectctl="<select name='$ctrlname' id='$ctrlid' $onchangefunction>";
 
 public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlname="bpartner_id",$wherestr="",$showLastBalance='N',
 		$ctrlid="bpartner_id",$width="") {
+    
 	global $tablebpartner,$defaultorganization_id;
-	$sql="SELECT bpartner_id,bpartner_name,currentbalance
+	 $sql="SELECT bpartner_id,bpartner_name,currentbalance
 		from $tablebpartner where (bpartner_id=$id
 		OR bpartner_id>0) and isactive=1 AND organization_id=$defaultorganization_id
 		$wherestr
-		order by defaultlevel,bpartner_name ;";
+		order by seqno,bpartner_name ;";
 	$this->log->showLog(4,"getSelectBPartner With SQL: $sql");
-	$selectctl="<SELECT name='$ctrlname' $onchangefunction id='$ctrlid' $width onmouseover='tooltip(this)'>";
+	//$selectctl="<SELECT name='$ctrlname' $onchangefunction id='$ctrlid' $width onmouseover='tooltip(this)'>";
 	if ($showNull=='Y')
 		$selectctl=$selectctl . "<OPTION value='0' SELECTED='SELECTED' >Null </OPTION>";
 
@@ -243,7 +244,7 @@ public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlna
 
 	}
 
-	$selectctl=$selectctl . "</SELECT>";
+	//$selectctl=$selectctl . "</SELECT>";
   	//$selectctl .= getZommCtrl($ctrlname,'../../system/bpartner.php');
 
 	return $selectctl;

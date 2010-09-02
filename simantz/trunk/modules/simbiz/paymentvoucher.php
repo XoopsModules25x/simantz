@@ -1,215 +1,29 @@
 <?php
 include "system.php";
-include "menu.php";
-include_once 'class/Log.php';
-include_once 'class/PaymentVoucher.php';
-include_once 'class/PaymentVoucherLine.php';
-include_once 'class/SelectCtrl.php';
+
+
+include_once '../simbiz/class/PaymentVoucher.php';
+include_once '../simbiz/class/PaymentVoucherLine.php';
 include_once "../simantz/class/datepicker/class.datepicker.php";
-include_once '../system/class/Currency.php';
+include_once '../simantz/class/Currency.inc.php';
+
 $cur = new Currency();
+
 //include_once "../system/class/Period.php";
+
 $dp=new datepicker($url);
 $dp->dateFormat='Y-m-d';
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 
-$log = new Log();
 $o = new PaymentVoucher();
 $pl = new PaymentVoucherLine();
 $s = new XoopsSecurity();
-$ctrl= new SelectCtrl();
 $orgctrl="";
 
 
 $action="";
-//marhan add here --> ajax
-echo "<iframe src='paymentvoucher.php' name='nameValidate' id='idValidate' style='display:none' ></iframe>";
-echo "<div id='simit'><form name='frmValidate' target='nameValidate' method='POST'></form></div>";
-////////////////////
-echo <<< EOF
-<script type="text/javascript">
 
-	function getTypeNo(paymentvoucher_type){
-
-	var arr_fld=new Array("action","paymentvoucher_type");//name for POST
-	var arr_val=new Array("gettypeno",paymentvoucher_type);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-	}
-
-	function saveRecord(){
-
-	if(validatePaymentVoucher())
-	document.forms['frmPaymentVoucher'].submit();
-
-	}
-
-	function calculateSummary(){
-	var exchangerate = document.forms['frmPaymentVoucher'].exchangerate.value;
-
-	var i=0;
-	var total_amt = 0;
-	while(i< document.forms['frmPaymentVoucher'].elements.length){
-		var ctlname = document.forms['frmPaymentVoucher'].elements[i].name; 
-		var data = document.forms['frmPaymentVoucher'].elements[i].value;
-	
-		if(ctlname.substring(0,7)=="lineamt"){
-		total_amt = parseFloat(total_amt) + parseFloat(data);
-				
-		}
-		
-		i++;
-		
-	}
-	
-	document.forms['frmPaymentVoucher'].originalamt.value = parseFloat(total_amt).toFixed(2);
-	document.forms['frmPaymentVoucher'].amt.value = parseFloat(parseFloat(exchangerate)*parseFloat(total_amt)).toFixed(2);
-	}
-
-	function validateAmount(){
-
-	var i=0;
-	while(i< document.forms['frmPaymentVoucher'].elements.length){
-		var ctlname = document.forms['frmPaymentVoucher'].elements[i].name; 
-		var data = document.forms['frmPaymentVoucher'].elements[i].value;
-	
-		if(ctlname.substring(0,7)=="lineamt"){
-		
-			if(!IsNumeric(data))
-				{
-					alert (ctlname + ":" + data + ":is not numeric, please insert appropriate +ve value!");
-					document.forms['frmPaymentVoucher'].elements[i].style.backgroundColor = "#FF0000";
-					document.forms['frmPaymentVoucher'].elements[i].focus();
-					return false;
-				}	
-				else
-				document.forms['frmPaymentVoucher'].elements[i].style.backgroundColor = "#FFFFFF";
-				
-				
-		}
-		
-		i++;
-		
-	}
-	return true;
-	}
-
-	function showHideDesc(i){
-	var descctrl=document.getElementById("linedescription"+i);
-	if(descctrl.style.display=="none")
-		descctrl.style.display="";
-	else
-		descctrl.style.display="none";
-
-	}
-	function autofocus(){
-	document.frmPaymentVoucher.paymentvoucher_date.focus();
-	document.frmPaymentVoucher.paymentvoucher_date.select();
-	}
-
-
-	function validatePaymentVoucher(){
-		
-	/*	var documentno=document.forms['frmPaymentVoucher'].paymentvoucher_no.value;
-		var paidto=document.forms['frmPaymentVoucher'].paidto.value;
-		var exchangerate=document.forms['frmPaymentVoucher'].exchangerate.value;
-		var divbpartner =document.getElementById("divbpartner");
-		var bpartnerctrl = document.getElementById("bpartner_id2") ? document.getElementById("bpartner_id2") : false;
-		
-		if(bpartnerctrl==false)
-			alert('no bpartner');
-		else
-			alert('have bpartner');
-*/
-		var documentno=document.forms['frmPaymentVoucher'].paymentvoucher_no.value;
-		var paidto=document.forms['frmPaymentVoucher'].paidto.value;
-		var exchangerate=document.forms['frmPaymentVoucher'].exchangerate.value;
-		var accountsfrom=document.forms['frmPaymentVoucher'].accountsfrom_id.value;
-		//var bpartner_id2=document.forms['frmPaymentVoucher'].bpartner_id2.value;
-		//var accountsto=document.forms['frmPaymentVoucher'].accountsto_id.value;
-		var originalamt=document.forms['frmPaymentVoucher'].originalamt.value;
-	
-		if(confirm("Save record?")){
-
-		if(documentno=="" || accountsfrom==0){
-		alert("Please make sure PaymentVoucher No, From Accounts is filled in.");
-		return false;
-		}else{
-			
-			if(!IsNumeric(exchangerate) || !IsNumeric(originalamt)){
-			alert("Please make sure Exchange Rate and Amount filled in with numeric.");
-			return false;
-			}else{
-			var paymentvoucher_date=document.forms['frmPaymentVoucher'].paymentvoucher_date.value;
-			if(!isDate(paymentvoucher_date)){
-			return false;
-			}else{
-
-			if(validateAmount())
-			return true;
-			else
-			return false;
-			}
-			}
-		}
-
-		}else
-			return false;
-	}
-
-	function reloadAccountFrom(accounts_id){
-
-	var arr_fld=new Array("action","accounts_id");//name for POST
-	var arr_val=new Array("refreshaccountsfrom",accounts_id);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-
-	}
-	function reloadAccountTo(accounts_id,line){
-
-	var arr_fld=new Array("action","accounts_id","line");//name for POST
-	var arr_val=new Array("refreshaccountsto",accounts_id,line);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-
-	}
-	function refreshCurrency(currency_id){
-
-	var arr_fld=new Array("action","currency_id");//name for POST
-	var arr_val=new Array("refreshcurrency",currency_id);//value for POST
-
-	getRequest(arr_fld,arr_val);
-
-
-	}
-
-	function changePaidFrom(ctrl){
-		
-		try {
-		var selected_text =ctrl.options[ctrl.selectedIndex].text;
-		document.forms['frmPaymentVoucher'].paidto.value=selected_text;
-		document.forms['frmPaymentVoucher'].bpartner_id.value=ctrl.value;
-		}catch (error) {
-		document.forms['frmPaymentVoucher'].paidto.value="";
-		}
-		
-	}
-
-	function changePaidTo(ctrl){
-		try {
-		var selected_text =ctrl.options[ctrl.selectedIndex].text;
-		document.forms['frmPaymentVoucher'].paidto.value=selected_text;
-		//document.forms['frmPaymentVoucher'].bpartner_id.value=ctrl.value;
-		}catch (error) {
-		document.forms['frmPaymentVoucher'].paidto.value="";
-		}
-
-		
-	}
-</script>
-
-EOF;
 
 $o->paymentvoucher_id=0;
 if (isset($_POST['action'])){
@@ -404,19 +218,24 @@ break;
 	//when user request to edit particular organization
   case "edit" :
 	if($o->fetchPaymentVoucher($o->paymentvoucher_id)){
+                  include "menu.php";
+   $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
+    $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
+      $o->showJavascript();
 		//create a new token for editing a form
 		$token=$s->createToken($tokenlife,"CREATE_ACG"); 
 		$o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
-
+      
 		include_once "class/Accounts.php";
+          
 		$acc= new Accounts();
 		$acc->fetchAccounts($o->accountsfrom_id);
 
 		if($acc->account_type==2)
-		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
+		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (debtoraccounts_id = $o->accountsfrom_id and isdebtor=1) ",'N',"bpartner_id");
 		elseif( $acc->account_type==3)
-		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
+		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
 		
 
@@ -433,7 +252,7 @@ break;
 
 
 
-		$o->accountsfromctrl=$ctrl->getSelectAccounts($o->accountsfrom_id,'Y',"onchange='reloadAccountFrom(this.value)' ",
+		$o->accountsfromctrl=$simbizctrl->getSelectAccounts($o->accountsfrom_id,'Y',"onchange='reloadAccountFrom(this.value)' ",
 			"accountsfrom_id","");
 
 		//$o->accountstoctrl=$ctrl->getSelectAccounts($o->accountsto_id,'Y',"onchange='reloadAccountTo(this.value)'",
@@ -443,6 +262,7 @@ break;
 		include_once "class/Accounts.php";
 		$acc= new Accounts();
 		$acc->fetchAccounts($o->bpartneraccounts_id);
+
 		$o->paymentvoucherlinectrl=$pl->showPaymentVoucherLine($o->paymentvoucher_id,'N');
 
 		$o->paymentvoucherlinectrl=$o->paymentvoucherlinectrl.
@@ -462,7 +282,7 @@ break;
 break;
 //when user press save for change existing organization data
   case "update" :
-	if ($s->check(true,$token,"CREATE_ACG")){
+	//if ($s->check(true,$token,"CREATE_ACG")){
 		$o->updatedby=$xoopsUser->getVar('uid'); //get current uid
 	
 		$pl->updatePaymentVoucherLine();
@@ -532,9 +352,9 @@ break;
 			redirect_header("paymentvoucher.php?action=edit&paymentvoucher_id=$o->paymentvoucher_id",$pausetime,"<b style='color:red'>Warning! Can't save the data, please make sure all value is insert properly.</b>");
 
 
-	}
-	else{
-		redirect_header("paymentvoucher.php?action=edit&paymentvoucher_id=$o->paymentvoucher_id",$pausetime,"Warning! Can't save the data, due to token expired.");			}
+	//}
+	//else{
+	//	redirect_header("paymentvoucher.php?action=edit&paymentvoucher_id=$o->paymentvoucher_id",$pausetime,"Warning! Can't save the data, due to token expired.");			}
   break;
   case "delete" :
 	if ($s->check(true,$token,"CREATE_ACG")){
@@ -730,14 +550,16 @@ EOF;
   break;
 
   case "showSearchForm":
+      include "menu.php";
 	$o->iscomplete="";
-	$o->accountsfromctrl=$ctrl->getSelectAccounts(0,'Y',"","accountsfrom_id","");
+	$o->accountsfromctrl=$simbizctrl->getSelectAccounts(0,'Y',"","accountsfrom_id","");
 	//$o->accountstoctrl=$ctrl->getSelectAccounts(0,'Y',"","accountsto_id","");
 	$o->currencyctrl=$ctrl->getSelectCurrency(0,'Y');
-	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y');
+//	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y');
 	$o->showSearchForm();
   break;
   case "search":
+      include "menu.php";
 	$o->datefrom=$_POST['datefrom'];
 	$o->dateto=$_POST['dateto'];
 	$o->paymentvoucherfrom_no=$_POST['paymentvoucherfrom_no'];
@@ -747,27 +569,45 @@ EOF;
 	if($o->currency_id == "")
 	$o->currency_id = 0;
 
-	$o->accountsfromctrl=$ctrl->getSelectAccounts($o->accountsfrom_id,'Y',"","accountsfrom_id","");
+	$o->accountsfromctrl=$simbizctrl->getSelectAccounts($o->accountsfrom_id,'Y',"","accountsfrom_id","");
 	//$o->accountstoctrl=$ctrl->getSelectAccounts($o->accountsto_id,'Y',"","accountsto_id","");
 	$o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'Y');
-	$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y');
+	//$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y');
 	$o->showSearchForm();
 	$wherestr=$o->genWhereString();
 	$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id $wherestr","ORDER BY f.paymentvoucher_no");	
 
   break;
+  case "getaccountinfo":
+      include "../simantz/class/SelectCtrl.inc.php";
+      $ctrl=new SelectCtrl();
+      
+      include "../simbiz/class/SimbizSelectCtrl.inc.php";
+      $simbizctrl=new SimbizSelectCtrl();
+      
+     $accounts_id=$_REQUEST['accounts_id'];
+  
+      echo $simbizctrl->getSelectBPartner(0,$showNull='N',"","bpartner_id"," and (creditoraccounts_id =$accounts_id or debtoraccounts_id=$accounts_id)");
+      die;
+      break;
+
   default :
 //and (account_type=4 or account_type=7)
+      include "menu.php";
+   $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
+    $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
+      $o->showJavascript();
 	$token=$s->createToken($tokenlife,"CREATE_ACG");
 	$o->orgctrl=$ctrl->selectionOrg($o->createdby,$defaultorganization_id,'N',"",'Y');
 	//$o->accounclassctrl=$ctrl->getAccClass(0,'N');
 //	$o->accountsfromctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountFrom(this.value)'","accountsfrom_id","");
-	$o->accountsfromctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountFrom(this.value)'","accountsfrom_id","");
+	$o->accountsfromctrl=$simbizctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountFrom(this.value)'","accountsfrom_id","");
 	//$o->accountstoctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadAccountTo(this.value)'","accountsto_id","");
 	$o->currencyctrl=$ctrl->getSelectCurrency($defaultcurrency_id,'N',"currency_id","","onchange='refreshCurrency(this.value)'");
 //	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y',"style='display:none' onchange='changePaidFrom(this.selectedIndex)'");
 	//echo "<input name='bpartner_id' value='0' type='hidden'>";
 	$o->preparedby=$xoopsUser->getVar("name");
+        
 	$o->getInputForm("new",0,$token);
 	//$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id","ORDER BY f.paymentvoucher_no limit 0,30");
        	$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id and f.iscomplete=0","ORDER BY f.paymentvoucher_no");

@@ -1,9 +1,9 @@
 <?php
 	include "system.php";
-  
+
 	$action=$_GET['action'];
 	if(!isset($action) || $action=='create'){
-	include "class/Accounts.php";
+	include "../simbiz/class/Accounts.php";
 
 	include "../simantz/class/pchart/pChart/pData.class";
 	include "../simantz/class/pchart/pChart/pChart.class";
@@ -28,7 +28,7 @@
 	//$period1=$period->getPeriodID($year,$month);
 	eval("\$period".(5-$i)."=".$period->getPeriodID($year,$month).";");
 	eval("\$periodname".(5-$i)."=\$year.'-'.\$month;");
-	
+
 	
 	}
 

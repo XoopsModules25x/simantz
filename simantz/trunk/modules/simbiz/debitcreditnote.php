@@ -1,6 +1,6 @@
 <?php
 include_once "system.php";
-include_once "menu.php";
+
 
 include_once 'class/DebitCreditNote.php';
 include_once 'class/DebitCreditNoteLine.php';
@@ -8,14 +8,14 @@ include_once 'class/DebitCreditNoteLine.php';
 //include_once 'class/SelectCtrl.php';
 include_once "../simantz/class/datepicker/class.datepicker.php";
 //include_once "../system/class/Period.php";
-include_once '../system/class/Currency.php';
+include_once '../simantz/class/Currency.inc.php';
 
 $cur = new Currency();
+
 $dp=new datepicker($url);
 $dp->dateFormat='Y-m-d';
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
-global $log ;
 $o = new DebitCreditNote();
 $pl = new DebitCreditNoteLine();
 
@@ -27,151 +27,6 @@ $orgctrl="";
 $action="";
 
 
-//marhan add here --> ajax
-echo "<iframe src='debitcreditnote.php' name='nameValidate' id='idValidate' style='display:none' width='100%'></iframe>";
-echo "<div id='simit'><form name='frmValidate' target='nameValidate' method='POST'></form></div>";
-////////////////////
-
-echo <<< EOF
-<script type="text/javascript">
-
-	function saveRecord(){
-
-	if(validateDebitCreditNote())
-	document.forms['frmDebitCreditNote'].submit();
-
-	}
-
-	function autofocus(){
-	document.frmDebitCreditNote.document_date.focus();
-	document.frmDebitCreditNote.document_date.select();
-	}
-
-
-	
-	function calculatesummary(){
-		itemqty=parseFloat(document.getElementById("itemqty").value);
-	
-		exchangerate=document.forms['frmDebitCreditNote'].exchangerate.value
-		var totaltonnage=0;
-		var totaloritonnage=0;
-		var amt=0;
-
-		for(i=0;i<itemqty;i++){
-
-			amt=amt+parseFloat(document.getElementById("lineamt"+i).value);
-		}
-		amt=amt.toFixed(2);
-		document.forms['frmDebitCreditNote'].originalamt.value=amt;
-		document.forms['frmDebitCreditNote'].amt.value=(amt* parseFloat(exchangerate)).toFixed(2);
-
-		}
-
-	function showHideDesc(i){
-		var descctrl=document.getElementById("linedescription"+i);
-		if(descctrl.style.display=="none")
-			descctrl.style.display="";
-		else
-			descctrl.style.display="none";
-
-	}
-
-	function gotoAction(action){
-	document.forms['frmDebitCreditNote'].action.value = action;
-	document.forms['frmDebitCreditNote'].submit();
-	}
-
-	function reloadBPartnerAccount(bpartneraccounts_id){
-	var arr_fld=new Array("action","bpartneraccounts_id");//name for POST
-	var arr_val=new Array("refreshbpartneraccounts",bpartneraccounts_id);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-	}
-
-	function changeBPartner(bpartner_id){
-	document.forms['frmDebitCreditNote'].bpartner_id.value=bpartner_id;
-	}
-	function validateDebitCreditNote(){
-		var action = document.forms['frmDebitCreditNote'].action.value;
-
-		if(action == "edit")
-		calculatesummary();
-
-		var date=document.forms['frmDebitCreditNote'].document_date.value;
-		var no=document.forms['frmDebitCreditNote'].document_no.value;
-		var documenttype=document.forms['frmDebitCreditNote'].documenttype.value;
-		var bpartner_id=document.forms['frmDebitCreditNote'].bpartner_id.value;
-		var exchangerate=document.forms['frmDebitCreditNote'].exchangerate.value;
-	
-		if(confirm("Save record?")){
-		if(no =="" ||   date=="" || bpartner_id==0 || documenttype == 0){
-			alert('Please make sure Document No, Date, Type and supplier is fill with appropriate value before you save the record.');
-			return false;
-		}else{
-			if(!IsNumeric(exchangerate)){
-			alert("Exchange Rate is not numeric, please insert appropriate +ve value!");
-			return false;
-			}
-
-			if(action == "update"){
-			var i=0;
-			while(i< document.forms['frmDebitCreditNote'].elements.length){
-				var ctlname = document.forms['frmDebitCreditNote'].elements[i].name; 
-				var data = document.forms['frmDebitCreditNote'].elements[i].value;
-			
-				if(ctlname.substring(0,13)=="lineunitprice" || ctlname.substring(0,7)=="lineqty" || ctlname=="exchangerate" ){
-				
-					if(!IsNumeric(data))
-						{
-							alert (ctlname + ":" + data + ":is not numeric, please insert appropriate +ve value!");
-							document.forms['frmDebitCreditNote'].elements[i].style.backgroundColor = "#FF0000";
-							document.forms['frmDebitCreditNote'].elements[i].focus();
-							return false;
-						}	
-						else
-						document.forms['frmDebitCreditNote'].elements[i].style.backgroundColor = "#FFFFFF";
-						
-						
-				}
-				
-				i++;
-				
-			}
-			}
-		return true;
-		}
-
-		}
-		else
-			return false;
-	}
-
-	function refreshUnitPrice(currency_id){
-	//bpartner,species_id,girth
-	var arr_fld=new Array("action","currency_id");//name for POST
-	var arr_val=new Array("refreshunitprice",currency_id);//value for POST
-	
-	getRequest(arr_fld,arr_val);
-	}
-
-	function reloadDocumentNo(id,documenttype){
-	var arr_fld=new Array("action","debitcreditnote_id","documenttype");//name for POST
-	var arr_val=new Array("getnewdocumentno",id,documenttype);//value for POST
-	if(documenttype !=0 && id <=0)
-		getRequest(arr_fld,arr_val);
-	else
-		document.forms['frmDebitCreditNote'].document_no.value="";
-	}
-
-	function calculateLine(i){
-			var amt=parseFloat(document.getElementById("lineunitprice"+i).value)*parseFloat(document.getElementById("lineqty"+i).value);
-			document.getElementById("lineamt"+i).value=amt.toFixed(2);
-	}
-
-
-</script>
-
-EOF;
 
 $o->debitcreditnote_id=0;
 if (isset($_POST['action'])){
@@ -316,30 +171,33 @@ break;
 	//when user request to edit particular organization
   case "edit" :
 	if($o->fetchDebitCreditNote($o->debitcreditnote_id)){
-		//create a new token for editing a form
+    include "menu.php";
+   $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
+    $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
+      $o->showJavascript();
 		$token=$s->createToken($tokenlife,"CREATE_NOTE"); 
 		$log->showLog(4,"editing purchase invoice with organization_id=".$o->organization_id);
 		$o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
 
-		$o->accountsctrl=$ctrl->getSelectAccounts($o->accounts_id,'Y',"","accounts_id",
+		$o->accountsctrl=$simbizctrl->getSelectAccounts($o->accounts_id,'Y',"","accounts_id",
 		"and (account_type<>2 AND account_type<>3)");
-		$o->bpartneraccountsctrl=$ctrl->getSelectAccounts($o->bpartneraccounts_id,'Y',"onchange='reloadBPartnerAccount(this.value)'","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
+		$o->bpartneraccountsctrl=$simbizctrl->getSelectAccounts($o->bpartneraccounts_id,'Y',"onchange='reloadBPartnerAccount(this.value)'","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
 
 		include_once "class/Accounts.php";
 		$acc= new Accounts();
 		$acc->fetchAccounts($o->bpartneraccounts_id);
 		if($acc->account_type==2)
-		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y',"onchange='changeBPartner(this.value)'","bpartner_id2",
+		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'Y',"onchange='changeBPartner(this.value)'","bpartner_id2",
 		"and (debtoraccounts_id=$o->bpartneraccounts_id and isdebtor=1)","N","bpartner_id2") ;
 		elseif( $acc->account_type==3)
-		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y',"onchange='changeBPartner(this.value)'","bpartner_id2",
+		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'Y',"onchange='changeBPartner(this.value)'","bpartner_id2",
 		"and (creditoraccounts_id=$o->bpartneraccounts_id and iscreditor=1)","N","bpartner_id2") ;
 
 
 
 
 		$o->debitcreditnotelinectrl=$pl->showDebitCreditNoteLine($o->debitcreditnote_id,'N');
-		$o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'N','currency_id',"",
+		$o->currencyctrl=$simbizctrl->getSelectCurrency($o->currency_id,'N','currency_id',"",
 			"onchange='refreshUnitPrice(this.value)';calculatesummary()");
 		$o->debitcreditnotelinectrl=$o->debitcreditnotelinectrl.
 				"<tr><th></th><th></th><th></th><th></th><th>Total:</th>
@@ -535,17 +393,18 @@ break;
 		redirect_header("debitcreditnote.php?action=edit&debitcreditnote_id=$o->debitcreditnote_id",$pausetime,"Warning! Can't delete data from database.");
 	
 case "showSearchForm":
-	$o->accountsctrl=$ctrl->getSelectAccounts(0,'Y',"","accounts_id",
+    include "menu.php";
+	$o->accountsctrl=$simbizctrl->getSelectAccounts(0,'Y',"","accounts_id",
 		"and (account_type<>2 AND account_type<>3)");
-	$o->bpartneraccountsctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadBPartnerAccount(this.value)'","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
-	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y',"onchange='changeBPartner(this.value)'","bpartner_id",
+	$o->bpartneraccountsctrl=$simbizctrl->getSelectAccounts(0,'Y');
+	$o->bpartnerctrl=$simbizctrl->getSelectBPartner(0,'Y',"onchange='changeBPartner(this.value)'","bpartner_id",
 		"","N","bpartner_id") ;
 	$o->currencyctrl=$ctrl->getSelectCurrency(0,'Y','currency_id',"","onchange='refreshUnitPrice(this.value)'");
 	$o->showSearchForm();
 break;
 
   case "search" :
-	
+include "menu.php";
 	$wherestr = $o->getWhereStr();
 	
 //	$o->accounts_id=$_POST['accounts_id'];
@@ -557,10 +416,10 @@ break;
 	$o->document_dateto=$_POST['document_dateto'];
 
 	$o->iscomplete=$_POST['iscomplete'];
-	$o->accountsctrl=$ctrl->getSelectAccounts($o->accounts_id,'Y',"","accounts_id",
+	$o->accountsctrl=$simbizctrl->getSelectAccounts($o->accounts_id,'Y',"","accounts_id",
 		"and (account_type<>2 AND account_type<>3)");
-	$o->bpartneraccountsctrl=$ctrl->getSelectAccounts($o->bpartneraccounts_id,'Y',"","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
-	$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y',"","bpartner_id",
+	$o->bpartneraccountsctrl=$simbizctrl->getSelectAccounts($o->bpartneraccounts_id,'Y',"","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
+	$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'Y',"","bpartner_id",
 		"","N","bpartner_id") ;
 	$o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'Y','currency_id',"","");
 
@@ -608,23 +467,24 @@ EOF;
         $prefix_doc = $prefix_drnote;
 
         
-	echo <<< EOF
-<script type='text/javascript'>
-	self.parent.document.frmDebitCreditNote.debitcreditnote_prefix.value="$prefix_doc";
-	self.parent.document.frmDebitCreditNote.document_no.value="$new_no";
-	</script>
-EOF;
-  break;
-  default :
 
+        $arr = array("prefix_doc"=>$prefix_doc,"new_no"=>$new_no);
+        echo json_encode($arr);
+        die;
+        break;
+  default :
+      
+    include "menu.php";
+   $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
+    $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
+      $o->showJavascript();
 
 	$token=$s->createToken($tokenlife,"CREATE_NOTE");
 	$o->orgctrl=$ctrl->selectionOrg($o->createdby,$defaultorganization_id,'N',"",'Y');
-	$o->accountsctrl=$ctrl->getSelectAccounts(0,'Y',"","accounts_id",
+	$o->accountsctrl=$simbizctrl->getSelectAccounts(0,'Y',"","accounts_id",
 		"and (account_type<>2 AND account_type<>3)");
-	$o->bpartneraccountsctrl=$ctrl->getSelectAccounts(0,'Y',"onchange='reloadBPartnerAccount(this.value)'","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
-	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y',"onchange='changeBPartner(this.value)'","bpartner_id2",
-		"and bpartner_id=0","N","bpartner_id2") ;
+	$o->bpartneraccountsctrl=$simbizctrl->getSelectAccounts(0,'Y',"","bpartneraccounts_id","and ( account_type=2 or account_type=3)");
+	$o->bpartnerctrl=$simbizctrl->getSelectBPartner(0,'Y') ;
 	$o->currencyctrl=$ctrl->getSelectCurrency($defaultcurrency_id,'N','currency_id',"","onchange='refreshUnitPrice(this.value)'");
 	$o->exchangerate=1;
 	$o->getInputForm("new",0,$token);

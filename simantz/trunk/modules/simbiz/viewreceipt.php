@@ -3,7 +3,7 @@
 	include_once "system.php";
 	//include_once "../system/class/Organization.php";
 	include_once "../simantz/class/Period.inc.php";
-	include_once "../simantz/class/BPartner.php";
+	include_once "../bpartner/class/BPartner.php";
 	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 	$org = new Organization();
 	$bp = new BPartner();

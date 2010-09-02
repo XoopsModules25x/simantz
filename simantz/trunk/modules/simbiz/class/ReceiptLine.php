@@ -19,7 +19,7 @@ $this->log=$log;
 }
 
   public function showreceiptline($receipt_id,$readonly='N'){
-	global $ctrl;
+	global $simbizctrl;
 	$result="<tr><td class='head'>Detail <br>Use F8/F9 to jump row,<br>Tab/Shift Tab to <br>navigate column</td>
 		<td colspan='3' aclass='head'>
 		<table  cellspacing=0 border=0 cellpadding=0><tbody>
@@ -71,7 +71,7 @@ $this->log=$log;
 		else
 		$displaychequenostyle="style='display:none'";
 
-		$accountsctrl=$ctrl->getSelectAccounts($accounts_id,'Y',"onchange='reloadAccountTo(this.value,$i)' onKeyDown='return  changearrayfieldEnter(event,\"lineaccounts_id\",$nextid,$previousid,\"lineaccounts_id\",this);'","lineaccounts_id[]"," and (account_type=4 or account_type=7) ","lineaccounts_id$i");
+		$accountsctrl=$simbizctrl->getSelectAccounts($accounts_id,'Y',"onchange='reloadAccountTo(this.value,$i)' onKeyDown='return  changearrayfieldEnter(event,\"lineaccounts_id\",$nextid,$previousid,\"lineaccounts_id\",this);'","lineaccounts_id[]"," and (account_type=4 or account_type=7) ","lineaccounts_id$i");
 
 		$result=$result."
 

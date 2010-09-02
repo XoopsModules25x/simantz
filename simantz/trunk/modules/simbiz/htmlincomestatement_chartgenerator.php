@@ -107,9 +107,6 @@ EOF;
 }
 
 
-echo "<iframe src='htmlincomestatement_chartgenerator.php' name='nameValidate' id='idValidate' style='display:none' width='100%'></iframe>";
-echo "<div id='simit'><form name='frmValidate' target='nameValidate' method='POST'></form></div>";
-
 
 
    $datefrom="Unknown";

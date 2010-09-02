@@ -19,7 +19,7 @@ $this->log=$log;
 }
 
   public function showpaymentvoucherline($paymentvoucher_id,$readonly='N'){
-	global $ctrl;
+	global $simbizctrl;
 	$result="<tr><td class='head'>Detail <br>Use F8/F9 to jump row,<br>Tab/Shift Tab to <br>navigate column</td>
 		<td colspan='3' aclass='head'>
 		<table  cellspacing=0 border=0 cellpadding=0><tbody>
@@ -75,18 +75,18 @@ $this->log=$log;
 
 //		$accountsctrl=$ctrl->getSelectAccounts($accounts_id,'Y',"onchange='reloadAccountTo(this.value,$i)' onKeyDown='return  changearrayfieldEnter(event,\"lineaccounts_id\",$nextid,$previousid,\"lineaccounts_id\",this);'","lineaccounts_id[]"," and (account_type=1 or account_type=2 or account_type=3)","lineaccounts_id$i");
 
-		$accountsctrl=$ctrl->getSelectAccounts($accounts_id,'Y',"onchange='reloadAccountTo(this.value,$i)' onKeyDown='return  changearrayfieldEnter(event,\"lineaccounts_id\",$nextid,$previousid,\"lineaccounts_id\",this);'","lineaccounts_id[]"," ","lineaccounts_id$i");
+		$accountsctrl=$simbizctrl->getSelectAccounts($accounts_id,'Y',"onchange='reloadAccountTo(this.value,$i)' ","lineaccounts_id[]"," ","lineaccounts_id$i");
 
 		if($bpartner_id > 0 ){
 			if($account_type==2){
-			$bpartnerctrl=$ctrl->getSelectBPartner($bpartner_id,'N',"onchange='changePaidTo(this)' onKeyDown='return  changearrayfieldEnter(event,\"linebpartner_id\",$nextid,$previousid,\"linebpartner_id\",this);'","linebpartner_id[$i]",
+			$bpartnerctrl=$simbizctrl->getSelectBPartner($bpartner_id,'N',"onchange='changePaidTo(this)' ","linebpartner_id[$i]",
 					" and (debtoraccounts_id = $accounts_id and isdebtor=1) ",'N',"linebpartner_id$i");
 			}elseif($account_type==3){
-			$bpartnerctrl=$ctrl->getSelectBPartner($bpartner_id,'N',"onchange='changePaidTo(this)' onKeyDown='return  changearrayfieldEnter(event,\"linebpartner_id\",$nextid,$previousid,\"linebpartner_id\",this);'","linebpartner_id[$i]",
+			$bpartnerctrl=$simbizctrl->getSelectBPartner($bpartner_id,'N'," ","linebpartner_id[$i]",
 					" and (creditoraccounts_id = $accounts_id and iscreditor=1) ",'N',"linebpartner_id$i");
 			}
 		}else{
-			$bpartnerctrl = "<input type='hidden' name='linebpartner_id[$i]' value='0'>";
+			$bpartnerctrl = "<option value='0'>Null</option>";
 		}
 
 
@@ -96,22 +96,19 @@ $this->log=$log;
 		<td class='$rowtype'><font color=black>".($i+1)." </font><input type='hidden' name='linepaymentvoucherline_id[$i]' value='$paymentvoucherline_id'></td>
 		<td class='$rowtype'>
 		<input name='linesubject[$i]' value='$subject' size='40' maxlength='65' id='linesubject$i'
-		onKeyDown='return changearrayfieldEnter(event,\"linesubject\",$nextid,$previousid,\"linesubject\",this);'
 		onfocus='this.select();'><a href='javascript:;' onclick='showHideDesc($i)'>V</a><br>
 		<textarea name='linedescription[$i]' id='linedescription$i' cols=45 rows=5 $displaydescstyle
 		
 		onfocus='this.select();'>$description</textarea>
 		</td>
-		<td class='$rowtype'>$accountsctrl <div id='idBPartner$i'>$bpartnerctrl</div></td>
+		<td class='$rowtype'>$accountsctrl <select name='linebpartner_id[$i]' id='linebpartner_id$i' onchange='changePaidTo(this)'>$bpartnerctrl</select></td>
 
 		<td class='$rowtype'>
 		<input $alignR name='lineamt[$i]' value='$amt' size='12' maxlength='12' id='lineamt$i'
-		onKeyDown='return changearrayfieldEnter(event,\"lineamt\",$nextid,$previousid,\"lineamt\",this);'
-		onfocus='this.select();' onblur='calculateSummary();'>
+		onfocus='this.select();' onblur='this.value=parseFloat(this.value).toFixed(2);calculateSummary();'>
 		</td>
 		<td class='$rowtype'>
-		<input type='checkbox' name='linedel[$i]' id='linedel$i'
-		onKeyDown='return changearrayfieldEnter(event,\"linedel\",$nextid,$previousid,\"linedel\",this);'>
+		<input type='checkbox' name='linedel[$i]' id='linedel$i'>
 		</td>
 		</tr>
 		";
