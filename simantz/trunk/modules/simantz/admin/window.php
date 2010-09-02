@@ -50,7 +50,7 @@ case "ajaxselectwindows":
         $window->mid=$_GET['mid'];
         $window->window_id=$_GET['window_id'];
         if($window->window_id=="")$window->window_id=0;
-        echo $window->getSelectWindows($window->window_id,$window->mid);
+        echo $window->getSelectWindows($window->window_id,$window->mid,"Y");
     break;
 default:
     include "../class/SelectCtrl.inc.php";
