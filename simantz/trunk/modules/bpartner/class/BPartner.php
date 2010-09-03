@@ -1919,7 +1919,7 @@ return $searchAToZ;
 <div align="left">$new_button</div>
 <div id='centercontainer' >
 
-<form name="frmEmployeeSearch" id="frmEmployeeSearch">
+<form name="frmEmployeeSearch" id="frmEmployeeSearch" onsubmit="search();return false;">
 <table>
  <tr><td></td></tr>
    <tr> <td colspan="7" class="searchformheader">Search Business Partner</td> </tr>
@@ -1968,7 +1968,7 @@ return $searchAToZ;
       <td $style colspan="2">
       <input type="hidden" name="issearch" id="issearch" value="Y"/>
       <input type="hidden" name="action" value="search"/>
-      <input type="button" value="Search" onclick="search()"/>
+      <input type="submit" value="Search"/>
       <input type="button" value="Reset" onclick="reset();"/></td>
    </tr>
 
@@ -2057,6 +2057,7 @@ else{ //user dun have write permission, cannot save grid
         search();
     }
      function search(){
+
         var grid = nitobi.getGrid("DataboundGrid");
 
         var issearch=document.getElementById("issearch").value;
