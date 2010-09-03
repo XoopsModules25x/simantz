@@ -49,8 +49,7 @@ function blockepfsocso(eepf,esocso,epcb,iscomplete){
 
 function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
   var type =employee_epftype;
-
-  if(type=="M"){
+  if(type!="0"){
        var Incomegrid= nitobi.getGrid('IncomeDataboundGrid');
        var Deductiongrid= nitobi.getGrid('DeductionDataboundGrid');
        var Othergrid= nitobi.getGrid('OtherDataboundGrid');
@@ -82,7 +81,7 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
          Othergrid.getCellObject(i, 2).setValue(epfbase);
          }
        }
-        var data = "action=calculateEPF&caltype=epf&epfbase="+epfbase;
+        var data = "action=calculateEPF&epfbase="+epfbase+"&employee_epftype="+employee_epftype;
         $.ajax({
            url: "payslip.php",type: "POST",data: data,cache: false,
                  success: function (xml) {
@@ -105,15 +104,14 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
                        }
                        gettotalamount();
                  }});
-    }
-
+      }
    }
 
 
-  function getsocsobase(employee_socsotype,socsobasecol,ersocsocol,esocsocol){
+function getsocsobase(employee_socsotype,socsobasecol,ersocsocol,esocsocol){
     var type =employee_socsotype;
-  
-    if(type=="M"){
+
+    if(type!="0"){
        var Incomegrid= nitobi.getGrid('IncomeDataboundGrid');
        var Deductiongrid= nitobi.getGrid('DeductionDataboundGrid');
        var Othergrid= nitobi.getGrid('OtherDataboundGrid');
@@ -138,6 +136,7 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
        }
 
        socsobase = Incomesocsobase - Deductionsocsobase;
+
        var Othertotal_row = Othergrid.getRowCount();
        for(i = 0; i < Othertotal_row; i++ ) {
          celly = Othergrid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
@@ -145,7 +144,7 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
          Othergrid.getCellObject(i, 2).setValue(socsobase);
          }
        }
-        var data = "action=calculateSOC&caltype=socso&socsobase="+socsobase;
+       var data = "action=calculateSOC&socsobase="+socsobase+"&employee_socsotype="+employee_socsotype;
         $.ajax({
            url: "payslip.php",type: "POST",data: data,cache: false,
                  success: function (xml) {
@@ -153,7 +152,7 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
                       var status = jsonObj.status;
                       var msg = jsonObj.msg;
                       var esocso = jsonObj.esocso;
-                      var ersocso = jsonObj.ersocso;
+                      var ersocso = jsonObj.ersocso; 
                        for( var i = 0; i < Othertotal_row; i++ ) {
                          var celly = Othergrid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
                          if(celly.getValue() == ersocsocol){
