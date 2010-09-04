@@ -55,14 +55,14 @@ $xoTheme->addScript("$url/modules/simantz/include/firefox3_6fix.js");
 
 $o->showSearchForm(); //produce search form, comment here to hide search form
 if($isadmin==1){
-    $grIdColumn=6; //define primary key column index, it will set as readonly afterwards (count from 0)
+    $grIdColumn=7; //define primary key column index, it will set as readonly afterwards (count from 0)
     //    $deleteddefaultvalue_js="myGrid.getCellObject(rowNo,6).setValue(0);"; //if admin login got deleted column, during admin insert new record shall set it default =0 (not deleted)
     $grIdColumnRegion=5;
     $changewidth="width='155'";
 
 }
 else{
-    $grIdColumn=5;//define primary key column index for normal user
+    $grIdColumn=6;//define primary key column index for normal user
     $grIdColumnRegion=4;
     $deleteddefaultvalue_js="";
         $changewidth="width='180'";
@@ -499,7 +499,7 @@ else{ //user dun have write permission, cannot save grid
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
      onafterrowinsertevent="setDefaultValue(eventArgs)"
      rowhighlightenabled="true"
-     width="550"
+     width="590"
      height="250"
      oncellclickevent="ChooseRegion(eventArgs)"
      onaftersaveevent="savedone(eventArgs)"
@@ -511,6 +511,7 @@ else{ //user dun have write permission, cannot save grid
    <ntb:textcolumn  width="80" label="Country Code" xdatafld="country_code"  classname="{\$rh}" ></ntb:textcolumn>
    <ntb:textcolumn width="145" label="Country Name" xdatafld="country_name"  classname="{\$rh}"></ntb:textcolumn>
    <ntb:textcolumn  $changewidth label="Citizenship" xdatafld="citizenship" classname="{\$rh}" ></ntb:textcolumn>
+   <ntb:textcolumn  width="49" label="Tel Code" xdatafld="telcode" classname="{\$rh}" ></ntb:textcolumn>
    <ntb:textcolumn label="Active" width="45" xdatafld="isactive" sortenabled="true"  classname="{\$rh}" align="center">
          <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
           checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value"></ntb:checkboxeditor>

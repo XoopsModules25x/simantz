@@ -215,6 +215,7 @@ EOF;
         $getHandler->DefineField("info");
         $getHandler->DefineField("citizenship");
         $getHandler->DefineField("country_id");
+        $getHandler->DefineField("telcode");
         $getHandler->DefineField("rh");
 
 	$currentRecord = 0; // This will assist us finding the ordinalStart position
@@ -236,6 +237,7 @@ EOF;
              $getHandler->DefineRecordFieldValue("seqno", $row['seqno']);
              $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['country_id']."&tablename=sim_country&idname=country_id&title=Country");
              $getHandler->DefineRecordFieldValue("citizenship",$row['citizenship']);
+             $getHandler->DefineRecordFieldValue("telcode",$row['telcode']);
              $getHandler->DefineRecordFieldValue("country_id",$row['country_id']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
              $getHandler->SaveRecord();
@@ -268,8 +270,8 @@ EOF;
 if ($insertCount > 0)
 {
     $arrfield=array("country_code", "country_name","isactive","seqno",
-                    "created","createdby","updated","updatedby","citizenship","organization_id");
-    $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s','%d','%s','%d');
+                    "created","createdby","updated","updatedby","citizenship","organization_id","telcode");
+    $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s','%d','%s','%d','%d');
 
 // Yes there are INSERTs to perform...
  for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
@@ -284,7 +286,8 @@ if ($insertCount > 0)
                 $timestamp,
                 $createdby,
                 $saveHandler->ReturnInsertField($currentRecord,"citizenship"),
-                $organization_id);
+                $organization_id, $saveHandler->ReturnInsertField($currentRecord,"telcode"));
+
      $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "country_code");
      $save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"country_id");
   if($save->failfeedback!=""){
@@ -302,8 +305,8 @@ if ($updateCount > 0)
 {
 
       $arrfield=array("country_code", "country_name", "isactive","seqno",
-            "updated","updatedby","citizenship");
-      $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s');
+            "updated","updatedby","citizenship","telcode");
+      $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s','%d');
  // Yes there are UPDATEs to perform...
 
  for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
@@ -324,7 +327,8 @@ if ($updateCount > 0)
                 $timestamp,
                 $createdby,
                 $saveHandler->ReturnUpdateField($currentRecord,"citizenship"),
-                );
+                $saveHandler->ReturnUpdateField($currentRecord,"telcode"));
+                
         $this->log->showLog(3,"***updating record($currentRecord),new country_name:".
               $saveHandler->ReturnUpdateField($currentRecord, "country_name").",id:".
               $saveHandler->ReturnUpdateField($currentRecord,"country_id")."\n");
