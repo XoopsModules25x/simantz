@@ -90,6 +90,7 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
                       var msg = jsonObj.msg;
                       var eepf = jsonObj.eepf;
                       var erepf = jsonObj.erepf;
+
                        for( var i = 0; i < Othertotal_row; i++ ) {
                          var celly = Othergrid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
                          if(celly.getValue() == erepfcol){
@@ -169,3 +170,43 @@ function getsocsobase(employee_socsotype,socsobasecol,ersocsocol,esocsocol){
                  }});
      }
    }
+
+function getpcbbase(employee_pcbtype,pcbcol,eepfcol){
+  var type =employee_pcbtype;
+  if(type!="0")
+       var Deductiongrid= nitobi.getGrid('DeductionDataboundGrid');
+       var deduc =0;
+       var Incomegrid= nitobi.getGrid('IncomeDataboundGrid');
+       var totalincome =0;
+ 
+       var Incometotal_row = Incomegrid.getRowCount();
+       for( var i = 0; i < Incometotal_row; i++ ) {
+         //var celly = Incomegrid.getCellObject( i, 3);//1st para : row , 2nd para : column seq
+         totalincome = totalincome+Incomegrid.getCellObject( i, 4).getValue();
+       }
+        var Deductiontotal_row = Deductiongrid.getRowCount();
+           for( i = 0; i < Deductiontotal_row; i++ ) {
+             celly = Deductiongrid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
+             if(celly.getValue() != eepfcol && celly.getValue() != pcbcol){
+             deduc = deduc+Deductiongrid.getCellObject( i, 4).getValue();
+             }
+           }
+        var pcbbase=totalincome-deduc;
+        var data = "action=calculatePCB&pcbbase="+pcbbase+"&employee_pcbtype="+employee_pcbtype;
+        $.ajax({
+           url: "payslip.php",type: "POST",data: data,cache: false,
+                 success: function (xml) {
+                      jsonObj = eval( '(' + xml + ')');
+                      var status = jsonObj.status;
+                      var pcbamt = jsonObj.pcbamt;
+  
+                       for( i = 0; i < Deductiontotal_row; i++ ) {
+                         celly = Deductiongrid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
+                         if(celly.getValue() == pcbcol){
+                         Deductiongrid.getCellObject(i, 4).setValue(pcbamt);
+                         }
+                       }
+                       gettotalamount();
+                 }});
+      }
+ 

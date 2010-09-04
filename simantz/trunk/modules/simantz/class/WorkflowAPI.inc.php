@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * This class is for workflow purpose
  */
@@ -34,7 +35,7 @@ class WorkflowAPI
         $getLatestStatusArr = $this->getLatestStatus($workflow_code,$key_value);
         $workflowstatus_id = $getLatestStatusArr['workflowstatus_id'];
         $workflowtransaction_id = $getLatestStatusArr['workflowtransaction_id'];
-
+        $html .= "<input type='hidden' name='workflowtransaction_id' id='workflowtransaction_id' value='$workflowtransaction_id'>";
         //echo " $targetparameter_name : $target_uid : $target_groupid";
 
 
@@ -299,6 +300,10 @@ class WorkflowAPI
                                     AND primarykey_value = '%s' ",$timestamp,$tablename,$primarykey_name,$primarykey_value);
 
                  $queryupdate = $this->xoopsDB->query($sqlupdate);
+                 $this->log->showLog(4,"Start run ValidateTransaction");
+//
+//                 $transacAPI->ValidateTransaction($this->workflow_id);
+                 
              }
 
              if($this->workflow_sql != "")//if node define sql update
@@ -317,7 +322,141 @@ class WorkflowAPI
 
         return $saveTransaction;
    }
+   
+   public function updateWorkflowTransaction($workflowtransaction_id,$workflow_code,$workflowstatus_name,$tablename,$primarykey_name,$primarykey_value,$parameter_array=array(),
+           $workflowtransaction_person="",$others="",$workflowtransaction_feedback=""){
 
+        global $xoopsUser;
+        $uid = $xoopsUser->getVar('uid');
+
+        include_once "../simantz/class/Save_Data.inc.php";
+        $save = new Save_Data();
+
+
+        $this->fetchWorkflowNode($workflow_code,$workflowstatus_name);
+
+        $this->replaceWorkflowParameter($parameter_array);
+
+        $timestamp = date("y/m/d H:i:s", time());
+
+        //for transaction
+        $arrUpdateField = array(
+                                'workflowtransaction_datetime',
+                                'target_groupid',
+                                'target_uid',
+                                'targetparameter_name',
+                                'workflowstatus_id',
+                                'workflow_id',
+                                'tablename',
+                                'primarykey_name',
+                                'primarykey_value',
+                                'hyperlink',
+                                'title_description',
+                                'updated',
+                                'list_parameter',
+                                'workflowtransaction_description',
+                                'workflowtransaction_feedback',
+                                'iscomplete',
+                                'updatedby',
+                                'email_list',
+                                'sms_list',
+                                'email_body',
+                                'sms_body',
+                                'person_id',
+                                'issubmit',
+                                );
+        $arrUpdateFieldType = array(
+                                '%s',
+                                '%d',
+                                '%d',
+                                '%s',
+                                '%d',
+                                '%d',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%d',
+                                '%d',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%s',
+                                '%d',
+                                '%d'
+                                );
+
+        $arrvalue = array(
+                                $timestamp,
+                                $this->target_groupid,
+                                $this->target_uid,
+                                $this->targetparameter_name,
+                                $this->workflowstatus_id,
+                                $this->workflow_id,
+                                $tablename,
+                                $primarykey_name,
+                                $primarykey_value,
+                                $this->hyperlink,
+                                '',
+                                date("y/m/d H:i:s", time()),
+                                $this->parameter_used,
+                                $this->workflow_description,
+                                $workflowtransaction_feedback,
+                                $this->iscomplete_node,
+                                $uid,
+                                $this->email_list,
+                                $this->sms_list,
+                                $this->email_body,
+                                $this->sms_body,
+                                $workflowtransaction_person,
+                                $this->issubmit_node
+                        );
+        //end
+
+
+        $saveTransaction = $save->UpdateRecord('sim_workflowtransaction','workflowtransaction_id',
+                                    $workflowtransaction_id,$arrUpdateField,$arrvalue,$arrUpdateFieldType,
+                                    $tablename);
+   
+
+        if($saveTransaction){
+
+
+             if($this->insertWorkflowHistory($workflowtransaction_feedback)){
+                 $sqlupdate = sprintf("UPDATE sim_workflowtransaction SET issubmit = 0
+                                    WHERE created < '%s'
+                                    AND tablename = '%s'
+                                    AND primarykey_name = '%s'
+                                    AND primarykey_value = '%s' ",$timestamp,$tablename,$primarykey_name,$primarykey_value);
+
+                 $queryupdate = $this->xoopsDB->query($sqlupdate);
+                 $this->log->showLog(4,"Start run ValidateTransaction");
+//
+//                 $transacAPI->ValidateTransaction($this->workflow_id);
+
+             }
+
+             if($this->workflow_sql != "")//if node define sql update
+             $this->runWorkflowSql($tablename,$primarykey_name,$primarykey_value);
+
+             if($this->workflow_procedure != "")//if node define procedure
+             $this->runWorkflowProcedure();
+
+             $this->updateLatestStatus($tablename,$primarykey_name,$primarykey_value,$this->workflowstatus_id);//update latest status id
+
+
+
+             $this->sendWorkflowMail();//send email
+             $this->sendWorkflowSMS();//send sms
+        }
+
+        return $saveTransaction;
+   }
    /*
     * run procedure
     */
@@ -349,7 +488,7 @@ class WorkflowAPI
     * save into history
     */
 
-   public function insertWorkflowHistory(){
+   public function insertWorkflowHistory($workflowtransaction_feedback=""){
         global $xoopsUser;
         $uid = $xoopsUser->getVar('uid');
 
@@ -379,7 +518,7 @@ class WorkflowAPI
                                 $this->workflowstatus_id,
                                 date("y/m/d H:i:s", time()),
                                 $uid,
-                                ""
+                                $workflowtransaction_feedback
                         );
 
        return $save->InsertRecord('sim_workflowtransactionhistory',
@@ -549,15 +688,15 @@ class WorkflowAPI
 
   public function showWorkflowHistory($workflow_code,$field_value){
 
-        $sql = sprintf("SELECT wt.workflowtransaction_datetime,ws.workflowstatus_name,usr.name,wt.workflowtransaction_feedback
+        $sql = sprintf("SELECT wh.workflowtransaction_datetime,ws.workflowstatus_name,usr.name,wh.workflowtransactionhistory_description
                         FROM sim_workflowtransaction wt
                         INNER JOIN sim_workflow wf ON wt.workflow_id = wf.workflow_id
-                        INNER JOIN sim_workflowstatus ws ON wt.workflowstatus_id = ws.workflowstatus_id
                         INNER JOIN sim_workflowtransactionhistory wh ON wt.workflowtransaction_id = wh.workflowtransaction_id
+                        INNER JOIN sim_workflowstatus ws ON wh.workflowstatus_id = ws.workflowstatus_id
                         INNER JOIN sim_users usr ON wh.uid = usr.uid
                         WHERE wf.workflow_code = '%s'
                         AND wt.primarykey_value = '%d'
-                        ORDER BY wt.workflowtransaction_datetime DESC
+                        ORDER BY wh.workflowtransaction_datetime DESC
                         ",$workflow_code,$field_value);
 
         $this->log->showLog(3,'showWorkflowHistory');
@@ -594,7 +733,7 @@ class WorkflowAPI
             $workflowtransaction_datetime = $row['workflowtransaction_datetime'];
             $workflowstatus_name = $row['workflowstatus_name'];
             $name = $row['name'];
-            $workflowtransaction_feedback = $row['workflowtransaction_feedback'];
+            $workflowtransaction_feedback = $row['workflowtransactionhistory_description'];
             $html .= "
                 <tr class='$trstyle'>
                     <td>$i</td>
