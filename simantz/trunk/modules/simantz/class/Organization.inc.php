@@ -140,9 +140,9 @@ class Organization
 		"<input type='hidden' value='delete' name='action'><input name='token' value='$token' type='hidden'></form>";
 		$addnewctrl="<Form action='organization.php' method='POST'><input name='submit' value='New' type='submit'></form>";
 	}
-
+//<A href='index.php'>Back To This Module Administration Menu</A>
     echo <<< EOF
-<A href='index.php'>Back To This Module Administration Menu</A>
+
 <form onsubmit="return validateOrganization()" method="post"
  action="organization.php" name="frmOrganzation">
   <table style="text-align: left; width: 100%;" border="1" class="searchformblock"
