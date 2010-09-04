@@ -38,21 +38,32 @@ global $smtpserver,$smtpuser,$smtppassword,$senderuser,$smsurl,$smsid,
 }
 
 public function convertArrayToNumber(){
+global $defaulttelcode;
 
  $removestring=array("(", ")", "-", " ","\n","\0","\t","\r");
 
  foreach($this->arraynumber as $num){
-	$num=str_replace($removestring,"" , $num);
+	
+        if($defaulttelcode==60){//Malaysia Standard
+            if(substr($num,0,1)=="0")
+                        $num="6".$num;
+            if(strlen($num)!=11)
+                $num="";
+            else
+                $this->subscriber_number.=$num."@";
+        }
+        else{
 	$this->subscriber_number.=$num."@";
+        }
   }
-  $this->subscriber_number=substr_replace($this->subscriber_number,"",-1);
-
  
  } 
 
 
 public function sendsms(){
-   // echo "owner_id=$this->smsowner_id&password=$this->smspassword&sender_name=$this->smssender_name&lang_type=$this->lang_type&subscriber_num=$this->subscriber_number&msg=$this->message <br>";
+
+
+    //echo "owner_id=$this->smsowner_id&password=$this->smspassword&sender_name=$this->smssender_name&lang_type=$this->lang_type&subscriber_num=$this->subscriber_number&msg=$this->message <br>";
 
     //echo "Balance Credit:";
 	$curl_connection = curl_init($this->smsurl);

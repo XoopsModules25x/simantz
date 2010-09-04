@@ -145,6 +145,7 @@
         $defcountrycode=$o->country_code;
 	$defcurrencycode=$o->currency_code;
 	$defaultcurrency_id=$o->currency_id;
+        $defaulttelcode=$o->telcode;
 		$log->showLog(3,"end system.php.");
 
 //	if($a->checkAccounts($defaultorganization_id))
