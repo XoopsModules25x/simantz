@@ -300,17 +300,15 @@ class WorkflowAPI
                                     AND primarykey_value = '%s' ",$timestamp,$tablename,$primarykey_name,$primarykey_value);
 
                  $queryupdate = $this->xoopsDB->query($sqlupdate);
-                 $this->log->showLog(4,"Start run ValidateTransaction");
-//
-//                 $transacAPI->ValidateTransaction($this->workflow_id);
                  
              }
 
              if($this->workflow_sql != "")//if node define sql update
              $this->runWorkflowSql($tablename,$primarykey_name,$primarykey_value);
 
-             if($this->workflow_procedure != "")//if node define procedure
-             $this->runWorkflowProcedure();
+  
+//            if($this->workflow_procedure != "")//if node define procedure
+//             $this->runWorkflowProcedure();
 
              $this->updateLatestStatus($tablename,$primarykey_name,$primarykey_value,$this->workflowstatus_id);//update latest status id
 
@@ -435,17 +433,18 @@ class WorkflowAPI
                                     AND primarykey_value = '%s' ",$timestamp,$tablename,$primarykey_name,$primarykey_value);
 
                  $queryupdate = $this->xoopsDB->query($sqlupdate);
-                 $this->log->showLog(4,"Start run ValidateTransaction");
-//
-//                 $transacAPI->ValidateTransaction($this->workflow_id);
 
              }
 
              if($this->workflow_sql != "")//if node define sql update
              $this->runWorkflowSql($tablename,$primarykey_name,$primarykey_value);
 
+       $this->log->showLog(4,"Start run ValidateTransaction $this->workflow_procedurefile");
+             if(file_exists("$this->workflow_procedurefile"))
+               include "$this->workflow_procedurefile";
              if($this->workflow_procedure != "")//if node define procedure
-             $this->runWorkflowProcedure();
+               eval($this->workflow_procedure.";");
+                     //$this->runWorkflowProcedure();
 
              $this->updateLatestStatus($tablename,$primarykey_name,$primarykey_value,$this->workflowstatus_id);//update latest status id
 
@@ -571,6 +570,7 @@ class WorkflowAPI
             $this->isemail=$row['isemail'];
             $this->issms=$row['issms'];
             $this->parentnode_id=$row['parentnode_id'];
+            $this->workflow_procedurefile=$row['workflow_procedurefile'];
             $this->workflow_procedure=$row['workflow_procedure'];
             $this->parameter_used=$row['parameter_used'];
             $this->isactive=$row['isactive'];
