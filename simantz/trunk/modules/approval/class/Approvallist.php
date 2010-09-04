@@ -409,9 +409,9 @@ echo <<< EOF
             <ntb:textcolumn width="150" label="Description" xdatafld="workflow_name" classname="{\$rh}"></ntb:textcolumn>
             <ntb:textcolumn width="130" label="Employee" xdatafld="employee_name" classname="{\$rh}"></ntb:textcolumn>
             <ntb:textcolumn width="115" label="Date" xdatafld="apply_date" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn width="400" label="Detail" xdatafld="workflowtransaction_description" classname="{\$rh}"></ntb:textcolumn>
+            <ntb:textcolumn width="350" label="Detail" xdatafld="workflowtransaction_description" classname="{\$rh}"></ntb:textcolumn>
             <ntb:textcolumn width="65" label="Status" xdatafld="workflowstatus_name" classname="{\$rh}"></ntb:textcolumn>
-            <ntb:textcolumn label="Edit" xdatafld="operation" sortenabled="false" width="40" initial="images/del.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
+            <ntb:textcolumn label="Edit" xdatafld="operation" sortenabled="false" width="35" initial="images/del.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
             <ntb:imageeditor></ntb:imageeditor>
             </ntb:textcolumn>
             <ntb:textcolumn label="Action" xdatafld="approval" sortenabled="false" width="45" initial="images/approval.gif" classname="{\$rh}" align="center" cssstyle="cursor:pointer;">
