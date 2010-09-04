@@ -32,11 +32,12 @@ if($parentwindows_id=="")
 
 	$curr_date = getDateSession($curr_date);
 	//echo $curr_date=$defaultDateSession;
-        //echo $currenturl=curPageURL();
+        $currenturl=curPageURL();
+        $action=$_REQUEST['action'];
         if(strpos($currenturl,"?")>0)
-                $newurl="'$currenturl&switchorg=Y&defaultorganization_id='+this.value";
+                $newurl="'$currenturl&switchorg=Y&defaultorganization_id='+this.value+'&action=$action'";
         else
-                $newurl="'$currenturl?switchorg=Y&defaultorganization_id='+this.value";
+                $newurl="'$currenturl?action=$action&switchorg=Y&defaultorganization_id='+this.value";
 $orgctrl=$ctrl->selectionOrg($userid,$defaultorganization_id,'N',"location.href=$newurl");
 
 echo <<< EOF
