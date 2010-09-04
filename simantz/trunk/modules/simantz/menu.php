@@ -29,11 +29,15 @@ $i++;
 //if there is no module id submit from another include use simantz module as menu
 if($parentwindows_id=="")
     $parentwindows_id=0;
-$orgctrl=$ctrl->selectionOrg($userid,$defaultorganization_id,$showNull='N');
 
 	$curr_date = getDateSession($curr_date);
 	//echo $curr_date=$defaultDateSession;
-        $currenturl=curPageURL();
+        //echo $currenturl=curPageURL();
+        if(strpos($currenturl,"?")>0)
+                $newurl="'$currenturl&switchorg=Y&defaultorganization_id='+this.value";
+        else
+                $newurl="'$currenturl?switchorg=Y&defaultorganization_id='+this.value";
+$orgctrl=$ctrl->selectionOrg($userid,$defaultorganization_id,'N',"location.href=$newurl");
 
 echo <<< EOF
 
