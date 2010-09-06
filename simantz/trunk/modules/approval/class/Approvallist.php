@@ -593,6 +593,9 @@ EOF;
      CASE  "LEAVE":
         include_once "../hr/class/Leave.php";
         $lev = new Leave();
+               $lev->leave_id=$this->primarykey_value;
+               $lev->person_id=$this->person_id;
+               $lev->window_workflow= $this->window_workflow;
         return $lev->defineWorkflowParameter();
      break;
 
@@ -601,6 +604,8 @@ EOF;
         include_once "../hr/class/Generalclaim.php";
         $gen = new Generalclaim();
                $gen->generalclaim_id=$this->primarykey_value;
+               $gen->person_id=$this->person_id;
+               $gen->window_workflow= $this->window_workflow;
         return $gen->defineWorkflowParameter();
      break;
 
@@ -609,6 +614,8 @@ EOF;
         include_once "../hr/class/Medicalclaim.php";
         $me = new Medicalclaim();
                $me->medicalclaim_id=$this->primarykey_value;
+               $me->person_id=$this->person_id;
+               $me->window_workflow= $this->window_workflow;
         return $me->defineWorkflowParameter();
      break;
 
@@ -617,6 +624,8 @@ EOF;
         include_once "../hr/class/Overtimeclaim.php";
         $ov = new Overtimeclaim_id();
                $ov->overtimeclaim_id=$this->primarykey_value;
+               $ov->person_id=$this->person_id;
+               $ov->window_workflow= $this->window_workflow;
         return $ov->defineWorkflowParameter();
      break;
 
@@ -625,6 +634,8 @@ EOF;
         include_once "../hr/class/Travellingclaim.php";
         $tr = new Travellingclaim();
                $tr->travellingclaim_id=$this->primarykey_value;
+               $tr->person_id=$this->person_id;
+               $tr->window_workflow= $this->window_workflow;
         return $tr->defineWorkflowParameter();
      break;
  
@@ -633,6 +644,8 @@ EOF;
         include_once "../hr/class/Leaveadjustment.php";
         $led = new Leaveadjustment();
                $led->leaveadjustment_id=$this->primarykey_value;
+               $led->person_id=$this->person_id;
+               $led->window_workflow= $this->window_workflow;
         return $led->defineWorkflowParameter();
      break;
 
