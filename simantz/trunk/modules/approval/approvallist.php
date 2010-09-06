@@ -106,11 +106,13 @@ $o->defineHeaderButton();
         if($o->primarykey_value > 0){
 
             $workflowstatus_id = $_REQUEST['status_node'];
+            $workflowtransaction_id = $_REQUEST['workflowtransaction_id'];
             $person_id = $_REQUEST['person_id'];
             $workflowtransaction_feedback = $_REQUEST['workflowtransaction_feedback'];
             $nextstatus_name = $workflowapi->getStatusName($workflowstatus_id);
 
-            $workflowReturn = $workflowapi->insertWorkflowTransaction(
+            $workflowReturn = $workflowapi->updateWorkflowTransaction(
+                                           "$workflowtransaction_id",
                                             $o->window_workflow,
                                             "$nextstatus_name",
                                             $o->tablename,
