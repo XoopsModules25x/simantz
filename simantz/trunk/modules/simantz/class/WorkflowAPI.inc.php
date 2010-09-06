@@ -76,7 +76,7 @@ class WorkflowAPI
    public function checkByPassWorkflow($workflownode_id,$parameter_array,$frmName,$fieldName,$typebtn="form",$person_id=0){
 
         $html = '';
-   echo     $sqluserchoice = sprintf("SELECT wn.*,wl.workflowuserchoiceline_name,wl.workflowstatus_id
+       $sqluserchoice = sprintf("SELECT wn.*,wl.workflowuserchoiceline_name,wl.workflowstatus_id
                             FROM sim_workflownode wn
                             INNER JOIN sim_workflowuserchoice wc ON wn.workflowuserchoice_id = wc.workflowuserchoice_id
                             INNER JOIN sim_workflowuserchoiceline wl ON wc.workflowuserchoice_id = wl.workflowuserchoice_id
