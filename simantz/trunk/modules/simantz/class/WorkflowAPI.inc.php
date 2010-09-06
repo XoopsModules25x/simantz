@@ -76,7 +76,7 @@ class WorkflowAPI
    public function checkByPassWorkflow($workflownode_id,$parameter_array,$frmName,$fieldName,$typebtn="form",$person_id=0){
 
         $html = '';
-        $sqluserchoice = sprintf("SELECT wn.*,wl.workflowuserchoiceline_name,wl.workflowstatus_id
+   echo     $sqluserchoice = sprintf("SELECT wn.*,wl.workflowuserchoiceline_name,wl.workflowstatus_id
                             FROM sim_workflownode wn
                             INNER JOIN sim_workflowuserchoice wc ON wn.workflowuserchoice_id = wc.workflowuserchoice_id
                             INNER JOIN sim_workflowuserchoiceline wl ON wc.workflowuserchoice_id = wl.workflowuserchoice_id
@@ -313,9 +313,9 @@ class WorkflowAPI
              $this->updateLatestStatus($tablename,$primarykey_name,$primarykey_value,$this->workflowstatus_id);//update latest status id
 
 
+             $this->sendWorkflowSMS();//send sms
 
              $this->sendWorkflowMail();//send email
-             $this->sendWorkflowSMS();//send sms
         }
 
         return $saveTransaction;
@@ -450,8 +450,9 @@ class WorkflowAPI
 
 
 
-             $this->sendWorkflowMail();//send email
+           
              $this->sendWorkflowSMS();//send sms
+               $this->sendWorkflowMail();//send email
         }
 
         return $saveTransaction;
@@ -759,6 +760,8 @@ class WorkflowAPI
         /* start replace parameter */
 
         foreach($parameter_array as $para_name=>$para_value){
+
+        
         $this->targetparameter_name = str_replace($para_name,$para_value,$this->targetparameter_name);
         $this->workflow_description = str_replace($para_name,$para_value,$this->workflow_description);
         $this->email_list = str_replace($para_name,$para_value,$this->email_list);
@@ -797,7 +800,7 @@ class WorkflowAPI
    public function checkButtonAllowed($workflownode_id,$parameter_array){
         global $xoopsUser;
         $uid = $xoopsUser->getVar('uid');
-
+ 
         $retval = false;
 
         $sql = sprintf("SELECT * FROM sim_workflownode WHERE workflownode_id = '%d' ",$workflownode_id);
@@ -816,7 +819,8 @@ class WorkflowAPI
             $this->sms_body = $row['sms_body'];
 
             $this->replaceWorkflowParameter($parameter_array);
-
+    //   echo "????  $uid $this->targetparameter_name"; die;
+       
             if($uid == $this->target_uid)//check for target_uid
             $retval = true;
 
@@ -878,38 +882,38 @@ class WorkflowAPI
      */
 
     public function sendWorkflowMail(){
+global $smtpuser,$smtpserver,$smtppassword,$senderuser;
 
         $this->log->showLog(4,"run sendWorkflowMail with isemail : $this->isemail");
 
-        if($this->isemail == 1){
+      if($this->isemail == 1 or 1){
+      $arrcontent=explode("\n",$this->email_body);
+      $subject=$arrcontent[0];
+    $body=str_replace("\n", "<br/>", $this->email_body);
+    include('../simantz/class/class.phpmailer.php');
 
-        include_once "../simantz/class/Mail.php";
-        $m=new Mail();
+    $mail             = new PHPMailer();
+    $mail->IsSMTP(); // telling the class to use SMTP
 
-        $m->emailtitle=$this->email_subject;
-        $m->message=$this->email_body;
-        $m->textlength=strlen($this->email_body);
-        $m->receipient=$this->email_list;
+    $mail->Host       = $smtpserver; // SMTP server
+    $mail->SMTPDebug  = 2;                     // enables SMTP debug information (for testing)
+    $mail->SMTPAuth   = true;                  // enable SMTP authentication
+    $mail->Username   = $smtpuser; // SMTP account username
+    $mail->Password   = $smtppassword;        // SMTP account password
+    $mail->SetFrom($smtpuser, $senderuser);
+    $mail->AddReplyTo($smtpuser,$senderuser);
+    $mail->Subject    =$subject;
+    $mail->MsgHTML($body);
+
+echo $address = $this->email_list;
+$mail->AddAddress($address);
 
 
-        $headers = array ('Subject' => $m->emailtitle,'From' => $smtpuser,
-        'To' => $m->receipient);
-        $smtp = Mail::factory('smtp',
-        array ('host' => "$m->smtpserver",
-        'auth' => true,
-        'username' => $m->smtpuser,
-        'password' => $m->smtppassword));
-
-        $mail = $smtp->send($m->receipient, $headers, $m->message);
-
-        //if (PEAR::isError($mail)) {
-        //echo("<p>" . $mail->getMessage() . "</p>");
-        //} else {
-        //echo("<p>Message sent! click <a href='index.php'>here</a> for back to home.</p> The receipient as below:<br>$m->receipient");
-        //}
-
-        //$m->sendemail();
-
+if(!$mail->Send()) {
+  echo "Mailer Error: " . $mail->ErrorInfo;
+} else {
+  echo "Message sent!";
+}
         }
 
     }
@@ -923,21 +927,16 @@ class WorkflowAPI
 
         $this->log->showLog(4,"run sendWorkflowSMS with isemail : $this->issms");
         if($this->issms == 1){
-if($smsid!="" && $smspassword!=""){
-        if($this->isGroup($sendsmsgroup)){
+        if($smsid!="" && $smspassword!=""){
         include_once "../simantz/class/SendMessage.php.inc";
         $m=new SendMessage();
-
-        //$o->studentselected = $this->sms_list;
-        //$m->emailtitle=$_POST['emailtitle'];
         $m->message=$this->sms_body;
         $m->textlength=strlen($this->sms_body);
-        $m->subscriber_number=$this->sms_list;
+        $m->arraynumber=explode(",",$this->sms_list);
+               $m->convertArrayToNumber();
+        
         $m->sendsms();
-        }else{
-        //redirect_header("student.php?action=search",$pausetime,"You do not have a permission to send SMS");
-        }
-}
+    }
 
 
         }
