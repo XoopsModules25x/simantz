@@ -424,22 +424,21 @@ class WorkflowAPI
 
         if($saveTransaction){
 
-
              if($this->insertWorkflowHistory($workflowtransaction_feedback)){
-                 $sqlupdate = sprintf("UPDATE sim_workflowtransaction SET issubmit = 0
-                                    WHERE created < '%s'
-                                    AND tablename = '%s'
-                                    AND primarykey_name = '%s'
-                                    AND primarykey_value = '%s' ",$timestamp,$tablename,$primarykey_name,$primarykey_value);
-
-                 $queryupdate = $this->xoopsDB->query($sqlupdate);
+//                 $sqlupdate = sprintf("UPDATE sim_workflowtransaction SET issubmit = 0
+//                                    WHERE created < '%s'
+//                                    AND tablename = '%s'
+//                                    AND primarykey_name = '%s'
+//                                    AND primarykey_value = '%s' ",$timestamp,$tablename,$primarykey_name,$primarykey_value);
+//
+//                 $queryupdate = $this->xoopsDB->query($sqlupdate);
 
              }
 
              if($this->workflow_sql != "")//if node define sql update
              $this->runWorkflowSql($tablename,$primarykey_name,$primarykey_value);
 
-       $this->log->showLog(4,"Start run ValidateTransaction $this->workflow_procedurefile");
+             $this->log->showLog(4,"Start run ValidateTransaction $this->workflow_procedurefile");
              if(file_exists("$this->workflow_procedurefile"))
                include "$this->workflow_procedurefile";
              if($this->workflow_procedure != "")//if node define procedure
@@ -447,12 +446,9 @@ class WorkflowAPI
                      //$this->runWorkflowProcedure();
 
              $this->updateLatestStatus($tablename,$primarykey_name,$primarykey_value,$this->workflowstatus_id);//update latest status id
-
-
-
            
              $this->sendWorkflowSMS();//send sms
-               $this->sendWorkflowMail();//send email
+             $this->sendWorkflowMail();//send email
         }
 
         return $saveTransaction;
@@ -905,15 +901,15 @@ global $smtpuser,$smtpserver,$smtppassword,$senderuser;
     $mail->Subject    =$subject;
     $mail->MsgHTML($body);
 
-echo $address = $this->email_list;
+//echo $address = $this->email_list;
 $mail->AddAddress($address);
 
 
-if(!$mail->Send()) {
-  echo "Mailer Error: " . $mail->ErrorInfo;
-} else {
-  echo "Message sent!";
-}
+//if(!$mail->Send()) {
+//  echo "Mailer Error: " . $mail->ErrorInfo;
+//} else {
+//  echo "Message sent!";
+//}
         }
 
     }
