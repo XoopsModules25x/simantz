@@ -2,12 +2,12 @@
 $report_organizationname="SIM IT Sdn Bhd";
 $report_organizationaddress="39-01, Jalan Mutiara Emas 9/3, Taman Mount Austin, 81100 Johor Bahru, Johor";
 $report_organizationcontacts="Tel : 019-7725330  Fax : 07-3511757";
-$smtpserver="mail.simit.com.my:587";
-$smtpuser="marhan@simit.com.my";
-$smtppassword="mahan777";
+$smtpserver="";
+$smtpuser="";
+$smtppassword="";
 $smsurl="http://219.93.241.218:8080/siriesoftSMS/smsBulkERA";
-$smsid="59";
-$smspassword="abcabc";
+$smsid="";
+$smspassword="";
 $smssender_name="SIMIT";
 $urlchecksmsbalance="http://219.93.241.218:8080/siriesoftSMS/smsRequestBalance?owner_id=$smsid&password=$smspassword";
 $senderuser="Hiumen";
