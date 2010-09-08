@@ -824,7 +824,7 @@ class WorkflowAPI
 
             foreach($target_arr as $value){//check for targetparameter_name
 
-                if($uid == $value)
+                if("[".$uid."]" == $value)
                 $retval = true;
             }
 

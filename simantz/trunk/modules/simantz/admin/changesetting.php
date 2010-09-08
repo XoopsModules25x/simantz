@@ -26,7 +26,7 @@ $selectspliter=$_POST['selectspliter'];
 $allowbrowser=$_POST['allowbrowser'];
 $sendsmsgroup=$_POST['sendsmsgroup'];
 $uploadpath=$_POST['uploadpath'];
-
+$supportbrowserurl="http://www.simit.com.my/?q=supportbrowser";
 /*
 if(PHP_OS=='WINNT'){
 
