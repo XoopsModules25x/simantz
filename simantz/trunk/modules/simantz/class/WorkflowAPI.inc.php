@@ -111,7 +111,7 @@ class WorkflowAPI
             //$workflowstatus_name = $rowuserchoice['workflowstatus_name'];
             $workflowuserchoiceline_name = $rowuserchoice['workflowuserchoiceline_name'];
             $workflowstatus_id = $rowuserchoice['workflowstatus_id'];
-            $workflownode_button = $rowuserchoice['workflownode_id'];
+            $workflownode_button = $rowuserchoice['parentnode_id'];
             $workflow_bypass = $rowuserchoice['workflow_bypass'];
 
             $isbypass = $this->replaceWorkflowByPassParameter($workflow_bypass,$parameter_array);
@@ -199,7 +199,10 @@ class WorkflowAPI
         $this->fetchWorkflowNode($workflow_code,$workflowstatus_name);
 
         $this->replaceWorkflowParameter($parameter_array);
-
+        if($this->target_groupid!=0)
+              $this->getTargetGroupEmail();
+        
+        $this->log->showLog(3,"Email List by group: $this->email_list");
         $timestamp = date("y/m/d H:i:s", time());
 
         //for transaction
@@ -334,7 +337,10 @@ class WorkflowAPI
         $this->fetchWorkflowNode($workflow_code,$workflowstatus_name);
 
         $this->replaceWorkflowParameter($parameter_array);
+        if($this->target_groupid!=0)
+              $this->getTargetGroupEmail();
 
+        $this->log->showLog(3,"Email List by group: $this->email_list");
         $timestamp = date("y/m/d H:i:s", time());
 
         //for transaction
@@ -456,7 +462,33 @@ class WorkflowAPI
    /*
     * run procedure
     */
+   public function getTargetGroupEmail(){
 
+        $result="";
+        $this->log->showLog(3,"call GetEmail by group: $this->target_groupid");
+        $sql = "SELECT u.uid, emp.employee_id,emp.employee_name, emp.employee_email
+                 FROM sim_groups_users_link u
+                 inner join sim_hr_employee emp on emp.uid= u.uid
+                 WHERE u.groupid ='$this->target_groupid' ";
+        $this->log->showLog(3,"GetEmail by group SQL: $sql");
+        $query=$this->xoopsDB->query($sql);
+        while ($row=$this->xoopsDB->fetchArray($query)){
+            $email = $row['employee_email'];
+                if($email!="")
+                    $result.=$email.",";
+        }
+        $this->log->showLog(3,"GetEmail Result of SQL: $result");
+        $result=substr_replace($result,"",-1);
+        if($this->email_list!=""){
+                $this->email_list=$this->email_list.",".$result;
+                $this->log->showLog(3,"after add email_list Result of SQL: $this->email_list");}
+        else{
+                $this->email_list=$result;
+        }
+
+        //return $result;
+    }
+    
    public function runWorkflowProcedure(){
 
         $sqlprocedure = sprintf("call $this->workflow_procedure;");
