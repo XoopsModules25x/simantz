@@ -946,10 +946,10 @@ EOF;
         $wherestring .= " AND wt.workflowtransaction_datetime BETWEEN '$searchleave_fromdate' AND '$searchleave_todate' ";
         }
 
-        $wherestring .= " AND (wt.target_uid = $this->createdby OR $this->createdby IN (wt.targetparameter_name) ".
+        $wherestring .= " AND (wt.target_uid = $this->createdby OR wt.targetparameter_name LIKE concat('%[',$this->createdby,']%') ".
                       "  OR $this->createdby IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)) ";
 
-        $wherestring .= " AND wt.iscomplete = 0 ";
+//        $wherestring .= " AND wt.iscomplete = 0 ";
         if($searchiscomplete != "true"){
         $wherestring .= " AND wt.iscomplete = '0' ";
         }else{

@@ -112,7 +112,7 @@ $o->defineHeaderButton();
             $nextstatus_name = $workflowapi->getStatusName($workflowstatus_id);
 
             $workflowReturn = $workflowapi->updateWorkflowTransaction(
-                                           "$workflowtransaction_id",
+                                            $workflowtransaction_id,
                                             $o->window_workflow,
                                             "$nextstatus_name",
                                             $o->tablename,
