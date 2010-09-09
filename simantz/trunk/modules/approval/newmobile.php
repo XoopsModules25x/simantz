@@ -17,10 +17,10 @@ echo <<< EOF
         var init_height = screen.height;
         var init_width = screen.width;
 
-//        if(init_height > 500 && init_width > 500)
-//        self.location = "approvallist.php";
-//        else if($userbasicmobileweb)
-//        self.location = "basicmobile.php";
+        if(init_height > 500 && init_width > 500)
+        self.location = "approvallist.php";
+        else if($userbasicmobileweb)
+        self.location = "basicmobile.php";
         
     </script>
 EOF;
