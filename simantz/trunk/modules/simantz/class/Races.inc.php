@@ -328,7 +328,9 @@ if ($deleteCount > 0){
     $isdeleted=$this->isdeleted;
 
     $save->DeleteRecord("sim_races","races_id",$record_id,$controlvalue,1);
-
+  if($save->failfeedback!=""){
+      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
+      $this->failfeedback.=$save->failfeedback;}
   }
 
   }

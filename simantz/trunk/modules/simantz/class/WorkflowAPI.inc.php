@@ -53,20 +53,12 @@ class WorkflowAPI
         while ($row=$this->xoopsDB->fetchArray($query))
         {
                 $workflownode_id = $row['workflownode_id'];
-
-                //echo "$workflownode_id<br>";
-
                 $htmlBypass = $this->checkByPassWorkflow($workflownode_id,$parameter_array,$frmName,$fieldName,$typebtn,$person_id);
-
                 $html .= $htmlBypass;
         }
-
         //end
-
         //$html = "";
-
         //$html = "<input type='button' value='Workflow : $workflow_code, Status : $workflowstatus_id'>";//testing purpose
-
         return $html;
    }
 
@@ -84,7 +76,7 @@ class WorkflowAPI
                             GROUP BY wl.workflowuserchoiceline_id"
                             ,$workflownode_id);//get child node
 
-        $this->log->showLog(4," getWorkflowButtonUserChoice user choice SQL: $sqluserchoice");
+        $this->log->showLog(4," getWorkflowButtonUserChoice user choice SQL: $sqluserchoice , Type: $typebtn");
 
         $queryuserchoice = $this->xoopsDB->query($sqluserchoice);
 
@@ -845,10 +837,9 @@ class WorkflowAPI
             $this->sms_list = $row['sms_list'];
             $this->email_body = $row['email_body'];
             $this->sms_body = $row['sms_body'];
-
+  $this->log->showLog(3,"get targetparameter_name: $this->targetparameter_name ");
             $this->replaceWorkflowParameter($parameter_array);
-    //   echo "????  $uid $this->targetparameter_name"; die;
-       
+  $this->log->showLog(3,"get targetparameter_name after: $this->targetparameter_name ");
             if($uid == $this->target_uid)//check for target_uid
             $retval = true;
 
@@ -858,6 +849,7 @@ class WorkflowAPI
 
                 if("[".$uid."]" == $value)
                 $retval = true;
+                 $this->log->showLog(3,"check for targetparameter_name: $uid and $value ");
             }
 
             if($this->target_groupid != ""){//check for targetgroup
