@@ -17,17 +17,16 @@ echo <<< EOF
         var init_height = screen.height;
         var init_width = screen.width;
 
-        if(init_height > 500 && init_width > 500)
-        self.location = "approvallist.php";
-        else if($userbasicmobileweb)
-        self.location = "basicmobile.php";
+//        if(init_height > 500 && init_width > 500)
+//        self.location = "approvallist.php";
+//        else if($userbasicmobileweb)
+//        self.location = "basicmobile.php";
         
     </script>
 EOF;
 
 $approvallist = new Approvallist();
 $workflowapi = new WorkflowAPI();
-$approvallist->parameter_array = $approvallist->defineWorkflowParameter();
 
 $action = $_REQUEST['action'];
 $day = $_REQUEST['day'];
@@ -38,28 +37,27 @@ switch ($action){
     case "next_node":
 
         $workflowstatus_id = $_REQUEST['status_node'];
+        $workflowtransaction_id = $_POST['workflowtransaction_id'];
         $workflowtransaction_feedback = $_REQUEST['workflowtransaction_feedback'];
-        $window_workflow = $_REQUEST['window_workflow'];
+        $approvallist->window_workflow = $_REQUEST['window_workflow'];
         $tablename = $_REQUEST['tablename'];
         $primarykey_name = $_REQUEST['primarykey_name'];
-        $primarykey_value = $_REQUEST['primarykey_value'];
-        $person_id = $_REQUEST['person_id'];
-        
-        if($primarykey_value > 0){
-
-
-
+        $approvallist->primarykey_value = $_REQUEST['primarykey_value'];
+        $approvallist->person_id = $_REQUEST['person_id'];
+        $approvallist->parameter_array = $approvallist->defineWorkflowParameter();
+        if($approvallist->primarykey_value > 0){
 
             $nextstatus_name = $workflowapi->getStatusName($workflowstatus_id);
 
-            $workflowReturn = $workflowapi->insertWorkflowTransaction(
-                                            $window_workflow,
+            $workflowReturn = $workflowapi->updateWorkflowTransaction(
+                                           "$workflowtransaction_id",
+                                            $approvallist->window_workflow,
                                             "$nextstatus_name",
                                             $tablename,
                                             $primarykey_name,
-                                            $primarykey_value,
+                                            $approvallist->primarykey_value,
                                             $approvallist->parameter_array,
-                                            $person_id,
+                                            $approvallist->person_id,
                                             "",
                                             $workflowtransaction_feedback
                                             );
@@ -84,7 +82,7 @@ switch ($action){
 
 
 }
-
+$approvallist->parameter_array = $approvallist->defineWorkflowParameter();
 if(!empty($xoopsUser )){
     $approvallist->createdby=$xoopsUser->getVar('uid');
 
@@ -164,20 +162,14 @@ EOF;
 </head>
 
 <body id="jPint">
-
-
     
 <div class="jPintPageSet">
 
 	<div id="mainMenuPage" class="jPintPage IconMenu">
                 <div class="txtWelcome">Welcome to HIUMEN Mobile</div>
                 
-		<ul>
-			<li><a onclick="enterPage()" style="cursor:pointer"><img src="../simantz/mobile/images/NavEnter.png"></a></li>
-
-		</ul>
-                <form id='idEnterPage' method='post' action='newmobile.php#approvalList'>
-                </form>
+		<ul><li><a onclick="enterPage()" style="cursor:pointer"><img src="../simantz/mobile/images/NavEnter.png"></a></li></ul>
+                <form id='idEnterPage' method='post' action='newmobile.php#approvalList'></form>
                 <div class="imgLogout"><a href="logout.php" title="Logout"><img src="../simantz/mobile/images/NavLogout.png"></a></div>
 	</div>
 

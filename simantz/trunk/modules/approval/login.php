@@ -76,7 +76,7 @@ EOF;
 <div class="jPintPageSet">
 
 	<div id="mainMenuPage" class="jPintPage IconMenu" >
-               <h1>Welcome To SimEDU System
+               <h1>Welcome To HIUMEN System
 
 		</h1>
                 <br/><br/>

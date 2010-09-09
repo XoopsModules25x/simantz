@@ -17,11 +17,11 @@ echo <<< EOF
         var init_height = screen.height;
         var init_width = screen.width;
 
-        if(init_height > 500 && init_width > 500)
-        self.location = "approvallist.php";
+//        if(init_height > 500 && init_width > 500)
+//        self.location = "approvallist.php";
         
         //if($userbasicmobileweb)
-        //self.location = "basicmobile.php";
+//        self.location = "basicmobile.php";
         //else
         //self.location = "newmobile.php";        
     </script>
@@ -29,7 +29,7 @@ EOF;
 
 $approvallist = new Approvallist();
 $workflowapi = new WorkflowAPI();
-$approvallist->parameter_array = $approvallist->defineWorkflowParameter();
+
 
 $action = $_REQUEST['action'];
 $day = $_REQUEST['day'];
@@ -76,28 +76,27 @@ switch ($action){
     case "next_node":
 
         $workflowstatus_id = $_REQUEST['status_node'];
+        $workflowtransaction_id = $_POST['workflowtransaction_id'];
         $workflowtransaction_feedback = $_REQUEST['workflowtransaction_feedback'];
-        $window_workflow = $_REQUEST['window_workflow'];
+        $approvallist->window_workflow = $_REQUEST['window_workflow'];
         $tablename = $_REQUEST['tablename'];
         $primarykey_name = $_REQUEST['primarykey_name'];
-        $primarykey_value = $_REQUEST['primarykey_value'];
-        $person_id = $_REQUEST['person_id'];
-        
-        if($primarykey_value > 0){
-
-
-
+        $approvallist->primarykey_value = $_REQUEST['primarykey_value'];
+        $approvallist->person_id = $_REQUEST['person_id'];
+        $approvallist->parameter_array = $approvallist->defineWorkflowParameter();
+        if($approvallist->primarykey_value > 0){
 
             $nextstatus_name = $workflowapi->getStatusName($workflowstatus_id);
 
-            $workflowReturn = $workflowapi->insertWorkflowTransaction(
-                                            $window_workflow,
+            $workflowReturn = $workflowapi->updateWorkflowTransaction(
+                                           "$workflowtransaction_id",
+                                            $approvallist->window_workflow,
                                             "$nextstatus_name",
                                             $tablename,
                                             $primarykey_name,
-                                            $primarykey_value,
+                                            $approvallist->primarykey_value,
                                             $approvallist->parameter_array,
-                                            $person_id,
+                                            $approvallist->person_id,
                                             "",
                                             $workflowtransaction_feedback
                                             );
@@ -227,6 +226,9 @@ EOF;
 break;
 
 case "view":
+
+$approvallist->fetchWorkflowtransaction($_GET['id']);
+$approvallist->parameter_array = $approvallist->defineWorkflowParameter();
 echo <<< EOF
 <title>SimEDU Approval</title>
 
@@ -242,6 +244,7 @@ echo <<< EOF
 
 
 EOF;
+
 $approvallist->getInputForm($_GET['id']);
 
 break;
@@ -264,7 +267,7 @@ echo <<< EOF
 		<!-- Home Level Begin -->
 		<h1>Approval List
 			<div class="">
-								<a href="basicmobile.php?action=showhistorypage" class="RightButton">History</a>
+			  <a href="basicmobile.php?action=showhistorypage" class="RightButton">History</a>
 			</div>
 
 			</h1>

@@ -28,42 +28,9 @@ class Approvallist
         global $xoopsDB,$xoopsUser,$workflowapi;
         $uid = $xoopsUser->getVar('uid');
 
-        /*
-        $wherestring = "WHERE 1 ";
-        $wherestring .= " AND lv.iscomplete = '0' ";
-
-        $wherestring .= " AND (wt.target_uid = $uid OR $uid IN (wt.targetparameter_name)
+        $wherestring .= " AND (wt.target_uid = $uid OR wt.targetparameter_name LIKE concat('%[',$uid,']%')
                         OR $uid IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)
                         ) ";
-
-        $sqlleave = "SELECT wt.*, 'LEAVE' as window_workflow,lv.leave_date as apply_date,lv.leave_no as doc_no,
-                wf.workflow_name,em.employee_name,em.employee_no,
-                CONCAT('<b>Leave Date :</b> ',lv.leave_fromdate,' - ',lv.leave_todate,'<br/>','<b>Reasons :</b><br/>',lv.description) as approval_details
-                FROM sim_workflowtransaction wt
-                INNER JOIN sim_workflow wf ON wt.workflow_id = wf.workflow_id
-                INNER JOIN sim_workflowstatus ws ON wt.workflowstatus_id = ws.workflowstatus_id
-                INNER JOIN sim_workflownode wn ON wt.workflowstatus_id = wn.workflowstatus_id AND wt.workflow_id = wn.workflow_id
-                INNER JOIN sim_workflownode wnp ON wn.workflownode_id = wnp.parentnode_id
-                INNER JOIN sim_hr_leave lv ON lv.leave_id = wt.primarykey_value AND wt.primarykey_name = 'leave_id'
-                INNER JOIN sim_hr_employee em ON lv.employee_id = em.employee_id
-                AND wt.tablename = 'sim_hr_leave'
-
-                $wherestring AND lv.issubmit = 1
-                GROUP BY wt.tablename, wt.primarykey_name, wt.primarykey_value
-                ORDER BY lv.leave_date ";
-
-        $sql = "SELECT * FROM (
-                ($sqlleave)
-                ) a
-                ORDER BY a.apply_date ASC
-                ";
-         * 
-         */
-
-        $wherestring .= " where (wt.target_uid = $uid OR $uid IN (wt.targetparameter_name)
-                        OR $uid IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)
-                        ) ";
-
 
         $wherestring .= " AND wt.iscomplete = 0 ";
 
@@ -83,13 +50,8 @@ class Approvallist
         $i=0;
         while ($row=$this->xoopsDB->fetchArray($query))
         {
-
-
             $issubmit = $row['issubmit'];
-
             if($issubmit == 1){
-
-
         $i++;
         $workflowtransaction_id =$row['workflowtransaction_id'];
         $employee_name = $row['employee_name'];
@@ -109,9 +71,6 @@ class Approvallist
 
         $workflowbtn = $workflowapi->getWorkflowButton($window_workflow,$primarykey_value,"$idForm","action",$this->parameter_array,"mobile",$person_id);
 
-
-
-      
         $url = 'basicmobile.php?action=view&id='.$workflowtransaction_id."#details";
 
 echo <<< EOF
@@ -130,7 +89,7 @@ EOF;
 public function getInputForm($id){
 	  global $xoopsDB,$xoopsUser,$url,$workflowapi;
         $uid = $xoopsUser->getVar('uid');
-	    $wherestring .= " WHERE (wt.target_uid = $uid OR $uid IN (wt.targetparameter_name)
+        $wherestring .= " AND (wt.target_uid = $uid OR wt.targetparameter_name LIKE concat('%[',$uid,']%')
                         OR $uid IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)
                         ) ";
 
@@ -145,7 +104,7 @@ public function getInputForm($id){
                 INNER JOIN sim_workflow wf ON wt.workflow_id = wf.workflow_id
                 $wherestring
                 ORDER BY wt.created DESC";
-
+        $this->log->showLog(4,"getInputForm SQL: $sql");
         //$log->showLog(4,"showApprovallistGrid SQL: $sql");
         $query = $xoopsDB->query($sql);
 
@@ -153,12 +112,9 @@ public function getInputForm($id){
         while ($row=$xoopsDB->fetchArray($query))
         {
             $issubmit = $row['issubmit'];
- 
       //      if($issubmit == 1){
-
-
         $i++;
-         $employee_name = $row['employee_name'];
+        $employee_name = $row['employee_name'];
         $person_id = $row['person_id'];
         $employee_no = $row['employee_no'];
         $primarykey_value = $row['primarykey_value'];
@@ -168,25 +124,23 @@ public function getInputForm($id){
         $primarykey_name = $row['primarykey_name'];
         $tablename = $row['tablename'];
         $apply_date = $row['created'];
+        $workflowtransaction_id = $row['workflowtransaction_id'];
         $approval_details = $row['workflowtransaction_description'];
-
+            $approval_details = str_replace("\n","<br>",$approval_details);
         $idForm = "idApprovalForm".$window_workflow.$primarykey_value;
         $nameForm = "frmApprovalForm".$window_workflow.$primarykey_value;
-
+   $this->log->showLog(3,"test getWorkflowButton , window_workflow:$window_workflow, primarykey_value: $primarykey_value, idForm:$idForm, person_id:$person_id, $this->parameter_array");
         $workflowbtn = $workflowapi->getWorkflowButton($window_workflow,$primarykey_value,"$idForm","action",$this->parameter_array,"mobile",$person_id);
 
-
-
         $html .= '<div id="details" class="jPintPage HasTitle EdgedList EditModeOff Notes">';
-
         $html .= '<form name="'.$nameForm.'" id="'.$idForm.'" method="POST" action="basicmobile.php">';
-
         $html .= '
                 <input type="hidden" id="action" name="action" value="next_node">
                 <input type="hidden" id="primarykey_value" name="primarykey_value" value="'.$primarykey_value.'">
                 <input type="hidden" id="primarykey_name" name="primarykey_name" value="'.$primarykey_name.'">
                 <input type="hidden" id="tablename" name="tablename" value="'.$tablename.'">
                 <input type="hidden" id="window_workflow" name="window_workflow" value="'.$window_workflow.'">
+                <input type="hidden" id="$workflowtransaction_id" name="$workflowtransaction_id" value="'.$workflowtransaction_id.'">
                 ';
 
        $html .= '<h1>Approval
@@ -270,20 +224,84 @@ EOF;
   public function defineWorkflowParameter(){
         global $xoopsUser;
 
-        $uid = $xoopsUser->getVar('uid');
-        /* start define hod */
-        include_once "../hr/class/Employee.php";
-        $emp = new Employee();
+    switch ($this->window_workflow){
 
-        $hod_uid = $emp->getHODDepartmentID($uid);
-        /* end */
-      return $parameter_array = array(
-                                '{own_uid}'=>$uid,
-                                '{hod_uid}'=>$hod_uid,
-                                '{email_list}'=>'',
-                                '{sms_list}'=>'',
-                                '{bypassapprove}'=>false
-                                    );
+     CASE  "LEAVE":
+        include_once "../hr/class/Leave.php";
+        $lev = new Leave();
+               $lev->leave_id=$this->primarykey_value;
+               $lev->person_id=$this->person_id;
+               $lev->window_workflow= $this->window_workflow;
+        return $lev->defineWorkflowParameter();
+     break;
+
+     CASE  "GENERCLAIM":
+
+        include_once "../hr/class/Generalclaim.php";
+        $gen = new Generalclaim();
+               $gen->generalclaim_id=$this->primarykey_value;
+               $gen->person_id=$this->person_id;
+               $gen->window_workflow= $this->window_workflow;
+        return $gen->defineWorkflowParameter();
+     break;
+
+     CASE  "MEDICCLAIM":
+
+        include_once "../hr/class/Medicalclaim.php";
+        $me = new Medicalclaim();
+               $me->medicalclaim_id=$this->primarykey_value;
+               $me->person_id=$this->person_id;
+               $me->window_workflow= $this->window_workflow;
+        return $me->defineWorkflowParameter();
+     break;
+
+      CASE  "OVERCLAIM":
+
+        include_once "../hr/class/Overtimeclaim.php";
+        $ov = new Overtimeclaim_id();
+               $ov->overtimeclaim_id=$this->primarykey_value;
+               $ov->person_id=$this->person_id;
+               $ov->window_workflow= $this->window_workflow;
+        return $ov->defineWorkflowParameter();
+     break;
+
+      CASE  "TRAVECLAIM":
+
+        include_once "../hr/class/Travellingclaim.php";
+        $tr = new Travellingclaim();
+               $tr->travellingclaim_id=$this->primarykey_value;
+               $tr->person_id=$this->person_id;
+               $tr->window_workflow= $this->window_workflow;
+        return $tr->defineWorkflowParameter();
+     break;
+
+      CASE  "LEAVEADJ":
+
+        include_once "../hr/class/Leaveadjustment.php";
+        $led = new Leaveadjustment();
+               $led->leaveadjustment_id=$this->primarykey_value;
+               $led->person_id=$this->person_id;
+               $led->window_workflow= $this->window_workflow;
+        return $led->defineWorkflowParameter();
+     break;
+
+     default:
+         break;
+    }
+//        $uid = $xoopsUser->getVar('uid');
+//        /* start define hod */
+//        include_once "../hr/class/Employee.php";
+//        $emp = new Employee();
+//
+//        $hod_uid = $emp->getHODDepartmentID($uid);
+//        /* end */
+//      return $parameter_array = array(
+//                                '{own_uid}'=>$uid,
+//                                '{hod_uid}'=>$hod_uid,
+//                                '{email_list}'=>'',
+//                                '{sms_list}'=>'',
+//                                '{bypassapprove}'=>false
+//                                    );
 
   }
 
@@ -296,42 +314,7 @@ EOF;
 
         $uid = $xoopsUser->getVar('uid');
 
-        /*
-        $wherestring = "WHERE 1 ";
-        
-        $wherestring .= " AND lv.iscomplete = '1' ";
-
-        $wherestring .= " AND (wt.target_uid = $uid OR $uid IN (wt.targetparameter_name)
-                        OR $uid IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)
-                        ) ";
-
-        $wherestring .= " AND SUBSTRING(wt.created,1,10) BETWEEN SUBSTRING(DATE_SUB(NOW(),INTERVAL $day DAY),1,10) AND SUBSTRING(NOW(),1,10) ";
-
-        $sqlleave = "SELECT wt.*, 'LEAVE' as window_workflow,lv.leave_date as apply_date,lv.leave_no as doc_no,
-                wf.workflow_name,em.employee_name,em.employee_no,ws.workflowstatus_name,
-                CONCAT('<b>Leave Date :</b> ',lv.leave_fromdate,' - ',lv.leave_todate,'<br/>','<b>Reasons :</b><br/>',lv.description) as approval_details
-                FROM sim_workflowtransaction wt
-                INNER JOIN sim_workflow wf ON wt.workflow_id = wf.workflow_id
-                INNER JOIN sim_workflowstatus ws ON wt.workflowstatus_id = ws.workflowstatus_id
-                INNER JOIN sim_workflownode wn ON wt.workflowstatus_id = wn.workflowstatus_id AND wt.workflow_id = wn.workflow_id
-                INNER JOIN sim_workflownode wnp ON wn.workflownode_id = wnp.parentnode_id
-                INNER JOIN sim_hr_leave lv ON lv.leave_id = wt.primarykey_value AND wt.primarykey_name = 'leave_id'
-                INNER JOIN sim_hr_employee em ON lv.employee_id = em.employee_id
-                AND wt.tablename = 'sim_hr_leave'
-
-                $wherestring AND lv.issubmit = 1
-                GROUP BY wt.tablename, wt.primarykey_name, wt.primarykey_value
-                ORDER BY lv.leave_date ";
-
-        $sql = "SELECT * FROM (
-                ($sqlleave)
-                ) a
-                ORDER BY a.apply_date ASC
-                ";
-         *
-         */
-
-        $wherestring .= " AND (wt.target_uid = $uid OR $uid IN (wt.targetparameter_name)
+        $wherestring .= " AND (wt.target_uid = $uid OR wt.targetparameter_name LIKE concat('%[',$uid,']%')
                         OR $uid IN (SELECT uid FROM sim_groups_users_link WHERE groupid = wt.target_groupid)
                         ) ";
 
@@ -380,7 +363,34 @@ EOF;
 
   }
 
+  public function fetchWorkflowtransaction($id){
 
+	$this->log->showLog(3,"Fetching Workflowtransaction detail into class ApprovalBasicMobile.php.<br>");
+
+	$sql= sprintf("SELECT wt.* , w.workflow_code
+                       from sim_workflowtransaction wt
+                       left join sim_workflow w on w.workflow_id = wt.workflow_id
+                       where workflowtransaction_id='%d'",$id);
+
+	$this->log->showLog(4,"ProductApprovallist->fetchWorkflowtransaction, before execute:" . $sql . "<br>");
+
+	$query=$this->xoopsDB->query($sql);
+
+	if($row=$this->xoopsDB->fetchArray($query)){
+        $this->window_workflow=$row["workflow_code"];
+        $this->primarykey_value=$row["primarykey_value"];
+        $this->person_id=$row['person_id'];
+      
+   	$this->log->showLog(4,"Approvallist->fetchWorkflowtransaction,database fetch into class successfully");
+	return true;
+	}
+	else{
+	return false;
+	$this->log->showLog(4,"Approvallist->fetchWorkflowtransaction,failed to fetch data into databases:" . mysql_error(). ":$sql");
+	}
+
+
+  }
 
 } // end of ClassWorkflow
 ?>
