@@ -112,7 +112,7 @@ class Organization
 		$this->url="";
 		$this->groupid=0;
 		}
-		$savectrl="<input name='submit' value='save' type='submit'>";
+		$savectrl="<input name='btnsave' value='save' type='submit' onclick='save()'>";
 		$checked="CHECKED";
 		$deletectrl="";
 		$addnewctrl="";
@@ -125,8 +125,8 @@ class Organization
 		*/
 		$action="update";
 		
-		$savectrl="<input name='organization_id' value='$this->organization_id' type='hidden'>".
-			 "<input name='submit' value='save' type='submit'>";
+		$savectrl="".
+			 "<input name='btnsave' value='save' type='submit' onclick='save()'>";
 
 		//force isactive checkbox been checked if the value in db is '1'
 		if ($this->isactive==1)
@@ -134,97 +134,161 @@ class Organization
 		else
 			$checked="";
 		$header="Edit Organization";
-		$deletectrl="<FORM action='organization.php' method='POST' onSubmit='return confirm(".
-		'"confirm to remove this organization?"'.")'><input type='submit' value='Delete' name='submit'>".
-		"<input type='hidden' value='$this->organization_id' name='organization_id'>".
-		"<input type='hidden' value='delete' name='action'><input name='token' value='$token' type='hidden'></form>";
-		$addnewctrl="<Form action='organization.php' method='POST'><input name='submit' value='New' type='submit'></form>";
+		$deletectrl="<input type='submit' value='Delete' name='btndelete' onclick='deleterecord();'>";
+		$addnewctrl="<input name='btnadd' value='New' type='submit' onclick='add()'>";
 	}
 //<A href='index.php'>Back To This Module Administration Menu</A>
     echo <<< EOF
+ <script language="javascript" type="text/javascript">
+        
+  function deleterecord(){
+    if(confirm("Save record?")){
+    document.frmOrganzation.action.value="delete";
+    document.frmOrganzation.submit();
+    }
+  }
+  function add(){
+    document.frmOrganzation.action.value="";
+    document.frmOrganzation.submit();
+  }
+  function save(){
 
-<form onsubmit="return validateOrganization()" method="post"
- action="organization.php" name="frmOrganzation">
-  <table style="text-align: left; width: 100%;" border="1" class="searchformblock"
- cellpadding="2" >
+      var name=document.forms['frmOrganzation'].organization_name.value;
+      var code=document.forms['frmOrganzation'].organization_code.value;
+
+
+            var isallow = true;
+            var errorMsg = "";
+
+            if(name == ""){
+                isallow = false;
+                errorMsg += "<br/><b>Organization name Name</b>";
+            }
+            if(code == ""){
+                isallow = false;
+                errorMsg += "<br/><b>Organization code</b>";
+            }
+
+      if(confirm("Save record?")){
+             if(isallow){
+             document.frmOrganzation.submit();
+              }else{
+                 document.getElementById("statusDiv").innerHTML="Failed to save record...Please Check :<br/>"+errorMsg;
+                 return false;
+               }
+        }
+
+  }
+
+  function resetdata(){
+
+     document.forms['frmOrganzation'].organization_code.value="";
+     document.forms['frmOrganzation'].organization_name.value="";
+     document.forms['frmOrganzation'].companyno.value="";
+     document.forms['frmOrganzation'].tel_1.value="";
+     document.forms['frmOrganzation'].tel_2.value="";
+
+     document.forms['frmOrganzation'].fax.value="";
+     document.forms['frmOrganzation'].url.value="";
+     document.forms['frmOrganzation'].email.value="";
+     document.forms['frmOrganzation'].street1.value="";
+     document.forms['frmOrganzation'].street2.value="";
+
+    document.forms['frmOrganzation'].street3.value="";
+     document.forms['frmOrganzation'].city.value="";
+     document.forms['frmOrganzation'].state.value="";
+     document.forms['frmOrganzation'].postcode.value="";
+     document.forms['frmOrganzation'].country_id.value="0";
+     document.forms['frmOrganzation'].currency_id.value="0";
+   }
+
+</script>
+<br>
+<div style="width: 970px;" id="statusDiv" align="center" class="ErrorstatusDiv"></div>
+<form onsubmit="return false" method="post" action="organization.php" name="frmOrganzation">
+<input name='organization_id' value='$this->organization_id' type='hidden'>
+    <table>
+      <tr>
+        <td align="left">$addnewctrl</td>
+      </tr>
+   </table>
+   <table style="text-align: left; width: 100%;" border="1" class="searchformblock" cellpadding="2" >
     <tbody>
+        
       <tr>
         <td colspan="4" rowspan="1" class="searchformheader">$header</td>
       </tr>
+
       <tr>
         <td class='head'>Organization Code $selectorg</td>
-        <td  class='odd'><input maxlength="10" size="10"
-		 name="organization_code" value="$this->organization_code">&nbsp;
+
+        <td class='odd'><input maxlength="10" size="10"  name="organization_code" value="$this->organization_code">&nbsp;
 	Active <input type="checkbox" $checked name="isactive">  $this->groupctrl</td>
+        
         <td class='head'>Organization Name/No</td>
-        <td  class='odd'><input maxlength="40" size="40"
- name="organization_name" value="$this->organization_name"> 
-	<input maxlength="15" size="15"
- name="companyno" value="$this->companyno"></td>
+
+        <td class='odd'>
+            <input maxlength="40" size="40" name="organization_name"  id="organization_name" value="$this->organization_name">
+	    <input maxlength="15" size="15" name="companyno" id="companyno" value="$this->companyno"></td>
       </tr>
+
       <tr>
         <td  class='head'>Tel 1 / Tel 2</td>
-        <td class='even'><input maxlength="16" size="16"
- name="tel_1" value="$this->tel_1"> / <input
- maxlength="16" size="16" name="tel_2"
- value="$this->tel_2"></td>
+        <td class='even'>
+            <input maxlength="16" size="16" name="tel_1" value="$this->tel_1"> /
+            <input maxlength="16" size="16" name="tel_2" value="$this->tel_2"></td>
         <td class='head'>Fax</td>
-        <td class='even'><input maxlength="16" size="16"
- name="fax" value="$this->fax"></td>
+        <td class='even'><input maxlength="16" size="16" name="fax" value="$this->fax"></td>
       </tr>
+
       <tr>
         <td class='head'>Website</td>
-        <td class='odd'><input maxlength="100" size="60"
- name="url" value="$this->url"></td>
+        <td class='odd'><input maxlength="100" size="60" name="url" value="$this->url"></td>
 	<td class='head'>Email</td>
-        <td  class='odd'><input maxlength="100" size="60"
- name="email" value="$this->email"></td>
-     
+        <td  class='odd'><input maxlength="100" size="60" name="email" value="$this->email"></td>
       </tr>
      
- <tr>
-     <td class='head'>Street 1</td>
-        <td class='even'><input maxlength="60" size="60"
- name="street1" value="$this->street1"></td>
-
+     <tr>
+        <td class='head'>Street 1</td>
+        <td class='even'><input maxlength="60" size="60" name="street1" value="$this->street1"></td>
         <td class='head'>Street 2</td>
-        <td class='even'><input maxlength="60" size="60"
- name="street2" value="$this->street2"></td>
- </tr>
- <tr>
-     <td class='head'>Street 3</td>
-        <td class='odd'><input maxlength="60" size="60"
- name="street3" value="$this->street3"></td>
+        <td class='even'><input maxlength="60" size="60" name="street2" value="$this->street2"></td>
+     </tr>
 
+     <tr>
+        <td class='head'>Street 3</td>
+        <td class='odd'><input maxlength="60" size="60" name="street3" value="$this->street3"></td>
         <td class='head'>City / Postcode</td>
         <td class='odd'><input maxlength="30" size="30" name="city" value="$this->city">
 	<input maxlength="6" size="6" name="postcode" value="$this->postcode"></td>
- </tr>
-<tr>
-     <td class='head'>State</td>
-        <td class='even'><input maxlength="30" size="30"
- name="state" value="$this->state"></td>
-
+     </tr>
+            
+     <tr>
+        <td class='head'>State</td>
+        <td class='even'><input maxlength="30" size="30" name="state" value="$this->state"></td>
         <td class='head'>Country</td>
         <td class='even'><select name="country_id" id="country_id">$this->countryctrl</select></td>
- </tr>
+     </tr>
 
-
-<tr>
-     <td class='head'>Currency</td>
+     <tr>
+        <td class='head'>Currency</td>
         <td class='odd'><select name="currency_id" id="currency_id">$this->currencyctrl</select></td>
         <td class='head'>Seq No</td>
         <td class='odd'><input maxlength="3" size="3" name="seqno" value="$this->seqno"></td>
- </tr>
-      <tr><td></td>
-        <td>$savectrl  <input name="reset" value="Reset" type="reset"> 
+     </tr>
+            
+     <tr>
+        <td></td>
+        <td>$savectrl  <input name="reset" value="Reset" type="button" onclick="resetdata()">
 	<input name="action" value="$action" type="hidden">
-	<input name="token" value="$token" type="hidden"></form> </td><td>
-	  $deletectrl </td><td> $addnewctrl
-	</td>
+	<input name="token" value="$token" type="hidden">
+        </td><td>
+        <td> $deletectrl</td>
       </tr>
+
     </tbody>
   </table>
+ </form>
   <br>
 
 

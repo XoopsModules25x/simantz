@@ -86,7 +86,7 @@ else
 	if ($s->check(false,$token,"CREATE_ORG")){
 		
 		//if organization saved
-			if($o->insertOrganization()){
+		       if($o->insertOrganization()){
 				 $latest_id=$o->getLatestOrganizationID();
 				 redirect_header("organization.php?action=edit&organization_id=$latest_id",$pausetime,"Your data is saved.");
 			}
@@ -124,8 +124,8 @@ break;
 	if($o->fetchOrganization($o->organization_id)){
 ;
 		$token=$s->createToken($tokenlife,"CREATE_ORG");
-		$o->countryctrl=$ctrl->getSelectCountry($o->country_id,'N');
-		$o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'N');
+		$o->countryctrl=$ctrl->getSelectCountry($o->country_id);
+		$o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id);
 		$o->groupctrl=$ctrl->getAllSystemGroup($o->groupid);
 	//	$o->accruedaccctrl=$ctrl->getSelectAccounts($o->accrued_acc,'Y',"","accrued_acc","","","N","","","style='width:150px'");
 	//	$o->socsoaccctrl=$ctrl->getSelectAccounts($o->socso_acc,'Y',"","socso_acc","","","N","","","style='width:150px'");

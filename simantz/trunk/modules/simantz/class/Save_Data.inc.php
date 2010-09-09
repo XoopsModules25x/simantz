@@ -139,13 +139,12 @@ public function completeAuditHistory($category,$status,$tablename,$primarykey,$r
             ('%s','%s','%s','%s','%s',%d,'%s','%s','%s','%s','%s')";
 
         $sql=sprintf($sql,$tablename,$primarykey,$record_id,$category,$status,$uid,
-                mysql_real_escape_string($uname),$ip,mysql_real_escape_string($changedesc),$updated,$this->addEscapeString($controlvalue));
+                mysql_real_escape_string($uname),$ip,mysql_real_escape_string($changedesc),$updated,mysql_real_escape_string($controlvalue));
          $this->log->showLog(3,"with sql: $sql");
          
         $rs=$this->xoopsDB->query($sql);
         if(!$rs){
-            
-            $this->failfeedback.="completeAuditHistory fail with SQL ($sql) on: ".mysql_error();
+            $this->failfeedback.="completeAuditHistory fail with SQL ($sql)  on: ".mysql_error();
             return false;
         }
         else{

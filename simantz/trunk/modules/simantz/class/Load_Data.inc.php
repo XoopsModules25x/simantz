@@ -838,9 +838,15 @@ $newQuery = "SELECT  *
         //$getHandler->DefineField("defaultlevel");
         $getHandler->DefineField("isdeleted");
         $getHandler->DefineField("info");
+        $getHandler->DefineField("rh");
 	$currentRecord = 0; // This will assist us finding the ordinalStart position
+                    $rh="odd";
       while ($row=$xoopsDB->fetchArray($query))
      {
+          if($rh=="even")
+            $rh="odd";
+          else
+            $rh="even";
      	    $currentRecord = $currentRecord +1;
             if($currentRecord > $ordinalStart){
                 $getHandler->CreateNewRecord($row['workflow_id']);
@@ -854,7 +860,7 @@ $newQuery = "SELECT  *
                 $getHandler->DefineRecordFieldValue("isactive", $row['isactive']);
                 //$getHandler->DefineRecordFieldValue("defaultlevel", $row['defaultlevel']);
                 $getHandler->DefineRecordFieldValue("isdeleted",$row['isdeleted']);
-
+                $getHandler->DefineRecordFieldValue("rh",$rh);
                 $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['workflow_id']."&tablename=sim_workflow&idname=workflow_id&title=Workflow");
                 $getHandler->SaveRecord();
            //  $getHandler->CompleteGet();
