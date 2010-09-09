@@ -85,7 +85,7 @@
         $tableproduction=$tableprefix."simiterp_production";
         $tableproductionoutput=$tableprefix."simiterp_productionoutput";
         $tableproductionline=$tableprefix."simiterp_productionline";
-        $tableemployee=$tableprefix."simiterp_employee";
+
         $tablepricelist=$tableprefix."simiterp_pricelist";
         $tablefollowuptype=$tableprefix."followuptype";
         $tablefollowup=$tableprefix."followup";
