@@ -474,7 +474,6 @@ else{ //user dun have write permission, cannot save grid
      mode="nonpaging"
      toolbarenabled='false'
      $permctrl
-     singleclickeditenabled="true"
      onhtmlreadyevent="dataready()"
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
