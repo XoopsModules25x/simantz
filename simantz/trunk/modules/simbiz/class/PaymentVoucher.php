@@ -7,7 +7,7 @@ class PaymentVoucher
   public $paymentvoucher_id;
   public $paidto;
   public $organization_id;
-  
+
   public $iscomplete;
   public $description;
   public $exchangerate;
@@ -43,14 +43,14 @@ class PaymentVoucher
    * Display input form, type can be 'new', or 'edit', if new all field will be set
    * empty or 0. Or else all field data will pull from database.
    *
-   * @param string type 
-   * @param int paymentvoucher_id 
-   * @return 
+   * @param string type
+   * @param int paymentvoucher_id
+   * @return
    * @access public
    */
   public function getInputForm( $type,  $paymentvoucher_id,$token  ) {
       global $prefix_pv;
-      
+
 		$mandatorysign="<b style='color:red'>*</b>";
 
     	$header=""; // parameter to display form header
@@ -59,13 +59,13 @@ class PaymentVoucher
 	$deletectrl="";
 	$itemselect="";
 	$originalamtctrl="";
-	
+
 	$orgctrl="";
 	$this->created=0;
 	if ($type=="new"){
 		$header="New PaymentVoucher";
 		$action="create";
-	 	
+
 		if($paymentvoucher_id==0){
 			$this->paidto="";
 			$this->iscomplete="";
@@ -94,14 +94,14 @@ class PaymentVoucher
 		$closectrl="";
 
 		$originalamtctrl = "<input name='originalamt' type='hidden' value='0'>";
-	
+
 	}
 	else
 	{
-		
+
 		$action="update";
-		
-		
+
+
 
 		if($this->isAdmin){
 		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
@@ -117,10 +117,10 @@ class PaymentVoucher
 		"<input name='paymentvoucher_id' value='$this->paymentvoucher_id' type='hidden'>".
 		"<input name='btnPreview' value='Print Preview' type='submit'>".
 		"</form>";
-		
-	
+
+
 		$header="Edit PaymentVoucher";
-		
+
 		if($this->iscomplete==0){
 		$deletectrl="<FORM action='paymentvoucher.php' method='POST' onSubmit='return confirm(".
 		'"confirm to remove this paymentvoucher?"'.")'><input type='submit' value='Delete' name='btnDelete'>".
@@ -154,7 +154,7 @@ class PaymentVoucher
 	else
 	$selectedCash = "SELECTED";
 
-	
+
 /*if($this->bpartner_id == 0)
 $bpartner_fld = "<input type='hidden' name='bpartner_id' value='0'>";
 */
@@ -196,9 +196,7 @@ $originalamtctrl
 
       </tr>
       <tr>
-        <!--<td class="head">From Accounts</td>
-        <td class="even">$this->accountsfromctrl <div id='divbpartnera'> $this->bpartnerctrl</div> 
-			<input name='bpartner_id_bca' id='bpartner_id_bca' type='hidden' value="$this->bpartner_id"></td>-->
+    
         <td class="head">Paid To $mandatorysign</td>
         <td class="even" colspan="3"><input name='paidto' value="$this->paidto" id='paidto'></td>
       </tr>
@@ -207,13 +205,13 @@ $originalamtctrl
         <td class="even"><select name='currency_id' id='currency_id'>$this->currencyctrl</select></td>
         <td class="head">Exchange Rate $mandatorysign</td>
         <td class="even"><input name='exchangerate' value="$this->exchangerate" onchange='amt.value=parseFloat(this.value*originalamt.value).toFixed(2)' size="10">
-	Local Amount : 
+	Local Amount :
 	<input name='amt' value="$this->amt" readonly='readonly'></td>
       </tr>
 
       <tr>
    <td class="head">From Accounts</td>
-        <td class="even">$this->accountsfromctrl <input value="$this->chequeno" name='chequeno' $this->displaychequenostyle>
+        <td class="even">$this->accountsfromctrl <input id='chequeno' value="$this->chequeno" name='chequeno' $this->displaychequenostyle>
 		</td>
         <td class="head">Prepared By</td>
         <td class="even"><input name='preparedby' value="$this->preparedby">
@@ -275,17 +273,17 @@ EOF;
 
 
  	$timestamp= date("y/m/d H:i:s", time()) ;
- 	$sql="UPDATE $this->tablepaymentvoucher SET 
+ 	$sql="UPDATE $this->tablepaymentvoucher SET
 	paidto='$this->paidto',description='$this->description',originalamt=$this->originalamt,amt=$this->amt,
 	updated='$timestamp',updatedby=$this->updatedby,iscomplete='$this->iscomplete',exchangerate=$this->exchangerate,
 	organization_id=$this->organization_id,accountsfrom_id=$this->accountsfrom_id,
 	currency_id=$this->currency_id,paymentvoucher_prefix='$this->paymentvoucher_prefix',paymentvoucher_no='$this->paymentvoucher_no',chequeno='$this->chequeno',
 	paymentvoucher_date='$this->paymentvoucher_date',paymentvoucher_type='$this->paymentvoucher_type',preparedby='$this->preparedby',
 	batch_id=$this->batch_id WHERE paymentvoucher_id='$this->paymentvoucher_id'";
-	
+
 	$this->log->showLog(3, "Update paymentvoucher_id: $this->paymentvoucher_id, $this->paidto");
 	$this->log->showLog(4, "Before execute SQL statement:$sql");
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if(!$rs){
 		$this->log->showLog(2, "Warning! Update paymentvoucher failed:".mysql_error(). ":$sql");
@@ -318,13 +316,13 @@ EOF;
 
 	$this->log->showLog(4,"Before insert paymentvoucher SQL:$sql");
 	$rs=$this->xoopsDB->query($sql);
-	
+
 	if (!$rs){
 		$this->log->showLog(1,"Failed to insert paymentvoucher code $paidto:" . mysql_error() . ":$sql");
 		return false;
 	}
 	else{
-		$this->log->showLog(3,"Inserting new paymentvoucher $paidto successfully"); 
+		$this->log->showLog(3,"Inserting new paymentvoucher $paidto successfully");
 		return true;
 	}
   } // end of member function insertPaymentVoucher
@@ -339,15 +337,15 @@ EOF;
 
 
 	$this->log->showLog(3,"Fetching paymentvoucher detail into class PaymentVoucher.php.<br>");
-		
+
 	$sql="SELECT paymentvoucher_id,paidto,iscomplete,exchangerate,organization_id,description,accountsfrom_id,
 		currency_id,amt,originalamt,paymentvoucher_no,paymentvoucher_prefix,chequeno,batch_id,paymentvoucher_date,paymentvoucher_type,preparedby,paidto
 		 from $this->tablepaymentvoucher where paymentvoucher_id=$paymentvoucher_id";
-	
+
 	$this->log->showLog(4,"ProductPaymentVoucher->fetchPaymentVoucher, before execute:" . $sql . "<br>");
-	
+
 	$query=$this->xoopsDB->query($sql);
-	
+
 	if($row=$this->xoopsDB->fetchArray($query)){
 		$this->paymentvoucher_no=$row["paymentvoucher_no"];
                 $this->paymentvoucher_prefix=$row["paymentvoucher_prefix"];
@@ -376,14 +374,14 @@ EOF;
 	}
 	else{
 		return false;
-	$this->log->showLog(4,"PaymentVoucher->fetchPaymentVoucher,failed to fetch data into databases:" . mysql_error(). ":$sql");	
+	$this->log->showLog(4,"PaymentVoucher->fetchPaymentVoucher,failed to fetch data into databases:" . mysql_error(). ":$sql");
 	}
   } // end of member function fetchPaymentVoucher
 
   /**
    * Delete particular paymentvoucher id
    *
-   * @param int paymentvoucher_id 
+   * @param int paymentvoucher_id
    * @return bool
    * @access public
    */
@@ -391,7 +389,7 @@ EOF;
     	$this->log->showLog(2,"Warning: Performing delete paymentvoucher id : $paymentvoucher_id !");
 	$sql="DELETE FROM $this->tablepaymentvoucher where paymentvoucher_id=$paymentvoucher_id";
 	$this->log->showLog(4,"Delete SQL Statement: $sql");
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if (!$rs){
 		$this->log->showLog(1,"Error: paymentvoucher ($paymentvoucher_id) cannot remove from database:" . mysql_error(). ":$sql");
@@ -400,16 +398,16 @@ EOF;
 	else{
 		$this->log->showLog(3,"paymentvoucher ($paymentvoucher_id) removed from database successfully!");
 		return true;
-		
+
 	}
   } // end of member function deletePaymentVoucher
 
   /**
    * Return select sql statement.
    *
-   * @param string wherestring 
-   * @param string orderbystring 
-   * @param int startlimitno 
+   * @param string wherestring
+   * @param string orderbystring
+   * @param int startlimitno
    * @return string
    * @access public
    */
@@ -424,15 +422,15 @@ EOF;
 		INNER JOIN $this->tablecurrency cr on cr.currency_id=f.currency_id
 		 $wherestring $orderbystring";
     $this->log->showLog(4,"Generate showpaymentvouchertable with sql:$sql");
-	
+
   return $sql;
   } // end of member function getSQLStr_AllPaymentVoucher
 
  public function showPaymentVoucherTable($wherestring,$orderbystring){
-	
+
 	$this->log->showLog(3,"Showing PaymentVoucher Table");
 	$sql=$this->getSQLStr_AllPaymentVoucher($wherestring,$orderbystring);
-	
+
 	$query=$this->xoopsDB->query($sql);
 	echo <<< EOF
 	<table border='1' cellspacing='3'>
@@ -444,7 +442,7 @@ EOF;
 				<th style="text-align:center;">PaymentVoucher No</th>
 				<th style="text-align:center;">Paid To</th>
 				<th style="text-align:center;">Account From</th>
-				
+
 				<th style="text-align:center;">Currency</th>
 				<th style="text-align:center;">Amount</th>
 				<th style="text-align:center;">IsComplete</th>
@@ -487,7 +485,7 @@ EOF;
 		$paymentvoucher_type="Bank";
 		else
 		$paymentvoucher_type="Cash";
-		
+
 		echo <<< EOF
 
 		<tr>
@@ -541,7 +539,7 @@ EOF;
 	}
 	else
 	return -1;
-	
+
   } // end
 
 
@@ -557,7 +555,7 @@ EOF;
 	}
 	else
 	return 10;
-	
+
   } // end
 
  public function allowDelete($paymentvoucher_id){
@@ -698,7 +696,7 @@ public function genWhereString(){
 
 	if($this->iscomplete !="-1" && $this->iscomplete !="")
 		$wherestring=$wherestring. " f.iscomplete = $this->iscomplete AND";
-	
+
 	if($this->accountsfrom_id!=0)
 		$wherestring=$wherestring. " f.accountsfrom_id = $this->accountsfrom_id AND";
 
@@ -734,19 +732,19 @@ public function genWhereString(){
 	public function getArrayPOST($paymentvoucher_id){
 	global $prefix_pv;
 
-	$sql = "select * 
-		from $this->tablepaymentvoucher a, $this->tablepaymentvoucherline b 
-		where a.paymentvoucher_id = b.paymentvoucher_id 
-		and a.paymentvoucher_id = $paymentvoucher_id 
+	$sql = "select *
+		from $this->tablepaymentvoucher a, $this->tablepaymentvoucherline b
+		where a.paymentvoucher_id = b.paymentvoucher_id
+		and a.paymentvoucher_id = $paymentvoucher_id
 		and b.amt > 0 ";
 
 	$this->log->showLog(4,"Get Array Post Value: $sql");
-	
+
 	$query=$this->xoopsDB->query($sql);
 	$return_false = 0;
 	$i=0;
 	while($row=$this->xoopsDB->fetchArray($query)){
-	
+
 	if($row['paymentvoucher_prefix']!="")
 	$row['paymentvoucher_no'] = $row['paymentvoucher_prefix']."".$row['paymentvoucher_no'];
 
@@ -757,7 +755,7 @@ public function genWhereString(){
 	$totaltransactionamt = $row['originalamt'];
 	$batch_name = $row['paymentvoucher_no']." ($paidto)";
 	$description = $row['description'];
-        
+
 	if($i==0){//header
 
 		$amtarray[$i] = $row['originalamt']*-1;
@@ -798,7 +796,7 @@ public function genWhereString(){
 	return array($date,$systemname,$batch_name,$description,$totaltransactionamt,$documentnoarray,
 	$accountsarray,$amtarray,$currencyarray,$conversionarray,$originalamtarray,$bpartnerarray,$transtypearray,$linetypearray,
 	$chequenoarray,$return_false,$linedescarray);
-	
+
 	}
 
 	public function getTypeNo($paymentvoucher_type){
@@ -811,15 +809,15 @@ public function genWhereString(){
 public function navigationRecord($paymentvoucher_id,$paymentvoucher_date,$paymentvoucher_no){
 
 global $defaultorganization_id;
- $sqlfirst="SELECT paymentvoucher_id FROM 
+ $sqlfirst="SELECT paymentvoucher_id FROM
             $this->tablepaymentvoucher p
             where organization_id=$defaultorganization_id
             ORDER BY paymentvoucher_date ASC, paymentvoucher_no ASC LIMIT 0,1";
  $sqlprev="SELECT paymentvoucher_id FROM
             $this->tablepaymentvoucher p
             where organization_id=$defaultorganization_id
-            AND paymentvoucher_date<='$paymentvoucher_date' 
-            AND  paymentvoucher_no <= (case when paymentvoucher_date = '$paymentvoucher_date' then '$paymentvoucher_no' else 'ZZZZZZZZZZ' end) 
+            AND paymentvoucher_date<='$paymentvoucher_date'
+            AND  paymentvoucher_no <= (case when paymentvoucher_date = '$paymentvoucher_date' then '$paymentvoucher_no' else 'ZZZZZZZZZZ' end)
             and paymentvoucher_id <>$paymentvoucher_id
             ORDER BY paymentvoucher_date DESC, paymentvoucher_no DESC LIMIT 0,1";
 $sqlnext="SELECT paymentvoucher_id FROM
@@ -1000,10 +998,20 @@ public function showJavascript(){
 
 	function reloadAccountFrom(accounts_id){
 
-	var arr_fld=new Array("action","accounts_id");//name for POST
-	var arr_val=new Array("refreshaccountsfrom",accounts_id);//value for POST
+	 var data="action="+"checkisbank"+
+                    "&accounts_id="+accounts_id;
 
-	getRequest(arr_fld,arr_val);
+            $.ajax({
+                 url:"paymentvoucher.php",type: "POST",data: data,cache: false,
+                     success: function (xml)
+                     {
+                      if(xml==1)
+                     document.getElementById("chequeno").style.display="";
+                      else
+                     document.getElementById("chequeno").style.display="none";
+                     }
+                   });
+
 
 	}
 	function reloadAccountTo(accounts_id,line){
@@ -1058,4 +1066,3 @@ public function showJavascript(){
 EOF;
 }
 } // end of ClassPaymentVoucher
-?>

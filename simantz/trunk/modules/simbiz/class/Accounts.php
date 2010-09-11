@@ -153,8 +153,8 @@ class Accounts
 
     if($row['placeholder']==1){
     $hyperlink.="&nbsp;&nbsp;&nbsp;".
-            "<a href=javascript:addChildAccounts($accounts_id)>".
-            "<img src='images/addaccount.gif'></a>";
+            "<a href=javascript:addChildAccounts($accounts_id) style='color:black'>".
+            "[+]</a>";
     $this->chartaccountparentaccountlist.="$accounts_id,";
     }
     else{
@@ -242,7 +242,7 @@ class Accounts
     return "
    <div id='errormsg' class='red' style='display:none'></div>
         <A href=javascript:addChildAccounts(0)>[Add New]</a><br/>
-    <form onsubmit='return false'>
+    <form onsubmit='return false'  id='frmAccount'>
        <table>
     <tbody>
     

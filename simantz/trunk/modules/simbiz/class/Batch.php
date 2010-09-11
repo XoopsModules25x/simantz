@@ -85,7 +85,7 @@ class Batch
   public function getInputForm( $type,  $batch_id,$token  ) {
     global $defaultorganization_id,$workflowapi,$uid,$showOrganization,$havewriteperm,$defcurrencycode;
 
-    
+
         $this->getIncludeFileMenu();
         //$this->initFormProcess();//initialize process
 
@@ -100,7 +100,7 @@ class Batch
             $selectY="selected";
         else
             $selectN="selected";
-        
+
         if($havewriteperm==1){ //user with write permission can edit grid, have button
                 $getListButton = $this->getListButton($this->batch_id);
         }
@@ -118,7 +118,7 @@ class Batch
         //$workflow_history = $workflowapi->showWorkflowHistory($this->window_workflow,$this->batch_id);
 
         $getFinalTotal = $this->getFinalTotal($this->batch_id);
-        
+
 	$orgctrl="";
 	$this->created=0;
 	if ($type=="new"){
@@ -144,20 +144,20 @@ class Batch
 
                 if($this->isreadonly==0){
 
-                    if($this->iscomplete==0){                    
+                    if($this->iscomplete==0){
                             $readonlyctrl="";
                     }
                     else{
                             $readonlyctrl="readonly='readonly'";
                     }
-                    
+
                 }
                 else{
                     $readonlyctrl="readonly='readonly'";
                 }//end else from check isreadonly field
-                
-                                
-                
+
+
+
 		if($this->isAdmin)
 		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
 		"<input name='tablename' value='sim_simbiz_batch' type='hidden'>".
@@ -218,13 +218,13 @@ class Batch
 <script type="text/javascript">
 
     var init_cell = 11;
-    
+
 jQuery(document).ready((function (){
 
 
 }));
 
-                     
+
 
             function deleteBatch(){
             var batch_id = document.forms['frmBatch'].batch_id.value;
@@ -265,11 +265,11 @@ jQuery(document).ready((function (){
             function activateBatch(){
             var batch_id = document.forms['frmBatch'].batch_id.value;
             var msg = "";
-            
+
             if(confirm("Confirm to activate record?")){
 
             data = "action=activatebatch&batch_id="+batch_id;
-            
+
             $.ajax({
                  url: "batch.php",type: "POST",data: data,cache: false,
                      success: function (xml) {
@@ -287,17 +287,23 @@ jQuery(document).ready((function (){
 
                         document.getElementById("iscomplete").value = "0";
                         search();
+                        document.getElementById("batchno").removeAttribute('readOnly');
+                        document.getElementById("batchdate").removeAttribute('readOnly');
+                        document.getElementById("description").removeAttribute('readOnly');
+                        document.getElementById("batch_name").removeAttribute('readOnly');
+    
                         document.getElementById("msgbox").innerHTML="Record activated successfully.";
+
                         }
 
 
-                        
+
                 }});
 
             }
-            
+
             }
-            
+
             function saveBatch(iscomplete){
 
             //start form validation
@@ -309,7 +315,7 @@ jQuery(document).ready((function (){
             var msg = "";
 
             var isallow = true;
-            var errorMsg = "";           
+            var errorMsg = "";
 
             if(confirm("Confirm to save record?")){
 
@@ -326,7 +332,7 @@ jQuery(document).ready((function (){
                     errorMsg += "<br/><b>Total Debit or Total Credit is 0.00</b>";
                     $("#totaldebit").addClass('validatefail');
                     $("#totalcredit").addClass('validatefail');
-            
+
                 }else if(totaldebit != totalcredit){
 
                     isallow = false;
@@ -347,18 +353,24 @@ jQuery(document).ready((function (){
                         if(line_accountchild.getValue() == 0){
                                 isallow = false;
                         }
-            
+
                     }
 
                     if(isallow == false){
                         errorMsg += "<br/><b>Please define all account line.</b>";
                     }else{
+                        
                         document.getElementById("iscomplete").value = "1";
+                        document.getElementById("batchno").setAttribute('readOnly','readonly');
+                        document.getElementById("description").setAttribute('readOnly','readonly');
+                        document.getElementById("batchdate").setAttribute('readOnly','readonly');
+                        document.getElementById("batch_name").setAttribute('readOnly','readonly');
                         msg = "Record completed successfully.";
+                      
                     }
-            
-                    
-            
+
+
+
                 }
 
 
@@ -387,10 +399,10 @@ jQuery(document).ready((function (){
 
             if(isallow){
             var data = $("#idBatchForm").serialize();
-                
+
              document.getElementById('popupmessage').innerHTML="Please Wait...";
              popup('popUpDiv');
-            
+
             $.ajax({
                  url: "batch.php",type: "POST",data: data,cache: false,
                      success: function (xml) {
@@ -411,19 +423,20 @@ jQuery(document).ready((function (){
 
                         if(workflowbtn != 'none' && workflowbtn != '')
                         document.getElementById("idListButton").innerHTML = workflowbtn;
-            
+
                         var grid = nitobi.getGrid('DataboundGrid');
                         var datatable = grid.getDataSource();
                         datatable.setSaveHandlerParameter("batch_id", batch_id);
                         grid.save();
 
                         datatable.setGetHandlerParameter("batch_id", batch_id);
-                        
+
                         //grid.dataBind();
 
                         //save();
 
                         msg = "Record saved  successfully.";
+                          reloadBatch();
 
                         }else{
                         //document.getElementById("action").value = "create";
@@ -434,7 +447,7 @@ jQuery(document).ready((function (){
                         document.getElementById("msgbox").innerHTML=msg;
 
                         popup('popUpDiv');
-                        
+
                 }});
                 //return false;
 
@@ -446,7 +459,7 @@ jQuery(document).ready((function (){
                 //document.getElementById("statusDiv").innerHTML="Failed to save record...Please Check :<br/>"+errorMsg;
                 }
 
-            
+
             }
 
           }
@@ -486,7 +499,7 @@ jQuery(document).ready((function (){
           }
 
     function reuseBatch(){
-        
+
 
         if(confirm("Confirm to re-use record?")){
 
@@ -506,7 +519,7 @@ jQuery(document).ready((function (){
                         var newbatch_id = jsonObj.batch_id;
 
                         document.getElementById("msgbox").innerHTML=msg;
-                        
+
                         if(status == 1){
                         document.forms['frmBatch'].batch_id.value = newbatch_id;
                         setTimeout("redirect_batch();",2000);;
@@ -514,7 +527,7 @@ jQuery(document).ready((function (){
                 }});
 
         }
-    
+
     }
 
     function redirect_batch(newbatch_id){
@@ -522,7 +535,13 @@ jQuery(document).ready((function (){
     self.location = 'batch.php?action=edit&batch_id='+newbatch_id;
     }
 
+function reloadBatch(){
     
+    if(document.getElementById("batch_id").value>0)
+            window.location="batch.php?action=edit&batch_id="+document.getElementById("batch_id").value
+    else
+        window.location="batch.php";
+    }
 </script>
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
@@ -530,8 +549,9 @@ jQuery(document).ready((function (){
      <div id='popupmessage' style='text-align:center'></div>
      <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
 </div>
+    <br/>
  <div align="center" >
-    <table style="width:990px;"><tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
+    <table style="width:990px;text-align: left; " ><tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
 $noperm
  <form $formsubmit method="post" id="idBatchForm" action="batch.php" name="frmBatch"  enctype="multipart/form-data">
 <table style="width:140px;">
@@ -562,16 +582,15 @@ $noperm
         <input name='batchdate' id='batchdate' value="$this->batchdate" maxlength='10' size='10' $readonlyctrl>
         <input name='btnDate' value="Date" type="button" onclick="$this->batchdatectrl">
         <input type='hidden' id='period_id' name='period_id' value="$this->period_id" $readonlyctrl>
-        </td>
-        <td class="head" >Re-use</td>
-        <td class="even"><input type="checkbox" $checked name="reuse" $readonlyctrl></td>
+        &nbsp; Re-use
+        <input type="checkbox" $checked name="reuse" id="reuse" $readonlyctrl></td>
         </tr>
 
         <tr>
         <td class="head">Batch Name $mandatorysign</td>
         <td class="even"><input id='batch_name' name='batch_name' value="$this->batch_name" size='24' $readonlyctrl></td>
         <td class="head" style="vertical-align:top">Description</td>
-        <td class="even" colspan="3"><textarea name="description" cols="40" rows="2" $readonlyctrl>$this->description</textarea></td>
+        <td class="even" colspan="3"><textarea name="description" id="description" cols="40" rows="2" $readonlyctrl>$this->description</textarea></td>
         </tr>
 
         <tr>
@@ -580,7 +599,7 @@ $noperm
         <td class="head">Total Credit ($defcurrencycode) </td>
         <td class="even" colspan="3"><input id='totalcredit' name='totalcredit' value="$this->totalcredit" size='15' readonly></td>
         </tr>
-            
+
         <tr style="display:none"><!--currently comment as per KS request on 18-08-2010 -->
         <td class="head" colspan="4" align="right" style="padding:10px;">
             Amounts are :
@@ -607,12 +626,14 @@ echo <<< EOF
         <tr height="30px" style="display:none">
         <td id='idFinalTotal' colspan="6" align="right">$getFinalTotal</td>
         </tr>
-    
+
         <tr height="30px">
-        <td id='idListButton' colspan="6">$getListButton</td>
+        <td id='idListButton' colspan="6">$getListButton
+       
+</td>
         </tr>
     </tbody>
-            
+
     </table>
 
     </form>
@@ -667,12 +688,12 @@ echo <<< EOF
 
 <script language="javascript" type="text/javascript">
 
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
+  //  jQuery(document).ready((function (){}));
 
     function init(){}
 
      function search(){
-
+nitobi.loadComponent('DataboundGrid');
         var grid = nitobi.getGrid("DataboundGrid");
         var searchbatch_no=document.getElementById("searchbatch_no").value;
         var searchbatch_name=document.getElementById("searchbatch_name").value;
@@ -689,7 +710,7 @@ echo <<< EOF
         searchTxt += "Date From : "+batchdatefrom+"<br/>";
         if(batchdateto != "")
         searchTxt += "Date To : "+batchdateto+"<br/>";
-    
+
         if(searchbatch_no != "")
         searchTxt += "Batch no : "+searchbatch_no+"<br/>";
         if(searchbatch_name != "")
@@ -771,6 +792,7 @@ echo <<< EOF
                      	 document.getElementById('msgbox').innerHTML="Record saved successfully";
                          //document.getElementById('popupmessage').innerHTML="Please Wait.....";
                          search();
+                         
                          popup('popUpDiv');
 
 		});
@@ -825,7 +847,7 @@ echo <<< EOF
     function addline(){
 //    var g= nitobi.getGrid('DataboundGrid');
 //        g.insertAfterCurrentRow();
-    
+
     }
 
     //trigger save activity from javascript
@@ -935,7 +957,7 @@ echo <<< EOF
     $savectrl
 
      &nbsp;&nbsp;<a href="printbatchlist.php?rcode=$this->rcode" target="_blank" title="Print List"><img src="images/printer.png"></a>
-        
+
     <div id="pager_control" class="inline">
     <div id="pager_first" class="inline FirstPage" onclick="Pager.First('DataboundGrid');" onmouseover="this.className+=' FirstPageHover';" onmouseout="this.className='inline FirstPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
     <div id="pager_prev" class="inline PreviousPage" onclick="Pager.Previous('DataboundGrid');" onmouseover="this.className+=' PreviousPageHover';" onmouseout="this.className='inline PreviousPage';" style="margin:0;"></div>
@@ -979,12 +1001,12 @@ echo <<< EOF
 
            <ntb:columns>
            <ntb:textcolumn classname="{\$rh}" width="25" label="No." xdatafld="seq_no" ></ntb:textcolumn>
-           <ntb:textcolumn classname="{\$rh}" width="110" label="Batch No." xdatafld="batch_no" ></ntb:textcolumn>
-           <ntb:textcolumn classname="{\$rh}" width="100" label="Date" xdatafld="batch_date" ></ntb:textcolumn>
+           <ntb:textcolumn classname="{\$rh}" width="110" label="Batch No." xdatafld="batchno" ></ntb:textcolumn>
+           <ntb:textcolumn classname="{\$rh}" width="100" label="Date" xdatafld="batchdate" ></ntb:textcolumn>
            <ntb:textcolumn classname="{\$rh}" width="200" label="Batch Name" xdatafld="batch_name" ></ntb:textcolumn>
            <ntb:textcolumn classname="{\$rh}" width="80" label="Completed" xdatafld="iscomplete" ></ntb:textcolumn>
            <ntb:textcolumn classname="{\$rh}" width="50" label="Re-Use" xdatafld="reuse" ></ntb:textcolumn>
-           <ntb:textcolumn classname="{\$rh}" width="100" label="User" xdatafld="user" ></ntb:textcolumn>
+           <ntb:textcolumn classname="{\$rh}" width="100" label="User" xdatafld="uname" ></ntb:textcolumn>
            <ntb:textcolumn classname="{\$rh}" width="100" label="Debit" xdatafld="totaldebit" ></ntb:textcolumn>
            <ntb:textcolumn classname="{\$rh}" width="100" label="Credit" xdatafld="totalcredit" ></ntb:textcolumn>
 
@@ -1056,7 +1078,7 @@ echo <<< EOF
         <tr height="100px">
             <td width="70%" class="headerSearchTdTable">
                 <table>
-        
+
                 <tr>
                 <td class="head">Date From</td>
                 <td class="even">
@@ -1069,7 +1091,7 @@ echo <<< EOF
 		<input type='button' onclick="$this->showcalendarto" value='Date'>
                 </td>
                 </tr>
-        
+
 
                 <tr>
                 <td class="head">Batch Name</td><td class="even"><input name="searchbatch_name" id="searchbatch_name"></td>
@@ -1094,7 +1116,7 @@ echo <<< EOF
                 </select>
                 </td>
                 </tr>
-                
+
                 <tr>
                 <td colspan="2"><input type="submit" value="Search"></td>
                 <td colspan="2"></td>
@@ -1124,7 +1146,7 @@ EOF;
 
 $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
 
-	$sql="SELECT * 
+	$sql="SELECT *
 		 from sim_simbiz_batch where batch_id=$batch_id";
 
 	$this->log->showLog(4,"ProductBatch->fetchBatch, before execute:" . $sql . "<br>");
@@ -1255,7 +1277,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
     $sql = "SELECT * FROM sim_simbiz_trackheader where trackheader_id >0";
 
         $query = $this->xoopsDB->query($sql);
-        
+
     while ($row=$this->xoopsDB->fetchArray($query))
     {
 
@@ -1268,7 +1290,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
     }
 
     return array("track1_name"=>$track1_name,"track2_name"=>$track2_name,"track3_name"=>$track3_name);
-      
+
   }
 
   public function saveBatchAjax(){
@@ -1282,7 +1304,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
         $track1_name = $track_array['track1_name'];
         $track2_name = $track_array['track2_name'];
         $track3_name = $track_array['track3_name'];
-        
+
         $arrvalue=array(
         $this->period_id,
         $this->batchno,
@@ -1311,7 +1333,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
   public function updateBatchAjax(){
         global $defaultorganization_id,$selectspliter,$xoopsUser;
         $timestamp=date("Y-m-d H:i:s",time());
-        
+
         $uname=$xoopsUser->getVar('uname');
         include_once "../simantz/class/Save_Data.inc.php";
         $save = new Save_Data();
@@ -1431,7 +1453,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
                     $completectrl = '';
                     $deletectrl='';
                     $msgstatus='<b style="color:red">System controlled record, you have readonly permission.</b>';
-
+                    $reloadbtn='<input type="button" value="Reload" onclick=javascript:reloadBatch()>';
                     if($this->reuse == 1)
                     $reusectrl = '<input type="button" value="Re-Use" onclick="reuseBatch()"><br/>';
                 }
@@ -1440,6 +1462,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
                     $completectrl = '<input type="button" value="Complete" onclick="saveBatch(1)">';
                     $reusectrl = '<input type="button" value="Re-Use" onclick="reuseBatch()">';
                     $deletectrl='<input type="button" value="Delete" onclick="deleteBatch()">';
+                    $reloadbtn='<input type="button" value="Reload" onclick=javascript:reloadBatch()>';
                     $msgstatus='';
                 }
 
@@ -1447,12 +1470,14 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
                     //$rstctrl='<input type="reset" value="Reset">';
                     $savectrl='<input type="button" value="Save" onclick="saveBatch(0)">';
                     $completectrl = '<input type="button" value="Complete" onclick="saveBatch(1)">';
+                    $reloadbtn='<input type="button" value="Reload" onclick=javascript:reloadBatch()>';
                     $deletectrl='<input type="button" value="Delete" onclick="deleteBatch()">';
                     $msgstatus='';
                 }else if($this->iscomplete == 1){
                     $savectrl='<input type="button" value="Activate" onclick="activateBatch()">';
                     $msgstatus='';
                     $completectrl = '';
+                    $reloadbtn='<input type="button" value="Reload" onclick=javascript:reloadBatch()>';
                     $deletectrl='';
                 }
 
@@ -1465,7 +1490,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
 
         }
 
-        $html = ''.$rstctrl.' '.$savectrl.' '.$completectrl.' '.$reusectrl.' '.$deletectrl.''.$msgstatus;
+        $html = ''.$rstctrl.' '.$savectrl.' '.$completectrl.' '.$reusectrl.' '.' '.$reloadbtn. ' '.$deletectrl.''.$msgstatus;
 
 
 
@@ -1483,8 +1508,8 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
         $emp = new Employee();
 
         $hod_uid = $emp->getHODDepartmentID($this->createdby);
-        
-        
+
+
         /* end */
       return $parameter_array = array(
                                 '{own_uid}'=>$this->createdby,
@@ -1594,19 +1619,20 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
     $this->log->showLog(2,"Access showBatchGrid($wherestring)");
 
         if(empty($sortcolumn)){
-           $sortcolumn="bt.batchdate DESC,bt.updated DESC";
+           $sortcolumn="bt.batchdate DESC,bt.batchno";
+
         }
         if(empty($sortdirection)){
            $sortdirection="DESC";
         }
+$this->log->showLog(4,"sortcolumn: $sortcolumn, sortdirection $sortdirection");
 
-
-        $sql="SELECT bt.*,usr.name
+        $sql="SELECT bt.*,usr.uname
             FROM sim_simbiz_batch bt
             LEFT JOIN sim_users usr ON bt.updatedby = usr.uid
             $wherestring
-            ORDER BY $sortcolumn ";
-                    
+            ORDER BY $sortcolumn $sortdirection";
+
 
         $rcode = $_GET['rcode'];
         $_SESSION['sql_txt_'.$rcode] = $sql;
@@ -1616,12 +1642,12 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
 
         $getHandler->ProcessRecords();
         $getHandler->DefineField("seq_no");
-        $getHandler->DefineField("batch_no");
+        $getHandler->DefineField("batchno");
      	$getHandler->DefineField("batchdate");
      	$getHandler->DefineField("batch_name");
         $getHandler->DefineField("iscomplete");
         $getHandler->DefineField("reuse");
-        $getHandler->DefineField("user");
+        $getHandler->DefineField("uname");
         $getHandler->DefineField("totaldebit");
         $getHandler->DefineField("totalcredit");
         $getHandler->DefineField("operation");
@@ -1636,19 +1662,19 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
             $rh="odd";
             else
             $rh="even";
-            
+
      	    $currentRecord = $currentRecord +1;
             if($currentRecord > $ordinalStart){
              $i++;
              $getHandler->CreateNewRecord($row['batch_id']);
 
              $getHandler->DefineRecordFieldValue("seq_no", $currentRecord);
-             $getHandler->DefineRecordFieldValue("batch_no", $row['batchno']);
-             $getHandler->DefineRecordFieldValue("batch_date",$row['batchdate']);
+             $getHandler->DefineRecordFieldValue("batchno", $row['batchno']);
+             $getHandler->DefineRecordFieldValue("batchdate",$row['batchdate']);
              $getHandler->DefineRecordFieldValue("batch_name", $row['batch_name']);
              $getHandler->DefineRecordFieldValue("iscomplete",($row['iscomplete'] != "1" ? "N" : "Y")) ;
              $getHandler->DefineRecordFieldValue("reuse",($row['reuse'] != "1" ? "N" : "Y")) ;
-             $getHandler->DefineRecordFieldValue("user", $row['name']);
+             $getHandler->DefineRecordFieldValue("uname", $row['uname']);
              $getHandler->DefineRecordFieldValue("totaldebit",$row['totaldebit']);
              $getHandler->DefineRecordFieldValue("totalcredit",$row['totalcredit']);
              $getHandler->DefineRecordFieldValue("operation","batch.php?action=edit&batch_id=".$row['batch_id']);
@@ -1673,7 +1699,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
     $this->allowedit = 1;
 
     $this->fetchBatch($this->batch_id);
-    
+
     $editBPartner = "true";
     if($iseditbpartner == "N" || $this->fromsys != "")
     $editBPartner = "false";
@@ -1685,7 +1711,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
     $editTax = "true";
     if($this->tax_type == 1)
     $editTax = "false";
-    
+
     $editabled=0;
 
         $grIdColumn=13;//define primary key column index for normal user
@@ -1697,10 +1723,10 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
        $permctrl=" rowinsertenabled=\"true\" rowdeleteenabled=\"true\" onbeforesaveevent=\"beforesave()\"";
 
       if($this->allowedit==1){
-         
+
           if($this->issubmit!=1 && $this->iscomplete!=1){
          $savectrl='<input id="ntbSavebtn" name="ntbSavebtn" onclick="save()" value="Save" type="button" style="display:inline">';
-         $addctrl='<input id="ntbAddbtn" name="ntbAddbtn" onclick="addline()" value="Add New Line" type="button" style="display:inline">';         
+         $addctrl='<input id="ntbAddbtn" name="ntbAddbtn" onclick="addline()" value="Add Transaction" type="button" style="display:inline">';
          $editabled=1;
          $this->claimdetailsmsg="";
          }
@@ -1709,7 +1735,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
       }
       else{
          $savectrl='<input id="ntbSavebtn" name="ntbSavebtn" onclick="save()" value="Save" type="button" style="display:none">';
-         $addctrl='<input id="ntbAddbtn" name="ntbAddbtn" onclick="addline()" value="Add New Line" type="button" style="display:none">';
+         $addctrl='<input id="ntbAddbtn" name="ntbAddbtn" onclick="addline()" value="Add Transaction" type="button" style="display:none">';
          $this->claimdetailsmsg="";
       }
         $alloweditgrid= "col!=$grIdColumn";
@@ -1787,26 +1813,37 @@ echo <<< EOF
         var parent_col = init_cell-5;
         var child_col = init_cell-4;
         if(selCol == (init_cell-5)){//is debit
-            if(debit_cell.getValue() > 0 )
+            if(debit_cell.getValue() > 0 ){
             cerdit_cell.setValue('0.00');
 
             parent_col = init_cell-4;
             child_col = init_cell-5;
+           }
+        else{
+            parent_col = init_cell-5;
+            child_col = init_cell-4;
+
+        }
         }else if(selCol == (init_cell-4)){//is credit
-            if(cerdit_cell.getValue() > 0 )
+            if(cerdit_cell.getValue() > 0 ){
             debit_cell.setValue('0.00');
 
             parent_col = init_cell-5;
             child_col = init_cell-4;
+           }else{
+                    parent_col = init_cell-4;
+            child_col = init_cell-5;
+
+            }
         }
 
         var currentrow = document.getElementById('currentrow').value;
         if(typeline_val == 2 && selRow == currentrow){//if child do update parent
         updateTotalParent(parent_val,parent_col,child_col,0);
         }
-    
+
         sumDebitCreditLine();
-        
+
 
     }
 
@@ -1814,8 +1851,9 @@ echo <<< EOF
 
         var grid= nitobi.getGrid('DataboundGrid');
         var total_row = grid.getDisplayedRowCount();
-
+        
         var sum_col_val = 0;
+        
         for(var i = 0; i < total_row; i++){
 
             var typeline_cell = grid.getCellObject(i, init_cell+4);
@@ -1836,12 +1874,13 @@ echo <<< EOF
                 }else{
                 sum_col = grid.getCellObject(i,child_col);
                 sum_col_val = parseFloat(sum_col_val) + parseFloat(sum_col.getValue());
+                
                 }
 
-                
-                
+
+
             }
-    
+
 
         }
 
@@ -1850,13 +1889,13 @@ echo <<< EOF
         update_col_1.setValue(sum_col_val);
         update_col_2.setValue("0.00");
         }
-        
+
     }
 
     function sumDebitCreditLine(){
 
         var grid= nitobi.getGrid('DataboundGrid');
-        var total_row = grid.getDisplayedRowCount();        
+        var total_row = grid.getDisplayedRowCount();
 
         ColTxt1 = "Subtotal";
         ColTxt2 = "";
@@ -1876,7 +1915,7 @@ echo <<< EOF
         total_credit = 0;
         debit_amt_tax = 0;
         credit_amt_tax = 0;
-    
+
         for(var i = 0; i < total_row; i++){
 
             var line_taxchild = grid.getCellObject(i,init_cell-3);
@@ -1895,7 +1934,7 @@ echo <<< EOF
             total_debit_ori = parseFloat(total_debit_ori) + parseFloat(debit_amt);
             total_credit_ori = parseFloat(total_credit_ori) + parseFloat(credit_amt);
 
-            
+
             if(false){//val_totaltaxchild > 0 : not use
                 j++;
 
@@ -1912,11 +1951,11 @@ echo <<< EOF
                 var credit_amt_tax = 0;
                 }
 
-    
+
                 var prevDebit = finalTotalDebitArr[val_totaltaxchild*100];
                 if(prevDebit == undefined)
                 prevDebit = 0;
-    
+
                 var prevCredit = finalTotalCreditArr[val_totaltaxchild*100];
                 if(prevCredit == undefined)
                 prevCredit = 0;
@@ -1949,9 +1988,9 @@ echo <<< EOF
 
 
         }
-            
+
             /* start update value */
-            
+
             document.getElementById("totaldebit").value=total_debit;
             document.getElementById("totalcredit").value=total_credit;
             /* not use
@@ -1973,10 +2012,10 @@ echo <<< EOF
                     ColTxt2 += "<br/><br/>"+roundAmtValue(debitTotFinal);
                     ColTxt3 += "<br/><br/>"+roundAmtValue(creditTotFinal);
                 }
-    
+
             }
 
-            
+
             ColTxt2 = total_debit_ori+""+ColTxt2;
 
 
@@ -2012,7 +2051,7 @@ echo <<< EOF
 
         document.getElementById('currentrow').value = row;
     }
-    
+
     function  getTotalAmountCell(eventArgs){
 
         row=eventArgs.getCell().getRow();
@@ -2025,13 +2064,13 @@ echo <<< EOF
         var line_totaltaxchild = grid.getCellObject(row,init_cell+7);
 
         var val_taxchild = line_taxchild.getValue();
-
+     
         var data = "action=getTotalTax&tax_id="+val_taxchild;
 
         $.ajax({
          url: "batch.php",type: "POST",data: data,cache: false,
              success: function (xml) {
-                
+
                 var total_tax = 0;
 
                 if(xml != ""){
@@ -2048,17 +2087,17 @@ echo <<< EOF
                 sumDebitCreditLine();
         }});
 
-    
+
 
 
         }else if((col == init_cell-5) || (col == init_cell-4)){//if debit | credit
         getTotalAmount();
-    
+
         }
 
     }
 
-    
+
  //optional function to generate primary key value, ignore this function because we use autogen method
     function GetNewRecordID()
     {
@@ -2069,7 +2108,7 @@ echo <<< EOF
     // immediately press search again. From screen we won't detect cell is selected infact from javascript
     // detect selected
    function dataready(){
-       
+
        var  g = nitobi.getGrid('DataboundGrid');
         g.move(0,0);//need to trigger relative position 0,0 in for next code able to highlight at screen
         var selRow = g.getSelectedRow();
@@ -2119,7 +2158,8 @@ echo <<< EOF
     }
 
     //if user click particular column, auto fall into edit mode
-    function clickrecord(eventArgs){alert("fds");
+    function clickrecord(eventArgs){
+                    alert("fds");
                     row=eventArgs.getCell().getRow();
                     col=eventArgs.getCell().getColumn();
                     var  myGrid = nitobi.getGrid('DataboundGrid');
@@ -2135,7 +2175,7 @@ echo <<< EOF
             document.getElementById('line_type').value = "1";
 
             var grid= nitobi.getComponent('DataboundGrid');
-            grid.insertRow();                        
+            grid.insertRow();
 
     }
 
@@ -2185,7 +2225,7 @@ echo <<< EOF
     function checkAllowEdit(eventArgs){
 	var g= nitobi.getGrid('DataboundGrid');
         col=eventArgs.getCell().getColumn();
-      if($alloweditgrid) //if user have permission to edit the cell, control primary key column read only at here too
+      if($alloweditgrid && document.getElementById("iscomplete").value==0) //if user have permission to edit the cell, control primary key column read only at here too
         return true;
        else
         return false;
@@ -2195,14 +2235,14 @@ echo <<< EOF
     //after insert a new line will automatically fill in some value here
       function setDefaultValue(eventArgs,action_type)
        {
-        
+
        var myGrid = eventArgs.getSource();
        var r = eventArgs.getRow();
-       var rowNo = r.Row;        
+       var rowNo = r.Row;
        $deleteddefaultvalue_js
 
        myGrid.selectCellByCoords(rowNo, 0);
-        
+
         /* start css */
         var grid = nitobi.getComponent("DataboundGrid");
 
@@ -2212,7 +2252,7 @@ echo <<< EOF
 
         if(linetype_new == 0 || linetype_new == "")
         linetype_new = 2;//set to child if 0
-    
+
         linetype_cell.setValue(linetype_new);
         }else if(action_type == "delete"){
 
@@ -2244,7 +2284,7 @@ echo <<< EOF
     function refreshGrid(){
         init_cell = 10;
         var grid = nitobi.getComponent("DataboundGrid");
-        
+
         var selRow = grid.getSelectedRow();
         var total_col = grid.columnCount();
         var total_row = grid.getDisplayedRowCount();
@@ -2367,17 +2407,26 @@ echo <<< EOF
     }
 
         function onclickaddbutton(){
+            
             var g= nitobi.getGrid('DataboundGrid');
             g.insertAfterCurrentRow();
 
             document.getElementById('line_type').value = "2";
         }
+        function shotcutinsertline(e){
+        
+            if(e.charCode==32)
+            onclickaddbutton();
+        }
+        function shotcutdeleteline(e){
 
-
+            if(e.charCode==32)
+            onclickdeletebutton();
+        }
 </script>
 
 <input type="hidden" id="line_type" value="">
-        
+
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
 
@@ -2413,48 +2462,48 @@ echo <<< EOF
      theme="$nitobigridthemes">
 
  <ntb:columns>
-   
-        
-    <ntb:textcolumn classname="{\$rh}" width="110" label="Account"  xdatafld="accounts_cell" sortenabled="false">
-    <ntb:lookupeditor delay="1000" gethandler="batch.php?action=getaccountlist" displayfields="accounts_name" valuefield="accounts_id" ></ntb:lookupeditor>
+
+
+    <ntb:textcolumn classname="{\$rh}" width="170" label="Account"  xdatafld="accounts_cell" sortenabled="false">
+    <ntb:listboxeditor gethandler="batch.php?action=getaccountlist" displayfields="accounts_name" valuefield="accounts_id" ></ntb:listboxeditor>
+        </ntb:textcolumn>
+
+    <ntb:textcolumn classname="{\$rh}" width="170" label="B.Partner"  xdatafld="bpartner_cell" sortenabled="false" editable="$editBPartner">
+    <ntb:listboxeditor gethandler="batch.php?action=getbpartnerlist" displayfields="bpartner_name" valuefield="bpartner_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
-    <ntb:textcolumn classname="{\$rh}" width="100" label="B.Partner"  xdatafld="bpartner_cell" sortenabled="false" editable="$editBPartner">
-    <ntb:lookupeditor delay="1000" gethandler="batch.php?action=getbpartnerlist" displayfields="bpartner_name" valuefield="bpartner_id" ></ntb:lookupeditor>
-    </ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" label="Cheque No." width="60" xdatafld="document_no2" sortenabled="false"></ntb:textcolumn>
 
-    <ntb:textcolumn classname="{\$rh}" label="Cheque No." width="70" xdatafld="document_no2" sortenabled="false"></ntb:textcolumn>
-        
-    <ntb:textcolumn classname="{\$rh}" label="Doc No." width="70" xdatafld="document_no" sortenabled="false" editable="true"></ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" label="Doc No." width="60" xdatafld="document_no" sortenabled="false" editable="true"></ntb:textcolumn>
     <ntb:textcolumn classname="{\$rh}" label="Memo"  width="125"  xdatafld="linedesc" sortenabled="false"><ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
-        
+
     <ntb:numbercolumn classname="{\$rh}" label="Debit($defcurrencycode)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_debit" sortenabled="false"></ntb:numbercolumn>
 
     <ntb:numbercolumn classname="{\$rh}" label="Credit($defcurrencycode)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_credit" sortenabled="false"></ntb:numbercolumn>
 
     <ntb:textcolumn classname="{\$rh}" width="50" label="Branch"  xdatafld="organization_cell" sortenabled="false" initial="$defaultorganization_id">
-    <ntb:lookupeditor delay="1000" gethandler="batch.php?action=getbranchlist" displayfields="organization_code" valuefield="organization_id" ></ntb:lookupeditor>
+    <ntb:listboxeditor gethandler="batch.php?action=getbranchlist" displayfields="organization_code" valuefield="organization_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
-    <ntb:textcolumn classname="{\$rh}" width="75" label="$track1_name"  xdatafld="track1_cell" sortenabled="false">
-    <ntb:lookupeditor delay="1000" gethandler="batch.php?action=gettracklist1" displayfields="track_name" valuefield="track_id" ></ntb:lookupeditor>
+    <ntb:textcolumn classname="{\$rh}" visible="false"   width="40" label="$track1_name"  xdatafld="track1_cell" sortenabled="false">
+    <ntb:listboxeditor gethandler="batch.php?action=gettracklist1" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
-    <ntb:textcolumn classname="{\$rh}" width="75" label="$track2_name"  xdatafld="track2_cell" sortenabled="false">
-    <ntb:lookupeditor delay="1000" gethandler="batch.php?action=gettracklist2" displayfields="track_name" valuefield="track_id" ></ntb:lookupeditor>
+    <ntb:textcolumn classname="{\$rh}" visible="false"  width="40" label="$track2_name"  xdatafld="track2_cell" sortenabled="false">
+    <ntb:listboxeditor gethandler="batch.php?action=gettracklist2" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
-    <ntb:textcolumn classname="{\$rh}" width="75" label="$track3_name"  xdatafld="track3_cell" sortenabled="false">
-    <ntb:lookupeditor delay="1000" gethandler="batch.php?action=gettracklist3" displayfields="track_name" valuefield="track_id" ></ntb:lookupeditor>
+    <ntb:textcolumn classname="{\$rh}" visible="false"  width="40" label="$track3_name"  xdatafld="track3_cell" sortenabled="false">
+    <ntb:listboxeditor gethandler="batch.php?action=gettracklist3" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
 EOF;
 
  echo <<< EOF
-      
-      <ntb:textcolumn label=""   xdatafld="imgdel"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()" align="right">
+
+      <ntb:textcolumn label=""   xdatafld="imgdel"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()" align="right" onkeypressevent=javascrpt:shotcutdeleteline(eventArgs)>
       <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>
-      <ntb:textcolumn label=""   xdatafld="imgadd"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickaddbutton()" align="center">
+      <ntb:textcolumn label=""   xdatafld="imgadd"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickaddbutton()" align="center" onkeypressevent=javascrpt:shotcutinsertline(eventArgs)>
       <ntb:imageeditor imageurl="$url_addline_img" ></ntb:imageeditor> </ntb:textcolumn>
 
       <ntb:numbercolumn    visible="false" label=""  width="0" xdatafld="trans_id" mask="###0" sortenabled="false"></ntb:numbercolumn>
@@ -2527,7 +2576,7 @@ EOF;
         $getHandler->DefineField("trans_id");
         $getHandler->DefineField("accounts_cell");
         $getHandler->DefineField("bpartner_cell");
-     	$getHandler->DefineField("document_no2");        
+     	$getHandler->DefineField("document_no2");
         $getHandler->DefineField("organization_cell");
      	$getHandler->DefineField("track1_cell");
      	$getHandler->DefineField("track2_cell");
@@ -2557,7 +2606,7 @@ EOF;
 
             $url_addimg = "images/add_line.gif";
 
-            
+
 //            if($row['row_typeline'] == 1 ){
 //            $rh="journalParent";
 //            }else{
@@ -2595,7 +2644,7 @@ EOF;
             $amt_debit = $row['amt'];
             else if($row['amt'] < 0)
             $amt_credit = -1*$row['amt'];
-            
+
      	    $currentRecord = $currentRecord +1;
             if($currentRecord > $ordinalStart){
              $getHandler->CreateNewRecord($row['trans_id']);
@@ -2643,7 +2692,7 @@ EOF;
             $tablename="sim_simbiz_transaction";
 
             $this->multiplyconversion = 1;
-            
+
             $this->log->showLog(3,"Get batch_id:$batch_id");
             $save = new Save_Data();
 
@@ -2682,7 +2731,7 @@ EOF;
             $temp_parent_id = $saveHandler->ReturnUpdateField($currentRecord,"temp_parent_id");
 //            if($row_typeline == 2)
 //            $reference_id = $this->getLatestGridParentID($temp_parent_id);
-            
+
              $amt = $saveHandler->ReturnUpdateField($currentRecord,"amt_debit");
              if($saveHandler->ReturnUpdateField($currentRecord,"amt_credit") > 0)
              $amt = -1*$saveHandler->ReturnUpdateField($currentRecord,"amt_credit");
@@ -2701,8 +2750,8 @@ EOF;
                     $this->isreconciled,
                     $this->bankreconcilation_id,
                     $this->transtype,
-                    $saveHandler->ReturnUpdateField($currentRecord,"linedesc"),                
-                    $this->reconciledate,             
+                    $saveHandler->ReturnUpdateField($currentRecord,"linedesc"),
+                    $this->reconciledate,
                     $saveHandler->ReturnUpdateField($currentRecord,"organization_cell"),
                     $saveHandler->ReturnUpdateField($currentRecord,"track1_cell"),
                     $saveHandler->ReturnUpdateField($currentRecord,"track2_cell"),
@@ -2726,7 +2775,7 @@ EOF;
   }
 
      }
-    }    
+    }
 
 
 /*run delete 1st*/
@@ -2832,7 +2881,7 @@ EOF;
          $temp_parent_id = $saveHandler->ReturnInsertField($currentRecord,"temp_parent_id");
          if($row_typeline == 2)
          $reference_id = $this->getLatestGridParentID($temp_parent_id);
-         
+
          if($row_typeline == 2){
 
 
@@ -2884,7 +2933,7 @@ EOF;
     }
 
 
-      
+
 
     /* end insert */
 
@@ -2945,7 +2994,7 @@ EOF;
 
     return $retval;
    }
-   
+
    public function includeGeneralFile(){
       global $url;
 
@@ -2973,7 +3022,7 @@ public function getSelectAccount($wherestring) {
 
         $this->log->showLog(2,"Run lookup getSelectAccount()");
 
-        global $getHandler,$pagesize,$ordinalStart,$sortcolumn,$sortdirection,$wherestring,$iseditbpartner;
+        global $getHandler,$pagesize,$ordinalStart,$sortcolumn,$sortdirection,$wherestring,$iseditbpartner,$searchstring;
 
         if(empty($pagesize)){
           $pagesize=$defaultpagesize;
@@ -2994,10 +3043,13 @@ public function getSelectAccount($wherestring) {
 
         if($iseditbpartner == "N")
         $wherestring .= " and ac.account_type NOT IN (2,3) ";
-    
-       $sql = "SELECT * FROM sim_simbiz_accounts ac              
+
+   // $wherestring .= " and concat(ac.accountcode_full,'-',ac.accounts_name) LIKE '%$searchstring%'";
+       $sql = "SELECT ac.accounts_id,concat(ac.accountcode_full,'-',ac.accounts_name) as accounts_name FROM sim_simbiz_accounts ac
               $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-       $this->log->showLog(4," with SQL: $sql");
+       $this->log->showLog(4," with SQL: $sql," );
+       $this->log->showLog(4," search string: $searchstring, Request:".print_r($_REQUEST,true) );
+
        $query = $this->xoopsDB->query($sql);
 
        $currentRecord = 0; // This will assist us finding the ordinalStart position
@@ -3007,7 +3059,7 @@ public function getSelectAccount($wherestring) {
             if($currentRecord > $ordinalStart){
                        $getHandler->CreateNewRecord($row["accounts_id"]);
                        $getHandler->DefineRecordFieldValue("accounts_id", $row["accounts_id"]);
-                       $getHandler->DefineRecordFieldValue("accounts_name", $row["accountcode_full"]." - ".$row["accounts_name"] );
+                       $getHandler->DefineRecordFieldValue("accounts_name", $row["accounts_name"] );
                        $getHandler->SaveRecord();
            //  $getHandler->CompleteGet();
 
@@ -3085,7 +3137,7 @@ public function getSelectBranch($wherestring) {
        $sql = sprintf("SELECT * FROM sim_organization org
               $wherestring $wheregroup ORDER BY " . $sortcolumn . " " . $sortdirection .";",$this->createdby);
 
-       
+
        $this->log->showLog(4," with SQL: $sql");
        $query = $this->xoopsDB->query($sql);
 
@@ -3188,7 +3240,7 @@ public function getSelectTax($wherestring) {
       }
   }
 
-  
+
 	public function checkPeriodID($date){
 	$retval = 0;
 	$year = substr($date,0,4);
@@ -3230,7 +3282,7 @@ public function getSelectTax($wherestring) {
             //$getFinalTotalDetailRow = $this->getFinalTotalDetailRow();
             //                            LEFT JOIN sim_simbiz_tax tx ON tr.tax_id = tx.tax_id
 
-            
+
             $sql = sprintf("SELECT bt.tax_type,tx.total_tax,tr.tax_id,
                             SUM(CASE WHEN tr.amt > 0 THEN tr.amt
                             ELSE 0
@@ -3280,7 +3332,7 @@ public function getSelectTax($wherestring) {
                         $col_3 .= number_format(($total_tax/100)*$row['total_credit'],2,".","");
                     }
                 }
-                
+
             }
 
 
@@ -3301,7 +3353,7 @@ public function getSelectTax($wherestring) {
                         <td class="td2FinalTotal2" id="idFinalTotalDebit">'.$this->totaldebit.'</td>
                         <td class="td3FinalTotal2" id="idFinalTotalCredit">'.$this->totalcredit.'</td>
                     </tr>';
-            
+
             $html .= '</table>';
 
             return $html;
@@ -3346,7 +3398,7 @@ public function reUse(){
                         "multiplyconversion","seqno","reference_id","bpartner_id","isreconciled","bankreconcilation_id",
                         "transtype","linedesc","reconciledate","branch_id","track_id1","track_id2","track_id3",
                         "created","createdby","row_typeline","temp_parent_id");
-        
+
         $arrInsertFieldTypeChild=array(
                         '%d', '%s','%f','%f','%d',
                         '%d','%s','%d',
@@ -3377,7 +3429,7 @@ public function reUse(){
 	$fromsys=$row['fromsys'];
 	$batchdate=$row['batchdate'];
 	$tax_type=$row['tax_type'];
-	$isreadonly=$row['isreadonly'];	
+	$isreadonly=$row['isreadonly'];
 
         $arrvalue=array(
         $period_id,
@@ -3440,7 +3492,7 @@ public function reUse(){
         $track_id3=$row['track_id3'];
         $row_typeline=$row['row_typeline'];
         $temp_parent_id=$row['temp_parent_id'];
-        
+
 
 	if($reference_id > 0)
 	$reference_id = $refid;
@@ -3472,7 +3524,7 @@ public function reUse(){
                     $temp_parent_id);
 
          $rschild = $save->InsertRecord("sim_simbiz_transaction", $arrInsertFieldChild, $arrvalue, $arrInsertFieldTypeChild,$seqno,"trans_id");
-         
+
 
 	if (!$rschild){
 		$this->log->showLog(1,"Failed to insert reuse code $batch_name:");
@@ -3510,6 +3562,104 @@ public function reUse(){
 	}
 
 
+public function getLatestBatchID() {
+	$sql="SELECT MAX(batch_id) as batch_id from sim_simbiz_batch;";
+	$this->log->showLog(3,'Checking latest created batch_id');
+	$this->log->showLog(4,"SQL: $sql");
+	$query=$this->xoopsDB->query($sql);
+	if($row=$this->xoopsDB->fetchArray($query)){
+		$this->log->showLog(3,'Found latest created batch_id:' . $row['batch_id']);
+		return $row['batch_id'];
+	}
+	else
+	return -1;
+
+  } // end
+
+  public function getNextBatchID() {
+	$sql="SELECT MAX(batch_id) as batch_id from $this->tablebatch;";
+	$this->log->showLog(3,'Checking latest created batch_id');
+	$this->log->showLog(4,"SQL: $sql");
+	$query=$this->xoopsDB->query($sql);
+	if($row=$this->xoopsDB->fetchArray($query)){
+		$this->log->showLog(3,'Found latest created batch_id:' . $row['batch_id']);
+		return $row['batch_id']+1;
+	}
+	else
+	return 1;
+
+  } // end
+
+
+public function navigationRecord($batch_id,$batchdate,$batchno){
+
+global $defaultorganization_id;
+$sqlfirst="SELECT batch_id FROM
+            $this->tablebatch b
+            where organization_id=$defaultorganization_id
+            ORDER BY batchdate ASC, batchno ASC LIMIT 0,1";
+$sqlprev="SELECT batch_id FROM
+            $this->tablebatch b
+            where organization_id=$defaultorganization_id
+            AND batchdate<='$batchdate'
+            AND  batchno <= (case when batchdate = '$batchdate' then '$batchno' else '9999999999999' end)
+            and batch_id <>$batch_id
+            ORDER BY batchdate DESC, batchno DESC LIMIT 0,1";
+$sqlnext="SELECT batch_id FROM
+            $this->tablebatch b
+            where organization_id=$defaultorganization_id
+            AND batchdate>='$batchdate' AND batchno >=(case when batchdate = '$batchdate' then '$batchno' else '000000000' end)  and batch_id <>$batch_id
+            ORDER BY batchdate ASC, batchno ASC LIMIT 0,1";
+$sqllast="SELECT batch_id FROM
+            $this->tablebatch b
+            where organization_id=$defaultorganization_id
+            ORDER BY batchdate DESC, batchno DESC LIMIT 0,1";
+ $sqlall="SELECT ($sqlfirst) as firstid,($sqlprev) as previd,($sqlnext) as nextid,($sqllast) as lastid FROM DUAL";
+$this->log->showLog(4,"show navigationRecord($batch_id,$batchdate,$batchno) with sql: $sqlall");
+$queryall=$this->xoopsDB->query($sqlall);
+$row=$this->xoopsDB->fetchArray($queryall);
+$firstid=$row['firstid'];
+$previd=$row['previd'];
+$nextid=$row['nextid'];
+$lastid=$row['lastid'];
+
+if($firstid!=$batch_id)
+$firstrecord="<a href='batch.php?action=edit&batch_id=$firstid'> &#60;&#60;First </a>";
+else
+$firstrecord="&#60;&#60;First ";
+
+if($previd!="")
+$prevrecord="<a href='batch.php?action=edit&batch_id=$previd'> &#60;Prev </a>";
+else
+$prevrecord=" &#60;Prev ";
+
+if($nextid!="")
+$nextrecord="<a href='batch.php?action=edit&batch_id=$nextid'> Next&#62; </a>";
+else
+$nextrecord=" Next&#62; ";
+
+if($lastid!=$batch_id)
+$lastrecord="<a href='batch.php?action=edit&batch_id=$lastid'> Last&#62;&#62; </a>";
+else
+$lastrecord=" Last&#62;&#62; ";
+
+return "$firstrecord &nbsp;&nbsp;&nbsp; $prevrecord &nbsp;&nbsp;&nbsp;
+        $nextrecord &nbsp;&nbsp;&nbsp; $lastrecord";
+}
+
+  public function getNextSeqNo() {
+
+	$sql="SELECT MAX(period_id) + 10 as period_id from $this->tablebatch;";
+	$this->log->showLog(3,'Checking next period_id');
+	$this->log->showLog(4,"SQL: $sql");
+	$query=$this->xoopsDB->query($sql);
+	if($row=$this->xoopsDB->fetchArray($query)){
+		$this->log->showLog(3,'Found next period_id:' . $row['period_id']);
+		return  $row['period_id'];
+	}
+	else
+	return 10;
+
+  } // end
 
 } // end of ClassBatch
-?>

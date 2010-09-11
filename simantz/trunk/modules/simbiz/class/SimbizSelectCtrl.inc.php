@@ -44,7 +44,7 @@ class SimbizSelectCtrl extends SelectCtrl{
 	return "<input type='hidden' name='$ctrlname' value='0' $onchangefunction>";
 	}else{
 
-	$selectctl="<SELECT name='$ctrlname' $onchangefunction  id='$ctrlid' $width  onmouseover='tooltip(this)'>";
+	$selectctl="<SELECT name='$ctrlname' $onchangefunction  id='$ctrlid' $width >";
 	if ($showNull=='Y'){
 		if($id<1)
 		$selectnull = "SELECTED='SELECTED'";
@@ -224,7 +224,7 @@ public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlna
 	$this->log->showLog(4,"getSelectBPartner With SQL: $sql");
 	//$selectctl="<SELECT name='$ctrlname' $onchangefunction id='$ctrlid' $width onmouseover='tooltip(this)'>";
 	if ($showNull=='Y')
-		$selectctl=$selectctl . "<OPTION value='0' SELECTED='SELECTED' >Null </OPTION>";
+		$selectctl=$selectctl . "<OPTION value='0' SELECTED='SELECTED' >Null</OPTION>";
 
 	$query=$this->xoopsDB->query($sql);
 	$selected="";

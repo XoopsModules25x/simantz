@@ -32,9 +32,9 @@ $this->log=$log;
 			<th>Del</th>
 			</tr>
 			";
-	$sql="SELECT pivl.receiptline_id,pivl.subject,pivl.amt,pivl.description,pivl.accounts_id,pivl.chequeno,acc.account_type 
-		FROM $this->tablereceiptline pivl, $this->tableaccounts acc 
-		where pivl.accounts_id = acc.accounts_id 
+	$sql="SELECT pivl.receiptline_id,pivl.subject,pivl.amt,pivl.description,pivl.accounts_id,pivl.chequeno,acc.account_type
+		FROM $this->tablereceiptline pivl, $this->tableaccounts acc
+		where pivl.accounts_id = acc.accounts_id
 		and pivl.receipt_id=$receipt_id order by pivl.receiptline_id";
 	$this->log->showLog(4,"Call purchase invoice line with SQL: $sql");
 	$query=$this->xoopsDB->query($sql);
@@ -87,11 +87,11 @@ $this->log=$log;
 		</td>
 		<td class='$rowtype'>$accountsctrl</td>
 		<td class='$rowtype'>
-		
+
 		<input name='linechequeno[$i]' value='$chequeno' size='12' maxlength='20' id='linechequeno$i'
 		onKeyDown='return changearrayfieldEnter(event,\"linechequeno\",$nextid,$previousid,\"linechequeno\",this);'
 		onfocus='this.select();' $displaychequenostyle>
-		
+
 		</td>
 		<td class='$rowtype'>
 		<input $alignR name='lineamt[$i]' value='$amt' size='12' maxlength='12' id='lineamt$i'
@@ -104,7 +104,7 @@ $this->log=$log;
 		</td>
 		</tr>
 		";
-		
+
 	$i++;
 	}
 
@@ -120,7 +120,7 @@ $this->log=$log;
 		global $enddiscountpercent;
 		$sql="INSERT INTO $this->tablereceiptline (receipt_id) VALUES ";
 		$i=0;
-	
+
 		while($i<$addqty){
 			$i++;
 			$sql=$sql."($receipt_id),";
@@ -138,7 +138,7 @@ $this->log=$log;
 				$this->log->showLog(1,'create receiptline failed');
 				return false;
 			}
-			
+
 	}
 	else{
 		$this->log->showLog(1,"function createreceiptline add line qty: $addqty, but receipt_id<=0");
@@ -166,7 +166,7 @@ $this->log=$log;
 		$sql="UPDATE $this->tablereceiptline SET subject='$subject',description='$description',
 			chequeno='$chequeno',amt=$amt,accounts_id=$accounts_id
 			where receiptline_id=$receiptline_id";
-		
+
 		$rs=$this->xoopsDB->query($sql);
 		if($rs)
 		$this->log->showLog(4,"Updatereceiptline successfully with SQL: $sql");
@@ -175,29 +175,29 @@ $this->log=$log;
 		}
 	$i++;
 	}
-	
+
  }
 
 public function deleteUnuseLine($receipt_id){
 	$this->log->showLog(4,"call Delete Unuse line.");
-	
-		
-	$sql = "DELETE from $this->tablereceiptline 
-		where receipt_id=$receipt_id 
+
+
+	$sql = "DELETE from $this->tablereceiptline
+		where receipt_id=$receipt_id
 		and amt = 0 ";
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if(!$rs)
 	$this->log->showLog(1,"Updatereceiptline failed with SQL: $sql");
-	
-	
+
+
  }
 
   public function deletereceiptline($receiptline_id){
 	$this->log->showLog(2,"Warning: Performing delete receipt id : $receipt_id !");
 	$sql="DELETE FROM $this->tablereceiptline where receiptline_id=$receiptline_id";
 	$this->log->showLog(4,"Delete SQL Statement: $sql");
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if (!$rs){
 		$this->log->showLog(1,"Error: receiptline ($receiptline_id) cannot remove from database:" . mysql_error(). ":$sql");
@@ -206,7 +206,7 @@ public function deleteUnuseLine($receipt_id){
 	else{
 		$this->log->showLog(3,"receiptline ($receiptline_id) removed from database successfully!");
 		return true;
-		
+
 	}
  }
 
@@ -218,8 +218,8 @@ public function deleteUnuseLine($receipt_id){
 //	$exchangerate = $cur->checkExchangeRate($currency_id,$defaultcurrency_id);
 	$exchangerate = $this->getExchangerateReceipt($receipt_id);
 
-	
-	$sqlupdate = "update $this->tablereceipt set originalamt = ($sql), amt = $exchangerate*($sql) 
+
+	$sqlupdate = "update $this->tablereceipt set originalamt = ($sql), amt = $exchangerate*($sql)
 			where receipt_id = $receipt_id";
 
 	$this->log->showLog(4,"update SQL Statement: $sqlupdate");
@@ -236,7 +236,7 @@ public function deleteUnuseLine($receipt_id){
 	$sql = "select exchangerate from $this->tablereceipt where receipt_id = $receipt_id ";
 
 	$query=$this->xoopsDB->query($sql);
-	
+
 	if($row=$this->xoopsDB->fetchArray($query)){
 	$retval = $row['exchangerate'];
 	}
@@ -245,4 +245,3 @@ public function deleteUnuseLine($receipt_id){
   }
 
 }
-?>

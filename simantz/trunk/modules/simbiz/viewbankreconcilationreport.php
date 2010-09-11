@@ -64,7 +64,7 @@ function Header()
 	$this->SetFont('Times','B',18);
 	$this->Rect($this->marginx,$this->marginy,$this->headerrectwith,$this->headerrectheight);
 	$this->SetXY($this->headertitlex,$this->marginy);
-	$this->Cell($this->headertitlewitdth,$this->headertitleheight,"Bank Reconcilation Report",0,0,'L');
+	$this->Cell($this->headertitlewitdth,$this->headertitleheight,"Bank Reconciliation Report",0,0,'L');
 	$this->SetFont('Times','B',10);
 //	$this->SetXY($this->headertitlex,$this->headertitley);
 //	$this->Ln(20);
@@ -370,7 +370,7 @@ $headeralign=array("L","L","L","L","R","R");
 
 
 	$pdf->addPage();
-	$pdf->MultiCell(0,5,$sql,1,'L');
+	//$pdf->MultiCell(0,5,$sql,1,'L');
 	//display pdf
 	//$pdf->Output("doc.pdf","D");
 	$pdf->Output("generalledger.pdf","I");
@@ -413,4 +413,3 @@ EOF;
 require(XOOPS_ROOT_PATH.'/footer.php');
 }
 ?>
-

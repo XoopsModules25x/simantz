@@ -397,11 +397,11 @@ default:
     }
      </script>
     <br/>
+    <small style='color:black'>*Click [+] to add new sub-account</small>
     <table border=1px>
-    <tr><TH colspan='2'>Add/Edit Account</TH></tr>
     <tr>
-    <td width="50%" style='vertical-align:top'><div id="treeAccount">$accountslist</div></td>
-    <td width="50%" style='vertical-align:top'><div id="formAccounts">$formname</div></td>
+    <td width="50%" style='vertical-align:top'><div id="treeAccount" class="searchformblock">$accountslist</div></td>
+    <td width="50%" style='vertical-align:top'><div id="formAccounts" class="searchformblock">$formname</div></td>
     </tr></table>
 
 

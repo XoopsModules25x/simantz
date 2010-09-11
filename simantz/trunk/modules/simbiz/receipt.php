@@ -88,7 +88,7 @@ else
 	$log->showLog(4,"Accessing create record event, with receipt name=$o->paidto");
 
 	if ($s->check(true,$token,"CREATE_ACG")){
-		
+
 
 
 	  if($o->insertReceipt()){
@@ -127,13 +127,13 @@ else
 				$o->updateReceipt();
 			 redirect_header("receipt.php?action=edit&receipt_id=$latest_id",$pausetime,"<b style='color:red'>Your data is saved but can't complete due to internal error on posting. Reverse this document to draft mode.</b>");
 			}
-			
+
 
 		}*/
 
 		if($o->addreceiptlineqty > 0)
 		$pl->createReceiptLine($latest_id,$o->addreceiptlineqty);
-		
+
 		if($chkAddNew=='on')
 			 redirect_header("receipt.php",$pausetime,"Your data is saved, creating new record");
 		else
@@ -156,7 +156,7 @@ else
 		elseif( $acc->account_type==3)
 		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
-		
+
 		/*
 		$acc->fetchAccounts($o->accountsto_id);
 
@@ -164,14 +164,14 @@ else
 				$pl->displaychequenostyle="";
 		else
 				$pl->displaychequenostyle="style='display:none'";*/
-		
+
 
 
 
 
 		$o->getInputForm("new",-1,$token);
-		
-		$o->showReceiptTable("WHERE receipt_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto"); 
+
+		$o->showReceiptTable("WHERE receipt_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto");
 		}
 
 	}
@@ -192,7 +192,7 @@ else
 		elseif( $acc->account_type==3)
 		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
-		
+
 
 		/*
 		$acc->fetchAccounts($o->accountsto_id);
@@ -202,13 +202,13 @@ else
 		else
 				$pl->displaychequenostyle="style='display:none'";
 		*/
-		
+
 
 
 		$o->getInputForm("new",-1,$token);
-		$o->showReceiptTable("WHERE receipt_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto"); 
+		$o->showReceiptTable("WHERE receipt_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto");
 	}
- 
+
 break;
 	//when user request to edit particular organization
   case "edit" :
@@ -218,7 +218,7 @@ break;
     $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
       $o->showJavascript();
 		//create a new token for editing a form
-		$token=$s->createToken($tokenlife,"CREATE_ACG"); 
+		$token=$s->createToken($tokenlife,"CREATE_ACG");
 		$o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
 
 		include_once "../simbiz/class/Accounts.php";
@@ -231,7 +231,7 @@ break;
 		elseif( $acc->account_type==3)
 		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
-		
+
 
 		$acc->fetchAccounts($o->accountsto_id);
 
@@ -241,7 +241,7 @@ break;
 		else
 				$pl->displaychequenostyle="style='display:none'";
 		*/
-		
+
 
 
 
@@ -260,27 +260,27 @@ break;
 
 		$o->receiptlinectrl=$o->receiptlinectrl.
 				"<tr><th></th><th></th><th></th><th>Total:</th>
-				<th><input value='$o->originalamt' name='originalamt' 
+				<th><input value='$o->originalamt' name='originalamt'
 					size='12' maxlength='12' style='text-align:right' readonly></th>
 				<th></th>
-				
+
 				</tr></tbody></table></th></tr>";
 
 		$o->getInputForm("edit",$o->receipt,$token);
-		//$o->showReceiptTable("WHERE f.receipt_id>0 and f.organization_id=$defaultorganization_id","ORDER BY f.receipt_no limit 0,30"); 
+		//$o->showReceiptTable("WHERE f.receipt_id>0 and f.organization_id=$defaultorganization_id","ORDER BY f.receipt_no limit 0,30");
 	}
 	else	//if can't find particular organization from database, return error message
 		redirect_header("receipt.php",3,"<b style='color:red'>Some error on viewing your receipt data, probably database corrupted.</b>");
-  
+
 break;
 //when user press save for change existing organization data
   case "update" :
 	if ($s->check(true,$token,"CREATE_ACG")){
 		$o->updatedby=$xoopsUser->getVar('uid'); //get current uid
-	
+
 		$pl->updateReceiptLine();
 		if($o->updateReceipt()) {//if data save successfully
-		
+
 			if($o->iscomplete==1){
 			include_once "class/AccountsAPI.php";
 			$accapi=new AccountsAPI();
@@ -299,7 +299,7 @@ break;
 			$arrayValue = $o->getArrayPOST($o->receipt_id);
 //echo $arrayValue[15];
 			if($arrayValue[15] == 0){//if have accounts > 0
-			
+
 			$result=$accapi->PostBatch($o->createdby,$arrayValue[0],$arrayValue[1],$arrayValue[2],
 				$arrayValue[3],$arrayValue[4],$arrayValue[5],
 				$arrayValue[6],$arrayValue[7],$arrayValue[8],$arrayValue[9],$arrayValue[10],$arrayValue[11],
@@ -338,7 +338,7 @@ break;
 
 			if($chkAddNew=='on')
 				 redirect_header("receipt.php",$pausetime,"Your data is saved, creating new record");
-			else		
+			else
 				redirect_header("receipt.php?action=edit&receipt_id=$o->receipt_id",$pausetime,"Your data is saved.");
 		}
 		else
@@ -358,16 +358,16 @@ break;
 	}
 	else
 		redirect_header("receipt.php?action=edit&receipt_id=$o->receipt_id",$pausetime,"<b style='color:red'>Warning! Can't delete data from database.</b>");
-	
+
   break;
 
 case "refreshcurrency":
-	
+
 	$currency_id=$_POST['currency_id'];
 
 	//$unitprice =999;
 	$exchangerate = $cur->checkExchangeRate($currency_id,$defaultcurrency_id);
-	
+
 	if($exchangerate == 0 && $currency_id>0)
 	echo "<script type='text/javascript'>alert('Detect exchange rate =0, please verified your currency table.')
 	self.parent.document.frmReceipt.exchangerate.value=1;
@@ -379,41 +379,33 @@ case "refreshcurrency":
 	</script>";
 
 break;
+case "getaccountinfo":
 
-  case "refreshaccountsfrom":
-	$accounts_id=$_POST['accounts_id'];
-	include_once "class/Accounts.php";
-	$acc= new Accounts();
+      include "../simantz/class/SelectCtrl.inc.php";
+      $ctrl=new SelectCtrl();
 
-	$acc->fetchAccounts($accounts_id);
-	if($acc->account_type==2)
-	$bpartnerctrl=$ctrl->getSelectBPartner(0,'N',"onchange='changePaidFrom(this)'","bpartner_id",
-			" and (debtoraccounts_id = $accounts_id and isdebtor=1) ",'N',"bpartner_id");
-	elseif( $acc->account_type==3)
-	$bpartnerctrl=$ctrl->getSelectBPartner(0,'N',"onchange='changePaidFrom(this)'","bpartner_id",
-			" and (creditoraccounts_id = $accounts_id and iscreditor=1) ",'N',"bpartner_id");
-	else
-	$bpartnerctrl="<input name='bpartner_id' value='0' type='hidden'>";
+      include "../simbiz/class/SimbizSelectCtrl.inc.php";
+      $simbizctrl=new SimbizSelectCtrl();
 
-echo <<< EOF
-	<script type="text/javascript">
-		
-			//alert("$o->bpartnerctrl");	
-		self.parent.document.getElementById('divbpartner').innerHtml="";
-		//alert(self.parent.document.getElementById('divbpartner').innerHTML);
-		self.parent.document.getElementById('divbpartner').innerHTML="$bpartnerctrl";
+     $accounts_id=$_REQUEST['accounts_id'];
 
-		if($acc->account_type == 2 || $acc->account_type ==3)
-		self.parent.document.getElementById('bpartnerID').innerHTML="";
-		//	self.parent.document.getElementById('bpartner_id').value=0;
+      echo $simbizctrl->getSelectBPartner(0,'Y',"","bpartner_id"," and (creditoraccounts_id =$accounts_id or debtoraccounts_id=$accounts_id)");
+      die;
+      break;
+case "checkisbank":
+    include "../simbiz/class/Accounts.php";
+$acc = new Accounts();
+    $acc->fetchAccounts($_REQUEST["accounts_id"]);
+        if($acc->account_type==4)
+                    echo 1;
+        else
+                echo 0;
+        die;
+    break;
 
-		self.parent.changePaidFrom(self.parent.document.frmReceipt.bpartner_id);
-	</script>
-EOF;
-  break;
 case "reactivate":
 	if($o->fetchReceipt($o->receipt_id)){
-		
+
 		$o->iscomplete=0;
 		include_once "class/AccountsAPI.php";
 		$accapi=new AccountsAPI();
@@ -436,35 +428,7 @@ case "reactivate":
 
 	}
   break;
-  case "refreshaccountsto":
-	$accounts_id=$_POST['accounts_id'];
-	$line=$_POST['line'];
-	$bankreconcilation_id=$_POST['bankreconcilation_id'];
-	include_once "class/Accounts.php";
-	$acc= new Accounts();
-	$acc->fetchAccounts($accounts_id);
-	if($acc->account_type==4 ){
-	$displaychequenostyle='';
-	}else{
-	$displaychequenostyle='none';
-	}
 
-echo <<< EOF
-	<script type="text/javascript">
-
-	//alert("linechequeno$line");
-		
-		//self.parent.document.forms['frmReceipt'].chequeno+'['+0].style.display = "$displaychequenostyle";
-		self.parent.document.getElementById("linechequeno$line").style.display = "$displaychequenostyle";
-		//self.parent.document.getElementById("idCNo$line").style.display = "$displaychequenostyle";
-
-		//self.parent.document.getElementById("linechequeno0").style.display = "none";
-
-//alert(self.parent.document.getElementById("linechequeno$line").style.display);
-
-	</script>
-EOF;
-  break;
   case "showSearchForm":
                 include "menu.php";
 
@@ -484,7 +448,7 @@ EOF;
 	$o->receiptfrom_no=$_POST['receiptfrom_no'];
 	$o->receiptto_no=$_POST['receiptto_no'];
 	$o->iscomplete=$_POST['iscomplete'];
-	
+
 	if($o->currency_id == "")
 	$o->currency_id = 0;
 
@@ -494,11 +458,11 @@ EOF;
 	$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'Y');
 	$o->showSearchForm();
 	$wherestr=$o->genWhereString();
-	$o->showReceiptTable("WHERE f.receipt_id>0 and f.organization_id=$defaultorganization_id $wherestr","ORDER BY f.receipt_no");	
+	$o->showReceiptTable("WHERE f.receipt_id>0 and f.organization_id=$defaultorganization_id $wherestr","ORDER BY f.receipt_no");
 
   break;
   default :
-      
+
      include "menu.php";
    $xoTheme->addScript($url.'/modules/simantz/include/validatetext.js');
     $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
@@ -519,5 +483,3 @@ EOF;
 }
 echo "</td>";
 require(XOOPS_ROOT_PATH.'/footer.php');
-
-?>

@@ -423,7 +423,7 @@ EOF;
 	FROM $this->tablebankreconcilation br
 	INNER JOIN $this->tableperiod p on p.period_id=br.period_id
 	INNER JOIN $this->tableaccounts a on a.accounts_id=br.accounts_id
-	WHERE br.organization_id=$defaultorganization_id $wherestring $orderbystring";
+	WHERE 1 $wherestring $orderbystring";
     $this->log->showLog(4,"Generate showbankreconcilationtable with sql:$sql");
 	
   return $sql;
@@ -682,7 +682,7 @@ EOF;
 	FROM $this->tabletransaction t
 	INNER JOIN $this->tablebatch b on t.batch_id=b.batch_id
 	where 1 and ($wherestr)
-		 AND t.accounts_id=$accounts_id and b.iscomplete=1 AND t.branch_id=$defaultorganization_id order by b.batchdate,b.batchno";
+		 AND t.accounts_id=$accounts_id and b.iscomplete=1 order by b.batchdate,b.batchno";
 
 	$this->log->showLog(4,"genChildList with SQL: $sql");
 	$query=$this->xoopsDB->query($sql);
@@ -737,4 +737,3 @@ EOF;
 	}
 
 } // end of ClassBankReconcilation
-?>

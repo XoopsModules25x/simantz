@@ -17,7 +17,7 @@ $isadmin=$xoopsUser->isAdmin();
 $o = new Batch();
 $s = new XoopsSecurity();
 $ctrl= new SelectCtrl();
-    
+
 $o->rcode = date("YmdHis", time()) ;
 $_SESSION['sql_txt_'.$o->rcode] = "";
 
@@ -98,7 +98,7 @@ $o->showcalendarto=$dp->show("batchdateto");
 
 $o->defineHeaderButton();
 
- switch ($action){    
+ switch ($action){
 
     case "searchgrid": //return xml table to grid
     $wherestring=" WHERE bt.batch_id>0";
@@ -126,8 +126,8 @@ $o->defineHeaderButton();
     break;
 
     case "delete" :
-        
-    
+
+
         if($o->deleteBatchAjax($o->batch_id)){//success
         $msg = "<div class='statusmsg'>Record deleted successfully.</div>";
         $arr = array("msg"=>$msg,"status"=>1);
@@ -152,7 +152,7 @@ $o->defineHeaderButton();
         echo json_encode($arr);
         }
     break;
-    
+
     case "update" :
 
 	$batchdate=$_POST['batchdate'];
@@ -169,7 +169,7 @@ $o->defineHeaderButton();
 
             $saveparent = $o->updateBatchAjax();
             $nothingchange = strpos($o->failfeedback,"nothing");
-            
+
             if($saveparent || $nothingchange !== false){//success
             $msg = "";
             $workflowbtn = $o->getListButton($o->batch_id);//show submit button
@@ -201,7 +201,7 @@ $o->defineHeaderButton();
 	//$o->period_id = $o->checkPeriodID($batchdate);
 
         if($o->period_id > 0 && $allowtrans == true){//check period id
-            
+
             if($o->saveBatchAjax()){//success
             $batch_id = $o->getBatchID();
             $o->batch_id = $batch_id;
@@ -232,7 +232,7 @@ $o->defineHeaderButton();
         $fyl = new FinancialYearLine();
         $allowtrans=$fyl->allowAccountTransactionInDate($defaultorganization_id,$batchdate);
         $o->period_id=$fyl->period_id;
-        
+
         if($o->period_id > 0 && $allowtrans == true){//check period id
 
 
@@ -258,15 +258,16 @@ $o->defineHeaderButton();
     case "getaccountlist": //return xml table to grid
     include_once "../simantz/class/EBAGetHandler.php";
     header('Content-type: text/xml');
-    $lookupdelay=1000;
+    $lookupdelay=300;
     $pagesize=&$_GET["pagesize"];
     $ordinalStart=&$_GET["startrecordindex"];
     $sortcolumn=&$_GET["sortcolumn"];
     $sortdirection=&$_GET["sortdirection"];
+    $searchstring=&$_GET["SearchString"];
     $getHandler = new EBAGetHandler();
     $getHandler->ProcessRecords();
     $getHandler->DefineField("accounts_cell");
-    $wherestring=" WHERE accounts_id>0 ";
+    $wherestring=" WHERE (accounts_id>0 and placeholder=0) or accounts_id=0 ";
     $o->getSelectAccount($wherestring);
     $getHandler->completeGet();
     break;
@@ -384,7 +385,7 @@ $o->defineHeaderButton();
         $o->getInputForm("edit",0,$token);
         //$o->getBatchlineform();
     }else{//failed fetch data
-        
+
     }
 
   require(XOOPS_ROOT_PATH.'/footer.php');
@@ -394,16 +395,16 @@ $o->defineHeaderButton();
     include "menu.php";
     $o->getIncludeFileMenu();
     $o->showSearchForm();
-    
+
     require(XOOPS_ROOT_PATH.'/footer.php');
-  
+
   break;
 
   case "getdeparment" :
 
   $employee_id=$_POST['employee_id'];
   echo $o->getselectDepartment($employee_id);
- 
+
   break;
 
   case "getTotalamount" :
@@ -441,8 +442,8 @@ $o->defineHeaderButton();
   break;
 
     default :
-    include "menu.php";        
-    
+    include "menu.php";
+
     if($o->period_id=="")
         $o->period_id=0;
     $o->orgctrl=$ctrl->selectionOrg($o->createdby,$defaultorganization_id,'N',"",'Y');
@@ -455,7 +456,3 @@ $o->defineHeaderButton();
 
 }
 
-
-
-
-?>

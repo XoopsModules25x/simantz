@@ -31,9 +31,9 @@ $this->log=$log;
 			<th>Del</th>
 			</tr>
 			";
-	$sql="SELECT pivl.paymentvoucherline_id,pivl.subject,pivl.amt,pivl.description,pivl.accounts_id,pivl.bpartner_id,acc.account_type 
-		FROM $this->tablepaymentvoucherline pivl, $this->tableaccounts acc 
-		where pivl.accounts_id = acc.accounts_id 
+	$sql="SELECT pivl.paymentvoucherline_id,pivl.subject,pivl.amt,pivl.description,pivl.accounts_id,pivl.bpartner_id,acc.account_type
+		FROM $this->tablepaymentvoucherline pivl, $this->tableaccounts acc
+		where pivl.accounts_id = acc.accounts_id
 		and pivl.paymentvoucher_id=$paymentvoucher_id order by pivl.paymentvoucherline_id";
 	$this->log->showLog(4,"Call purchase invoice line with SQL: $sql");
 	$query=$this->xoopsDB->query($sql);
@@ -98,7 +98,7 @@ $this->log=$log;
 		<input name='linesubject[$i]' value='$subject' size='40' maxlength='65' id='linesubject$i'
 		onfocus='this.select();'><a href='javascript:;' onclick='showHideDesc($i)'>V</a><br>
 		<textarea name='linedescription[$i]' id='linedescription$i' cols=45 rows=5 $displaydescstyle
-		
+
 		onfocus='this.select();'>$description</textarea>
 		</td>
 		<td class='$rowtype'>$accountsctrl <select name='linebpartner_id[$i]' id='linebpartner_id$i' onchange='changePaidTo(this)'>$bpartnerctrl</select></td>
@@ -112,7 +112,7 @@ $this->log=$log;
 		</td>
 		</tr>
 		";
-		
+
 	$i++;
 	}
 
@@ -128,7 +128,7 @@ $this->log=$log;
 		global $enddiscountpercent;
 		$sql="INSERT INTO $this->tablepaymentvoucherline (paymentvoucher_id) VALUES ";
 		$i=0;
-	
+
 		while($i<$addqty){
 			$i++;
 			$sql=$sql."($paymentvoucher_id),";
@@ -146,7 +146,7 @@ $this->log=$log;
 				$this->log->showLog(1,'create paymentvoucherline failed');
 				return false;
 			}
-			
+
 	}
 	else{
 		$this->log->showLog(1,"function createpaymentvoucherline add line qty: $addqty, but paymentvoucher_id<=0");
@@ -174,7 +174,7 @@ $this->log=$log;
 		$sql="UPDATE $this->tablepaymentvoucherline SET subject='$subject',description='$description',
 			bpartner_id=$bpartner_id,amt=$amt,accounts_id=$accounts_id
 			where paymentvoucherline_id=$paymentvoucherline_id";
-		
+
 		$rs=$this->xoopsDB->query($sql);
 		if($rs)
 		$this->log->showLog(4,"Updatepaymentvoucherline successfully with SQL: $sql");
@@ -183,29 +183,29 @@ $this->log=$log;
 		}
 	$i++;
 	}
-	
+
  }
 
 public function deleteUnuseLine($paymentvoucher_id){
 	$this->log->showLog(4,"call Delete Unuse line.");
-	
-		
-	$sql = "DELETE from $this->tablepaymentvoucherline 
-		where paymentvoucher_id=$paymentvoucher_id 
+
+
+	$sql = "DELETE from $this->tablepaymentvoucherline
+		where paymentvoucher_id=$paymentvoucher_id
 		and amt = 0 ";
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if(!$rs)
 	$this->log->showLog(1,"Updatepaymentvoucherline failed with SQL: $sql");
-	
-	
+
+
  }
 
   public function deletepaymentvoucherline($paymentvoucherline_id){
 	$this->log->showLog(2,"Warning: Performing delete paymentvoucher id : $paymentvoucher_id !");
 	$sql="DELETE FROM $this->tablepaymentvoucherline where paymentvoucherline_id=$paymentvoucherline_id";
 	$this->log->showLog(4,"Delete SQL Statement: $sql");
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if (!$rs){
 		$this->log->showLog(1,"Error: paymentvoucherline ($paymentvoucherline_id) cannot remove from database:" . mysql_error(). ":$sql");
@@ -214,7 +214,7 @@ public function deleteUnuseLine($paymentvoucher_id){
 	else{
 		$this->log->showLog(3,"paymentvoucherline ($paymentvoucherline_id) removed from database successfully!");
 		return true;
-		
+
 	}
  }
 
@@ -226,7 +226,7 @@ public function deleteUnuseLine($paymentvoucher_id){
 	//$exchangerate = $cur->checkExchangeRate($currency_id,$defaultcurrency_id);
 	$exchangerate = $this->getExchangeratePV($paymentvoucher_id);
 
-	$sqlupdate = "update $this->tablepaymentvoucher set originalamt = ($sql), amt = $exchangerate*($sql) 
+	$sqlupdate = "update $this->tablepaymentvoucher set originalamt = ($sql), amt = $exchangerate*($sql)
 			where paymentvoucher_id = $paymentvoucher_id";
 
 	$this->log->showLog(4,"update SQL Statement: $sqlupdate");
@@ -243,7 +243,7 @@ public function deleteUnuseLine($paymentvoucher_id){
 	$sql = "select exchangerate from $this->tablepaymentvoucher where paymentvoucher_id = $paymentvoucher_id ";
 
 	$query=$this->xoopsDB->query($sql);
-	
+
 	if($row=$this->xoopsDB->fetchArray($query)){
 	$retval = $row['exchangerate'];
 	}
@@ -252,4 +252,3 @@ public function deleteUnuseLine($paymentvoucher_id){
   }
 
 }
-?>

@@ -93,7 +93,7 @@ else
 	$log->showLog(4,"Accessing create record event, with paymentvoucher name=$o->paidto");
 
 	if ($s->check(true,$token,"CREATE_ACG")){
-		
+
 
 
 	  if($o->insertPaymentVoucher()){
@@ -132,13 +132,13 @@ else
 				$o->updatePaymentVoucher();
 			 redirect_header("paymentvoucher.php?action=edit&paymentvoucher_id=$latest_id",$pausetime,"<b style='color:red'>Your data is saved but can't complete due to internal error on posting. Reverse this document to draft mode.</b>");
 			}
-			
+
 
 		}*/
 
 		if($o->addpaymentvoucherlineqty > 0)
 		$pl->createPaymentVoucherLine($latest_id,$o->addpaymentvoucherlineqty);
-		
+
 		if($chkAddNew=='on')
 			 redirect_header("paymentvoucher.php",$pausetime,"Your data is saved, creating new record");
 		else
@@ -161,7 +161,7 @@ else
 		elseif( $acc->account_type==3)
 		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
-		
+
 		/*
 		$acc->fetchAccounts($o->accountsto_id);
 
@@ -169,14 +169,14 @@ else
 				$pl->displaychequenostyle="";
 		else
 				$pl->displaychequenostyle="style='display:none'";*/
-		
+
 
 
 
 
 		$o->getInputForm("new",-1,$token);
-		
-		//$o->showPaymentVoucherTable("WHERE paymentvoucher_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto"); 
+
+		//$o->showPaymentVoucherTable("WHERE paymentvoucher_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto");
 		}
 
 	}
@@ -197,7 +197,7 @@ else
 		elseif( $acc->account_type==3)
 		$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
-		
+
 
 		/*
 		$acc->fetchAccounts($o->accountsto_id);
@@ -207,13 +207,13 @@ else
 		else
 				$pl->displaychequenostyle="style='display:none'";
 		*/
-		
+
 
 
 		$o->getInputForm("new",-1,$token);
-		//$o->showPaymentVoucherTable("WHERE paymentvoucher_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto"); 
+		//$o->showPaymentVoucherTable("WHERE paymentvoucher_id>0 and organization_id=$defaultorganization_id","ORDER BY f.paidto");
 	}
- 
+
 break;
 	//when user request to edit particular organization
   case "edit" :
@@ -223,11 +223,11 @@ break;
     $xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
       $o->showJavascript();
 		//create a new token for editing a form
-		$token=$s->createToken($tokenlife,"CREATE_ACG"); 
+		$token=$s->createToken($tokenlife,"CREATE_ACG");
 		$o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
-      
+
 		include_once "class/Accounts.php";
-          
+
 		$acc= new Accounts();
 		$acc->fetchAccounts($o->accountsfrom_id);
 
@@ -237,7 +237,7 @@ break;
 		elseif( $acc->account_type==3)
 		$o->bpartnerctrl=$simbizctrl->getSelectBPartner($o->bpartner_id,'N',"onchange='changePaidFrom(this)'",
 			"bpartner_id",	" and (creditoraccounts_id = $o->accountsfrom_id and iscreditor=1) ",'N',"bpartner_id");
-		
+
 
 		$acc->fetchAccounts($o->accountsto_id);
 
@@ -247,7 +247,7 @@ break;
 		else
 				$pl->displaychequenostyle="style='display:none'";
 		*/
-		
+
 
 
 
@@ -267,27 +267,27 @@ break;
 
 		$o->paymentvoucherlinectrl=$o->paymentvoucherlinectrl.
 				"<tr><th></th><th></th><th>Total:</th>
-				<th><input value='$o->originalamt' name='originalamt' 
+				<th><input value='$o->originalamt' name='originalamt'
 					size='12' maxlength='12' style='text-align:right' readonly></th>
 				<th></th>
-				
+
 				</tr></tbody></table></th></tr>";
 
 		$o->getInputForm("edit",$o->paymentvoucher,$token);
-		//$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id","ORDER BY f.paymentvoucher_no limit 0,30"); 
+		//$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id","ORDER BY f.paymentvoucher_no limit 0,30");
 	}
 	else	//if can't find particular organization from database, return error message
 		redirect_header("paymentvoucher.php",3,"<b style='color:red'>Some error on viewing your paymentvoucher data, probably database corrupted.</b>");
-  
+
 break;
 //when user press save for change existing organization data
   case "update" :
 	//if ($s->check(true,$token,"CREATE_ACG")){
 		$o->updatedby=$xoopsUser->getVar('uid'); //get current uid
-	
+
 		$pl->updatePaymentVoucherLine();
 		if($o->updatePaymentVoucher()) {//if data save successfully
-		
+
 			if($o->iscomplete==1){
 			include_once "class/AccountsAPI.php";
 			$accapi=new AccountsAPI();
@@ -306,7 +306,7 @@ break;
 			$arrayValue = $o->getArrayPOST($o->paymentvoucher_id);
 //echo $arrayValue[15];
 			if($arrayValue[15] == 0){//if have accounts > 0
-			
+
 			$result=$accapi->PostBatch($o->createdby,$arrayValue[0],$arrayValue[1],$arrayValue[2],
 				$arrayValue[3],$arrayValue[4],$arrayValue[5],
 				$arrayValue[6],$arrayValue[7],$arrayValue[8],$arrayValue[9],$arrayValue[10],$arrayValue[11],
@@ -345,7 +345,7 @@ break;
 
 			if($chkAddNew=='on')
 				 redirect_header("paymentvoucher.php",$pausetime,"Your data is saved, creating new record");
-			else		
+			else
 				redirect_header("paymentvoucher.php?action=edit&paymentvoucher_id=$o->paymentvoucher_id",$pausetime,"Your data is saved.");
 		}
 		else
@@ -365,16 +365,16 @@ break;
 	}
 	else
 		redirect_header("paymentvoucher.php?action=edit&paymentvoucher_id=$o->paymentvoucher_id",$pausetime,"<b style='color:red'>Warning! Can't delete data from database.</b>");
-	
+
   break;
 
 case "refreshcurrency":
-	
+
 	$currency_id=$_POST['currency_id'];
 
 	//$unitprice =999;
 	$exchangerate = $cur->checkExchangeRate($currency_id,$defaultcurrency_id);
-	
+
 	if($exchangerate == 0 && $currency_id>0)
 	echo "<script type='text/javascript'>alert('Detect exchange rate =0, please verified your currency table.')
 	self.parent.document.frmPaymentVoucher.exchangerate.value=1;
@@ -425,8 +425,8 @@ EOF;
 
 echo <<< EOF
 	<script type="text/javascript">
-		
-			//alert("$o->bpartnerctrl");	
+
+			//alert("$o->bpartnerctrl");
 		self.parent.document.getElementById('divbpartner').innerHtml="";
 		//alert(self.parent.document.getElementById('divbpartner').innerHTML);
 		self.parent.document.getElementById('divbpartner').innerHTML="$bpartnerctrl";
@@ -441,7 +441,7 @@ EOF;
   break;
 case "reactivate":
 	if($o->fetchPaymentVoucher($o->paymentvoucher_id)){
-		
+
 		$o->iscomplete=0;
 		include_once "class/AccountsAPI.php";
 		$accapi=new AccountsAPI();
@@ -484,7 +484,7 @@ case "reactivate":
 
 echo <<< EOF
 	<script type="text/javascript">
-			
+
 		//self.parent.document.getElementById('divbpartner').innerHtml="";
 
 
@@ -492,7 +492,7 @@ echo <<< EOF
 
 		/*if($acc->account_type == 2 || $acc->account_type ==3)
 		self.parent.document.getElementById('bpartnerID').innerHTML="";*/
-	
+
                 if($paid_to == 0)
 		self.parent.changePaidTo(self.parent.document.getElementById("linebpartner_id$line"));
 
@@ -518,7 +518,7 @@ echo <<< EOF
 	<script type="text/javascript">
 
 	//alert("linechequeno$line");
-		
+
 		//self.parent.document.forms['frmPaymentVoucher'].chequeno+'['+0].style.display = "$displaychequenostyle";
 		self.parent.document.getElementById("linechequeno$line").style.display = "$displaychequenostyle";
 		//self.parent.document.getElementById("idCNo$line").style.display = "$displaychequenostyle";
@@ -565,7 +565,7 @@ EOF;
 	$o->paymentvoucherfrom_no=$_POST['paymentvoucherfrom_no'];
 	$o->paymentvoucherto_no=$_POST['paymentvoucherto_no'];
 	$o->iscomplete=$_POST['iscomplete'];
-	
+
 	if($o->currency_id == "")
 	$o->currency_id = 0;
 
@@ -575,21 +575,32 @@ EOF;
 	//$o->bpartnerctrl=$ctrl->getSelectBPartner($o->bpartner_id,'Y');
 	$o->showSearchForm();
 	$wherestr=$o->genWhereString();
-	$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id $wherestr","ORDER BY f.paymentvoucher_no");	
+	$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id $wherestr","ORDER BY f.paymentvoucher_no");
 
   break;
   case "getaccountinfo":
+
       include "../simantz/class/SelectCtrl.inc.php";
       $ctrl=new SelectCtrl();
-      
+
       include "../simbiz/class/SimbizSelectCtrl.inc.php";
       $simbizctrl=new SimbizSelectCtrl();
-      
+
      $accounts_id=$_REQUEST['accounts_id'];
-  
-      echo $simbizctrl->getSelectBPartner(0,$showNull='N',"","bpartner_id"," and (creditoraccounts_id =$accounts_id or debtoraccounts_id=$accounts_id)");
+
+      echo $simbizctrl->getSelectBPartner(0,'Y',"","bpartner_id"," and (creditoraccounts_id =$accounts_id or debtoraccounts_id=$accounts_id)");
       die;
       break;
+case "checkisbank":
+    include "../simbiz/class/Accounts.php";
+$acc = new Accounts();
+    $acc->fetchAccounts($_REQUEST["accounts_id"]);
+        if($acc->account_type==4)
+                    echo 1;
+        else
+                echo 0;
+        die;
+    break;
 
   default :
 //and (account_type=4 or account_type=7)
@@ -607,7 +618,7 @@ EOF;
 //	$o->bpartnerctrl=$ctrl->getSelectBPartner(0,'Y',"style='display:none' onchange='changePaidFrom(this.selectedIndex)'");
 	//echo "<input name='bpartner_id' value='0' type='hidden'>";
 	$o->preparedby=$xoopsUser->getVar("name");
-        
+
 	$o->getInputForm("new",0,$token);
 	//$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id","ORDER BY f.paymentvoucher_no limit 0,30");
        	$o->showPaymentVoucherTable("WHERE f.paymentvoucher_id>0 and f.organization_id=$defaultorganization_id and f.iscomplete=0","ORDER BY f.paymentvoucher_no");
@@ -617,5 +628,3 @@ EOF;
 }
 echo "</td>";
 require(XOOPS_ROOT_PATH.'/footer.php');
-
-?>

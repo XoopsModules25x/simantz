@@ -7,7 +7,7 @@ class Receipt
   public $receipt_id;
   public $paidfrom;
   public $organization_id;
-  
+
   public $iscomplete;
   public $description;
   public $exchangerate;
@@ -43,14 +43,14 @@ class Receipt
    * Display input form, type can be 'new', or 'edit', if new all field will be set
    * empty or 0. Or else all field data will pull from database.
    *
-   * @param string type 
-   * @param int receipt_id 
-   * @return 
+   * @param string type
+   * @param int receipt_id
+   * @return
    * @access public
    */
   public function getInputForm( $type,  $receipt_id,$token  ) {
       global $prefix_rcpt,$mandatorysign;
-      
+
 
     	$header=""; // parameter to display form header
 	$action="";
@@ -58,13 +58,13 @@ class Receipt
 	$deletectrl="";
 	$itemselect="";
 	$originalamtctrl="";
-	
+
 	$orgctrl="";
 	$this->created=0;
 	if ($type=="new"){
 		$header="New Receipt";
 		$action="create";
-	 	
+
 		if($receipt_id==0){
 			$this->paidfrom="";
 			$this->iscomplete="";
@@ -92,14 +92,14 @@ class Receipt
 		$closectrl="";
 
 		$originalamtctrl = "<input name='originalamt' type='hidden' value='0'>";
-	
+
 	}
 	else
 	{
-		
+
 		$action="update";
-		
-		
+
+
 
 		if($this->isAdmin){
 		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
@@ -115,10 +115,10 @@ class Receipt
 		"<input name='receipt_id' value='$this->receipt_id' type='hidden'>".
 		"<input name='btnPreview' value='Print Preview' type='submit'>".
 		"</form>";
-		
-	
+
+
 		$header="Edit Receipt";
-		
+
 		if($this->iscomplete==0){
 		$deletectrl="<FORM action='receipt.php' method='POST' onSubmit='return confirm(".
 		'"confirm to remove this receipt?"'.")'><input type='submit' value='Delete' name='btnDelete'>".
@@ -145,16 +145,14 @@ class Receipt
 		$viewbatch="";
 	}
 
-	
-if($this->bpartner_id == 0)
-$bpartner_fld = "<input type='hidden' name='bpartner_id' value='0'>";
+
 
     echo <<< EOF
 <A href='receipt.php'>[Add New]</A>&nbsp;<A href='receipt.php?action=showSearchForm'>[Search]</A>
 <form onsubmit="return validateReceipt()" method="post"
  action="receipt.php" name="frmReceipt">
 <table style="width:140px;"><tbody><td><input name="reset" value="Reset" type="reset"></td></tbody></table>
-<div id="bpartnerID">$bpartner_fld</div>
+
   <table style="text-align: left; width: 100%;" border="1" cellpadding="0" cellspacing="1">
 $originalamtctrl
     <tbody>
@@ -178,7 +176,7 @@ $originalamtctrl
       </tr>
       <tr>
         <td class="head">From Accounts</td>
-        <td class="even">$this->accountsfromctrl <select name="bpartner_id" id="bpartner_id"> $this->bpartnerctrl</select></div>
+        <td class="even">$this->accountsfromctrl <select name="bpartner_id" id="bpartner_id" onchange=changePaidFrom(this)> $this->bpartnerctrl</select></div>
 			<input name='bpartner_id_bc' id='bpartner_id_bc' type='hidden' value="$this->bpartner_id"></td>
         <td class="head">Paid From $mandatorysign</td>
         <td class="even"><input name='paidfrom' value="$this->paidfrom" id='paidfrom'></td>
@@ -188,7 +186,7 @@ $originalamtctrl
         <td class="even"><select name="currency_id">$this->currencyctrl</select></td>
         <td class="head">Exchange Rate $mandatorysign</td>
         <td class="even"><input name='exchangerate' value="$this->exchangerate" onchange='amt.value=parseFloat(this.value*originalamt.value).toFixed(2)' size="10">
-	Local Amount : 
+	Local Amount :
 	<input name='amt' value="$this->amt" readonly='readonly'></td>
       </tr>
 
@@ -255,17 +253,17 @@ EOF;
 
 
  	$timestamp= date("y/m/d H:i:s", time()) ;
- 	$sql="UPDATE $this->tablereceipt SET 
+ 	$sql="UPDATE $this->tablereceipt SET
 	paidfrom='$this->paidfrom',description='$this->description',originalamt=$this->originalamt,amt=$this->amt,
 	updated='$timestamp',updatedby=$this->updatedby,iscomplete='$this->iscomplete',exchangerate=$this->exchangerate,
 	organization_id=$this->organization_id,accountsfrom_id=$this->accountsfrom_id,
 	currency_id=$this->currency_id,receipt_prefix='$this->receipt_prefix',receipt_no='$this->receipt_no',bpartner_id=$this->bpartner_id,
 	receipt_date='$this->receipt_date',receivedby='$this->receivedby',
 	batch_id=$this->batch_id WHERE receipt_id='$this->receipt_id'";
-	
+
 	$this->log->showLog(3, "Update receipt_id: $this->receipt_id, $this->paidfrom");
 	$this->log->showLog(4, "Before execute SQL statement:$sql");
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if(!$rs){
 		$this->log->showLog(2, "Warning! Update receipt failed:".mysql_error(). ":$sql");
@@ -298,13 +296,13 @@ EOF;
 
 	$this->log->showLog(4,"Before insert receipt SQL:$sql");
 	$rs=$this->xoopsDB->query($sql);
-	
+
 	if (!$rs){
 		$this->log->showLog(1,"Failed to insert receipt code $paidfrom:" . mysql_error() . ":$sql");
 		return false;
 	}
 	else{
-		$this->log->showLog(3,"Inserting new receipt $paidfrom successfully"); 
+		$this->log->showLog(3,"Inserting new receipt $paidfrom successfully");
 		return true;
 	}
   } // end of member function insertReceipt
@@ -319,15 +317,15 @@ EOF;
 
 
 	$this->log->showLog(3,"Fetching receipt detail into class Receipt.php.<br>");
-		
+
 	$sql="SELECT receipt_id,paidfrom,iscomplete,exchangerate,organization_id,description,accountsfrom_id,
 		currency_id,amt,originalamt,receipt_no,receipt_prefix,batch_id,receipt_date,receivedby,paidfrom,bpartner_id
 		 from $this->tablereceipt where receipt_id=$receipt_id";
-	
+
 	$this->log->showLog(4,"ProductReceipt->fetchReceipt, before execute:" . $sql . "<br>");
-	
+
 	$query=$this->xoopsDB->query($sql);
-	
+
 	if($row=$this->xoopsDB->fetchArray($query)){
 		$this->receipt_no=$row["receipt_no"];
 		$this->receipt_prefix=$row["receipt_prefix"];
@@ -355,14 +353,14 @@ EOF;
 	}
 	else{
 		return false;
-	$this->log->showLog(4,"Receipt->fetchReceipt,failed to fetch data into databases:" . mysql_error(). ":$sql");	
+	$this->log->showLog(4,"Receipt->fetchReceipt,failed to fetch data into databases:" . mysql_error(). ":$sql");
 	}
   } // end of member function fetchReceipt
 
   /**
    * Delete particular receipt id
    *
-   * @param int receipt_id 
+   * @param int receipt_id
    * @return bool
    * @access public
    */
@@ -370,7 +368,7 @@ EOF;
     	$this->log->showLog(2,"Warning: Performing delete receipt id : $receipt_id !");
 	$sql="DELETE FROM $this->tablereceipt where receipt_id=$receipt_id";
 	$this->log->showLog(4,"Delete SQL Statement: $sql");
-	
+
 	$rs=$this->xoopsDB->query($sql);
 	if (!$rs){
 		$this->log->showLog(1,"Error: receipt ($receipt_id) cannot remove from database:" . mysql_error(). ":$sql");
@@ -379,16 +377,16 @@ EOF;
 	else{
 		$this->log->showLog(3,"receipt ($receipt_id) removed from database successfully!");
 		return true;
-		
+
 	}
   } // end of member function deleteReceipt
 
   /**
    * Return select sql statement.
    *
-   * @param string wherestring 
-   * @param string orderbystring 
-   * @param int startlimitno 
+   * @param string wherestring
+   * @param string orderbystring
+   * @param int startlimitno
    * @return string
    * @access public
    */
@@ -403,15 +401,15 @@ EOF;
 		INNER JOIN $this->tablecurrency cr on cr.currency_id=f.currency_id
 		 $wherestring $orderbystring";
     $this->log->showLog(4,"Generate showreceipttable with sql:$sql");
-	
+
   return $sql;
   } // end of member function getSQLStr_AllReceipt
 
  public function showReceiptTable($wherestring,$orderbystring){
-	
+
 	$this->log->showLog(3,"Showing Receipt Table");
 	$sql=$this->getSQLStr_AllReceipt($wherestring,$orderbystring);
-	
+
 	$query=$this->xoopsDB->query($sql);
 	echo <<< EOF
 
@@ -465,7 +463,7 @@ EOF;
 			$rowtype="even";
 		else
 			$rowtype="odd";
-		
+
 		echo <<< EOF
 
 		<tr>
@@ -486,7 +484,7 @@ EOF;
 			<img src="images/list.gif" title='Preview'>
 			</a>
 			</td>
-			<td>	
+			<td>
 			<a href="receipt.php?action=edit&receipt_id=$receipt_id">
 			<img src="images/edit.gif" name="btnEdit" title='Edit this record'>
 			</a>
@@ -529,7 +527,7 @@ EOF;
 	}
 	else
 	return -1;
-	
+
   } // end
 
 
@@ -545,7 +543,7 @@ EOF;
 	}
 	else
 	return 10;
-	
+
   } // end
 
  public function allowDelete($receipt_id){
@@ -667,7 +665,7 @@ public function genWhereString(){
 
 	if($this->iscomplete !="-1" && $this->iscomplete !="")
 		$wherestring=$wherestring. " f.iscomplete = $this->iscomplete AND";
-	
+
 	if($this->accountsfrom_id!=0)
 		$wherestring=$wherestring. " f.accountsfrom_id = $this->accountsfrom_id AND";
 
@@ -702,14 +700,14 @@ public function genWhereString(){
 	public function getArrayPOST($receipt_id){
 	global $prefix_rcpt;
 
-	$sql = "select * 
-		from $this->tablereceipt a, $this->tablereceiptline b 
-		where a.receipt_id = b.receipt_id 
-		and a.receipt_id = $receipt_id 
+	$sql = "select *
+		from $this->tablereceipt a, $this->tablereceiptline b
+		where a.receipt_id = b.receipt_id
+		and a.receipt_id = $receipt_id
 		and b.amt > 0 ";
 
 	$this->log->showLog(4,"Get Array Post Value: $sql");
-	
+
 	$query=$this->xoopsDB->query($sql);
 	$return_false = 0;
 	$i=0;
@@ -747,7 +745,7 @@ public function genWhereString(){
 	}
 
 	// line
-	
+
 		$documentnoarray[$i] = $documentno;
 		$accountsarray[$i] = $row['accounts_id'];
 		$originalamtarray[$i] = $row['originalamt'];
@@ -769,7 +767,7 @@ public function genWhereString(){
 	return array($date,$systemname,$batch_name,$description,$totaltransactionamt,$documentnoarray,
 	$accountsarray,$amtarray,$currencyarray,$conversionarray,$originalamtarray,$bpartnerarray,$transtypearray,$linetypearray,
 	$chequenoarray,$return_false,$linedescarray);
-	
+
 	}
 
 
@@ -942,22 +940,43 @@ public function showJavascript(){
 			return false;
 	}
 
-	function reloadAccountFrom(accounts_id){
+function reloadAccountFrom(accounts_id){
 
-	var arr_fld=new Array("action","accounts_id");//name for POST
-	var arr_val=new Array("refreshaccountsfrom",accounts_id);//value for POST
+	 var data="action="+"getaccountinfo"+
+                    "&accounts_id="+accounts_id;
 
-	getRequest(arr_fld,arr_val);
+            $.ajax({
+                 url:"receipt.php",type: "POST",data: data,cache: false,
+                     success: function (xml)
+                     {
+                        $("#bpartner_id").html(xml);
+                     }
+                   });
+
+
 
 	}
+
 	function reloadAccountTo(accounts_id,line){
+	 var data="action="+"checkisbank"+
+                    "&accounts_id="+accounts_id;
 
-	var arr_fld=new Array("action","accounts_id","line");//name for POST
-	var arr_val=new Array("refreshaccountsto",accounts_id,line);//value for POST
-
-	getRequest(arr_fld,arr_val);
+            $.ajax({
+                 url:"receipt.php",type: "POST",data: data,cache: false,
+                     success: function (xml)
+                     {
+                      if(xml==1)
+                     document.getElementById("linechequeno"+line).style.display="";
+                      else
+                     document.getElementById("linechequeno"+line).style.display="none";
+                     }
+                   });
 
 	}
+
+
+
+
 	function refreshCurrency(currency_id){
 
 	var arr_fld=new Array("action","currency_id");//name for POST
@@ -984,4 +1003,3 @@ public function showJavascript(){
 EOF;
 }
 } // end of ClassReceipt
-?>

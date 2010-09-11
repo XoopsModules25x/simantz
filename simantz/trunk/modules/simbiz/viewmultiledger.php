@@ -225,16 +225,19 @@ if (isset($_POST["submit"])){
         $pdf->dateto = $pdf->getBatchInfo(1);
 
 
-	$sqlgetaccountlist="SELECT accounts_id,accountcode_full FROM $tableaccounts 
-		WHERE (accountcode_full LIKE '$accounts_to%' OR ( accountcode_full between '$accounts_from%' and '$accounts_to%'))
-		and placeholder=0 and organization_id=$defaultorganization_id and account_type<>2 and account_type<>3 order by accountcode_full";
-	$queryaccountlist=$xoopsDB->query($sqlgetaccountlist);
+	 $sqlgetaccountlist="SELECT a.accounts_id,a.accountcode_full, ac.classtype
+		FROM $tableaccounts a
+		inner join $tableaccountgroup ag on ag.accountgroup_id=a.accountgroup_id
+		inner join $tableaccountclass ac on ac.accountclass_id=ag.accountclass_id
+		WHERE a.accountcode_full = '$accounts_from' OR a.accountcode_full = '$accounts_to' OR
+                ( a.accountcode_full >= '$accounts_from%' and a.accountcode_full <= '$accounts_to%')
+		and a.placeholder=0 and a.account_type<>2 and a.account_type<>3 order by a.accountcode_full";	$queryaccountlist=$xoopsDB->query($sqlgetaccountlist);
 	$j=0;
 	while($rowaccounts=$xoopsDB->fetchArray($queryaccountlist)) {
 	
 	$accounts_id=$rowaccounts['accounts_id'];
 
-
+$classtype=$rowaccounts['classtype'];
 
 
 		//$pdf->headeraccounts_code=$accountcode_full;
@@ -347,7 +350,10 @@ if (isset($_POST["submit"])){
 
 	if($i == 0){
 	$acc->fetchAccounts($accounts_id);
+	if($classtype=="5A"|| $classtype=="6L" || $classtype=="7E")
 	$balanceamt=$acc->accBalanceBFAmount($periodfrom_id,$accounts_id);
+	else
+	$balanceamt=0;
 	
 	$pdf->headeraccounts_code=$acc->accountcode_full;
   	$pdf->headeraccounts_name=$acc->accounts_name;
@@ -387,6 +393,7 @@ $headeralign = array("L","L","L","L","L","R","R","R");
         $balanceamt = 0;
         
 	$balancebf=number_format($balanceamt,2);
+        if($classtype=="5A"|| $classtype=="6L"||$classtype=="7E"){
 	$pdf->SetX($pdf->marginx);
 	$pdf->SetFont("$pdf->tabletextfont",$pdf->tabletextfontstyle,$pdf->tabletextfontsize);
 	$pdf->Cell($w[0],$pdf->tabletextheight,"",0,0,'L');
@@ -399,7 +406,11 @@ $headeralign = array("L","L","L","L","L","R","R","R");
 	$pdf->Cell($w[7],$pdf->tabletextheight,$balancebf,0,0,'R');
 	$pdf->Ln();
 	$balanceamt=$transamt+$balanceamt;
-
+}else{
+$balancebf=0;
+$balanceamt=$transamt+$balanceamt;
+//$pdf->Ln();
+}
 //	echo "$transamt + $balancebf = $balanceamt <br>";
 	}
 

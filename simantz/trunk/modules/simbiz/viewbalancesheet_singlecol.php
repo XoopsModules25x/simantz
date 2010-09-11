@@ -8,7 +8,7 @@
 	$org = new Organization();
 	$acc = new Accounts();
         $header=array("Accounts","");
-        $w=array(160,30);
+        $w=array(110,40,40);
         $papertype="A4";
 
 
@@ -101,13 +101,13 @@ function Header()
 		$orgnamefontstyle,  $orgcontactfont,$org,
 		$orgcontactfontsize,  $orgcontactfontheight,   $orgcontactfontstyle,   $headerorgseparator,   $reporttitle,
 		$reporttitlefont,  $reporttitlefontsize,  $reporttitlefontheight,   $reporttitlefontstyle,
-		$orgstreet1,$orgstreet2,$orgstreet3,$orgcity,$orgstate,$orgcountry_name,$orgemail,$orgurl,$orgtel1,$orgtel2,$orgfax,$bp, $orgreportheader;
+		$orgstreet1,$orgstreet2,$orgstreet3,$orgcity,$orgstate,$orgcountry_name,$orgemail,$orgurl,$orgtel1,$orgtel2,$orgfax,$bp;
 
 
 	$this->Ln();
 	$this->SetFont($orgnamefont,$orgnamefontstyle,$orgnamefontsize);
 	$this->SetXY($marginx,$marginy);
-	$this->Cell(0,$orgnamefontheight,"$orgreportheader",0,0,'C');
+	$this->Cell(0,$orgnamefontheight,"$orgname $companyno",0,0,'C');
 	$this->SetFont($orgcontactfont,$orgcontactfontstyle,$orgcontactfontsize);
 	$this->Ln();
 
@@ -212,22 +212,40 @@ if (isset($_POST["submit"])){
 
 	//$periodrange=$financialyear->getPeriodRange($financialyearfrom_id);
 
-        $datefrom="0000-00-00";
-        $dateto=$_POST['date1'];
+        $dateto1=$_POST['date1'];
+        $dateto2=$_POST['date2'];
+        $datefrom1="0000-00-00";
+        $datefrom2="0000-00-00";
+
+/*        if($datefrom=="")
+        $datefrom=getMinMaxBatchDate(0);
         if($dateto=="")
         $dateto=getMinMaxBatchDate(1);
-        $header[1]=$dateto;
-
-       $allsubsql.="case when (SELECT sum(t.amt) FROM $tabletransaction t
+ *
+ */
+        $header[1]=$dateto1;
+        $header[2]=$dateto2;
+        //  $datefrom='2008-10-01';
+      //  $dateto='2008-10-31';
+       // $reportlevel=2;
+       $allsubsql1="case when (SELECT sum(t.amt) FROM $tabletransaction t
                      inner join $tablebatch b on t.batch_id=b.batch_id
-                     where b.iscomplete=1 and t.accounts_id=a.accounts_id  and t.branch_id = $organization_id and
-                     batchdate BETWEEN '$datefrom' and '$dateto') is null
+                     where b.iscomplete=1 and t.accounts_id=a.accounts_id and t.branch_id = $organization_id and
+                     batchdate BETWEEN '$datefrom1' and '$dateto1') is null
                     then 0 else
                         (SELECT sum(t.amt) FROM $tabletransaction t
                         inner join $tablebatch b on t.batch_id=b.batch_id
-                        where b.iscomplete=1 and t.accounts_id=a.accounts_id  and t.branch_id = $organization_id and
-                        batchdate BETWEEN '$datefrom' and '$dateto') end";
-
+                        where b.iscomplete=1 and t.accounts_id=a.accounts_id and t.branch_id = $organization_id and
+                        batchdate BETWEEN '$datefrom1' and '$dateto1') end";
+         $allsubsql2="case when (SELECT sum(t.amt) FROM $tabletransaction t
+                     inner join $tablebatch b on t.batch_id=b.batch_id
+                     where b.iscomplete=1 and t.accounts_id=a.accounts_id and
+                     batchdate BETWEEN '$datefrom2' and '$dateto2') is null
+                    then 0 else
+                        (SELECT sum(t.amt) FROM $tabletransaction t
+                        inner join $tablebatch b on t.batch_id=b.batch_id
+                        where b.iscomplete=1 and t.accounts_id=a.accounts_id and t.branch_id = $organization_id and
+                        batchdate BETWEEN '$datefrom2' and '$dateto2') end";
 //	if($showaccountcode=="on")
 //	$orderby = "ORDER BY ac.classtype,a.accountcode_full";
 //	else
@@ -235,8 +253,8 @@ if (isset($_POST["submit"])){
 
 
 	$sql="SELECT a.accountcode_full,a.accounts_id,a.accounts_name,ac.classtype, a.treelevel,
-                a.placeholder,a.parentaccounts_id,a.hierarchy, $allsubsql as transactionamt
-		FROM $tableaccounts a
+                a.placeholder,a.parentaccounts_id,a.hierarchy, $allsubsql1 as transactionamt1,
+		$allsubsql2 as transactionamt2 FROM $tableaccounts a
 		INNER JOIN $tableaccountgroup ag on ag.accountgroup_id=a.accountgroup_id
 		INNER JOIN $tableaccountclass ac on ag.accountclass_id=ac.accountclass_id
 		WHERE ac.classtype in ('5A','6L','7E') and a.account_type <>6
@@ -246,10 +264,15 @@ if (isset($_POST["submit"])){
 	$pdf->AddPage();
 	$prefix="";
 	$currentcategory="5A";
+	$grossprofit1=0;
+	$totalasset1=0;
+	$totalliability1=0;
+	$totalequity1=0;
 
-	$totalasset=0;
-	$totalliability=0;
-	$totalequity=0;
+	$totalasset2=0;
+	$totalliability2=0;
+
+	$totalequity2=0;
 
 	while($row=$xoopsDB->fetchArray($query)){
 		$accountcode_full=$row['accountcode_full'] ;
@@ -264,6 +287,11 @@ if (isset($_POST["submit"])){
                 //skip to next record if found current record is not under this level
                 if($treelevel>$reportlevel)
                     continue;
+                $accounts_name=$row['accounts_name'];
+		$transactionamt1=$row['transactionamt1'];
+                $transactionamt2=$row['transactionamt2'];
+                if($showaccountcode=="on")
+                    $accounts_name=$accountcode_full . "-".$accounts_name;
 
                 if($treelevel==1)
                         $prefix="";
@@ -281,48 +309,65 @@ if (isset($_POST["submit"])){
 
 
 
-                $accounts_name=$row['accounts_name'];
-		$transactionamt=$row['transactionamt'];
-                if($showaccountcode=="on")
-                    $accounts_name=$accountcode_full . "-".$accounts_name;
-
-                if($transactionamt==0 && $placeholder==1 && $treelevel==$reportlevel)
-                $transactionamt=$acc->getAccountDateRangeValue($datefrom,$dateto,$accounts_id,0,$organization_id);
-                elseif($placeholder==1)
-                $transactionamt=0;
-
+                if($placeholder==1 && $treelevel==$reportlevel){
+                $transactionamt1=$acc->getAccountDateRangeValue($datefrom1,$dateto1,$accounts_id,0,$organization_id);
+                $transactionamt2=$acc->getAccountDateRangeValue($datefrom2,$dateto2,$accounts_id,0,$organization_id);
+                }
+                elseif($placeholder==1){
+                $transactionamt1=0;
+                $transactionamt2=0;
+                }
 
 		switch($classtype){
 		  case "5A":
-			$totalasset=$totalasset+$transactionamt;
-                        
-                        if($placeholder==0 )
-                            $displayamt=changeNegativeNumberFormat(($transactionamt),2);
-                        elseif($placeholder==1  && $treelevel<$reportlevel)
-                            $displayamt="";
-                        elseif($placeholder==1 && $treelevel==$reportlevel)
-                            $displayamt=changeNegativeNumberFormat(($transactionamt),2);
-
+			$totalasset1=$totalasset1+$transactionamt1;
+                        $totalasset2=$totalasset2+$transactionamt2;
+                        if($placeholder==0 ){
+                            $displayamt1=changeNegativeNumberFormat(($transactionamt1),2);
+                            $displayamt2=changeNegativeNumberFormat(($transactionamt2),2);
+                            }
+                        elseif($placeholder==1  && $treelevel<$reportlevel){
+                            $displayamt1="";
+                            $displayamt2="";
+                        }
+                        elseif($placeholder==1 && $treelevel==$reportlevel){
+                            $displayamt1=changeNegativeNumberFormat(($transactionamt1),2);
+                            $displayamt2=changeNegativeNumberFormat(($transactionamt2),2);
+                        }
 		  break;
 		  case "6L":
-			$totalliability=$totalliability+$transactionamt;
-                        if($placeholder==0 )
-                            $displayamt=changeNegativeNumberFormat($transactionamt*-1,2);
-                        elseif($placeholder==1  && $treelevel<$reportlevel)
-                            $displayamt="";
-                        elseif($placeholder==1 && $treelevel==$reportlevel)
-                            $displayamt=changeNegativeNumberFormat($transactionamt*-1,2);
+			$totalliability1=$totalliability1+$transactionamt1;
+                        $totalliability2=$totalliability2+$transactionamt2;
+                        if($placeholder==0 ){
+                            $displayamt1=changeNegativeNumberFormat($transactionamt1*-1,2);
+                            $displayamt2=changeNegativeNumberFormat($transactionamt2*-1,2);
+                        }
+                        elseif($placeholder==1  && $treelevel<$reportlevel){
+                            $displayamt1="";
+                            $displayamt2="";
+                            }
+                        elseif($placeholder==1 && $treelevel==$reportlevel){
+                            $displayamt1=changeNegativeNumberFormat($transactionamt1*-1,2);
+                            $displayamt2=changeNegativeNumberFormat($transactionamt2*-1,2);
+                        }
 		  break;
 		  case "7E":
-			$totalequity=$totalequity+$transactionamt;
-                        if($placeholder==0 )
-                            $displayamt=changeNegativeNumberFormat(($transactionamt*-1),2);
-                        elseif($placeholder==1  && $treelevel<$reportlevel)
-                            $displayamt="";
-                        elseif($placeholder==1 && $treelevel==$reportlevel)
-                            $displayamt=changeNegativeNumberFormat(($transactionamt*-1),2);
+			$totalequity1=$totalequity1+$transactionamt1;
+                        $totalequity2=$totalequity2+$transactionamt2;
+                        if($placeholder==0 ){
+                            $displayamt1=changeNegativeNumberFormat(($transactionamt1*-1),2);
+                            $displayamt2=changeNegativeNumberFormat(($transactionamt2*-1),2);
+                        }
+                        elseif($placeholder==1  && $treelevel<$reportlevel){
+                            $displayamt1="";
+                            $displayamt2="";
+                        }
+                        elseif($placeholder==1 && $treelevel==$reportlevel){
+                            $displayamt1=changeNegativeNumberFormat(($transactionamt1*-1),2);
+                            $displayamt2=changeNegativeNumberFormat(($transactionamt2*-1),2);
+                        }
 		  break;
-		
+
 
 		}
 
@@ -330,28 +375,26 @@ if (isset($_POST["submit"])){
 	  if($currentcategory !=$classtype){
 		$ypos=$pdf->GetY();
 		$pdf->Line($w[0],$ypos,$marginx+$w[0]+$w[1],$ypos);
+                $pdf->Line($marginx+$w[0]+$w[1] +2,$ypos,$marginx+$w[0]+$w[1]+$w[2],$ypos);
 		$pdf->SetFont($defaultfont,'',$defaultfontsize);
 		$pdf->Cell($w[0],$defaultfontheight,"",0,0,"L");
 		$summaryamt="";
 		switch($currentcategory){
 		  case "5A":
-
-			$summaryamt=changeNegativeNumberFormat($totalasset,2);
-                        
-			//$pdf->Ln();
-                        $pdf->SetX($marginx);
-			$pdf->SetFont($defaultfont,'B',$defaultfontsize+1);
-                        $pdf->Cell($w[0],$defaultfontheight,"Total",0,0,"L");
-			$pdf->Cell($w[1],$defaultfontheight,$summaryamt,"B",0,"R");
-                         $pdf->Line($marginx+$w[0],$pdf->GetY()+6,$marginx+$w[0]+$w[1]+$w[2],$pdf->GetY()+6);
+			$summaryamt1=changeNegativeNumberFormat($totalasset1,2);
+			$pdf->Cell($w[1],$defaultfontheight,$summaryamt1,0,0,"R");
+                        $summaryamt2=changeNegativeNumberFormat($totalasset2,2);
+			$pdf->Cell($w[2],$defaultfontheight,$summaryamt2,0,0,"R");
 		  break;
 		  case "6L":
-			$summaryamt=changeNegativeNumberFormat($totalliability*-1,2);
-			$pdf->Cell($w[1],$defaultfontheight,$summaryamt,0,0,"R");
+			$summaryamt1=changeNegativeNumberFormat($totalliability1*-1,2);
+                        $summaryamt2=changeNegativeNumberFormat($totalliability2*-1,2);
+			$pdf->Cell($w[1],$defaultfontheight,$summaryamt1,0,0,"R");
+                        $pdf->Cell($w[2],$defaultfontheight,$summaryamt2,0,0,"R");
+			$pdf->Ln();
 
 
 		  break;
-
 
 
 	  }
@@ -362,16 +405,21 @@ if (isset($_POST["submit"])){
 
 
 
+
+
+
+
+
 	if($showzero == "on")
 	$checkzero = 1;
-	else
-	$checkzero = $displayamt;
-
+	else{
+	$checkzero = $displayamt1;
+        }
 
 //	if(substr($displaytext,0,1) == "[" || $checkzero <> 0){
         if(($showplacefolderindicator==1 && $placeholder==1) || $checkzero <> 0 || $checkzero <> "0.00"){
 
-	  $data=array($prefix.$displaytext,$displayamt);
+	  $data=array($prefix.$displaytext,$displayamt1,$displayamt2);
 	  $pdf->SetX($marginx);
 
 	  $i=0;
@@ -391,30 +439,27 @@ if (isset($_POST["submit"])){
 	}
 
 	}
-
 		//display summary for last row
-                        $retainearning=$totalasset+$totalliability+$totalequity;
-			$summaryamt=changeNegativeNumberFormat($retainearning,2);
+			$retainearning1=$totalasset1+$totalliability1+$totalequity1;
+                        $retainearning2=$totalasset2+$totalliability2+$totalequity2;
+			$summaryamt1=changeNegativeNumberFormat($retainearning1,2);
+                        $summaryamt2=changeNegativeNumberFormat($retainearning2,2);
 			$pdf->Cell($w[0],$defaultfontheight,"  "."Retain Earning/(Loss)",0,0,"L");
-			$pdf->Cell($w[1],$defaultfontheight,$summaryamt,0,0,"R");
-			//$pdf->Ln();
+			$pdf->Cell($w[1],$defaultfontheight,$summaryamt1,0,0,"R");
+                        $pdf->Cell($w[1],$defaultfontheight,$summaryamt2,0,0,"R");
+
+
 			$pdf->Ln();
 			$pdf->SetFont($defaultfont,'B',$defaultfontsize+1);
-			//$total=($totalliability+$totalequity)*-1;
 
-//($totalequity)*(-1) -
-			$pdf->SetX($marginx);
-			 $pdf->Cell($w[0],$defaultfontheight,"Total",0,0,"L");
-			 $pdf->Cell($w[1],$defaultfontheight,"".changeNegativeNumberFormat($totalasset,2)."","TB",0,"R");
-		
-			 $pdf->Line($marginx+$w[0],$pdf->GetY()+6,$marginx+$w[0]+$w[1]+$w[2],$pdf->GetY()+6);
-                         $pdf->Ln();
+			 $pdf->Cell($w[0],$defaultfontheight,"Total ",0,0,"L");
+			 $pdf->Cell($w[1],$defaultfontheight,"".changeNegativeNumberFormat($totalasset1,2)."","TB",0,"R");
+			 $pdf->Cell($w[2],$defaultfontheight,"".changeNegativeNumberFormat($totalasset2,2)."","TB",0,"R");
+
+            $pdf->Line($marginx+$w[0],$pdf->GetY()+6,$marginx+$w[0]+$w[1]+$w[2],$pdf->GetY()+6);
 	//$pdf->MultiCell(0,5,"$sql",1,"C");
 
 	$pdf->Output("viewbalancesheet_singlecol.pdf","I");
 	exit (1);
 
 }
-
-?>
-

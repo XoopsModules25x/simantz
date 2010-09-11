@@ -4,7 +4,7 @@ $smtpuser="";
 $smtppassword="";
 $senderuser="";
 $tokenlife="3600";
-$pausetime="1000";
+$pausetime="0";
 
 $statementpapersource="1";
 $prefix_je="JV";
