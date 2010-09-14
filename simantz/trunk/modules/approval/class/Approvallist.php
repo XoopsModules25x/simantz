@@ -338,8 +338,8 @@ echo <<< EOF
    <div id="idApprovalWindows" style="display:none"></div>
    <table style="width:950px;"><tr><td>$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
 
-    <div align="center">
-    <table style="width:950px;">
+    <div >
+    <table style="width:950px;" align="center">
 
     <tr><td align="center" class="searchformheader">Search Form</td></tr>
 
@@ -458,27 +458,34 @@ echo <<< EOF
         <tr height="100px">
             <td width="70%" class="headerSearchTdTable">
                 <table>
+
                 <tr $stylesearchemployee >
                 <td class="searchTitle">Employee No.</td><td><input name="searchemployee_no" id="searchemployee_no"></td>
                 <td class="searchTitle">Employee Name</td><td><input name="searchemployee_name" id="searchemployee_name"></td>
                 </tr>
+
                 <tr>
-                <td class="searchTitle">Date From</td><td>
+                <td class="head">Date From</td>
+                  <td class="even">
                     <input name='searchleave_fromdate' id='searchleave_fromdate' value="$this->searchleave_fromdate" maxlength='10' size='12'>
                     <input name='btnDate' value="Date" type="button" onclick="$this->searchleave_fromdatectrl">
-                </td>
-                <td class="searchTitle">Date To</td><td>
+                  </td>
+                <td class="head">Date To</td>
+                  <td class="even">
                     <input name='searchleave_fromto' id='searchleave_todate' value="$this->searchleave_todate" maxlength='10' size='12'>
                     <input name='btnDate' value="Date" type="button" onclick="$this->searchleave_todatectrl">
-                </td>
+                  </td>
                 </tr>
+
                 <tr>
-                <!--<td class="searchTitle">Doc No.</td><td><input name="searchleave_no" id="searchleave_no"></td>-->
-                <td class="searchTitle">Complete</td><td colspan="3"><input type="checkbox" name="searchiscomplete" id="searchiscomplete"></td>
-                <td class="searchTitle" style="display:none">Approval History</td><td style="display:none"><input type="checkbox" name="searchishistory" id="searchishistory"></td>
+                <!--<td class="head">Doc No.</td><td class="even"><input name="searchleave_no" id="searchleave_no"></td>-->
+                <td class="head">Complete</td>
+                  <td colspan="3"><input type="checkbox" name="searchiscomplete" id="searchiscomplete"></td>
+                <td class="even" style="display:none">Approval History</td><td style="display:none"><input type="checkbox" name="searchishistory" id="searchishistory"></td>
                 </tr>
+
                 <tr>
-                <td colspan="2"><input type="button" value="Search" onclick="search()"></td>
+                <td colspan="2" align="left" class="head"><input type="button" value="Search" onclick="search()"></td>
                 <td colspan="2"></td>
                 </tr>
 
