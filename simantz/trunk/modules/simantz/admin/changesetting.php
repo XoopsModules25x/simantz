@@ -1,6 +1,8 @@
 <?php
 include "system.php";
+include_once '../../simantz/class/SelectCtrl.inc.php';
 //xoops_cp_header();
+$ctrl=new SelectCtrl();
 if(isset($_POST['savesetting'])){
 
 $report_organizationname=$_POST['report_organizationname'];
@@ -27,6 +29,7 @@ $allowbrowser=$_POST['allowbrowser'];
 $sendsmsgroup=$_POST['sendsmsgroup'];
 $uploadpath=$_POST['uploadpath'];
 $supportbrowserurl="http://www.simit.com.my/?q=supportbrowser";
+$approve_id=$_POST['approve_id'];
 /*
 if(PHP_OS=='WINNT'){
 
@@ -106,7 +109,7 @@ foreach($allowbrowser as $ab){
 if($i>0)
 $allowbrowsertext=substr($allowbrowsertext,0 ,-1);
 
-
+$approve_ctrl = $ctrl->getSelectWorkflowStatus($approve_id,'Y');
 $allowbrowsertext.=")";
 $b=$_SERVER['HTTP_USER_AGENT'];
 echo <<< EOF
@@ -163,6 +166,8 @@ echo <<< EOF
 <tr><td class='head' $aligncenter>Upload Path</td>
 	<td class='odd' $aligncenter><input name="uploadpath" value="$uploadpath"></td></tr>
 
+<tr><td class='head'  style='text-align:center'>Approve Complete Status</td>
+		<td class='odd'  style='text-align:center'><select name="approve_id">$approve_ctrl</select></td></tr>
 <tr><td><input type="reset" name="reset" value="reset"></td>
 <td><input type="submit" name="savesetting" value="Save">
 </td></tr>
