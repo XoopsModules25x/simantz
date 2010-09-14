@@ -323,7 +323,7 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 		inner join sim_window w on gsp.window_id=w.window_id
 		where w.mid=$module_id and w.filename='$usefilename' and w.isdeleted=0
                 and gp.gperm_name='module_read' and u.uid=$uid
-                and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by gsp.iswriteperm DESC";
+                and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by gsp.iswriteperm DESC,gsp.permissionsetting DESC";
       
 	$this->log->showLog(4, "With SQL: $sql");
 	$query=$this->xoopsDB->query($sql);
