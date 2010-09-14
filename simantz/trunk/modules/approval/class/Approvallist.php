@@ -622,7 +622,7 @@ EOF;
       CASE  "OVERCLAIM":
 
         include_once "../hr/class/Overtimeclaim.php";
-        $ov = new Overtimeclaim_id();
+        $ov = new Overtimeclaim();
                $ov->overtimeclaim_id=$this->primarykey_value;
                $ov->person_id=$this->person_id;
                $ov->window_workflow= $this->window_workflow;
