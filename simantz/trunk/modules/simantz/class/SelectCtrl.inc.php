@@ -576,7 +576,7 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
 	global $defaultorganization_id,$tableusers;
 
 
-	$sql="SELECT uid, uname from $tableusers where (uid=$id
+	 $sql="SELECT uid, uname from $tableusers where (uid=$id
 		OR uid>0) and uid>0
 		order by uname ;";
 	$this->log->showLog(4,"getSelectUsername With SQL: $sql");
@@ -602,5 +602,3 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
   }
 
 }
-
-?>
