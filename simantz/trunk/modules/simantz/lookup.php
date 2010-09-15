@@ -107,11 +107,7 @@
         }
       
 
-        
-       
-
 
 
 $getHandler->completeGet();
 
-?>
