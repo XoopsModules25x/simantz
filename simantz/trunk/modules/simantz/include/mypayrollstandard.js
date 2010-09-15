@@ -47,6 +47,44 @@ function blockepfsocso(eepf,esocso,epcb,iscomplete){
            }
 }
 
+ function checkAllowEditDeduction(eepf,esocso,epcb){
+	var g= nitobi.getGrid('DeductionDataboundGrid');
+        var selRow = g.getSelectedRow();
+        var selCol = g.getSelectedColumn();
+        var cellObj = g.getCellValue(selRow, 1);
+        var allow = true;
+        if(selCol==2 || selCol==3){
+           if(cellObj==eepf || cellObj==esocso || cellObj==epcb ){ //if user have permission to edit the cell, control primary key column read only at here too
+              allow=false;
+            }else{
+            allow=true;}
+        }
+        return allow;
+ }
+
+function checkstandard(eepf,esocso,epcb){
+	var g= nitobi.getGrid('DeductionDataboundGrid');
+        var selRow = g.getSelectedRow();
+        var value, epfcount=0, soccount=0, pcbcount=0;
+        var Deductiontotal_row = g.getRowCount();
+
+      for( var i = 0; i < Deductiontotal_row; i++ ) {
+         value=g.getCellObject( i, 1).getValue();
+         if(value==eepf){
+           epfcount++;
+         }else if(value==esocso){
+           soccount++;
+         }else if(value==epcb){
+           pcbcount++;
+         }
+      }
+      if(epfcount>1 || soccount>1 || pcbcount>1){
+      g.getCellObject(selRow,1).setValue(0);
+      alert("Cannot add more then one standard type.");
+      }
+}
+
+
 function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
   var type =employee_epftype;
   if(type!="0"){
@@ -107,7 +145,6 @@ function getepfbase(employee_epftype,epfbasecol,erepfcol,eepfcol){
                  }});
       }
    }
-
 
 function getsocsobase(employee_socsotype,socsobasecol,ersocsocol,esocsocol){
     var type =employee_socsotype;

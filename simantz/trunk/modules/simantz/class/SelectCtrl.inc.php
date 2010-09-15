@@ -375,7 +375,7 @@ public function getSelectPeriod($id,$showNull='N',$wherestr='') {
 	//and isactive=1
         $sql="SELECT period_id,period_name from sim_period where (
 		period_id>0) $wherestr
-		order by seqno,period_name asc;";
+		order by seqno,period_name desc;";
 	$this->log->showLog(4,"getSelectPeriod With SQL: $sql");
 
 	if ($showNull=='Y')
@@ -454,7 +454,7 @@ public function getSelectBPartnerGroup($id,$showNull='N') {
 
 public function getSelectIndustry($id,$showNull='N') {
 
-	$sql="SELECT industry_id,industry_name from sim_industry where (isactive=1 or industry_id=$id) and industry_id>0 order by industry_name asc;";
+	$sql="SELECT industry_id,industry_name from sim_industry where isactive=1 and industry_id>0 order by industry_name asc;";
 	$this->log->showLog(3,"Generate Industry list with with SQL($id,$showNull): $sql");
 	if ($id==-1 || $showNull=='Y')
 		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';

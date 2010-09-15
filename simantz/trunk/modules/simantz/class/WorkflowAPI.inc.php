@@ -422,7 +422,7 @@ class WorkflowAPI
 
         if($saveTransaction){
 
-             if($this->insertWorkflowHistory($workflowtransaction_feedback)){
+             if($this->insertWorkflowHistory($workflowtransaction_feedback,$workflowtransaction_id)){
 //                 $sqlupdate = sprintf("UPDATE sim_workflowtransaction SET issubmit = 0
 //                                    WHERE created < '%s'
 //                                    AND tablename = '%s'
@@ -508,14 +508,14 @@ class WorkflowAPI
     * save into history
     */
 
-   public function insertWorkflowHistory($workflowtransaction_feedback=""){
+   public function insertWorkflowHistory($workflowtransaction_feedback,$workflowtransaction_id){
         global $xoopsUser;
         $uid = $xoopsUser->getVar('uid');
 
         include_once "../simantz/class/Save_Data.inc.php";
         $save = new Save_Data();
-
-        $workflowtransaction_id = $this->getLatestWorkflowTransactionID();
+        if($workflowtransaction_id=="")
+         $workflowtransaction_id = $this->getLatestWorkflowTransactionID();
 
        //for history
         $arrInsertField = array(
