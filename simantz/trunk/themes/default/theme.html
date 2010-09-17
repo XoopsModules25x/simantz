@@ -43,8 +43,7 @@
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
 
-     <div id='popupmessage' style='text-align:center'></div>
-     <div id='progressimage' style='text-align:center'><img src='<{$xoops_url}>/modules/simantz/images/ajax_indicator_01.gif'></div>
+     <div id='popupmessage' style='text-align:center'></div><div id='progressimage' style='text-align:center'><img src='<{$xoops_url}>/modules/simantz/images/ajax_indicator_01.gif'></div>
 </div>
     
 <!-- Start Header -->
@@ -74,8 +73,12 @@
 	//		 echo "<li class='activemodulepattern'>&nbsp;&nbsp;<a href='$xoops_url/modules/system/admin.php' title='Admin'> Admin</a></li><li class='modulepattern'>|</li>";
 	//		 else
 	//		 echo "<li class='modulepattern'>&nbsp;&nbsp;<a href='$xoops_url/modules/system/admin.php' title='Admin'> Admin</a></li><li class='modulepattern'>|</li>";
+             if($uid==1){
+           		echo "<li class='modulepattern'><A href='$xoops_url/admin.php'>Admin</a></li><li class='modulepattern'>|</li>";
+                  }
 
-             while($row=$xoopsDB->fetchArray($query)){
+
+        while($row=$xoopsDB->fetchArray($query)){
              $mid=$row['mid'];
              $name=$row['name'];
 	     $class="modulepattern";
@@ -98,8 +101,9 @@
 
              
              }
-             if($uid>0)
+             if($uid>0){
            		echo "<li class='modulepattern'><A href='$xoops_url/user.php?op=logout'>Logout</a></li>";
+                  }
            	else
            		echo "<li class='modulepattern'><A href='$xoops_url/user.php'>Login</a></li>";
            
