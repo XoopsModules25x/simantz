@@ -329,7 +329,7 @@ else{ //user dun have write permission, cannot save grid
    <ntb:textcolumn  width="85" label="Races Code" xdatafld="races_description"  classname="{\$rh}" ></ntb:textcolumn>
    <ntb:textcolumn width="210" label="Races Name" xdatafld="races_name"  classname="{\$rh}"></ntb:textcolumn>
    <ntb:textcolumn label="Active" width="45" xdatafld="isactive" sortenabled="true"  classname="{\$rh}">
-         <ntb:checkboxeditor datasource="[{value:'1',display:'Yes'},{value:'0',display:'No'}]"
+         <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
           checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value"></ntb:checkboxeditor>
         </ntb:textcolumn>
    <ntb:numbercolumn maxlength="5" label="Seq No"  width="50" xdatafld="seqno" mask="###0"  classname="{\$rh}"></ntb:numbercolumn>
