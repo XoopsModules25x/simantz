@@ -1,0 +1,151 @@
+body {color: #000; background: #fff; margin: 0; padding: 0;}
+
+table {width: 100%; font-size: small;}
+table td {padding: 0; border-width: 0; vertical-align: top; font-family: Verdana,Arial, Helvetica, sans-serif;font-size: 10pt;}
+
+a {color: #2121aa; text-decoration: none; font-weight: bold; background-color: transparent;}
+a:hover {color: #ff6600;}
+
+h1 {}
+h2 {}
+h3 {}
+h4 {}
+h5 {}
+ul { margin: 2px; padding: 2px; list-style: disc inside; text-align: left;}
+ol { margin: 2px; padding: 2px; list-style: decimal inside; text-align: left;}
+li { margin-left: 2px; color: #359307;}
+
+input.formButton {}
+
+.item {border: 1px solid #cccccc;}
+.itemHead {padding: 3px; background-color: #359307; color: #FFFFFF;}
+.itemInfo {text-align: right; padding: 3px; background-color: #efefef}
+.itemTitle a {font-size: 130%; font-weight: bold; font-variant: small-caps; color: #ffffff; background-color: transparent;}
+.itemPoster {font-size: 90%; font-style:italic;}
+.itemPostDate {font-size: 90%; font-style:italic;}
+.itemStats {font-size: 90%; font-style:italic;}
+.itemBody {padding-left: 5px;}
+.itemText {margin-top: 5px; margin-bottom: 5px; line-height: 1.5em;}
+.itemText:first-letter {font-size: 133%; font-weight: bold;}
+.itemFoot {text-align: right; padding: 3px; background-color: #efefef;}
+.itemAdminLink {font-size: 90%;}
+.itemPermaLink {font-size: 90%;}
+
+th {background-color: #359307; color: #FFFFFF; padding : 2px; vertical-align : middle; font-family: Verdana, Arial, Helvetica, sans-serif;font-size:10pt;}
+
+td#headerbanner {width: 100%; background-color: #ffffff; vertical-align: middle; text-align:right;}
+td#headerbar {border-bottom: 1px solid #dddddd; background-image: url(hbar.gif);}
+
+td#leftcolumn {width: 170px; border: 1px solid #488248; font-size:12px;}
+td#leftcolumn th {background-color: #359307; color: #FFFFFF; vertical-align: middle;}
+td#leftcolumn div.blockTitle {padding: 3px; background-color: #d6fbd5; background-image: url(cellpic.jpg);color: #000; font-weight: bold;}
+td#leftcolumn div.blockContent {padding: 3px; line-height: 120%; line-height: 120%;}
+
+
+#centercolumn {font-size: 12px;}
+#centercolumn th {background-color: #359307;background: url(cellpic.jpg) repeat-x; color: #000; vertical-align: middle;}
+
+#centerCcolumn, #bottomCcolumn {padding: 0px 3px 1px 3px;}
+#centerCcolumn .blockTitle, #bottomCcolumn .blockTitle {padding: 3px; color: #639ACE; font-weight: bold; margin-top: 0px; margin-right: 0px;  margin-left: 0px;}
+#centerCcolumn .blockContent, #bottomCcolumn .blockContent {border-left: 1px solid #cccccc; border-right: 1px solid #cccccc; border-bottom: 1px solid #dddddd; padding: 3px; margin-right: 0px;  margin-left: 0px; margin-bottom: 2px; line-height: 120%;}
+
+#centerLcolumn, #bottomLcolumn, #centerRcolumn, #bottomRcolumn {
+	width: 50%; padding: 0px 3px 0px 0px;
+}
+#centerLcolumn .blockTitle, #bottomLcolumn .blockTitle, #centerRcolumn .blockTitle, #bottomRcolumn .blockTitle {
+	padding: 3px; color: #639ACE; font-weight: bold; margin-top: 0px;
+}
+#centerLcolumn .blockContent, #centerRcolumn .blockContent, #bottomLcolumn .blockContent, #bottomRcolumn .blockContent {
+	border-left: 1px solid #cccccc; border-right: 1px solid #cccccc; border-bottom: 1px solid #dddddd; padding: 3px; margin-left: 2px; margin-right: 3px; margin-bottom: 2px; line-height: 120%;
+}
+
+div#content {text-align: left; padding: 8px;}
+
+td#rightcolumn {width: 170px; border-left: 1px solid #488248; font-size:12px;}
+td#rightcolumn th {background-color: #359307; color: #FFFFFF; vertical-align: middle;}
+td#rightcolumn div.blockTitle {padding: 3px; background-color: #d6fbd5; background-image: url(cellpic.jpg);color: #003200; font-weight: bold;}
+td#rightcolumn div.blockContent {padding: 3px; line-height: 120%;}
+
+tr#footerbar {color:#fff; text-align:center; background-image: url(hbar.gif);}
+
+
+td#mainmenu a {background-color: #80c667; display: block; margin: 2px; padding: 4px;}
+td#mainmenu a:hover {background-color: #ffffff;}
+td#mainmenu a.menuTop {padding-left: 3px; border-top: 1px solid #c0c0c0; border-right: 1px solid #666666; border-bottom: 1px solid #666666; border-left: 1px solid #c0c0c0;}
+td#mainmenu a.menuMain {padding-left: 3px; border-top: 1px solid #c0c0c0; border-right: 1px solid #666666; border-bottom: 1px solid #666666; border-left: 1px solid #c0c0c0;}
+td#mainmenu a.menuSub {padding-left: 9px; border-top: 1px solid #c0c0c0; border-right: 1px solid #666666; border-bottom: 1px solid #666666; border-left: 1px solid #c0c0c0;}
+
+td#usermenu a {background-color: #80c667; display: block; margin: 0; padding: 4px; margin-bottom: 2px; border-top: 1px solid #c0c0c0;border-right: 1px solid #666666; border-bottom: 1px solid #666666; border-left: 1px solid #c0c0c0;}
+td#usermenu a:hover {background-color: #ffffff;}
+td#usermenu a.menuTop {border-top: 1px solid #c0c0c0;}
+td#usermenu a.highlight {background-color: #fcc;}
+
+
+
+.outer {border: 1px solid #c0c0c0;}
+.head {background-color: #608a38; color:#fff; padding: 5px; font-weight: bold;}
+.even {background-color: #aacf87; padding: 5px;}
+.vfocus {background-color: #f39999; padding: 5px;}
+.valert {background-color: #36db20; padding: 5px;}
+.odd {background-color: #d1ecb7; padding: 5px;}
+.foot {background-color: #ffa345; padding: 5px; font-weight: bold;}
+.red {background-color: #ff0000; padding: 5px; font-weight: bold;}
+tr.even td {background-color: #aacf87; padding: 5px;}
+tr.odd td {background-color: #d1ecb7; padding: 5px;}
+tr.vfocus td {background-color: #f39999; padding: 5px;}
+tr.valert td {background-color: #36db20; padding: 5px;}
+
+div.errorMsg { background-color: #FFCCCC; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px;}
+div.confirmMsg { background-color: #DDFFDF; color: #136C99; text-align: center; border-top: 1px solid #DDDDFF; border-left: 1px solid #DDDDFF; border-right: 1px solid #AAAAAA; border-bottom: 1px solid #AAAAAA; font-weight: bold; padding: 10px;}
+div.resultMsg { background-color : #CCCCCC; color: #333333; text-align: center; border-top: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0; font-weight: bold; border-right: 1px solid #666666; border-bottom: 1px solid #666666; padding: 10px;}
+
+div.xoopsCode { background: #FFFFFF; border: 1px inset #000080; font-family: "Courier New",Courier,monospace; padding: 0px 6px 6px 6px; height: 200px; overflow: auto;}
+div.xoopsQuote { background: #FFFFFF; border: 1px inset #000080; font-family: "Courier New",Courier,monospace; padding: 0px 6px 6px 6px;}
+
+
+.comTitle {font-weight: bold; margin-bottom: 2px;}
+.comText {padding: 2px;}
+.comUserStat {font-size: 10px; color: #2F5376; font-weight:bold; border: 1px solid #c0c0c0; background-color: #ffffff; margin: 2px; padding: 2px;}
+.comUserStatCaption {font-weight: normal;}
+.comUserStatus {margin-left: 2px; margin-top: 10px; color: #2F5376; font-weight:bold; font-size: 10px;}
+.comUserRank {margin: 2px;}
+.comUserRankText {font-size: 10px;font-weight:bold;}
+.comUserRankImg {border: 0;}
+.comUserName {}
+.comUserImg {margin: 2px;}
+.comDate {font-weight: normal; font-style: italic; font-size: smaller;}
+.comDateCaption {font-weight: bold; font-style: normal;}
+	
+
+input { BORDER-BOTTOM: 1px solid; BORDER-LEFT: 1px solid; BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; border-color:gray;font-size:10pt; color: #333333; font-family: Verdana,Arial, Helvetica, sans-serif;}
+textarea { BORDER-BOTTOM: 1px solid; BORDER-LEFT: 1px solid; BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; border-color:gray;font-size:10pt; color: #333333; font-family: Verdana,Arial, Helvetica, sans-serif;}
+select { BORDER-BOTTOM: 1px solid; BORDER-LEFT: 1px solid; BORDER-RIGHT: 1px solid; BORDER-TOP: 1px solid; border-color:gray;font-size:10pt; color: #333333; font-family: Verdana,Arial, Helvetica, sans-serif; }
+
+
+input[type="button"]:hover, input[type="button"]:focus,
+input[type="submit"]:hover, input[type="submit"]:focus,
+input[type="reset"]:hover, input[type="reset"]:focus,
+input[type="file"]:hover, input[type="file"]:focus{
+	border: 1px solid;
+	color: #454cdb;
+	background-image: url("../../images/btnimage2.gif");
+	cursor:pointer;
+	font-size: 10pt;
+	font-weight: normal;
+	}
+
+input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]   {
+border: 1px solid;
+	font-size: 10pt;
+	font-weight: normal;
+	background-image: url("../../images/btnimage.gif");
+	background-repeat: repeat-x;
+	background-position: top;
+	padding-bottom: 1px;
+	vertical-align: middle;
+}
+
+
+
+
+
