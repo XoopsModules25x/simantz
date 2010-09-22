@@ -31,7 +31,7 @@ private $tablebatch;
 	*/
 	public function PostBatch($uid,$date,$systemname,$batch_name,$description,$totaltransactionamt,$documentnoarray,
 		$accountsarray,$amtarray,$currencyarray,$conversionarray,$originalamtarray,$bpartnerarray,$transtypearray,$linetypearray,
-		$chequenoarray,$linedesc="",$isreadonly=0,$batchno=""){
+		$chequenoarray,$linedesc="",$isreadonly=0,$batchno="",$orgarray, $track1array, $track2array,$track3array){
 		include_once "../simbiz/class/Batch.php";
 		include_once "../simbiz/class/Accounts.php";
 		include_once "../simbiz/class/Transaction.php";
@@ -87,14 +87,22 @@ private $tablebatch;
 					}
 					elseif($linetypearray[$i]==0 && $i>0)
 					$reference_id=0;
-				$sqlinserttransaction="INSERT INTO $tabletransaction (
+
+                                        if($orgarray[$i]=="")
+                                            $orgarray[$i]==$defaultorganization_id;
+
+                                        if($track1array[$i]=="")$track1array[$i]=0;
+                                        if($track2array[$i]=="")$track2array[$i]=0;
+                                        if($track3array[$i]=="")$track3array[$i]=0;
+                                        
+                        		$sqlinserttransaction="INSERT INTO $tabletransaction (
 					document_no,batch_id,amt,currency_id,originalamt,
 					transtype,accounts_id,multiplyconversion,
-					seqno,reference_id,bpartner_id,document_no2,linedesc) 
+					seqno,reference_id,bpartner_id,document_no2,linedesc,branch_id,track_id1,track_id2,track_id3)
 					VALUES (
 					'$documentnoarray[$i]',$newbatch_id,$amtarray[$i],$currencyarray[$i],$originalamtarray[$i],
 					'$transtypearray[$i]',$accounts_id,$conversionarray[$i],'$i',$reference_id,$bpartnerarray[$i],
-					'$chequenoarray[$i]','$linedesc[$i]')";
+					'$chequenoarray[$i]','$linedesc[$i]', $orgarray[$i],$track1array[$i],$track2array[$i],$track3array[$i])";
 					$rsinserttransaction=$xoopsDB->query($sqlinserttransaction);
 					if(!$rsinserttransaction){
                                             echo mysql_error();

@@ -6,6 +6,7 @@ class SimbizSelectCtrl extends SelectCtrl{
     global $xoopsDB,$log;
     $this->xoopsDB=$xoopsDB;
     $this->log=$log;
+    
     }
 
   public function getSelectAccounts($id,$showNull='N',$onchangefunction="",$ctrlname="accounts_id",$wherestr='',$readonly='N',$isparent="N",$showlastbalance='N',
@@ -211,6 +212,32 @@ $selectctl="<select name='$ctrlname' id='$ctrlid' $onchangefunction>";
 	return $selectctl;
   }
 
+ public function getSelectTrack($id,$showNull='N',$wherestr='') {
+   global $tableperiod;
+	//and isactive=1
+	 $sql="SELECT track_id,track_name from sim_simbiz_track where (track_id=$id
+		OR track_id>0) $wherestr
+		order by seqno,track_name asc;";
+	$this->log->showLog(4,"getSelectTrack With SQL: $sql");
+	if ($showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$track_id=$row['track_id'];
+		$track_name=$row['track_name'];
+		if($id==$track_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$track_id' $selected>$track_name</OPTION>";
+
+	}
+
+	return $selectctl;
+  }
+
 
 public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlname="bpartner_id",$wherestr="",$showLastBalance='N',
 		$ctrlid="bpartner_id",$width="") {
@@ -250,7 +277,4 @@ public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlna
 	return $selectctl;
   }
 
-
-
 }
-?>

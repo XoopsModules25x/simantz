@@ -214,6 +214,11 @@ class Accounts
             $select8="selected='selected'";
             $optiontext="Retain Earning (Reverse Entry)";
        }
+       elseif($optionvalue==9){
+            $select9="selected='selected'";
+            $optiontext="Tax (GST)";
+       }
+
        else{
             $select1="selected='selected'";
                  $optiontext="Genaral Account";
@@ -242,7 +247,7 @@ class Accounts
     return "
    <div id='errormsg' class='red' style='display:none'></div>
         <A href=javascript:addChildAccounts(0)>[Add New]</a><br/>
-    <form onsubmit='return false'  id='frmAccount'>
+    <form onsubmit='return false' action='accounts.php' id='frmAccount' name='frmAccount'>
        <table>
     <tbody>
     
@@ -273,7 +278,7 @@ class Accounts
 
 
     <tr>
-        <td class='head'><a class='callout' href=javascript:alert('asd')>Parent Account</a></td>
+        <td class='head'>Parent Account</td>
         <td class='even' >
                 <select id='parentaccounts_id' onfocus=refreshparentaccountlist(this.value)>
                     $accoptionlist
@@ -834,6 +839,35 @@ public function getCOGSAndExpensesInPeriod($period_id){
 	return $row['amt'];
 	}
 	return 0;
+}
+
+
+function getBPartnerCreditStatus($accounts_id,$bpartner_id,$type="D"){ //type D =debtor, type C =creditor
+    if($type=="D"){
+        $acctype=2;
+    }
+    else{
+        $acctype=3;
+    }
+
+    $sql="SELECT bp.bpartner_id,bp.bpartner_name, sum(t.amt) as balance,bp.salescreditlimit, bp.enforcesalescreditlimit,bp.purchasecreditlimit,bp.enforcepurchasecreditlimit
+            from sim_simbiz_transaction t
+            inner join sim_simbiz_batch b on t.batch_id=b.batch_id
+            inner join sim_simbiz_accounts a on a.accounts_id=t.accounts_id
+            inner join sim_bpartner bp on t.bpartner_id=bp.bpartner_id
+            where t.accounts_id=$accounts_id and t.bpartner_id=$bpartner_id and a.account_type =$acctype";
+    $query=$this->xoopsDB->query($sql);
+    while($row=$this->xoopsDB->fetchArray($query)){
+            if($type=="D"){
+               return array(abs($row['balance']),$row['salescreditlimit'],$row['enforcesalescreditlimit']);
+            }
+            else{
+               return array(abs($row['balance']),$row['purchasecreditlimit'],$row['enforcepurchasecreditlimit']);
+            }
+
+        
+    }
+    return array(0,0,0);
 }
 
 

@@ -13,6 +13,7 @@ class Tax
   public $defaultlevel;
   public $created;
   public $createdby;
+  public $total_tax;
   public $updated;
   public $updatedby;
   public $orgctrl;
@@ -229,7 +230,7 @@ EOF;
 
 	$this->log->showLog(3,"Fetching tax detail into class Tax.php.<br>");
 		
-	$sql="SELECT tax_id,tax_name,isactive,defaultlevel,organization_id,description,istax
+	$sql="SELECT tax_id,tax_name,isactive,defaultlevel,organization_id,description,istax,total_tax
 		 from $this->tabletax where tax_id=$tax_id";
 	
 	$this->log->showLog(4,"ProductTax->fetchTax, before execute:" . $sql . "<br>");
@@ -242,6 +243,7 @@ EOF;
 		$this->defaultlevel= $row['defaultlevel'];
 		$this->isactive=$row['isactive'];
 		$this->istax=$row['istax'];
+                $this->total_tax =$row['total_tax'];
 		$this->description=$row['description'];
    	$this->log->showLog(4,"Tax->fetchTax,database fetch into class successfully");
 	$this->log->showLog(4,"tax_name:$this->tax_name");

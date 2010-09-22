@@ -1,6 +1,6 @@
 <?php
 include_once "system.php";
-include_once 'class/Invoice.inc.php';
+include_once 'class/Payment.inc.php';
 
 include "class/nitobi.xml.php";
    $readwritepermctrl=" rowinsertenabled=\"true\"      rowdeleteenabled=\"true\"      toolbarenabled=\"true\"      ";
@@ -17,12 +17,12 @@ $action=$_REQUEST['action'];
 
 
 
-$o = new Invoice();
+$o = new Payment();
 
 $o->issotrx=1;
-$o->invoicefilename="salesinvoice.php";
-$o->spinvoice_prefix=$prefix_spi;
-$o->documenttype=1;//1=invoice, 2=cashbill saverecord
+$o->paymentfilename="salespayment.php";
+$o->sppayment_prefix=$prefix_spp;
+$o->documenttype="P";
 $o->updated=date("Y-m-d H:i:s",time());
 $o->updatedby=$xoopsUser->getVar("uid");
 
@@ -55,15 +55,15 @@ switch($action){
        require(XOOPS_ROOT_PATH.'/footer.php');
     break;
     case "ajaxsearch":
-        $o->showSearchGrid("where i.issotrx=1 and i.invoice_id>0 ");
+        $o->showSearchGrid("where i.issotrx=1 and i.payment_id>0 ");
         break;
 
     case "view":
         echo $o->gridjs();
-        if($o->fetchInvoice($_GET['invoice_id']))
+        if($o->fetchPayment($_GET['payment_id']))
         {
-     if($o->iscomplete==0)
-                redirect_header("$o->invoicefilename?action=edit&invoice_id=$o->invoice_id","2", "This transaction not yet complete, redirect to edit mode.");
+        if($o->iscomplete==0)
+                redirect_header("$o->paymentfilename?action=edit&payment_id=$o->payment_id","2", "This transaction not yet complete, redirect to edit mode.");
 
 
         echo $o->viewInputForm();
@@ -78,11 +78,10 @@ switch($action){
         break;
     case "edit":
         
-        if($o->fetchInvoice($_GET['invoice_id']))
+        if($o->fetchPayment($_GET['payment_id']))
         {
-     if($o->iscomplete==1)
-                redirect_header("$o->invoicefilename?action=view&invoice_id=$o->invoice_id","2", "This transaction not yet complete, redirect to edit mode.");
-
+        if($o->iscomplete==1)
+                redirect_header("$o->paymentfilename?action=view&payment_id=$o->payment_id","2", "This transaction'd been completed, redirect to view mode.");
         echo $o->gridjs();
         echo $o->getInputForm("edit");
         
@@ -121,15 +120,17 @@ die;
       echo $add->address_street;
       die;
       break;
-  case "searchinvoiceline":
-      $log->showLog(4,"access action:searchinvoiceline");
-       $wherestring=" WHERE invoice_id=".$_REQUEST['invoice_id'];
-    $o->showInvoiceline($wherestring);
+  case "searchpaymentline":
+      $log->showLog(4,"access action:searchpaymentline");
+   //    $wherestring=" WHERE payment_id=".$_REQUEST['payment_id'];
+    $o->payment_id=$_REQUEST["payment_id"];
+  
+    $o->showPaymentline($wherestring);
       die;
   break;
     case "ajaxsave":
         
-    $o->invoice_id=$_POST['invoice_id'];
+    $o->payment_id=$_POST['payment_id'];
     $o->document_no=$_POST['document_no'];
     $o->document_date=$_POST['document_date'];
     
@@ -143,7 +144,7 @@ die;
     $o->bpartner_name=$_POST['cmbbpartner_idSelectedValue1'];
     $o->iscomplete=$_POST['iscomplete'];
     $o->bpartneraccounts_id=$_POST['bpartneraccounts_id'];
-    $o->spinvoice_prefix=$_POST['spinvoice_prefix'];
+    $o->sppayment_prefix=$_POST['sppayment_prefix'];
     $o->terms_id=$_POST['terms_id'];
     $o->contacts_id=$_POST['contacts_id'];
     $o->preparedbyuid=$_POST['preparedbyuid'];
@@ -162,13 +163,12 @@ die;
 
     $o->isprinted=$_POST['isprinted'];
     $o->contacts_id=$_POST['contacts_id'];
-    $o->terms_id=$_POST['terms_id'];
     $o->preparedbyuid=$_POST['preparedbyuid'];
     $o->salesagentname=$_POST['salesagentname'];
     $o->localamt=$_POST['localamt'];
     $o->address_text=$_POST['address_text'];
-    $o->granttotalamt=$_POST['granttotalamt'];
-        $o->totalgstamt=$_POST['totalgstamt'];
+    $o->outstandingamt=$_POST['outstandingamt'];
+     
 
     $o->itemqty=0;
  
@@ -176,15 +176,15 @@ die;
 
    
 if($o->validateForm()){
-    if( $o->invoice_id>0)
-            if($o->updateInvoice())
+    if( $o->payment_id>0)
+            if($o->updatePayment())
                                  echo "<result><status>1</status><detail><msg>Record save successfully $mytext</msg></detail></result>";                        
             else
                       echo "<result><status>0</status><detail><msg>Cannot save record due to internal error</msg></detail></result>";
 
     else
-            if($o->insertInvoice())
-                                   echo "<result><status>1</status><detail><msg>Record save successfully $mytext</msg><invoice_id>$o->invoice_id</invoice_id></detail></result>";
+            if($o->insertPayment())
+                                   echo "<result><status>1</status><detail><msg>Record save successfully $mytext</msg><payment_id>$o->payment_id</payment_id></detail></result>";
                       else 
                              echo "<result><status>0</status><detail><msg>Cannot save record due to internal error</msg></detail></result>";
 
@@ -195,29 +195,29 @@ else{
 
         break;
 case "posting":
-       if($o->fetchInvoice($_POST['invoice_id'])){
+       if($o->fetchPayment($_POST['payment_id'])){
                        if($o->posting())
                         echo "<result><status>1</status><detail><msg>Record post successfully.</msg></detail></result>";
                             else
                          echo "<result><status>0</status><detail><msg>Error, you cannot post record</msg></detail></result>";
        }
        else
-                            echo "<result><status>0</status><detail><msg>Error, you cannot post record due to cannot fetch invoice from database</msg></detail></result>";
+                            echo "<result><status>0</status><detail><msg>Error, you cannot post record due to cannot fetch payment from database</msg></detail></result>";
                             die;
                
     break;
 case "reactivate":
-     $invoice_id=$_POST['invoice_id'];
-     if($o->fetchInvoice($invoice_id)){
+     $payment_id=$_POST['payment_id'];
+     if($o->fetchPayment($payment_id)){
       include "../simbiz/class/AccountsAPI.php";
        $acc = new AccountsAPI();
    if($acc->reverseBatch($o->batch_id)){
      $o->iscomplete=0;
 
-     if($xoopsDB->query("update sim_simbiz_invoice set iscomplete=0 where invoice_id=".$invoice_id))
+     if($xoopsDB->query("update sim_simbiz_payment set iscomplete=0 where payment_id=".$payment_id))
          $arr = array("status"=>1);
      else
-         $arr = array("status"=>0,"msg"=>"cannot update invoice status to not complete, probably due to sql error");
+         $arr = array("status"=>0,"msg"=>"cannot update payment status to not complete, probably due to sql error");
      }
      else
          $arr = array("status"=>0,"msg"=>"Cannot reverse transaction, probably due to financial year issue");
@@ -231,9 +231,11 @@ case "reactivate":
     die;
 
     break;
-case "saveInvoiceline":
-    $log->showLog(4,"save invoiceline");
-    $o->saveInvoiceLine();
+case "savePaymentline":
+    
+    $log->showLog(4,"save paymentline");
+    $o->payment_id=$_REQUEST["payment_id"];
+    $o->savePaymentLine();
     die;
     break;
 case "ajaxgetTaxInfo":
@@ -260,18 +262,19 @@ case "getAccountInfo":
     break;
 
 case "ajaxdelete":
-    $o->invoice_id=$_POST['invoice_id'];
+    $o->payment_id=$_POST['payment_id'];
      echo "<?xml version='1.0' encoding='utf-8' ?><Result>";
-    if(!$o->deleteInvoice($o->invoice_id))
+    if(!$o->deletePayment($o->payment_id))
             echo "<status>0</status><detail><msg>Cannot delete this record due to internal error</msg></detail>";
     else
             echo "<status>1</status><detail><msg>C</msg></detail>";
     echo "</Result>";
     break;
     default:
-        $o->iscomplete=0;
-        $o->invoice=0;
-        $o->bpartner_id=0;
+        if($_REQUEST['bpartner_id']>0){
+            $o->bpartner_id=$_REQUEST['bpartner_id'];
+        $o->bpartner_name=$_REQUEST['bpartner_name'];
+        }
         
         echo $o->gridjs();
         echo $o->getInputForm();

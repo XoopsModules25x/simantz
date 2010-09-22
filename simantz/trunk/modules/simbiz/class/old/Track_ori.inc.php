@@ -26,6 +26,7 @@ class Track
 
 //constructor
    public function Track(){
+       
 	global $xoopsDB,$log,$tabletrack,$tablebpartner,$tablebpartnergroup,$tableorganization,$tabledailyreport,$defaultorganization_id;
         $this->defaultorganization_id=$defaultorganization_id;
   	$this->xoopsDB=$xoopsDB;
@@ -34,6 +35,7 @@ class Track
 	$this->tablebpartner=$tablebpartner;
 	$this->tabledailyreport=$tabledailyreport;
 	$this->log=$log;
+        
    }
   /**
    * Display input form, type can be 'new', or 'edit', if new all field will be set

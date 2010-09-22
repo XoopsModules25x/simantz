@@ -1,7 +1,7 @@
 <?php
 
-class Invoice{
-    public $invoice_id;
+class Payment{
+    public $payment_id;
     public $document_no;
     public $organization_id;
     public $documenttype;
@@ -21,7 +21,7 @@ class Invoice{
     public $bpartner_id;
     public $iscomplete;
     public $bpartneraccounts_id;
-    public $spinvoice_prefix;
+    public $sppayment_prefix;
     public $issotrx;
     public $terms_id;
     public $contacts_id;
@@ -34,7 +34,7 @@ class Invoice{
     public $track1_id;
     public $track2_id;
     public $track3_id;
-    public $invoicefilename;
+    public $paymentfilename;
     public $gridfieldarray;
     public $gridfielddisplayarray;
     public $gridfieldwidtharray;
@@ -45,47 +45,34 @@ class Invoice{
     public $gridvaluearray;
     public $gridfielddefault;
     private $xoopsDB;
-    private $tableinvoice;
+    private $tablepayment;
     private $tablename;
     private $tablecurrency;
     private $log;
 
   
-   public function Invoice(){
-	global $xoopsDB,$log,$tableinvoice,$tableinvoiceline,$defaultorganization_id;
+   public function Payment(){
+	global $xoopsDB,$log,$tablepayment,$tablepaymentline,$defaultorganization_id;
   	$this->xoopsDB=$xoopsDB;
         $this->organization_id=$defaultorganization_id;
 	$this->log=$log;
         $this->tableorganization=$tableorganization;
 	$this->tablecurrency=$tablecurrency;
-	$this->tableinvoice=$tableinvoice;
-        $this->tableinvoiceline=$tableinvoiceline;
-        $this->tablename=$tableinvoice;
-        $this->log->showLog(3,"Access Invoice()");
-
-        }
-
-        public function viewInputForm(){
-
-    $grid=$this->getGrid($this->invoice_id);
+	$this->tablepayment=$tablepayment;
+        $this->tablepaymentline=$tablepaymentline;
+        $this->tablename=$tablepayment;
+        $this->log->showLog(3,"Access Payment()");
+   
+   }
+    public function viewInputForm(){
+    $grid=$this->getGrid($this->payment_id,"N");
     $this->address_text= str_replace("\n", "<br/>", $this->address_text);
     $this->address_text= str_replace(" ", "&nbsp;", $this->address_text);
     $this->description= str_replace("\n", "<br/>", $this->description);
     $this->description= str_replace(" ", "&nbsp;", $this->description);
-    $balanceamt=$this->getOutstandingAmt($this->invoice_id);
-    $paymenthistory=$this->getPaymentHistory($this->invoice_id);
-
-    if($this->issotrx==1){
-        $type="D";
-            $paymenturl="salespayment.php?bpartner_id=$this->bpartner_id&bpartner_name=$this->bpartner_name";
-    }
-    else{$type="C";
-            $paymenturl="purchasepayment.php?bpartner_id=$this->bpartner_id&bpartner_name=$this->bpartner_name";
-    }
-
-     include "../simbiz/class/Accounts.php";
+   include "../simbiz/class/Accounts.php";
      $acc = new Accounts();
-     $creditstatusarr=$acc->getBPartnerCreditStatus($this->bpartneraccounts_id,$this->bpartner_id,$type);
+     $creditstatusarr=$acc->getBPartnerCreditStatus($this->bpartneraccounts_id,$this->bpartner_id,$type="D");
       $consumecredit=$creditstatusarr[0];
      $creditlimit=$creditstatusarr[1];
      $enforcement=$creditstatusarr[2];
@@ -108,15 +95,15 @@ class Invoice{
     <br/>
     <div id='errormsg' class='red' style='display:none'></div>
 
-<form onsubmit='return false' method='post' name='frmInvoice' id='frmInvoice'  action='$this->invoicefilename'  enctype="multipart/form-data">
+<form onsubmit='return false' method='post' name='frmPayment' id='frmPayment'  action='$this->paymentfilename'  enctype="multipart/form-data">
    <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
     <tbody>
         <tr>
-        <td colspan="5" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >Invoice</td>
+        <td colspan="5" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >Payment</td>
         </tr>
         <tr>
-          <td class="head">Invoice No</td>
-          <td class="even">$this->spinvoice_prefix $this->document_no   Branch: $this->organization_code</td>
+          <td class="head">Payment No</td>
+          <td class="even">$this->sppayment_prefix $this->document_no   Branch: $this->organization_code</td>
           <td class="head">Business Partner</td>
           <td class="even">
                 <a href="../bpartner/bpartner.php?action=viewsummary&bpartner_id=$this->bpartner_id" target="_blank">$this->bpartner_name</a>
@@ -125,12 +112,8 @@ class Invoice{
                     <b>Additional info</b><br/>
          <small>
             <a href="batch.php?action=edit&batch_id=$this->batch_id" target="_blank">View Journal</a><br/>
-
             <a href="">Print Statement</a><br/>
             C.Limit/Actual: $credittext <br/>
-            Outstanding: $balanceamt <a href="$paymenturl" title="Add Payment">[Add]</a><br/>
-            Payment History:<br/>
-            $paymenthistory
          </small>
          </div>
             </td>
@@ -164,22 +147,20 @@ class Invoice{
               </td>
 
                  <td class="head">
-        <input name='save' onclick='reactivateInvoice()' type='submit' id='submit' value='Re-activate'>
-          <input type="button" value="Reload" onclick=javascript:reloadInvoice()>
-            <input type="button" value="Preview" onclick=javascript:previewInvoice()>
-        <input name='invoice_id' id='invoice_id'  value='$this->invoice_id'  title='invoice_id' type='hidden'>
+        <input name='save' onclick='reactivatePayment()' type='submit' id='submit' value='Re-activate'>
+          <input type="button" value="Reload" onclick=javascript:reloadPayment()>
+            <input type="button" value="Preview" onclick=javascript:previewPayment()>
+        <input name='payment_id' id='payment_id'  value='$this->payment_id'  title='payment_id' type='hidden'>
         <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
             </td>
 </td></tr>
 <tr><td colspan='5'>
     <div id='detaildiv'>
     $grid
-           <div style="width:895px;text-align:right" >
-            Sub Total: $this->subtotal<br/>
-            GST : $this->totalgstamt<br/>
-
+           <div style="width:490px;text-align:right" >
+            Total: $this->subtotal<br/>
             <b style="text-align:right; height:30px; border-top: 1px solid #000; border-bottom: 3px double #000; width:300px">
-            Grant Total : $this->granttotalamt
+            Outstanding : $this->outstandingamt
            </b>
             </div>
 </div>
@@ -207,7 +188,7 @@ HTML;
     public function getInputForm($action="new"){
 
     global $userid,$simbizctrl,$ctrl,$defaultorganization_id;
-    $this->log->showLog(3,"Access Invoice getInputForm()");
+    $this->log->showLog(3,"Access Payment getInputForm()");
        if($o->track1_id=="")
                 $o->track1_id=0;
        if($o->track2_id=="")
@@ -227,14 +208,14 @@ HTML;
         $this->track2_name = $track_array['track2_name'];
         $this->track3_name = $track_array['track3_name'];
         $this->bpartneraccounts_id=0;
-        $tableheader="New Invoice";
+        $tableheader="New Payment";
          $attnoption="<option value='0'>Null</option>";
         $uidoption= $ctrl->getSelectUsers($userid);
         $termsoption="<option value='0'>Null</option>";
         $addressoption="<option value='0'>Null</option>";
         $currencyoption="<option value='0'>Null</option>";
         $branchctrl=$ctrl->selectionOrganization($userid, $defaultorganization_id);
-        $this->invoice_id=0;
+        $this->payment_id=0;
         $this->document_no=$this->getNextNo();
         $this->document_date=date("Y-m-d",time());
         $this->exchangerate=1;
@@ -242,7 +223,7 @@ HTML;
         $this->localamt=0;
     }
     else{
-        $tableheader="Edit Invoice";
+        $tableheader="Edit Payment";
          include_once "../simantz/class/SelectCtrl.inc.php";
     $ctrl= new SelectCtrl();
     include "../bpartner/class/BPSelectCtrl.inc.php";
@@ -271,7 +252,7 @@ HTML;
     
     }
 
-$grid=$this->getGrid($this->invoice_id);
+$grid=$this->getGrid($this->payment_id);
 
     $html =<<< HTML
     <br/>
@@ -284,15 +265,15 @@ $noperm
    
     <br/>
     <div id='errormsg' class='red' style='display:none'></div>
-<form onsubmit='return false' method='post' name='frmInvoice' id='frmInvoice'  action='$this->invoicefilename'  enctype="multipart/form-data">
+<form onsubmit='return false' method='post' name='frmPayment' id='frmPayment'  action='$this->paymentfilename'  enctype="multipart/form-data">
    <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
     <tbody>
         <tr>
         <td colspan="4" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >$tableheader</td>
         </tr>
         <tr>
-          <td class="head">Invoice No</td>
-          <td class="even"><input name='spinvoice_prefix' id='spinvoice_prefix' value='$this->spinvoice_prefix'size='3'>
+          <td class="head">Payment No</td>
+          <td class="even"><input name='sppayment_prefix' id='sppayment_prefix' value='$this->sppayment_prefix'size='3'>
                             <input name='document_no' id='document_no'  value='$this->document_no' size='10'>
                     Branch <select id='organization_id' name='organization_id'>&nbsp; $branchctrl</select></td>
           <td class="head">Business Partner</td>
@@ -310,13 +291,12 @@ $noperm
         <td class="head">Date (YYYY-MM-DD)</td>
           <td class="even">
             <input id='document_date' name='document_date'  size='10'  value='$this->document_date'>
-            <input id='btninvoicedate' type='button' class='btndate' onclick="$this->showCalendar" value="Date"></td>
+            <input id='btnpaymentdate' type='button' class='btndate' onclick="$this->showCalendar" value="Date"></td>
           <td class="head">Attn To </td>
           <td class="even"><select id='contacts_id' name='contacts_id' >$attnoption</select></td>
      </tr>
      <tr>
-      <td class="head">Terms</td>
-      <td class="even"><select id='terms_id' name='terms_id'>$termsoption</select></td>
+   
       <td class="head">Ref. No</td>
       <td class="even"><input id='ref_no' size='10' name='ref_no' value='$this->ref_no'></td>
      </tr>
@@ -336,21 +316,18 @@ $noperm
                     <select id='currency_id' name='currency_id' onchange=comparecurrency()>$currencyoption</select> Exchange rate: MYR<input size='8' id='exchangerate' onchange=updateCurrency() value="$this->exchangerate" name="exchangerate"><br/>
      </td>
   <tr>
-    <td class="head">
-            <a href='javascript:addLine()'>Add Line [+]</a>
-              </td>
-
-                 <td class="head">
+                 <td class="head" colspan='4'>
         <input name='save' onclick='saverecord(0)' type='submit' id='submit' value='Save'>
         <input name='save' onclick='saverecord(1);' type='submit' id='submit' value='Complete'>
         <input name='save' onclick='deleterecord()' type='submit' id='delete' value='Delete'>
-            <input name='action' name='action' value='ajaxsave'  type="hidden">
-          <input type="button" value="Reload" onclick=javascript:reloadInvoice()>
-            <input type="button" value="Preview" onclick=javascript:previewInvoice()>
+        <input name='action' name='action' value='ajaxsave'  type="hidden">
+        <input type="button" value="Reload" onclick=javascript:reloadPayment()>
+        <input type="button" value="Receive All" onclick=javascript:receiveAll()>
+            <input type="button" value="Preview" onclick=javascript:previewPayment()>
         <input name="track1_name" id="track1_name" type="hidden" value="$this->track1_name">
          <input name="track2_name" id="track2_name" type="hidden" value="$this->track2_name">
             <input name="track3_name"  id="track3_name" type="hidden" value="$this->track3_name">
-        <input name='invoice_id' id='invoice_id'  value='$this->invoice_id'  title='invoice_id' type='hidden'>
+        <input name='payment_id' id='payment_id'  value='$this->payment_id'  title='payment_id' type='hidden'>
         <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
         <input name='bpartneraccounts_id' id='bpartneraccounts_id' value='$this->bpartneraccounts_id' title='bpartneraccounts_id' type='hidden'>
             </td>
@@ -358,15 +335,14 @@ $noperm
 <tr><td colspan='4'>
     <div id='detaildiv'>
     $grid
-           <div style="width:895px;text-align:right" >
-            Sub Total: <label id='lblsubtotal'><input id='subtotal' size="10" name='subtotal' readonly="readonly" value='$this->subtotal'></label><br/>
-            GST : <label id='lbltotalgst'><input id='totalgstamt' size="10" name='totalgstamt' readonly="readonly" value='$this->totalgstamt'></label><br/>
+              <small>* Update payment detail via edit column Account, Paid Amt and following column, leave Paid Amt = 0 to delete particular payment detail</small>
 
-            <b style="text-align:right; height:30px; border-top: 1px solid #000; border-bottom: 3px double #000; width:300px">
-            Grant Total : <label id='lbltotalgst'><input id='granttotalamt' size="10"  name='granttotalamt' readonly="readonly" value='$this->granttotalamt'></label>
-           </b>
-          <input id='localamt' size="5" type='hidden' name='localamt' readonly="readonly"  value='$this->localamt'>
+           <div style="width:476px;text-align:right" >
+                        <b style="text-align:right; height:30px; border-top: 1px solid #000; border-bottom: 3px double #000; width:300px">
+             Total: <label id='lblsubtotal'><input id='subtotal' style="text-align:right"  size="10" name='subtotal' readonly="readonly" value='$this->subtotal'></label></b><br/>
+              Outstanding : <label id='lbltotalgst'><input id='outstandingamt' size="10" style="text-align:right"  name='outstandingamt' readonly="readonly" value='$this->outstandingamt'></label>
             </div>
+
 </div>
 </td></tr>
  <td class="head">Description</td>
@@ -389,7 +365,7 @@ HTML;
    }
 
 
-public function getGrid($invoice_id=0){
+public function getGrid($payment_id=0,$showAll="Y"){
     global $permctrl, $readonlypermctrl,$windowsetting,$nitobigridthemes;
     $data="";
     $editable="";
@@ -406,58 +382,54 @@ public function getGrid($invoice_id=0){
  * onbeforecelleditevent="checkAllowEdit(eventArgs)"
  */
    return $xml=<<< _XML_
-   <ntb:grid id="invoicegrid"
-     mode="livescrolling"
+   <ntb:grid id="paymentgrid"
+          mode="livescrolling"
      toolbarenabled="false"
      $permctrl
      singleclickeditenabled="true"
-     gethandler="$this->invoicefilename?action=searchinvoiceline&invoice_id=$this->invoice_id"
-     savehandler="$this->invoicefilename?action=saveInvoiceline"    
-     rowheight="70"
-     width="1060px"
-     height="300"
+     gethandler="$this->paymentfilename?action=searchpaymentline&payment_id=$this->payment_id&bpartner_id=$this->bpartner_id&showAll=$showAll"
+     savehandler="$this->paymentfilename?action=savePaymentline&payment_id=$this->payment_id"
+     rowheight="20"
+     width="1160"
+     height="90"
      onhtmlreadyevent="optimizegridview()"
      onaftersaveevent="savedone(eventArgs)"
      autosaveenabled="false"
      theme="$nitobigridthemes">
 
 <ntb:columns>    
-        <ntb:numbercolumn classname="{\$rh}" xdatafld="seqno" sortenabled="false" visible="false"></ntb:numbercolumn>
-        <ntb:textcolumn classname="{\$rh}" width="170px" label="Subject"  xdatafld="subject" sortenabled="false" $editable></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" width="190px" label="Description"  xdatafld="description" sortenabled="false" $editable>
-                        <ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" label="Account" width="80" xdatafld="accounts_id" sortenabled="false" $editable onaftercelleditevent="changeAccount()">
-                   <ntb:listboxeditor gethandler="simbizlookup.php?action=getaccountlistgrid" displayfields="accounts_name" valuefield="accounts_id" ></ntb:listboxeditor>
-               </ntb:textcolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="U.Price" mask="#0.00" width="50" $editable xdatafld="uprice" sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)">
-                        </ntb:numbercolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="Qty" width="50" mask="#0.00" xdatafld="qty" $editable sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)">
-                    </ntb:numbercolumn>
-        <ntb:textcolumn classname="{\$rh}" label="UOM"  width="50" xdatafld="uom" sortenabled="false" $editable></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" width="50" label="Branch"  xdatafld="branch_id" sortenabled="false" $editable>
-               <ntb:listboxeditor gethandler="simbizlookup.php?action=getbranchlistgrid" displayfields="organization_code" valuefield="organization_id"></ntb:listboxeditor>
-               </ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" width="50" label="Tax"  xdatafld="tax_id" sortenabled="false" $editable onaftercelleditevent="calculateTaxSummary()">
-           <ntb:listboxeditor gethandler="simbizlookup.php?action=gettaxlistgrid" displayfields="tax_name" valuefield="tax_id"></ntb:listboxeditor>
+    
+<ntb:textcolumn classname="{\$rh}" width="60" label="Invoice"  xdatafld="invoice_no" sortenabled="false" editable="false"></ntb:textcolumn>
+    
+    <ntb:textcolumn classname="{\$rh}" label="Date" width="60" xdatafld="invoice_date" editable="false" sortenabled="false" $editable></ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" label="Terms" width="50" xdatafld="terms_name" editable="false" sortenabled="false" $editable></ntb:textcolumn>
+    <ntb:numbercolumn classname="{\$rh}" label="I. Amount" mask="#0.00" width="70" editable="false" xdatafld="invoice_amt" sortenabled="false"></ntb:numbercolumn>
+    <ntb:numbercolumn classname="{\$rh}" label="Total Due" mask="#0.00" width="70" editable="false" xdatafld="balanceamt" sortenabled="false"></ntb:numbercolumn>
+    <ntb:textcolumn classname="{\$rh}" label="Account" width="100" xdatafld="accounts_id" sortenabled="false" $editable>
+               <ntb:listboxeditor gethandler="simbizlookup.php?action=getaccountlistgrid" displayfields="accounts_name" valuefield="accounts_id" ></ntb:listboxeditor>
            </ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}"  width="50" $editable label="$this->track1_name"  xdatafld="track1_id" sortenabled="false">
+    <ntb:numbercolumn classname="{\$rh}" label="Paid Amt" width="65" mask="#0.00" xdatafld="amt" $editable sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)"></ntb:numbercolumn>
+           <ntb:textcolumn classname="{\$rh}" label="Cheque No" width="65"  xdatafld="chequeno" $editable sortenabled="false" ></ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" label="Description"  width="150" xdatafld="description" sortenabled="false" $editable>
+           <ntb:textareaeditor></ntb:textareaeditor>
+           </ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" width="50" label="Branch"  xdatafld="branch_id" sortenabled="false" $editable>
+           <ntb:listboxeditor gethandler="simbizlookup.php?action=getbranchlistgrid" displayfields="organization_code" valuefield="organization_id"></ntb:listboxeditor>
+           </ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}"  width="50" $editable label="$this->track1_name"  xdatafld="track1_id" sortenabled="false">
            <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist1grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
            </ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}"  width="50" $editable label="$this->track2_name"  xdatafld="track2_id" sortenabled="false">
+    <ntb:textcolumn classname="{\$rh}"  width="50" $editable label="$this->track2_name"  xdatafld="track2_id" sortenabled="false">
            <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist2grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
            </ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}"  width="50" $editable label="$this->track3_name"  xdatafld="track3_id" sortenabled="false">
-            <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist3grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
-            </ntb:textcolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="Amount" mask="#0.00" width="50"  xdatafld="amt" sortenabled="false"  editable="false"></ntb:numbercolumn>
-        <ntb:textcolumn label="Del"   xdatafld="imgdel" $showdelete  width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:deleteLine()" align="right">
-              <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor></ntb:textcolumn>
-        <ntb:textcolumn  label="Log" classname="{\$rh}"  xdatafld="info"   width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:viewlog()">
+    <ntb:textcolumn classname="{\$rh}"  width="50" $editable label="$this->track3_name"  xdatafld="track3_id" sortenabled="false">
+        <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist3grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
+        </ntb:textcolumn>
+      <ntb:textcolumn  label="Log" classname="{\$rh}"  xdatafld="info"   width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:viewlog()">
             <ntb:imageeditor imageurl="images/history.gif"></ntb:imageeditor> </ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" label="IV"  visible="false"   xdatafld="invoice_id" sortenabled="false"></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" label="ID" visible="false" xdatafld="invoiceline_id" editable="false"></ntb:textcolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="GST Amount" visible="false" xdatafld="gstamt" sortenabled="false"></ntb:numbercolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="GTotal"  visible="false" xdatafld="granttotalamt" sortenabled="false"></ntb:numbercolumn>
+<ntb:textcolumn classname="{\$rh}" label="PM"  visible="true"   xdatafld="payment_id" sortenabled="false"></ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" label="ID"  width="30" visible="true" xdatafld="paymentline_id" editable="false"></ntb:textcolumn>
+    <ntb:textcolumn classname="{\$rh}" width="170px" visible="true" label="Invoice"  xdatafld="invoice_id" sortenabled="false" $editable></ntb:textcolumn>
   </ntb:columns>
 </ntb:grid>
 
@@ -466,7 +438,7 @@ _XML_;
 
 }
 
-public function showInvoiceline($wherestring){
+public function showPaymentline($wherestring){
       include "../simantz/class/nitobi.xml.php";
     $getHandler = new EBAGetHandler();
 
@@ -475,56 +447,109 @@ public function showInvoiceline($wherestring){
         $ordinalStart=$_GET["StartRecordIndex"];
         $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
-    global $xoopsDB,$wherestring,$xoopsUser,$isadmin,$url;
+    global $xoopsDB,$xoopsUser,$isadmin,$url;
 
-   $tablename="sim_simbiz_invoiceline";
-   $this->log->showLog(2,"Access showInvoiceline($wherestring)");
+   $tablename="sim_simbiz_paymentline";
+   $this->log->showLog(2,"Access showPaymentline($wherestring)");
     if(empty($pagesize)){
           $pagesize=$this->defaultpagesize;
         }
         if(empty($ordinalStart)){
           $ordinalStart=0;
         }
-        $orderbystring="seqno,invoiceline_id";
+        $orderbystring="paymentline_id";
+      
+        $subsql="select sum(pl1.amt) from sim_simbiz_paymentline pl1 ".
+            "inner join sim_simbiz_payment p1 on pl1.payment_id=p1.payment_id ".
+            " where pl1.invoice_id=i.invoice_id and pl1.payment_id<>$this->payment_id and p1.iscomplete=1";
+$bpartner_id=$_REQUEST['bpartner_id'];
+//    if($this->payment_id>0 && $_REQUEST["showAll"] =="N") //complete mode
+//       $wherestring=" AND pl.payment_id=$this->payment_id ";
+//    elseif($this->payment_id==0) // new mode
+//        $wherestring=" AND (pl.paymentline_id =0 OR) ";
+//    elseif($this->payment_id>0 && $_REQUEST["showAll"] =="Y") //edit mode
+//        $wherestring=" AND (pl.payment_id=$this->payment_id or 1)";
+
+        $wherestring=" WHERE i.issotrx=$this->issotrx and i.bpartner_id=".$_REQUEST['bpartner_id']. " $wherestring";
+
+          $sql1 ="SELECT i.invoice_id,concat(i.spinvoice_prefix,i.document_no) as invoice_no,tm.terms_name,
+                i.granttotalamt - COALESCE(($subsql),0) as balanceamt,i.document_date as invoice_date,i.granttotalamt as invoice_amt,
+            COALESCE(pl.paymentline_id,0) as paymentline_id,pl.description,
+            COALESCE(pl.accounts_id,0) as accounts_id,
+            pl.branch_id,pl.track1_id,pl.track2_id,pl.track3_id,
+            COALESCE(pl.amt,0) as amt,
+            COALESCE(pl.payment_id,0) as payment_id, pl.chequeno 
+            FROM sim_simbiz_invoice i left join $tablename pl  on i.invoice_id = pl.invoice_id 
+            inner join sim_terms  tm on tm.terms_id=i.terms_id
+            where pl.payment_id=$this->payment_id AND i.issotrx=$this->issotrx and i.bpartner_id=$bpartner_id ";
 
        
+          if($this->payment_id==0)
+             $sql2 ="SELECT i.invoice_id,concat(i.spinvoice_prefix,i.document_no) as invoice_no,tm.terms_name,
+                i.granttotalamt - COALESCE(($subsql),0) as balanceamt,i.document_date as invoice_date,i.granttotalamt as invoice_amt,
+                0 as paymentline_id,'' as description,
+                0 as accounts_id,
+           0 as branch_id, 0 as track1_id, 0 as track2_id, 0 as track3_id,
+            0 as amt,
+            0 as payment_id, '' as chequeno
+            FROM sim_simbiz_invoice i
+            inner join sim_terms  tm on tm.terms_id=i.terms_id
+            where i.granttotalamt - COALESCE(($subsql),0) <>0  AND i.issotrx=$this->issotrx and i.bpartner_id=$bpartner_id";
+         else
+          $sql2 ="SELECT i.invoice_id,concat(i.spinvoice_prefix,i.document_no) as invoice_no,tm.terms_name,
+                i.granttotalamt - COALESCE(($subsql),0) as balanceamt,i.document_date as invoice_date,i.granttotalamt as invoice_amt,
+                0 as paymentline_id,'' as description,
+                0 as accounts_id,
+           0 as branch_id, 0 as track1_id, 0 as track2_id, 0 as track3_id,
+            0 as amt,
+            0 as payment_id, '' as chequeno
+            FROM sim_simbiz_invoice i 
+            inner join sim_terms  tm on tm.terms_id=i.terms_id
+            where i.granttotalamt - COALESCE(($subsql),0) <>0  AND i.issotrx=$this->issotrx and i.bpartner_id=$bpartner_id and
+                i.invoice_id not in (select invoice_id from sim_simbiz_paymentline where payment_id=$this->payment_id)";
 
-      ////$sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-        $sql = "SELECT invoiceline_id,seqno,subject,description,accounts_id,uprice,qty,uom,tax_id,".
-            "branch_id,track1_id,track2_id,track3_id,amt,invoice_id,gstamt,granttotalamt FROM ".
-            " $tablename i $wherestring ORDER BY $orderbystring ";
+
+         if($this->payment_id>0 && $_REQUEST["showAll"] =="N") //complete mode
+            $sql ="SELECT a.* FROM ($sql1) a order by a.paymentline_id";
+    elseif($this->payment_id==0) // new mode
+            $sql ="SELECT a.* FROM ($sql2) a order by a.paymentline_id";
+    elseif($this->payment_id>0 && $_REQUEST["showAll"] =="Y") //edit mode
+            $sql ="SELECT a.* FROM ($sql1 UNION ALL $sql2) a order by a.paymentline_id";
 
       $this->log->showLog(4,"With SQL: $sql $sortdirection");
         $query = $xoopsDB->query($sql);
 
         $getHandler->ProcessRecords();
-        $getHandler->DefineField("invoiceline_id");
-        $getHandler->DefineField("seqno");
-        $getHandler->DefineField("subject");
-     	$getHandler->DefineField("description");
+        $getHandler->DefineField("recordno");
+        $getHandler->DefineField("paymentline_id");
+        $getHandler->DefineField("invoice_no");
+        $getHandler->DefineField("invoice_date");
+        $getHandler->DefineField("terms_name");
         $getHandler->DefineField("accounts_id");
-     	$getHandler->DefineField("uprice");
-     	$getHandler->DefineField("qty");
-     	$getHandler->DefineField("uom");
+        $getHandler->DefineField("invoice_amt");
+        $getHandler->DefineField("balanceamt");
+     	$getHandler->DefineField("invoice_id");
+     	$getHandler->DefineField("description");
+     	$getHandler->DefineField("chequeno");
         $getHandler->DefineField("tax_id");
         $getHandler->DefineField("branch_id");
         $getHandler->DefineField("track1_id");
         $getHandler->DefineField("rh");
         $getHandler->DefineField("track2_id");
         $getHandler->DefineField("track3_id");
-        $getHandler->DefineField("granttotalamt");
-        $getHandler->DefineField("invoice_id");
+        $getHandler->DefineField("amt");
+        $getHandler->DefineField("payment_id");
         $getHandler->DefineField("imgadd");
-        $getHandler->DefineField("gstamt");
-        $getHandler->DefineField("granttotalamt");
-
+        
 	$currentRecord = 0; // This will assist us finding the ordinalStart position
         $rh="odd";
         $temp_parent_id = 0;
+        $i=0;
+               $url_addimg = "images/add_line.gif";
       while ($row=$xoopsDB->fetchArray($query))
      {
-
-            $url_addimg = "images/add_line.gif";
+       $this->log->showLog(4,"ordinalstart:$ordinalStart,run row:". $i++);
+     
 
              if($rh=="odd")
                     $rh="even";
@@ -533,19 +558,21 @@ public function showInvoiceline($wherestring){
              
           
      	    $currentRecord = $currentRecord +1;
-            if($currentRecord > $ordinalStart){
+      //      if($currentRecord > $ordinalStart){
 
-             $getHandler->CreateNewRecord($row['invoiceline_id']);
-             $getHandler->DefineRecordFieldValue("invoiceline_id", $row['invoiceline_id']);
-             $getHandler->DefineRecordFieldValue("seqno",$row['seqno']);
+             $getHandler->CreateNewRecord($i);
+             $getHandler->DefineRecordFieldValue("invoice_id",$row['invoice_id']);
+             $getHandler->DefineRecordFieldValue("invoice_no", $row['invoice_no']);
+             $getHandler->DefineRecordFieldValue("invoice_date", $row['invoice_date']);
+             $getHandler->DefineRecordFieldValue("terms_name", $row['terms_name']);
+
              $getHandler->DefineRecordFieldValue("accounts_id", $row['accounts_id']);
              $getHandler->DefineRecordFieldValue("description", $row['description']);
-             $getHandler->DefineRecordFieldValue("subject", $row['subject']);
              $getHandler->DefineRecordFieldValue("amt", $row['amt']);
-             $getHandler->DefineRecordFieldValue("uprice",$row['uprice']);
-             $getHandler->DefineRecordFieldValue("qty", $row['qty']);
-             $getHandler->DefineRecordFieldValue("uom", $row['uom']);
-             $getHandler->DefineRecordFieldValue("tax_id", $row['tax_id']);
+             $getHandler->DefineRecordFieldValue("invoice_amt", $row['invoice_amt']);
+
+             $getHandler->DefineRecordFieldValue("balanceamt", $row['balanceamt']);
+             $getHandler->DefineRecordFieldValue("chequeno", $row['chequeno']);
              $getHandler->DefineRecordFieldValue("branch_id",$row['branch_id']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
              $getHandler->DefineRecordFieldValue("track1_id",$row['track1_id']);
@@ -553,17 +580,16 @@ public function showInvoiceline($wherestring){
              $getHandler->DefineRecordFieldValue("track3_id",$row['track3_id']);
              $getHandler->DefineRecordFieldValue("amt",$row['amt']);
              
-             $getHandler->DefineRecordFieldValue("invoice_id",$row['invoice_id']);
+             $getHandler->DefineRecordFieldValue("payment_id",$row['payment_id']);
+             $getHandler->DefineRecordFieldValue("paymentline_id", $row['paymentline_id']);
              $getHandler->DefineRecordFieldValue("imgadd",$url_addimg);
-             $getHandler->DefineRecordFieldValue("gstamt",$row['gstamt']);
-             $getHandler->DefineRecordFieldValue("granttotalamt",$row['granttotalamt']);
-             $getHandler->DefineRecordFieldValue("info","../simantz/recordinfo.php?tablename=sim_simbiz_invoiceline&idname=invoiceline_id&title=Invoice&id=".$row['invoiceline_id']);
+             $getHandler->DefineRecordFieldValue("info","../simantz/recordinfo.php?tablename=sim_simbiz_paymentline&idname=paymentline_id&title=Payment&id=".$row['paymentline_id']);
 
              $getHandler->SaveRecord();
-             }
+       //      }
       }
     $getHandler->CompleteGet();
-          $this->log->showLog(2,"complete function showInvoiceline()");
+          $this->log->showLog(2,"complete function showPaymentline()");
 }
 
 public function showSearchGrid($wherestring){
@@ -577,7 +603,7 @@ public function showSearchGrid($wherestring){
         $sortdirection=$_GET["SortDirection"];
     global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
 
-   $tablename="sim_simbiz_invoice";
+   $tablename="sim_simbiz_payment";
    $this->log->showLog(2,"Access showSearchGrid($wherestring)");
     if(empty($pagesize)){
           $pagesize=$this->defaultpagesize;
@@ -589,7 +615,7 @@ public function showSearchGrid($wherestring){
                 $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
         if(empty($sortcolumn)){
-           $sortcolumn="concat(i.spinvoice_prefix,i.document_no)";
+           $sortcolumn="concat(i.sppayment_prefix,i.document_no)";
 
         }
         if(empty($sortdirection)){
@@ -599,16 +625,16 @@ public function showSearchGrid($wherestring){
         
 
 
-        $subsql="SELECT sum(pl.amt) as amt from sim_simbiz_paymentline pl inner join sim_simbiz_payment p on pl.payment_id=pl.payment_id where pl.invoice_id=i.invoice_id and p.iscomplete=1";
+
       ////$sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-       $sql = "SELECT i.invoice_id,  concat(i.spinvoice_prefix,i.document_no) as invoice_no, i.document_date, i.amt, i.iscomplete,  ".
-                " bp.bpartner_id, bp.bpartner_no,bp.bpartner_name, t.terms_name, c.currency_code, u.uname,o.organization_code,i.granttotalamt, ".
-            " coalesce(i.granttotalamt -($subsql),i.granttotalamt) as outstandingamt FROM sim_simbiz_invoice i ".
+       $sql = "SELECT i.payment_id,  concat(i.sppayment_prefix,i.document_no) as payment_no, i.document_date, i.subtotal, i.iscomplete,  ".
+                " bp.bpartner_id, bp.bpartner_no,bp.bpartner_name, c.currency_code, u.uname,o.organization_code ".
+            " FROM sim_simbiz_payment i ".
               " left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id ".
-            " left join sim_terms t on t.terms_id=i.terms_id ".
             " left join sim_currency c on c.currency_id=i.currency_id ".
             " left join sim_users u on u.uid=i.preparedbyuid ".
-              " left join sim_organization o on o.organization_id=i.organization_id where i.issotrx=$this->issotrx".
+              " left join sim_organization o on o.organization_id=i.organization_id
+                  where issotrx=$this->issotrx".
 
         " $wherestring ORDER BY $sortcolumn $sortdirection";
 
@@ -616,16 +642,14 @@ public function showSearchGrid($wherestring){
         $query = $xoopsDB->query($sql);
 
         $getHandler->ProcessRecords();
-        $getHandler->DefineField("invoice_id");
+        $getHandler->DefineField("payment_id");
         $getHandler->DefineField("bpartner_id");
-        $getHandler->DefineField("invoice_no");
+        $getHandler->DefineField("payment_no");
         $getHandler->DefineField("document_date");
-     	$getHandler->DefineField("amt");
-        $getHandler->DefineField("outstandingamt");
+     	$getHandler->DefineField("subtotal");
         $getHandler->DefineField("iscomplete");
      	$getHandler->DefineField("bpartner_no");
      	$getHandler->DefineField("bpartner_name");
-     	$getHandler->DefineField("terms_name");
         $getHandler->DefineField("currency_code");
         $getHandler->DefineField("uname");
         $getHandler->DefineField("organization_code");
@@ -640,7 +664,8 @@ public function showSearchGrid($wherestring){
                     $rh="even";
              else
                     $rh="odd";
-       if($row['iscomplete']==1){
+
+         if($row['iscomplete']==1){
           $iscomplete="Y";
           $edit="view";
          }
@@ -649,52 +674,47 @@ public function showSearchGrid($wherestring){
              $iscomplete="N";
          }
 
-
-
      	    $currentRecord = $currentRecord +1;
             if($currentRecord > $ordinalStart){
 
-             $getHandler->CreateNewRecord($row['invoice_id']);
-             $getHandler->DefineRecordFieldValue("invoice_id", $row['invoice_id']);
+             $getHandler->CreateNewRecord($row['payment_id']);
+             $getHandler->DefineRecordFieldValue("payment_id", $row['payment_id']);
              $getHandler->DefineRecordFieldValue("bpartner_id",$row['bpartner_id']);
-             $getHandler->DefineRecordFieldValue("invoice_no", $row['invoice_no']);
+             $getHandler->DefineRecordFieldValue("payment_no", $row['payment_no']);
              $getHandler->DefineRecordFieldValue("document_date", $row['document_date']);
-             $getHandler->DefineRecordFieldValue("amt", $row['granttotalamt']);
-             $getHandler->DefineRecordFieldValue("outstandingamt", $row['outstandingamt']);
+             $getHandler->DefineRecordFieldValue("amt", $row['subtotal']);
              $getHandler->DefineRecordFieldValue("iscomplete",$iscomplete);
              $getHandler->DefineRecordFieldValue("bpartner_no",$row['bpartner_no']);
              $getHandler->DefineRecordFieldValue("bpartner_name", $row['bpartner_name']);
-             $getHandler->DefineRecordFieldValue("terms_name", $row['terms_name']);
              $getHandler->DefineRecordFieldValue("currency_code", $row['currency_code']);
              $getHandler->DefineRecordFieldValue("organization_code",$row['organization_code']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
-             $getHandler->DefineRecordFieldValue("edit","$this->invoicefilename?action=$edit&invoice_id=".$row['invoice_id']);
+             $getHandler->DefineRecordFieldValue("edit","$this->paymentfilename?action=$edit&payment_id=".$row['payment_id']);
 
              $getHandler->SaveRecord();
              }
       }
     $getHandler->CompleteGet();
-          $this->log->showLog(2,"complete function showInvoiceline()");
+          $this->log->showLog(2,"complete function showPaymentline()");
 }
 
-public function fetchInvoice($invoice_id){
-     $this->log->showLog(3,"Access fetchInvoice($invoice_id)");
+public function fetchPayment($payment_id){
+     $this->log->showLog(3,"Access fetchPayment($payment_id)");
       $sql="SELECT i.*,concat(bp.bpartner_name,'(', bp.bpartner_no,')' ) as bpartner_name,o.organization_code,
-            t.terms_name,c.contacts_name, u.uname,t1.track_name as t1tname,t2.track_name as t2tname,t3.track_name as t3tname
-                FROM $this->tableinvoice i
+           c.contacts_name, u.uname,t1.track_name as t1tname,t2.track_name as t2tname,t3.track_name as t3tname
+                FROM $this->tablepayment i
                 left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id
                 left join sim_organization o on o.organization_id=i.organization_id
-                left join sim_terms t on t.terms_id=i.terms_id
                 left join sim_users u on u.uid=i.preparedbyuid
                 left join sim_contacts c on c.contacts_id=i.contacts_id
                 left join sim_simbiz_track t1 on i.track1_id=t1.track_id
                 left join sim_simbiz_track t2 on i.track2_id=t2.track_id
                 left join sim_simbiz_track t3 on i.track3_id=t3.track_id
 
-                where invoice_id=$invoice_id";
+                where payment_id=$payment_id";
      $query=$this->xoopsDB->query($sql);
      while($row=$this->xoopsDB->fetchArray($query)){
-         $this->invoice_id=$invoice_id;
+         $this->payment_id=$payment_id;
          $this->document_no=htmlspecialchars($row['document_no']);
          $this->bpartner_name=$row['bpartner_name'];
          $this->organization_code=$row['organization_code'];
@@ -719,7 +739,7 @@ public function fetchInvoice($invoice_id){
          $this->bpartner_id=$row['bpartner_id'];
          $this->iscomplete=$row['iscomplete'];
          $this->bpartneraccounts_id=$row['bpartneraccounts_id'];
-         $this->spinvoice_prefix=$row['spinvoice_prefix'];
+         $this->sppayment_prefix=$row['sppayment_prefix'];
          $this->issotrx=$row['issotrx'];
          $this->terms_id=$row['terms_id'];
          $this->batch_id=$row['batch_id'];
@@ -741,18 +761,18 @@ public function fetchInvoice($invoice_id){
          $this->t1tname=$row['t1tname'];
          $this->t2tname=$row['t2tname'];
          $this->t3tname=$row['t3tname'];
-         $this->totalgstamt=$row['totalgstamt'];
-         $this->granttotalamt=$row['granttotalamt'];
+         $this->outstandingamt=$row['outstandingamt'];
+
          $this->note=$row['note'];
          $this->log->showLog(4,"Fetch data successfully");
 
          return true;
      }
-     $this->log->showLog(4,"Cannot fetch invoice with SQL: $sql");
+     $this->log->showLog(4,"Cannot fetch payment with SQL: $sql");
      return false;
 
  }
- public function insertInvoice( ) {
+ public function insertPayment( ) {
 
      include include "../simantz/class/Save_Data.inc.php";;
     $save = new Save_Data();
@@ -775,9 +795,8 @@ public function fetchInvoice($invoice_id){
     "description",
     "bpartner_id",
     "bpartneraccounts_id",
-    "spinvoice_prefix",
+    "sppayment_prefix",
     "issotrx",
-    "terms_id",
     "contacts_id",
     "preparedbyuid",
     "salesagentname",
@@ -787,7 +806,7 @@ public function fetchInvoice($invoice_id){
     "track1_name",
     "track2_name",
     "track3_name",
-        "address_id","granttotalamt","totalgstamt","note",
+        "address_id","outstandingamt","note",
             "track1_id",
     "track2_id",
     "track3_id",);
@@ -813,7 +832,6 @@ public function fetchInvoice($invoice_id){
     "%d",
     "%d",
     "%d",
-    "%d",
     "%s",
     "%d",
     "%f",
@@ -823,7 +841,7 @@ public function fetchInvoice($invoice_id){
     "%s",
     "%d",
         "%f",
-        "%f","%s",
+        "%s",
             "%d",
     "%d",
     "%d");
@@ -844,9 +862,8 @@ public function fetchInvoice($invoice_id){
    $this->description,
    $this->bpartner_id,
    $this->bpartneraccounts_id,
-   $this->spinvoice_prefix,
+   $this->sppayment_prefix,
    $this->issotrx,
-   $this->terms_id,
    $this->contacts_id,
    $this->preparedbyuid,
    $this->salesagentname,
@@ -857,14 +874,14 @@ public function fetchInvoice($invoice_id){
    $this->track2_name,
    $this->track3_name,
         $this->address_id,
-        $this->granttotalamt,
-        $this->totalgstamt,$this->note,
+        $this->outstandingamt,
+        $this->note,
            $this->track1_id,
    $this->track2_id,
    $this->track3_id);
     if($save->InsertRecord($this->tablename,   $arrInsertField,
-            $arrvalue,$arrInsertFieldType,$this->spinvoice_prefix.$this->document_no,"invoice_id")){
-            $this->invoice_id=$save->latestid;
+            $arrvalue,$arrInsertFieldType,$this->sppayment_prefix.$this->document_no,"payment_id")){
+            $this->payment_id=$save->latestid;
             return true;
             }
     else
@@ -873,7 +890,7 @@ public function fetchInvoice($invoice_id){
   }
 
 
- public function updateInvoice( ) {
+ public function updatePayment( ) {
 
      include include "../simantz/class/Save_Data.inc.php";;
     $save = new Save_Data();
@@ -891,8 +908,7 @@ public function fetchInvoice($invoice_id){
     "description",
     "bpartner_id",
     "bpartneraccounts_id",
-    "spinvoice_prefix",
-    "terms_id",
+    "sppayment_prefix",
     "contacts_id",
     "preparedbyuid",
     "salesagentname",
@@ -904,8 +920,8 @@ public function fetchInvoice($invoice_id){
     "track3_name",
         "address_id",
         "organization_id",
-        "granttotalamt",
-        "totalgstamt","note",
+        "outstandingamt",
+    "note",
             "track1_id",
     "track2_id",
     "track3_id");
@@ -926,7 +942,6 @@ public function fetchInvoice($invoice_id){
     "%s",
     "%d",
     "%d",
-    "%d",
     "%s",
     "%d",
     "%f",
@@ -937,7 +952,7 @@ public function fetchInvoice($invoice_id){
         "%d",
         "%d",
         "%f",
-        "%f","%s",
+        "%s",
             "%d",
     "%d",
     "%d");
@@ -954,8 +969,7 @@ public function fetchInvoice($invoice_id){
    $this->description,
    $this->bpartner_id,
    $this->bpartneraccounts_id,
-   $this->spinvoice_prefix,
-   $this->terms_id,
+   $this->sppayment_prefix,
    $this->contacts_id,
    $this->preparedbyuid,
    $this->salesagentname,
@@ -967,37 +981,138 @@ public function fetchInvoice($invoice_id){
    $this->track3_name,
    $this->address_id,
         $this->organization_id,
-        $this->granttotalamt,
-        $this->totalgstamt,$this->note,
+        $this->outstandingamt,
+        $this->note,
            $this->track1_id,
    $this->track2_id,
    $this->track3_id);
 
-    if( $save->UpdateRecord($this->tablename, "invoice_id",
-                $this->invoice_id,
-                    $arrUpdateField, $arrvalue,  $arrUpdateFieldType,$this->spinvoice_prefix.$this->document_no))
+    if( $save->UpdateRecord($this->tablename, "payment_id",
+                $this->payment_id,
+                    $arrUpdateField, $arrvalue,  $arrUpdateFieldType,$this->sppayment_prefix.$this->document_no))
             return true;
     else
             return false;
 
   }
 
-  public function deleteInvoice($invoice_id){
+  public function deletePayment($payment_id){
 include "../simantz/class/Save_Data.inc.php";
 $save = new Save_Data();
 
-   if($this->fetchAccounts($invoice_id)){
+   if($this->fetchAccounts($payment_id)){
 
-    return $save->DeleteRecord($this->tablename,"$invoice_id",$invoice_id,$this->spinvoice_prefix.$this->document_no,1);
+    return $save->DeleteRecord($this->tablename,"$payment_id",$payment_id,$this->sppayment_prefix.$this->document_no,1);
    }
    else
        return false;
 
 }
-public function saveInvoiceLine(){
-        $this->log->showLog(3,"Access saveInvoiceLine");
+
+public function insertPaymentLine($currentRecord,$saveHandler){
+     $this->log->showLog(3,"access insertPaymentLine($currentRecord)");
+                 include_once "../simantz/class/Save_Data.inc.php";
+            $save = new Save_Data();
+
+         global $xoopsDB,$xoopsUser, $timestamp,$createdby,$uname,$uid;
+              $tablename="sim_simbiz_paymentline";
+
+         $arrInsertField=array(
+                "description","accounts_id","tax_id", "branch_id", "track1_id", "track2_id", "track3_id",
+                "amt", "payment_id", "invoice_id","chequeno","created","createdby","updated","updatedby");
+              $arrInsertFieldType=array(
+                 "%s", "%d", "%d","%d","%s","%s","%s","%f","%d","%d","%s","%s","%d","%s","%d");
+    // Yes there are INSERTs to perform...
+  
+
+         $arrvalue=array(
+             $saveHandler->ReturnUpdateField($currentRecord, "description"),
+             $saveHandler->ReturnUpdateField($currentRecord, "accounts_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "tax_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "branch_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "track1_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "track2_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "track3_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "amt"),
+             $saveHandler->ReturnUpdateField($currentRecord, "payment_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "invoice_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "chequeno"),
+                    $timestamp,
+                    $createdby,
+                    $timestamp,
+                    $createdby);
+
+             $arra=print_r($arrvalue,true);
+             $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "invoice_no");
+             $this->log->showLog(4,"insertPaymentLine controlvalue:$controlvalue:, with array:$arra");
+
+
+      
+         $save->InsertRecord($tablename, $arrInsertField, $arrvalue, $arrInsertFieldType,$controlvalue,"paymentline_id");
+  if($save->failfeedback!=""){
+      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
+      $this->failfeedback.=$save->failfeedback;
+      // Now we execute this query
+     }
+
+}
+public function updatePaymentLine($currentRecord,$saveHandler){
+                 include_once "../simantz/class/Save_Data.inc.php";
+            $save = new Save_Data();
+
+         global $xoopsDB,$xoopsUser, $timestamp,$createdby,$uname,$uid;
+
+    $tablename="sim_simbiz_paymentline";
+        $arrUpdateField=array("payment_id",
+                "description", "accounts_id", "invoice_id",
+                "tax_id","branch_id","track1_id", "track2_id", "track3_id", "amt","chequeno","updated","updatedby");
+              $arrUpdateFieldType=array("%d","%s","%d","%d","%d","%d","%s","%s","%s","%f","%s","%s","%d");
+
+
+
+            $arrvalue=array($this->payment_id,
+             $saveHandler->ReturnUpdateField($currentRecord, "description"),
+             $saveHandler->ReturnUpdateField($currentRecord, "accounts_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "invoice_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "tax_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "branch_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "track1_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "track2_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "track3_id"),
+             $saveHandler->ReturnUpdateField($currentRecord, "amt"),
+                $saveHandler->ReturnUpdateField($currentRecord, "chequeno"),
+                    $timestamp,
+                    $createdby);
+            $this->log->showLog(3,"***updating record($currentRecord), paymentline:subject".
+                    $saveHandler->ReturnUpdateField($currentRecord, "subject"));
+
+             $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "subject");
+
+             $save->UpdateRecord($tablename, "paymentline_id", $saveHandler->ReturnUpdateField($currentRecord,"paymentline_id"),
+                        $arrUpdateField, $arrvalue, $arrUpdateFieldType,$controlvalue);
+  if($save->failfeedback!=""){
+      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
+      $this->failfeedback.=$save->failfeedback;
+  }
+}
+public function deletePaymentLine($currentRecord,$saveHandler){
+                include_once "../simantz/class/Save_Data.inc.php";
+            $save = new Save_Data();
+
+         global $xoopsDB,$xoopsUser, $timestamp,$createdby,$uname,$uid;
+        $tablename="sim_simbiz_paymentline";
+          $record_id=$saveHandler->ReturnUpdateField($currentRecord,"paymentline_id");
+        $controlvalue=$saveHandler->ReturnUpdateField($currentRecord,"invoice_no");
+        $this->log->showLog(3,"delete: $currentRecord,$record_id");
+
+        $save->DeleteRecord("sim_simbiz_paymentline","paymentline_id",$record_id,$controlvalue,1);
+
+
+}
+
+public function savePaymentLine(){
+        $this->log->showLog(3,"Access savePaymentLine");
             include "../simantz/class/nitobi.xml.php";
-            include_once "../simantz/class/Save_Data.inc.php";
 
             global $xoopsDB,$xoopsUser;
             $saveHandler = new EBASaveHandler();
@@ -1008,101 +1123,31 @@ public function saveInvoiceLine(){
             $uid=$xoopsUser->getVar('uid');
 
 
-        $tablename="sim_simbiz_invoiceline";
-
-            $save = new Save_Data();
-            $insertCount = $saveHandler->ReturnInsertCount();
-            $this->log->showLog(3,"Start Insert($insertCount records)");
-
-    if ($insertCount > 0)
-    {
-           $arrInsertField=array(
-                "seqno","subject","description","accounts_id","uprice","qty","uom","tax_id", "branch_id", "track1_id", "track2_id", "track3_id",
-                "amt", "invoice_id", "gstamt", "granttotalamt","created","createdby","updated","updatedby");
-              $arrInsertFieldType=array(
-                "%d", "%s", "%s", "%d", "%f","%f","%s","%d","%d","%s","%s","%s","%f","%d","%f","%f","%s","%d","%s","%d");
-    // Yes there are INSERTs to perform...
-     for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
-     {
-
-         $arrvalue=array(
-             $saveHandler->ReturnInsertField($currentRecord, "seqno"),
-             $saveHandler->ReturnInsertField($currentRecord, "subject"),
-             $saveHandler->ReturnInsertField($currentRecord, "description"),
-             $saveHandler->ReturnInsertField($currentRecord, "accounts_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "uprice"),
-             $saveHandler->ReturnInsertField($currentRecord, "qty"),
-             $saveHandler->ReturnInsertField($currentRecord, "uom"),
-             $saveHandler->ReturnInsertField($currentRecord, "tax_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "branch_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "track1_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "track2_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "track3_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "amt"),
-             $saveHandler->ReturnInsertField($currentRecord, "invoice_id"),
-             $saveHandler->ReturnInsertField($currentRecord, "gstamt"),
-             $saveHandler->ReturnInsertField($currentRecord, "granttotalamt"),
-                    $timestamp,
-                    $createdby,
-                    $timestamp,
-                    $createdby);
-         $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "subject");
-         $save->InsertRecord($tablename, $arrInsertField, $arrvalue, $arrInsertFieldType,$controlvalue,"invoiceline_id");
-  if($save->failfeedback!=""){
-      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
-      $this->failfeedback.=$save->failfeedback;
-  }
-      // Now we execute this query
-     }
-    }
+        $tablename="sim_simbiz_paymentline";
 
     $updateCount = $saveHandler->ReturnUpdateCount();
     $this->log->showLog(3,"Start update($updateCount records)");
-
     if ($updateCount > 0)
     {
+        for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
+        {
+                 $paymentline_id=$saveHandler->ReturnUpdateField($currentRecord, "paymentline_id");
+                 $invoice_id=$saveHandler->ReturnUpdateField($currentRecord, "invoice_id");
+                 $amt=$saveHandler->ReturnUpdateField($currentRecord, "amt");
+                 $this->log->showLog(3,"update record($currentRecord): paymentline_id=$paymentline_id,invoice_id=$invoice_id,amt=$amt");
 
-        $arrUpdateField=array(
-                "seqno", "subject", "description", "accounts_id", "uprice", "qty","uom",
-                "tax_id","branch_id","track1_id", "track2_id", "track3_id", "amt", "gstamt", "granttotalamt","updated","updatedby");
-              $arrUpdateFieldType=array( "%d", "%s","%s","%d","%f","%f","%s","%d","%d","%s","%s","%s","%f","%f","%f","%s","%d");
+                  if($paymentline_id>0 && $amt==0)
+                      $this->deletePaymentLine($currentRecord,$saveHandler);
+                  elseif($paymentline_id>0 && $amt<>0)
+                      $this->updatePaymentLine($currentRecord,$saveHandler);
+                  elseif($paymentline_id==0 && $amt<>0)
+                      $this->insertPaymentLine($currentRecord,$saveHandler);
+                  
 
-
-     for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
-     {
-
-            $arrvalue=array(
-                     $saveHandler->ReturnUpdateField($currentRecord, "seqno"),
-             $saveHandler->ReturnUpdateField($currentRecord, "subject"),
-             $saveHandler->ReturnUpdateField($currentRecord, "description"),
-             $saveHandler->ReturnUpdateField($currentRecord, "accounts_id"),
-                $saveHandler->ReturnUpdateField($currentRecord, "uprice"),
-             $saveHandler->ReturnUpdateField($currentRecord, "qty"),
-             $saveHandler->ReturnUpdateField($currentRecord, "uom"),
-             $saveHandler->ReturnUpdateField($currentRecord, "tax_id"),
-             $saveHandler->ReturnUpdateField($currentRecord, "branch_id"),
-             $saveHandler->ReturnUpdateField($currentRecord, "track1_id"),
-             $saveHandler->ReturnUpdateField($currentRecord, "track2_id"),
-             $saveHandler->ReturnUpdateField($currentRecord, "track3_id"),
-             $saveHandler->ReturnUpdateField($currentRecord, "amt"),
-             $saveHandler->ReturnUpdateField($currentRecord, "gstamt"),
-             $saveHandler->ReturnUpdateField($currentRecord, "granttotalamt"),
-                    $timestamp,
-                    $createdby);
-            $this->log->showLog(3,"***updating record($currentRecord), invoiceline:subject".
-                    $saveHandler->ReturnUpdateField($currentRecord, "subject"));
-
-             $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "subject");
-
-             $save->UpdateRecord($tablename, "invoiceline_id", $saveHandler->ReturnUpdateField($currentRecord,"invoiceline_id"),
-                        $arrUpdateField, $arrvalue, $arrUpdateFieldType,$controlvalue);
-  if($save->failfeedback!=""){
-      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
-      $this->failfeedback.=$save->failfeedback;
-  }
-
+        }
      }
-    }
+        
+    
 
     $ispurge=0;
     $deleteCount = $saveHandler->ReturnDeleteCount();
@@ -1110,18 +1155,7 @@ public function saveInvoiceLine(){
     
 
     if ($deleteCount > 0){
-      for($currentRecord = 0; $currentRecord < $deleteCount; $currentRecord++){
-       
-          $record_id=$saveHandler->ReturnDeleteField($currentRecord);
-          $this->log->showLog(3,"delete: $currentRecord,$record_id");
-     
-        $controlvalue=$this->getInvoiceLineSubject($record_id);
-     
-
-        $save->DeleteRecord("sim_simbiz_invoiceline","invoiceline_id",$record_id,$controlvalue,1);
-
-      }
-
+    
       }
 
     if($this->failfeedback!="")
@@ -1132,12 +1166,12 @@ public function saveInvoiceLine(){
     }
 
 
-public function getInvoiceLineSubject($invoiceline_id){
+public function getPaymentLineSubject($paymentline_id){
 
-    $sql="select concat(subject,'(',i.spinvoice_prefix,i.document_no,')')  as subject from sim_simbiz_invoiceline il
-            inner join sim_simbiz_invoice i on il.invoice_id=i.invoice_id
-        where il.invoiceline_id=$invoiceline_id";
-    $this->log->showLog(3,"access getInvoiceLineSubject($invoiceline_id)");
+    $sql="select concat(subject,'(',i.sppayment_prefix,i.document_no,')')  as subject from sim_simbiz_paymentline il
+            inner join sim_simbiz_payment i on il.payment_id=i.payment_id
+        where il.paymentline_id=$paymentline_id";
+    $this->log->showLog(3,"access getPaymentLineSubject($paymentline_id)");
     $this->log->showLog(4,"with sql: $sql");
 
     $query=$this->xoopsDB->query($sql);
@@ -1172,7 +1206,7 @@ public function validateForm(){
 public function showSearchForm(){
 global $nitobigridthemes,$url,$ctrl,$simbizctrl;
 $rowsperpage = 20;
-  $new_button = $this->getFormButton("Add New","$this->invoicefilename");
+  $new_button = $this->getFormButton("Add New","$this->paymentfilename");
   $this->currencyctrl=$ctrl->getSelectCurrency(0,"Y");
   
   echo <<< EOF
@@ -1182,7 +1216,7 @@ $rowsperpage = 20;
   
       <script language="javascript" type="text/javascript">
         jQuery(document).ready((function (){nitobi.loadComponent('searchgrid');}));
-        function viewinvoice(){
+        function viewpayment(){
 
    	var g= nitobi.getGrid('searchgrid');
         var selRow = g.getSelectedRow();
@@ -1206,7 +1240,7 @@ $rowsperpage = 20;
         
         var grid = nitobi.getGrid("searchgrid");
 
-        var searchinvoice_no=document.getElementById("searchinvoice_no").value;
+        var searchpayment_no=document.getElementById("searchpayment_no").value;
         var searchbpartner_id=document.getElementById("searchbpartner_id").value;
         
         var datefrom =document.getElementById('datefrom').value;
@@ -1222,8 +1256,8 @@ $rowsperpage = 20;
         if(dateto != "")
         searchTxt += "Date To : "+dateto+"<br/>";
 
-        if(searchinvoice_no != "")
-        searchTxt += "Invoice no : "+searchinvoice_no+"<br/>";
+        if(searchpayment_no != "")
+        searchTxt += "Payment no : "+searchpayment_no+"<br/>";
         if(searchbpartner_id > 0)
         searchTxt += "BPartner : "+"xxxxx"+"<br/>";
 
@@ -1240,7 +1274,7 @@ $rowsperpage = 20;
         }
 
 
-	grid.getDataSource().setGetHandlerParameter('searchinvoice_no',searchinvoice_no);
+	grid.getDataSource().setGetHandlerParameter('searchpayment_no',searchpayment_no);
 	grid.getDataSource().setGetHandlerParameter('searchbpartner_id',searchbpartner_id);
   	grid.getDataSource().setGetHandlerParameter('datefrom',datefrom);
 	grid.getDataSource().setGetHandlerParameter('dateto',dateto);
@@ -1270,15 +1304,15 @@ $rowsperpage = 20;
 <form name="frmSearch" id="frmSearch" onsubmit="return search()">
 <table>
  <tr><td></td></tr>
-   <tr> <td colspan="7" class="searchformheader">Search Invoice</td> </tr>
+   <tr> <td colspan="7" class="searchformheader">Search Payment</td> </tr>
 
    <tr>
     <td class="searchformblock">
 
    <table >
     <tr>
-      <td class="head">Invoice No</td>
-      <td class="even"><input type="text" $colstyle name="searchinvoice_no" id="searchinvoice_no" value="$this->searchinvoice_no"/></td>
+      <td class="head">Payment No</td>
+      <td class="even"><input type="text" $colstyle name="searchpayment_no" id="searchpayment_no" value="$this->searchpayment_no"/></td>
       <td class="head">Business Partner</td>
       <td class="even"><input type="text" $colstyle name="searchbpartner_id" id="searchbpartner_id" value=""/></td>
    </tr>
@@ -1338,7 +1372,7 @@ $rowsperpage = 20;
 
 <div align="center">
 
-     <form name="frmInvoiceListTable" action="$this->invoicefilename" method="POST" target="_blank" onsubmit='return validate()'>
+     <form name="frmPaymentListTable" action="$this->paymentfilename" method="POST" target="_blank" onsubmit='return validate()'>
      <input type="hidden"  name="action" id="action" value="">
      <input type="hidden" id="totalRowGrid" value="$rowsperpage">
 <table style="width:700px;" class="searchformblock" >
@@ -1368,7 +1402,7 @@ $rowsperpage = 20;
 
     <ntb:grid id="searchgrid"
      mode="livescrolling"
-     gethandler="$this->invoicefilename?action=ajaxsearch"
+     gethandler="$this->paymentfilename?action=ajaxsearch"
      theme="$nitobigridthemes"
      rowhighlightenabled="true"
      toolbarenabled="false"
@@ -1378,14 +1412,12 @@ $rowsperpage = 20;
     >
    <ntb:columns>
        <ntb:textcolumn  classname="{\$rh}" width="40" label="Org"  xdatafld="organization_code"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="70" label="Invoice No"  xdatafld="invoice_no"  editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="70" label="Payment No"  xdatafld="payment_no"  editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="200" label="BPartner"  xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="80" label="Terms"  xdatafld="terms_name"   editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="50" label="Currency"  xdatafld="currency_code"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="amt"   editable="false" ></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="80" label="Outstanding"  xdatafld="outstandingamt"   editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="70" label="Complete"  xdatafld="iscomplete"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="40" label="Edit"  xdatafld="edit"  oncellclickevent="javascript:viewinvoice()">
+       <ntb:textcolumn  classname="{\$rh}" width="40" label="Edit"  xdatafld="edit"  oncellclickevent="javascript:viewpayment()">
         <ntb:imageeditor imageurl="images/edit.gif"></ntb:imageeditor></ntb:textcolumn>
         <ntb:textcolumn  classname="{\$rh}" width="70" label="bpartner_id" visible="false" xdatafld="bpartner_id" ></ntb:textcolumn>
  </ntb:grid>
@@ -1402,6 +1434,48 @@ $rowsperpage = 20;
 EOF;
 
 }
+public function showSearchForm2(){
+    global $nitobigridthemes;
+  return  $xml=<<< _EOF
+
+   <a href='$this->paymentfilename'>[Add Payment]</a>
+<form onsubmit='return false'>
+   <table>
+        <tbody>
+            <tr><th colspan='4'>Search Form</th></tr>
+            <tr>
+                <td>Payment No From</td>
+                <td><input id='document_nofrom'></td>
+                <td>Payment No To</td>
+                <td><input id='document_noto'></td>
+            </tr>
+            </tbody>
+   </table>
+</form>
+<br/>
+
+    <ntb:grid id="searchgrid"
+     mode="livescrolling" 
+     gethandler="$this->paymentfilename?action=ajaxsearch"
+     theme="$nitobigridthemes"
+     rowhighlightenabled="true"
+     toolbarenabled="false"
+     editable="false"
+    >
+   <ntb:columns>
+       <ntb:textcolumn  classname="{\$rh}" width="40" label="Org"  xdatafld="organization_code"   editable="false"></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="70" label="Payment No"  xdatafld="payment_no"  editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="200" label="BPartner"  xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="80" label="Terms"  xdatafld="terms_name"   editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="50" label="Currency"  xdatafld="currency_code"   editable="false"></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="amt"   editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="70" label="Complete"  xdatafld="iscomplete"   editable="false"></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="40" label="Edit"  xdatafld="edit"  oncellclickevent="javascript:viewpayment()">
+        <ntb:imageeditor imageurl="images/edit.gif"></ntb:imageeditor></ntb:textcolumn>
+        <ntb:textcolumn  classname="{\$rh}" width="70" label="bpartner_id" visible="false" xdatafld="bpartner_id" ></ntb:textcolumn>
+ </ntb:grid>
+_EOF;
+}
 
 
 public function gridjs(){
@@ -1409,7 +1483,7 @@ global $defaultcurrency_id;
   return  $js= <<< JS
       <script language="javascript" type="text/javascript">
         $(document).ready((function (){
-        nitobi.loadComponent('invoicegrid');
+        nitobi.loadComponent('paymentgrid');
         nitobi.loadComponent('cmbbpartner_id');
        
         }));
@@ -1420,9 +1494,9 @@ global $defaultcurrency_id;
               var bpid=document.getElementById("cmbbpartner_idSelectedValue0").value;
                    var data="action="+"getbpartnerinfo"+
                             "&bpartner_id="+bpid;
-
+                var grid = nitobi.getGrid('paymentgrid');
                     $.ajax({
-                         url:"$this->invoicefilename",type: "POST",data: data,cache: false,
+                         url:"$this->paymentfilename",type: "POST",data: data,cache: false,
                              success: function (xml)
                              {
                            
@@ -1432,7 +1506,8 @@ global $defaultcurrency_id;
                                  var currency=$(xml).find("currency").text().replace(/{{{/g,"<").replace(/}}}/g,">");
                                var salesagent=$(xml).find("salesagent").text();
                                var bpartneraccounts_id=$(xml).find("bpartneraccounts_id").text();
-                               
+                               grid.getDataSource().setGetHandlerParameter('bpartner_id',bpid);
+                               grid.dataBind();
                                 $("#address_id").html(address);
                                 $("#contacts_id").html(contact);
                                 $("#terms_id").html(terms);
@@ -1461,7 +1536,7 @@ global $defaultcurrency_id;
           
         function updateAddressText(){
             var checkaddresstext="action=checkaddresstext&address_id="+document.getElementById("address_id").value;
-                                 $.ajax({url:"$this->invoicefilename",type: "POST",data: checkaddresstext,cache: false,
+                                 $.ajax({url:"$this->paymentfilename",type: "POST",data: checkaddresstext,cache: false,
                                     success: function (ad){
                                         document.getElementById("address_text").value=ad;
                                         }
@@ -1469,22 +1544,22 @@ global $defaultcurrency_id;
           }
 
         function addLine(){
-          var myGrid = nitobi.getGrid('invoicegrid');
-          var invoice_id=document.getElementById('invoice_id').value;
+          var myGrid = nitobi.getGrid('paymentgrid');
+          var payment_id=document.getElementById('payment_id').value;
           myGrid.insertAfterCurrentRow();
           
-          if(invoice_id>0){
+          if(payment_id>0){
 
                total_row = myGrid.getRowCount();
 
                                     for( var i = 0; i < total_row; i++ ) {
                                         var celly = myGrid.getCellObject( i, 15);
-                                        celly.setValue(invoice_id);
+                                        celly.setValue(payment_id);
                                     }
             }
         }
     function viewlog(){
-   	var g= nitobi.getGrid('invoicegrid');
+   	var g= nitobi.getGrid('paymentgrid');
         var selRow = g.getSelectedRow();
               var selCol = g.getSelectedColumn();
         var cellObj = g.getCellValue(selRow, selCol);
@@ -1493,7 +1568,7 @@ global $defaultcurrency_id;
 
         function deleteLine(){
         if(confirm('Delete this line? It will force save current record and delete current line.')){
-        var myGrid = nitobi.getGrid('invoicegrid');
+        var myGrid = nitobi.getGrid('paymentgrid');
             myGrid.deleteCurrentRow();
             saverecord(0);
         }
@@ -1503,39 +1578,39 @@ global $defaultcurrency_id;
         function saverecord(iscomplete){
             var iscompletectrl=document.getElementById("iscomplete");
              iscompletectrl.value=iscomplete;
-              
+              updateCurrentRow();
                 document.getElementById("popupmessage").innerHTML="Saving data...";
                 popup('popUpDiv');
         
-              var invoice_id=document.getElementById("invoice_id").value;
+              var payment_id=document.getElementById("payment_id").value;
                 var errordiv=document.getElementById("errormsg");
                 errordiv.style.display="none";
 
 
-                var data =$("#frmInvoice").serialize();
+                var data =$("#frmPayment").serialize();
               
 
             $.ajax({
-                 url: "$this->invoicefilename",type: "POST",data: data,cache: false,
+                 url: "$this->paymentfilename",type: "POST",data: data,cache: false,
                      success: function (xml) {
          
                      var status=$(xml).find("status").text();
                  
                      if(status==1){
-                    var grid= nitobi.getGrid('invoicegrid');
+                    var grid= nitobi.getGrid('paymentgrid');
 
                        errordiv.style.display="none";
                          total_row = grid.getRowCount();
               
-                              if(invoice_id==0){
-                                     var id=$(xml).find("invoice_id").text() ;
+                              if(payment_id==0){
+                                     var id=$(xml).find("payment_id").text() ;
 
-                                    document.getElementById("invoice_id").value=id;
+                                    document.getElementById("payment_id").value=id;
 
                                     
                            
                                     for( var i = 0; i < total_row; i++ ) {
-                                        var celly = grid.getCellObject( i, 15);
+                                        var celly = grid.getCellObject( i, 14);
                                         celly.setValue(id);
                                     }
 
@@ -1586,16 +1661,15 @@ global $defaultcurrency_id;
 
         }
         function reloadgrid(){
-          var  grid = nitobi.getGrid('invoicegrid');
-          grid.getDataSource().setGetHandlerParameter('invoice_id',document.getElementById("invoice_id").value);
+          var  grid = nitobi.getGrid('paymentgrid');
           grid.dataBind();
 
           }
          function deleterecord(){
 
           if(confirm('Delete this record?')){
-           var invoice_id=document.getElementById("invoice_id").value;
-            var data="action=ajaxdelete&invoice_id="+invoice_id;
+           var payment_id=document.getElementById("payment_id").value;
+            var data="action=ajaxdelete&payment_id="+payment_id;
             $.ajax({
                  url: "accounts.php",type: "POST",data: data,cache: false,
                      success: function (xml) {
@@ -1605,7 +1679,7 @@ global $defaultcurrency_id;
         }
 
         function onclickcell(eventArgs){
-          var  myGrid = nitobi.getGrid('invoicegrid');
+          var  myGrid = nitobi.getGrid('paymentgrid');
           var  row = eventArgs.cell.getRow();
           var col = eventArgs.cell.getColumn();
           var myCell = myGrid.getCellObject(row, col);
@@ -1613,160 +1687,112 @@ global $defaultcurrency_id;
         }
 
         function updateCurrentRow(eventArgs){
-            var  grid = nitobi.getGrid('invoicegrid');
+            var  grid = nitobi.getGrid('paymentgrid');
           
               total_row = grid.getRowCount();
               var total=0;
+                var outstandingtotal=0;
               for( var i = 0; i < total_row; i++ ) {
-                    var qty = grid.getCellObject( i, 4);
-                    var uprice = grid.getCellObject( i, 5);
-                    var amt = grid.getCellObject( i, 12);
-                    
-                    amt.setValue(qty.getValue() * uprice.getValue());
+                    var amt = grid.getCellObject( i, 6);
+                    var dueamt = grid.getCellObject( i, 4);
+                    outstandingtotal=outstandingtotal+dueamt.getValue();
                     total=total+amt.getValue();
-                    
               }
               document.getElementById("subtotal").value=total.toFixed(2);
-              calculateTaxSummary();
+              
+              document.getElementById("outstandingamt").value=outstandingtotal.toFixed(2)-total.toFixed(2);
+      
           }
-          
+
+             function receiveAll(){
+            var  grid = nitobi.getGrid('paymentgrid');
+
+              total_row = grid.getRowCount();
+              var total=0;
+              for( var i = 0; i < total_row; i++ ) {
+                    var dueamt = grid.getCellObject( i, 4).getValue();
+                    var amt = grid.getCellObject( i, 6);
+                    amt.setValue(dueamt);
+
+                    total=total+amt.getValue();
+              }
+              document.getElementById("subtotal").value=total.toFixed(2);
+                          document.getElementById("outstandingamt").value="0.00";
+
+          }
 
         function optimizegridview(){
-            var  grid = nitobi.getGrid('invoicegrid');
+            var  grid = nitobi.getGrid('paymentgrid');
             total_row = grid.getRowCount();
             if(total_row==0)
                 addLine();
             total_row = grid.getRowCount();
-          grid.resize(960,total_row*70+40);
+          //grid.resize(1260,total_row*20+30);
+            grid.setHeight(total_row*20+30);
 
           }
-        function calculateTaxSummary(){
-        
-            var  grid = nitobi.getGrid('invoicegrid');
-            var total_row = grid.getRowCount();
-            var totalgstamtctrl=document.getElementById("totalgstamt");
-            var granttotalamtctrl=document.getElementById("granttotalamt");
-            var subtotalctrl= document.getElementById("subtotal");
-              totalgstamtctrl.value=0.00;
           
-             for( var i = 0; i < total_row; i++ ) {
-                    var taxid = grid.getCellObject( parseInt(i),8).getValue();
-                    var amt = grid.getCellObject(parseInt(i),parseInt(12)).getValue();
-                  
-                    var gstamt = grid.getCellObject( parseInt(i), 17);
-                    var granttotalamt = grid.getCellObject( parseInt(i), 18);
-                    var data="action=ajaxgetTaxInfo&tax_id="+taxid+"&rowno="+i;
-                    var taxpercent=0;
-                    $.ajax({
-                        url: "$this->invoicefilename",type: "POST",data: data,cache: false,
-                        success: function (xml) {
-                             if(xml != ""){
-                                jsonObj = eval( '(' + xml + ')');
-                          
-                                taxpercent = jsonObj.total_tax;
-                                rowno= jsonObj.rowno;
-                                var newamt = grid.getCellObject( rowno, 12).getValue();
-                                var newgstamt = grid.getCellObject( rowno, 17);
-                                var newgranttotalamt = grid.getCellObject( rowno, 18);
-                                newgstamt.setValue(newamt*taxpercent/100);
-                                newgranttotalamt.setValue(newgstamt.getValue()+newamt);
-                                totalgstamtctrl.value=(parseFloat(totalgstamtctrl.value)+(newamt*taxpercent/100)).toFixed(2);
-                                granttotalamtctrl.value=(parseFloat(totalgstamtctrl.value)+parseFloat(subtotalctrl.value)).toFixed(2);
-                                updateCurrency();
-                                }
+          function updateCurrency(){
 
-                        }});
-          
-               
-              }
-
-
+            document.getElementById("subtotal").value=document.getElementById("subtotal").value*document.getElementById("exchangerate").value;
           }
-
-              function updateCurrency(){
-            document.getElementById("localamt").value=document.getElementById("granttotalamt").value*document.getElementById("exchangerate").value;
-          }
-        function reloadInvoice(){
+        function reloadPayment(){
           var action="edit";
           if(document.getElementById("iscomplete").value==1)
             action="view";
           
-        if(document.getElementById("invoice_id").value>0)
-        window.location="$this->invoicefilename?action="+action+"&invoice_id="+document.getElementById("invoice_id").value;
+        if(document.getElementById("payment_id").value>0)
+        window.location="$this->paymentfilename?action="+action+"&payment_id="+document.getElementById("payment_id").value;
         else
-        window.location="$this->invoicefilename";
+        window.location="$this->paymentfilename";
         }
           
-        function addNew(){
-        window.location="$this->invoicefilename";
-        }
-        function previewInvoice(){
-                window.open("view$this->invoicefilename?invoice_id="+document.getElementById("invoice_id").value)
+        function previewPayment(){
+                window.open("view$this->paymentfilename?payment_id="+document.getElementById("payment_id").value)
 
         }
         function savedone(even){
-          var  grid = nitobi.getGrid('invoicegrid');
-          grid.getDataSource().setGetHandlerParameter('invoice_id',document.getElementById("invoice_id").value);
+          var  grid = nitobi.getGrid('paymentgrid');
             grid.dataBind();
             if(document.getElementById("iscomplete").value==1){
                     posting();
           }
         }
 
-    function reactivateInvoice(){
-          var invoice_id=document.getElementById("invoice_id").value;
-           var data="action=reactivate&invoice_id="+invoice_id;
+
+
+          
+    function reactivatePayment(){
+          var payment_id=document.getElementById("payment_id").value;
+           var data="action=reactivate&payment_id="+payment_id;
             $.ajax({
-                        url: "$this->invoicefilename",type: "POST",data: data,cache: false,
+                        url: "$this->paymentfilename",type: "POST",data: data,cache: false,
                 success: function (xml) {
                              if(xml != ""){
                              jsonObj = eval( '(' + xml + ')');
 
                                 if(jsonObj.status==1){
                                 document.getElementById("iscomplete").value=0;
-                                reloadInvoice();
+                                reloadPayment();
                                 }
                                 else
-                                alert("Cannot reactivate invoice! Msg: "+jsonObj.msg);
+                                alert("Cannot reactivate payment! Msg: "+jsonObj.msg);
                                 }
                                 }
                    });
           
           }
-    function changeAccount(){
-          
-          var  grid = nitobi.getGrid('invoicegrid');
-          var r =grid.getSelectedRow();
-          var c =grid.getSelectedColumn();
-          var accounts_id=grid.getCellObject( r,c).getValue();
-
-          var data="action=getAccountInfo&rowno="+r+"&accounts_id="+accounts_id;
-            $.ajax({
-                        url: "$this->invoicefilename",type: "POST",data: data,cache: false,
-                        success: function (xml) {
-                             if(xml != ""){
-                                jsonObj = eval( '(' + xml + ')');
-                                var rowno = jsonObj.rowno;
-                               var tax_id=jsonObj.tax_id;
-                                grid.getCellObject( rowno, 8).setValue(tax_id);
-                                calculateTaxSummary();
-                              }
-                          }
-
-            });
-           
-
-        }
+ 
      function posting(){
-   var data="action=posting&invoice_id="+document.getElementById("invoice_id").value;
+   var data="action=posting&payment_id="+document.getElementById("payment_id").value;
             $.ajax({
-                        url: "$this->invoicefilename",type: "POST",data: data,cache: false,
+                        url: "$this->paymentfilename",type: "POST",data: data,cache: false,
                         success: function (xml) {
                              if(xml != ""){
                                     jsonObj = eval( '(' + xml + ')');
                                     var status = jsonObj.status;
                                     if(status==1)
-                                        reloadInvoice();
+                                        reloadPayment();
                                     else
                                         alert("cannot post record, please check you financial year setting");
                               }
@@ -1782,7 +1808,7 @@ JS;
 
   public function getNextNo() {
 
-   $sql="SELECT MAX(document_no ) + 1 as newno from $this->tableinvoice where issotrx=$this->issotrx";
+   $sql="SELECT MAX(document_no ) + 1 as newno from $this->tablepayment where issotrx=$this->issotrx";
 	$this->log->showLog(3,"Checking next no: $sql");
 
 	$query=$this->xoopsDB->query($sql);
@@ -1803,29 +1829,29 @@ JS;
   public function defineHeaderButton(){
            global $action;
 
-    $this->addnewctrl='<form action="'.$this->invoicefilename.'" ><input type="submit" value="Add New"></form>';
+    $this->addnewctrl='<form action="'.$this->paymentfilename.'" ><input type="submit" value="Add New"></form>';
         if($action=="search"){
     $this->searchctrl='';
     }
     else
-    $this->searchctrl='<form action="'.$this->invoicefilename.'?action=search" ><input type="hidden" name="action" value="search"><input type="submit" value="Search"></form>';
+    $this->searchctrl='<form action="'.$this->paymentfilename.'?action=search" ><input type="hidden" name="action" value="search"><input type="submit" value="Search"></form>';
   }
 
   public function posting(){
     include "../simbiz/class/AccountsAPI.php";
         $multiply=1;
 
-    if($this->issotrx==0)
+    if($this->issotrx==1)
         $multiply=-1;
        $acc = new AccountsAPI();
        global $defaultcurrency_id,$defaultorganization_id,$userid,$taxaccount_id,$xoopsUser;
-     $documentnoarray=array($this->spinvoice_prefix.$this->document_no);
-     $totaltransactionamt=$this->localamt ;
+     $documentnoarray=array($this->sppayment_prefix.$this->document_no);
+     $totaltransactionamt=$this->subtotal;
      $accountsarray=array($this->bpartneraccounts_id);
-     $amtarray=array($this->localamt* $multiply);
+     $amtarray=array($this->subtotal* $multiply);
      $currencyarray=array($defaultcurrency_id);
      $conversionarray=array(1);
-     $originalamtarray=array($this->localamt* $multiply);
+     $originalamtarray=array($this->subtotal* $multiply);
      $bpartnerarray=array($this->bpartner_id);
     $linetypearray=array(0);
 
@@ -1837,18 +1863,20 @@ JS;
     $track1array=array($this->track1_id);
     $track2array=array($this->track2_id);
     $track3array=array($this->track3_id);
-    $rowgettaxaccount=$this->xoopsDB->fetchArray($this->xoopsDB->query("Select accounts_id from sim_simbiz_accounts where account_type=9"));
-    $taxaccount_id=$rowgettaxaccount['accounts_id'];
-    $sql="SELECT * from sim_simbiz_invoiceline where invoice_id=$this->invoice_id";
+    $sql="SELECT pl.invoice_id,concat(i.spinvoice_prefix,i.document_no) as invoice_no,pl.chequeno,
+        pl.amt,pl.branch_id,pl.track1_id,pl.track2_id,pl.track3_id,pl.accounts_id
+        from sim_simbiz_paymentline pl
+        inner join sim_simbiz_invoice i on pl.invoice_id=i.invoice_id
+        where payment_id=$this->payment_id";
     $query=$this->xoopsDB->query($sql);
+$this->log->showLog(4,"Posting payment with SQL:  $sql");
 
-    $totalgstamt=0;
 
     //$taxaccount_id=
        //declare 2nd line and above as creditor
        while($row=$this->xoopsDB->fetchArray($query)){
 
-        array_push($documentnoarray, $this->spinvoice_prefix.$this->document_no);
+        array_push($documentnoarray, $this->sppayment_prefix.$this->document_no);
         array_push($accountsarray,$row['accounts_id']);
         array_push($amtarray,$row['amt']*-1* $multiply);
         array_push($currencyarray,$defaultcurrency_id);
@@ -1857,37 +1885,20 @@ JS;
         array_push($bpartnerarray,0);
         array_push($linetypearray,1);
         array_push($transtypearray,"");
-        array_push($chequenoarray,"");
-        array_push($linedesc,$row['subject']);
+        array_push($chequenoarray,$row['chequeno']);
+        array_push($linedesc,"Payment ($this->sppayment_prefix$this->document_no), from $this->bpartner_name");
         array_push($orgarray,$row['branch_id']);
         array_push($track1array,$row['track1_id']);
         array_push($track2array,$row['track2_id']);
         array_push($track3array,$row['track3_id']);
-        $totalgstamt+=$row['gstamt'];
         
 
        }
-       if($totalgstamt<>0){
-        array_push($documentnoarray, $this->spinvoice_prefix.$this->document_no);
-        array_push($accountsarray,$taxaccount_id);
-        array_push($amtarray,$totalgstamt*-1* $multiply);
-        array_push($currencyarray,$defaultcurrency_id);
-        array_push($conversionarray,1);
-        array_push($originalamtarray,$totalgstamt*-1* $multiply);
-        array_push($bpartnerarray,0);
-        array_push($transtypearray,"");
-        array_push($linetypearray,1);
-        array_push($chequenoarray,"");
-        array_push($linedesc,"Tax");
-        array_push($orgarray,$this->organization_id);
-        array_push($track1array,0);
-        array_push($track2array,0);
-        array_push($track3array,0);
-       }
+                ;
 //        $a=array($uid,
 //            $this->document_date,
 //            "simbiz",
-//            "Invoice: $this->spinvoice_prefix$this->document_no",
+//            "Payment: $this->sppayment_prefix$this->document_no",
 //            $this->description,
 //            $this->localamt,
 //               $documentnoarray,
@@ -1908,12 +1919,12 @@ JS;
 //            $track2array,
 //            $track3array);
         $uname=$xoopsUser->getVar('uname');
-       if($acc->PostBatch($userid,$this->document_date,"simbiz","Invoice $this->spinvoice_prefix$this->document_no",
-               "Post from Simbiz: Invoice ($this->spinvoice_prefix$this->document_no), from $uname",$this->localamt,
+       if($acc->PostBatch($userid,$this->document_date,"simbiz","Payment $this->sppayment_prefix$this->document_no",
+               "Post from Simbiz: Payment ($this->sppayment_prefix$this->document_no), from $uname",$this->subtotal,
                $documentnoarray,$accountsarray,$amtarray,$currencyarray,$conversionarray,$originalamtarray,$bpartnerarray,$transtypearray,$linetypearray,
 		$chequenoarray,$linedesc,1,"",$orgarray, $track1array, $track2array,$track3array)){
                  $this->batch_id=$acc->resultbatch_id;
-                 $this->xoopsDB->query("update sim_simbiz_invoice set batch_id=$acc->resultbatch_id,iscomplete=1 where invoice_id=$this->invoice_id");
+                 $this->xoopsDB->query("update sim_simbiz_payment set batch_id=$acc->resultbatch_id,iscomplete=1 where payment_id=$this->payment_id");
                return true;
                 }
        else{
@@ -1922,49 +1933,5 @@ JS;
        }
        }
 
-       function getOutstandingAmt($invoice_id){
-           $subsql="select sum(pl1.amt) from sim_simbiz_paymentline pl1 ".
-            " inner join sim_simbiz_payment p1 on pl1.payment_id=p1.payment_id ".
-            " where pl1.invoice_id=$invoice_id and p1.iscomplete=1";
-           $sql="SELECT i.granttotalamt -coalesce(($subsql),0) as balanceamt from sim_simbiz_invoice i where i.invoice_id=$invoice_id and i.iscomplete=1 ";
-           $query=$this->xoopsDB->query($sql);
-           while($row=$this->xoopsDB->fetchArray($query)){
-               if($row['balanceamt']=="")
-                    return 0;
-               else
-                   return $row['balanceamt'];
-
-           }
-           return 0;
-
-       }
-
-       function getPaymentHistory($invoice_id){
-           $sql="SELECT p.payment_id, p.document_date, concat(sppayment_prefix,p.document_no) as docno, pl.amt,p.issotrx,p.documenttype from sim_simbiz_paymentline pl
-                inner join sim_simbiz_payment p  on p.payment_id=pl.payment_id where pl.invoice_id=$invoice_id and p.iscomplete=1";
-           $query=$this->xoopsDB->query($sql);
-           $result="";
-           $filename="";
-           while($row=$this->xoopsDB->fetchArray($query)){
-            $doctype=$row['documenttype'];
-            $issotrx=$row['issotrx'];
-            
-            if($doctype=="P" && $issotrx==1) //credit note, sales
-                $filename="salespayment.php";
-            elseif($doctype=="P" && $issotrx==0) //credit note, sales
-                $filename="purchasepayment.php";
-            elseif($doctype=="C" && $issotrx==1) //credit note, sales
-                $filename="creditnote.php";
-            elseif($doctype=="C" && $issotrx==0) //credit note, sales
-                $filename="debitnote.php";
-            
-             $docno=$row['docno'];
-             $amt=$row['amt'];
-             $payment_id=$row['payment_id'];
-             $document_date=$row['document_date'];
-            $result.="<a href='$filename?action=view&payment_id=$payment_id' target='_blank'>$document_date ($docno): $amt</a><br/>";
-           }
-           return $result;
-       }
 
 }

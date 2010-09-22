@@ -40,6 +40,8 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 	$tablereceipt=$tableprefix."simbiz_receipt";
 	$tablereceiptline=$tableprefix."simbiz_receiptline";
+	$tablepayment=$tableprefix."simbiz_payment";
+	$tablepaymentline=$tableprefix."simbiz_paymentline";
 	$tablepaymentvoucher=$tableprefix."simbiz_paymentvoucher";
 	$tablepaymentvoucherline=$tableprefix."simbiz_paymentvoucherline";
 	$tablebankreconcilation=$tableprefix."simbiz_bankreconcilation";
@@ -338,5 +340,4 @@ function right($value, $count){
 
 }
 
-	
-?>
+

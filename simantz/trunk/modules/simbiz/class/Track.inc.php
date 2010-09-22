@@ -624,5 +624,28 @@ $saveHandler->CompleteSave();
     }
 $getHandler->completeGet();
     }
+
+
+  public function getTrackName(){
+
+    $sql = "SELECT * FROM sim_simbiz_trackheader where trackheader_id >0";
+
+        $query = $this->xoopsDB->query($sql);
+
+    while ($row=$this->xoopsDB->fetchArray($query))
+    {
+
+    if($row['trackheader_id'] == 1)
+    $track1_name = $row['trackheader_name'];
+    if($row['trackheader_id'] == 2)
+    $track2_name = $row['trackheader_name'];
+    if($row['trackheader_id'] == 3)
+    $track3_name = $row['trackheader_name'];
+    }
+
+    return array("track1_name"=>$track1_name,"track2_name"=>$track2_name,"track3_name"=>$track3_name);
+
+  }
+
 } // end of ClassTrackclass
 ?>

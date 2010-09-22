@@ -19,9 +19,9 @@ $action=$_REQUEST['action'];
 
 $o = new Invoice();
 
-$o->issotrx=1;
-$o->invoicefilename="salesinvoice.php";
-$o->spinvoice_prefix=$prefix_spi;
+$o->issotrx=0;
+$o->invoicefilename="purchaseinvoice.php";
+$o->spinvoice_prefix=$prefix_spi2;
 $o->documenttype=1;//1=invoice, 2=cashbill saverecord
 $o->updated=date("Y-m-d H:i:s",time());
 $o->updatedby=$xoopsUser->getVar("uid");
@@ -62,9 +62,9 @@ switch($action){
         echo $o->gridjs();
         if($o->fetchInvoice($_GET['invoice_id']))
         {
-     if($o->iscomplete==0)
-                redirect_header("$o->invoicefilename?action=edit&invoice_id=$o->invoice_id","2", "This transaction not yet complete, redirect to edit mode.");
 
+    if($o->iscomplete==0)
+                redirect_header("$o->invoicefilename?action=edit&invoice_id=$o->invoice_id","2", "This transaction not yet complete, redirect to edit mode.");
 
         echo $o->viewInputForm();
 
@@ -80,7 +80,7 @@ switch($action){
         
         if($o->fetchInvoice($_GET['invoice_id']))
         {
-     if($o->iscomplete==1)
+    if($o->iscomplete==1)
                 redirect_header("$o->invoicefilename?action=view&invoice_id=$o->invoice_id","2", "This transaction not yet complete, redirect to edit mode.");
 
         echo $o->gridjs();
@@ -111,7 +111,7 @@ switch($action){
 
     
     $salesagent=$bp->inchargeperson;
-    echo "<result><address>$addressxml</address><terms>$termsxml</terms><contact>$contactxml</contact><currency>$currencyxml</currency><salesagent>$salesagent</salesagent><bpartneraccounts_id>$bp->debtoraccounts_id</bpartneraccounts_id><status>1</status></result>";
+    echo "<result><address>$addressxml</address><terms>$termsxml</terms><contact>$contactxml</contact><currency>$currencyxml</currency><salesagent>$salesagent</salesagent><bpartneraccounts_id>$bp->creditoraccounts_id</bpartneraccounts_id><status>1</status></result>";
 die;
    break;
   case "checkaddresstext":
@@ -156,7 +156,7 @@ die;
     $o->track1_name=$_POST['track1_name'];
     $o->track2_name=$_POST['track2_name'];
     $o->track3_name=$_POST['track3_name'];
-    $o->track1_id=$_POST['track1_id'];
+        $o->track1_id=$_POST['track1_id'];
     $o->track2_id=$_POST['track2_id'];
     $o->track3_id=$_POST['track3_id'];
 
@@ -269,9 +269,6 @@ case "ajaxdelete":
     echo "</Result>";
     break;
     default:
-        $o->iscomplete=0;
-        $o->invoice=0;
-        $o->bpartner_id=0;
         
         echo $o->gridjs();
         echo $o->getInputForm();

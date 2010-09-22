@@ -224,6 +224,7 @@ default:
                     "&accountgroup_idname="+accountgroup_idname+
                     "&account_type="+account_type+
                     "&account_typename="+account_typename;
+                   
             $.ajax({
                  url: "accounts.php",type: "POST",data: data,cache: false,
                      success: function (xml) {

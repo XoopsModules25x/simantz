@@ -8,7 +8,7 @@
 	$org = new Organization();
 	$bp = new BPartner();
 	$org->fetchOrganization($defaultorganization_id);
-
+	$xmargin=15;
 	if($_POST || $_GET){
 	$pdf=new FPDF('L','mm',"A5");  //0=A4,1=Letter
 	$pdf->SetAutoPageBreak(true,10 );
@@ -81,63 +81,55 @@
 	$pdf->SetTextColor(255,255,255);
 	$pdf->Cell(0,10,"$timetext - $lastword",0,0,'C');
 
-	//company name block (1)
-	$pdf->SetXY(10,11);
+	$pdf->SetXY($xmargin,10);
 	$pdf->SetTextColor(0,0,0);
-	$pdf->Cell(140,10,$org->organization_name,0,0,'R');
-	$pdf->SetFont("Times","",10);
-	$pdf->Cell(0,12,"($org->companyno)",0,0,'L');
-	$pdf->SetXY(10,20);
+	$pdf->Cell(0,10,"$org->organization_name ($org->companyno)",0,0,'L');
+	//$pdf->SetFont("Times","",10);
+	//$pdf->Cell(0,12,"($org->companyno)",0,0,'L');
+	$pdf->SetXY($xmargin,18);
 
 
 	//organization contact info block (2)
-	$orgadd1=$org->street1 . ", ";
-	if($org->street2!="" && $org->street2!="-" && $org->street2!=" ")
-		$org->street2= $org->street2;
-	else
-		$org->street2="";
-	$orgadd1=$orgadd1 .$org->street2;
-	if($org->street3!="" && $org->street3!="-" && $org->street3!=" ")
-		$orgadd1=$orgadd1 . ", " . $org->street3;
-	$pdf->SetFont("Times","",10);
-	$pdf->Cell(0,4,"$orgadd1, $org->postcode $org->city, $org->state, $org->country_name",0,0,'C');
+	$orgadd1="$org->street1 $org->street2 $org->street3";
+
+	$pdf->SetFont("Times","",8);
+	$pdf->Cell(0,4,"$orgadd1 $org->postcode $org->city $org->state $org->country_name.",0,0,'L');
+
 	$pdf->Ln();
-	$pdf->Cell(0,4,"Tel: $org->tel1,$org->tel2 Fax: $org->fax",0,0,'C');
-	$pdf->Ln();
-	$pdf->Cell(0,4,"web:$org->url Email:$org->email",0,0,'C');
+	$pdf->SetX($xmargin);
+	$pdf->Cell(0,4,"Tel: $org->tel_1 $org->tel2 Fax: $org->fax  Website: $org->url Email: $org->email",0,0,'L');
 
 	//official receipt label block (3)
-	$pdf->SetXY(10,30);
-	$pdf->SetFont("Times","BU",12);
+	$pdf->SetXY(160,8);
+	$pdf->SetFont("Times","BU",14);
 	$pdf->Cell(0,12,"Official Receipt","",0,'L');
 
-
-	//Receipt no label block (4)
-	$pdf->SetXY(165,26);
+//paymentvoucher no label block (4)
+	$pdf->SetXY($xmargin+145,13);
 	$pdf->SetFont("Times","",10);
 	$pdf->Cell(10,12,"No. :","",0,'L');
 	$pdf->SetFont("Times","B",10);
 	$pdf->Cell(0,12,"$receipt_prefix$receipt_no","",0,'R');
 
 
-	//Receipt Date label block (5)
-	$pdf->SetXY(165,34);
+	//paymentvoucher Date label block (5)
+	$pdf->SetXY($xmargin+145,18);
 	$pdf->SetFont("Times","",10);
 	$pdf->Cell(10,12,"Date :","",0,'L');
-	$pdf->SetFont("Times","UB",10);
+	$pdf->SetFont("times","B",10);
 	$pdf->Cell(0,12,"$receipt_date","",0,'R');
-
+	
 
 	//Receipt From label block (6)
-	$pdf->SetXY(10,60-15); // ori Y=60
+	$pdf->SetXY(10,30); // ori Y=60
 	$pdf->SetFont("Times","",10);
 	$pdf->Cell(40,12,"Received From :","",0,'L');
-	$pdf->SetFont("Times","",10);
+	$pdf->SetFont("Times","B",10);
 	$pdf->Line($pdf->GetX(),$pdf->GetY()+9,$pdf->GetX()+150,$pdf->GetY()+9);
 	$pdf->Cell(0,12,"$paidfrom","",0,'L');
 
 	//Receipt AMT in Text label block (7)
-	$pdf->SetXY(10,68-15);
+	$pdf->SetXY(10,38);
 	$pdf->SetFont("Times","",10);
 	$pdf->Cell(40,12,"The Sum Of :","",0,'L');
 	$pdf->SetFont("Times","",10);
@@ -149,24 +141,24 @@
 	$pdf->MultiCell(0,10,$currency_code." ".$txt_sum,"",'L');
 
 	//Receipt AMT in Text label block (8)
-	$pdf->SetXY(10,87-25);
+	$pdf->SetXY(10,45);
 	$pdf->SetFont("Times","",10);
-	$pdf->Cell(40,12,"Description :","",0,'L');
+	$pdf->Cell(40,10,"Description :","",0,'L');
 	$pdf->SetFont("Times","",10);
-	$pdf->Line($pdf->GetX(),$pdf->GetY()+9,$pdf->GetX()+150,$pdf->GetY()+9);
-	$pdf->Line($pdf->GetX(),106-28,$pdf->GetX()+150,106-28);
-	$pdf->MultiCell(0,10,"$description","",'L');
-
+	
+        $pdf->Line($pdf->GetX(),53,$pdf->GetX()+150,53);
+	$pdf->Line($pdf->GetX(),61,$pdf->GetX()+150,61);
+        $pdf->MultiCell(0,8,$description,"",'L');
 	//detail table
-	$pdf->SetXY(10,82);
-	$pdf->SetFont("Times","B",10);
+	$pdf->SetXY(10,65);
+	$pdf->SetFont("Times","B",8);
 	$pdf->Cell(10,5,"No","TB",0,'C');
 	$pdf->Cell(90,5,"Item","TB",0,'L');
 	$pdf->Cell(40,5,"Payment Method","TB",0,'C');
 	$pdf->Cell(0,5,"Amount ($currency_code)","TB",1,'R');
 
 	$query2=$xoopsDB->query($sql);
-	$pdf->SetFont("Times","",10);
+	$pdf->SetFont("Times","",9);
 	$i=0;
 	$m=0;
 	while($row=$xoopsDB->fetchArray($query2)){
@@ -182,7 +174,7 @@
 	else
 	$paymentmethodtext="Cash";
 
-	if($m > 8){
+	if($m > 13){
 	$m=1;
 	$pdf->AddPage($pdf->CurOrientation);
 	}

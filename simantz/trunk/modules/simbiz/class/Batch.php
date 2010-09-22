@@ -149,21 +149,29 @@ class Batch
                     }
                     else{
                             $readonlyctrl="readonly='readonly'";
+                            if($this->iscomplete==-1)
+                                   $iscompletemsg="<b style='color:red'>Reversed Transaction, it is a history but will not effect accounting report</b>";
+                            else
+                                    $iscompletemsg="Completed Transaction";
                     }
 
                 }
                 else{
                     $readonlyctrl="readonly='readonly'";
+                    if($this->iscomplete==-1)
+                                   $iscompletemsg="<b style='color:red'>Reversed Transaction, it is a history but will not effect accounting report</b>";
+                            else
+                                    $iscompletemsg="Completed Transaction, you cannot change this transaction due to it post from another program.";
                 }//end else from check isreadonly field
 
 
 
 		if($this->isAdmin)
-		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
+		$recordctrl="<form target='_blank' action='../simantz/recordinfo.php' method='POST'>".
 		"<input name='tablename' value='sim_simbiz_batch' type='hidden'>".
 		"<input name='id' value='$this->batch_id' type='hidden'>".
 		"<input name='idname' value='batch_id' type='hidden'>".
-		"<input name='title' value='General Claim' type='hidden'>".
+		"<input name='title' value='Accounting Transaction' type='hidden'>".
 		"<input name='btnView' value='View Record Info' type='submit'>".
 		"</form>";
 
@@ -399,7 +407,7 @@ jQuery(document).ready((function (){
 
             if(isallow){
             var data = $("#idBatchForm").serialize();
-
+            
              document.getElementById('popupmessage').innerHTML="Please Wait...";
              popup('popUpDiv');
 
@@ -545,9 +553,7 @@ function reloadBatch(){
 </script>
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
-
-     <div id='popupmessage' style='text-align:center'></div>
-     <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
+<div id='popupmessage' style='text-align:center'></div><div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
 </div>
     <br/>
  <div align="center" >
@@ -628,7 +634,7 @@ echo <<< EOF
         </tr>
 
         <tr height="30px">
-        <td id='idListButton' colspan="6">$getListButton
+        <td id='idListButton' colspan="6">$getListButton <br/><small>$iscompletemsg</small>
        
 </td>
         </tr>
@@ -1272,34 +1278,15 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
     return $retval;
   }
 
-  public function getTrackName(){
-
-    $sql = "SELECT * FROM sim_simbiz_trackheader where trackheader_id >0";
-
-        $query = $this->xoopsDB->query($sql);
-
-    while ($row=$this->xoopsDB->fetchArray($query))
-    {
-
-    if($row['trackheader_id'] == 1)
-    $track1_name = $row['trackheader_name'];
-    if($row['trackheader_id'] == 2)
-    $track2_name = $row['trackheader_name'];
-    if($row['trackheader_id'] == 3)
-    $track3_name = $row['trackheader_name'];
-    }
-
-    return array("track1_name"=>$track1_name,"track2_name"=>$track2_name,"track3_name"=>$track3_name);
-
-  }
-
   public function saveBatchAjax(){
         global $defaultorganization_id,$selectspliter,$xoopsUser,$defcurrencycode_id;
         $uname=$xoopsUser->getVar('uname');
-        include_once "../simantz/class/Save_Data.inc.php";
-        $save = new Save_Data();
+        include "../simantz/class/Save_Data.inc.php";
+        include "../simbiz/class/Track.inc.php";
 
-        $track_array = $this->getTrackName();
+        $save = new Save_Data();
+        $track = new Trackclass();
+        $track_array = $track->getTrackName();
 
         $track1_name = $track_array['track1_name'];
         $track2_name = $track_array['track2_name'];
@@ -1473,7 +1460,7 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
                     $reloadbtn='<input type="button" value="Reload" onclick=javascript:reloadBatch()>';
                     $deletectrl='<input type="button" value="Delete" onclick="deleteBatch()">';
                     $msgstatus='';
-                }else if($this->iscomplete == 1){
+                }else if($this->iscomplete == 1 && $this->isreadonly==0){
                     $savectrl='<input type="button" value="Activate" onclick="activateBatch()">';
                     $msgstatus='';
                     $completectrl = '';
@@ -1678,7 +1665,7 @@ $this->log->showLog(4,"sortcolumn: $sortcolumn, sortdirection $sortdirection");
              $getHandler->DefineRecordFieldValue("totaldebit",$row['totaldebit']);
              $getHandler->DefineRecordFieldValue("totalcredit",$row['totalcredit']);
              $getHandler->DefineRecordFieldValue("operation","batch.php?action=edit&batch_id=".$row['batch_id']);
-             $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['batch_id']."&tablename=sim_simbiz_batch&idname=batch_id&title=Journal Entry");
+             $getHandler->DefineRecordFieldValue("info","../simantz/recordinfo.php?id=".$row['batch_id']."&tablename=sim_simbiz_batch&idname=batch_id&title=Journal Entry");
              $getHandler->DefineRecordFieldValue("batch_id",$row['batch_id']);
                    $getHandler->DefineRecordFieldValue("rh",$rh);
              $getHandler->SaveRecord();
@@ -1753,7 +1740,11 @@ $this->log->showLog(4,"sortcolumn: $sortcolumn, sortdirection $sortdirection");
     $rh = "odd";
 
         if($this->batch_id == 0){
-        $track_array = $this->getTrackName();
+
+        
+        include "../simbiz/class/Track.inc.php";
+        $track = new Trackclass();
+        $track_array = $track->getTrackName();
 
         $track1_name = $track_array['track1_name'];
         $track2_name = $track_array['track2_name'];
@@ -1781,7 +1772,11 @@ echo <<< EOF
     //testn = 12.054;
     //alert(Math.round(testn*100)/100);
 
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
+    $(document).ready((function (){
+     
+        nitobi.loadComponent('DataboundGrid');
+        
+            }));
 
 
     function roundAmtValue(val){
@@ -2170,12 +2165,15 @@ echo <<< EOF
     //add line button will call this
     function addline(){
 
+            if($this->isreadonly==0 && $this->iscomplete==0){
+
             var grid= nitobi.getComponent('DataboundGrid');
             grid.insertRow();
             document.getElementById('line_type').value = "1";
 
             var grid= nitobi.getComponent('DataboundGrid');
             grid.insertRow();
+        }
 
     }
 
@@ -2407,12 +2405,14 @@ echo <<< EOF
     }
 
         function onclickaddbutton(){
-            
+              if($this->isreadonly==0 && $this->iscomplete==0){
             var g= nitobi.getGrid('DataboundGrid');
             g.insertAfterCurrentRow();
 
             document.getElementById('line_type').value = "2";
+            }
         }
+        
         function shotcutinsertline(e){
         
             if(e.charCode==32)
@@ -2430,8 +2430,7 @@ echo <<< EOF
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
 
-     <div id='popupmessage' style='text-align:center'></div>
-     <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
+     <div id='popupmessage' style='text-align:center'></div>d<div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
 </div>
 
 <div align="center">
@@ -2465,12 +2464,12 @@ echo <<< EOF
 
 
     <ntb:textcolumn classname="{\$rh}" width="170" label="Account"  xdatafld="accounts_cell" sortenabled="false">
-    <ntb:listboxeditor gethandler="batch.php?action=getaccountlist" displayfields="accounts_name" valuefield="accounts_id" ></ntb:listboxeditor>
-        </ntb:textcolumn>
+        <ntb:listboxeditor gethandler="simbizlookup.php?action=getaccountlistgrid" displayfields="accounts_name" valuefield="accounts_id" ></ntb:listboxeditor>
+            </ntb:textcolumn>
 
     <ntb:textcolumn classname="{\$rh}" width="170" label="B.Partner"  xdatafld="bpartner_cell" sortenabled="false" editable="$editBPartner">
-    <ntb:listboxeditor gethandler="batch.php?action=getbpartnerlist" displayfields="bpartner_name" valuefield="bpartner_id" ></ntb:listboxeditor>
-    </ntb:textcolumn>
+    <ntb:listboxeditor gethandler="simbizlookup.php?action=searchbpartnergrid" displayfields="bpartner_name" valuefield="bpartner_id" ></ntb:listboxeditor>
+            </ntb:textcolumn>
 
     <ntb:textcolumn classname="{\$rh}" label="Cheque No." width="60" xdatafld="document_no2" sortenabled="false"></ntb:textcolumn>
 
@@ -2482,19 +2481,19 @@ echo <<< EOF
     <ntb:numbercolumn classname="{\$rh}" label="Credit($defcurrencycode)" oncellvalidateevent="updateCurrentRow(eventArgs)" mask="#0.00" width="70" xdatafld="amt_credit" sortenabled="false"></ntb:numbercolumn>
 
     <ntb:textcolumn classname="{\$rh}" width="50" label="Branch"  xdatafld="organization_cell" sortenabled="false" initial="$defaultorganization_id">
-    <ntb:listboxeditor gethandler="batch.php?action=getbranchlist" displayfields="organization_code" valuefield="organization_id" ></ntb:listboxeditor>
+            <ntb:listboxeditor gethandler="simbizlookup.php?action=getbranchlistgrid" displayfields="organization_code" valuefield="organization_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
     <ntb:textcolumn classname="{\$rh}" visible="false"   width="40" label="$track1_name"  xdatafld="track1_cell" sortenabled="false">
-    <ntb:listboxeditor gethandler="batch.php?action=gettracklist1" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
+    <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist1grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
     <ntb:textcolumn classname="{\$rh}" visible="false"  width="40" label="$track2_name"  xdatafld="track2_cell" sortenabled="false">
-    <ntb:listboxeditor gethandler="batch.php?action=gettracklist2" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
+    <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist2grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
     <ntb:textcolumn classname="{\$rh}" visible="false"  width="40" label="$track3_name"  xdatafld="track3_cell" sortenabled="false">
-    <ntb:listboxeditor gethandler="batch.php?action=gettracklist3" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
+    <ntb:listboxeditor gethandler="simbizlookup.php?action=gettracklist3grid" displayfields="track_name" valuefield="track_id" ></ntb:listboxeditor>
     </ntb:textcolumn>
 
 EOF;
@@ -2515,7 +2514,7 @@ EOF;
       <ntb:numbercolumn visible="false"   label=""  width="0" xdatafld="seqno" sortenabled="false" mask="###0"></ntb:numbercolumn>
 
         <ntb:textcolumn visible="false" classname="{\$rh}" width="0" label=""  xdatafld="tax_cell" sortenabled="false" editable="$editTax">
-        <ntb:lookupeditor delay="1000" gethandler="batch.php?action=gettaxlist" displayfields="tax_name" valuefield="tax_id"></ntb:lookupeditor>
+        <ntb:lookupeditor delay="1000" gethandler="simbizlookup.php?action=gettaxlistgrid" displayfields="tax_name" valuefield="tax_id"></ntb:lookupeditor>
         </ntb:textcolumn>
 
    </ntb:columns>
@@ -3108,137 +3107,6 @@ public function getSelectBpartner($wherestring) {
       }
   }
 
-
-public function getSelectBranch($wherestring) {
-
-        $this->log->showLog(2,"Run lookup getSelectBranch()");
-
-        global $getHandler,$pagesize,$ordinalStart,$sortcolumn,$sortdirection,$wherestring;
-
-        if(empty($pagesize)){
-          $pagesize=$defaultpagesize;
-        }
-
-        if(empty($ordinalStart)){
-          $ordinalStart=0;
-        }
-
-        if(empty($sortcolumn)){
-           $sortcolumn="org.organization_code";
-        }
-
-        if(empty($sortdirection)){
-           $sortdirection="ASC";
-        }
-
-
-        $wheregroup = " AND groupid IN (SELECT groupid FROM sim_groups_users_link WHERE uid = '%d' ) ";
-
-       $sql = sprintf("SELECT * FROM sim_organization org
-              $wherestring $wheregroup ORDER BY " . $sortcolumn . " " . $sortdirection .";",$this->createdby);
-
-
-       $this->log->showLog(4," with SQL: $sql");
-       $query = $this->xoopsDB->query($sql);
-
-       $currentRecord = 0; // This will assist us finding the ordinalStart position
-      while ($row=$this->xoopsDB->fetchArray($query))
-     {
-     	    $currentRecord = $currentRecord +1;
-            if($currentRecord > $ordinalStart){
-                       $getHandler->CreateNewRecord($row["organization_id"]);
-                       $getHandler->DefineRecordFieldValue("organization_id", $row["organization_id"]);
-                       $getHandler->DefineRecordFieldValue("organization_code", $row["organization_code"]);
-                       $getHandler->SaveRecord();
-                       $this->log->showLog(4," with CurrentRecord: $currentRecord");
-           //  $getHandler->CompleteGet();
-
-            }
-      }
-  }
-
-public function getSelectTrack($wherestring) {
-
-        $this->log->showLog(2,"Run lookup getSelectTrack()");
-
-        global $getHandler,$pagesize,$ordinalStart,$sortcolumn,$sortdirection,$wherestring;
-
-        if(empty($pagesize)){
-          $pagesize=$defaultpagesize;
-        }
-
-        if(empty($ordinalStart)){
-          $ordinalStart=0;
-        }
-
-        if(empty($sortcolumn)){
-           $sortcolumn="track_name";
-        }
-
-        if(empty($sortdirection)){
-           $sortdirection="ASC";
-        }
-       $sql = "SELECT * FROM sim_simbiz_track tr
-              $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-       $this->log->showLog(4," with SQL: $sql");
-       $query = $this->xoopsDB->query($sql);
-
-       $currentRecord = 0; // This will assist us finding the ordinalStart position
-      while ($row=$this->xoopsDB->fetchArray($query))
-     {
-     	    $currentRecord = $currentRecord +1;
-            if($currentRecord > $ordinalStart){
-                       $getHandler->CreateNewRecord($row["track_id"]);
-                       $getHandler->DefineRecordFieldValue("track_id", $row["track_id"]);
-                       $getHandler->DefineRecordFieldValue("track_name", $row["track_name"] );
-                       $getHandler->SaveRecord();
-           //  $getHandler->CompleteGet();
-
-            }
-      }
-  }
-
-
-public function getSelectTax($wherestring) {
-
-        $this->log->showLog(2,"Run lookup getSelectTax()");
-
-        global $getHandler,$pagesize,$ordinalStart,$sortcolumn,$sortdirection,$wherestring;
-
-        if(empty($pagesize)){
-          $pagesize=$defaultpagesize;
-        }
-
-        if(empty($ordinalStart)){
-          $ordinalStart=0;
-        }
-
-        if(empty($sortcolumn)){
-           $sortcolumn="tax_name";
-        }
-
-        if(empty($sortdirection)){
-           $sortdirection="ASC";
-        }
-       $sql = "SELECT * FROM sim_simbiz_tax lk
-              $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-       $this->log->showLog(4," with SQL: $sql");
-       $query = $this->xoopsDB->query($sql);
-
-       $currentRecord = 0; // This will assist us finding the ordinalStart position
-      while ($row=$this->xoopsDB->fetchArray($query))
-     {
-     	    $currentRecord = $currentRecord +1;
-            if($currentRecord > $ordinalStart){
-                       $getHandler->CreateNewRecord($row["tax_id"]);
-                       $getHandler->DefineRecordFieldValue("tax_id", $row["tax_id"]);
-                       $getHandler->DefineRecordFieldValue("tax_name", $row["tax_name"] );
-                       $getHandler->SaveRecord();
-           //  $getHandler->CompleteGet();
-
-            }
-      }
-  }
 
 
 	public function checkPeriodID($date){

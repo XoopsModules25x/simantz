@@ -254,7 +254,7 @@ $o->defineHeaderButton();
             echo json_encode($arr);
         }
     break;
-/*
+
     case "getaccountlist": //return xml table to grid
     include_once "../simantz/class/EBAGetHandler.php";
     header('Content-type: text/xml');
@@ -286,7 +286,87 @@ $o->defineHeaderButton();
     $wherestring=" WHERE bpartner_id>=0 ";
     $o->getSelectBpartner($wherestring);
     $getHandler->completeGet();
-    break;*/
+    break;
+
+    case "getbranchlist": //return xml table to grid
+    include_once "../simantz/class/EBAGetHandler.php";
+    header('Content-type: text/xml');
+    $lookupdelay=1000;
+    $pagesize=&$_GET["pagesize"];
+    $ordinalStart=&$_GET["startrecordindex"];
+    $sortcolumn=&$_GET["sortcolumn"];
+    $sortdirection=&$_GET["sortdirection"];
+    $getHandler = new EBAGetHandler();
+    $getHandler->ProcessRecords();
+    $getHandler->DefineField("organization_cell");
+    $wherestring=" WHERE organization_id > 0 ";
+    $o->getSelectBranch($wherestring);
+    $getHandler->completeGet();
+    break;
+
+    case "gettracklist1": //return xml table to grid
+    include_once "../simantz/class/EBAGetHandler.php";
+    header('Content-type: text/xml');
+    $lookupdelay=1000;
+    $pagesize=&$_GET["pagesize"];
+    $ordinalStart=&$_GET["startrecordindex"];
+    $sortcolumn=&$_GET["sortcolumn"];
+    $sortdirection=&$_GET["sortdirection"];
+    $getHandler = new EBAGetHandler();
+    $getHandler->ProcessRecords();
+    $getHandler->DefineField("track1_cell");
+    $wherestring=" WHERE track_id>=0 and trackheader_id = 1 OR trackheader_id = 0   ";
+    $o->getSelectTrack($wherestring);
+    $getHandler->completeGet();
+    break;
+
+    case "gettracklist2": //return xml table to grid
+    include_once "../simantz/class/EBAGetHandler.php";
+    header('Content-type: text/xml');
+    $lookupdelay=1000;
+    $pagesize=&$_GET["pagesize"];
+    $ordinalStart=&$_GET["startrecordindex"];
+    $sortcolumn=&$_GET["sortcolumn"];
+    $sortdirection=&$_GET["sortdirection"];
+    $getHandler = new EBAGetHandler();
+    $getHandler->ProcessRecords();
+    $getHandler->DefineField("track2_cell");
+    $wherestring=" WHERE track_id>=0 and trackheader_id = 2 OR trackheader_id = 0    ";
+    $o->getSelectTrack($wherestring);
+    $getHandler->completeGet();
+    break;
+
+    case "gettracklist3": //return xml table to grid
+    include_once "../simantz/class/EBAGetHandler.php";
+    header('Content-type: text/xml');
+    $lookupdelay=1000;
+    $pagesize=&$_GET["pagesize"];
+    $ordinalStart=&$_GET["startrecordindex"];
+    $sortcolumn=&$_GET["sortcolumn"];
+    $sortdirection=&$_GET["sortdirection"];
+    $getHandler = new EBAGetHandler();
+    $getHandler->ProcessRecords();
+    $getHandler->DefineField("track3_cell");
+    $wherestring=" WHERE track_id>=0 and trackheader_id = 3 OR trackheader_id = 0  ";
+    $o->getSelectTrack($wherestring);
+    $getHandler->completeGet();
+    break;
+
+    case "gettaxlist": //return xml table to grid
+    include_once "../simantz/class/EBAGetHandler.php";
+    header('Content-type: text/xml');
+    $lookupdelay=1000;
+    $pagesize=&$_GET["pagesize"];
+    $ordinalStart=&$_GET["startrecordindex"];
+    $sortcolumn=&$_GET["sortcolumn"];
+    $sortdirection=&$_GET["sortdirection"];
+    $getHandler = new EBAGetHandler();
+    $getHandler->ProcessRecords();
+    $getHandler->DefineField("tax_cell");
+    $wherestring=" WHERE tax_id>=0 ";
+    $o->getSelectTax($wherestring);
+    $getHandler->completeGet();
+    break;
 
   case "edit" :
     include "menu.php";
