@@ -661,7 +661,7 @@ input[type="file"]:hover, input[type="file"]:focus{
 	border: 1px solid;
 	color: #454cdb;
 	background: #ccc;
-	background-image: url("../../images/btnimage2.gif");
+	background-image: url("btnimage2.gif");
 	cursor:pointer;
 	font-size: 8pt;
 	font-weight: normal;
@@ -673,7 +673,7 @@ input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]
 	font-weight: normal;
 	color: #41415b;
 	background: #ffd894;
-	background-image: url("../../images/btnimage.gif");
+	background-image: url("btnimage.gif");
 	background-repeat: repeat-x;
 	background-position: top;
 	padding-bottom: 1px;

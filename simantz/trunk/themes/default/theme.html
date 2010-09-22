@@ -1,4 +1,5 @@
 <{php}>
+global $xoopsTheme;
 
 	if( ! empty( $_SESSION['redirect_message'] ) ) {
 		$this->_tpl_vars['xoops_msg'] = $_SESSION['redirect_message']; 
@@ -28,7 +29,7 @@
 	<link rel="shortcut icon" type="image/ico" href="<{$xoops_url}>/favicon.ico" />
     <!-- Sheet Css -->
 	<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="<{$xoops_url}>/xoops.css" />
-	<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="<{$xoops_url}>/themes/default/style.css" />
+	<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="<{$xoops_url}>/themes/<{php}>echo $xoopsTheme[thename];<{/php}>/style.css" />
     <!-- customized header contents -->
 	<{$xoops_module_header}>
 </head>
@@ -43,7 +44,7 @@
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
 
-     <div id='popupmessage' style='text-align:center'></div><div id='progressimage' style='text-align:center'><img src='<{$xoops_url}>/modules/simantz/images/ajax_indicator_01.gif'></div>
+     <div id='popupmessage' style='text-align:center'></div><div id='progressimage' style='text-align:center'><img src='<{$xoops_url}>/modules/<{$xoopsTheme[thename]}>/images/ajax_indicator_01.gif'></div>
 </div>
     
 <!-- Start Header -->
@@ -52,6 +53,7 @@
         <ul>
             
              <{php}>
+
              global $xoopsDB,$xoopsUser;
              $xoops_url=XOOPS_URL;
              if($xoopsUser)
@@ -266,7 +268,6 @@ echo <<< EOF
     </script>
 
 EOF;
-
 <{/php}>
 
 </body>

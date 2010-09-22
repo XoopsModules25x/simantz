@@ -425,14 +425,14 @@ td#usermenu a.highlight {
 
 .even {
 	/*background-color: #fff;*/
-        background-color: #fff8ec;
+        background-color: #faf4ff;
 	padding: 2px;
 	font-size: 9pt;
 	vertical-align:middle;
 }
 
 .odd {
-	background-color: #fff4d2;
+	background-color: #f2e3ff;
 	padding: 2px;
 	font-size: 9pt;
         vertical-align:middle;
@@ -661,7 +661,7 @@ input[type="file"]:hover, input[type="file"]:focus{
 	border: 1px solid;
 	color: #454cdb;
 	background: #ccc;
-	background-image: url("../../images/btnimage2.gif");
+	background-image: url("btnimage.gif");
 	cursor:pointer;
 	font-size: 8pt;
 	font-weight: normal;
@@ -673,7 +673,7 @@ input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]
 	font-weight: normal;
 	color: #41415b;
 	background: #ffd894;
-	background-image: url("../../images/btnimage.gif");
+	background-image: url("btnimage.gif");
 	background-repeat: repeat-x;
 	background-position: top;
 	padding-bottom: 1px;
@@ -965,8 +965,8 @@ font-weight: bold;
     margin: 5px;
     padding: 3px;
     height: 100%;
-    background-color: #fff8ec;
-    border: 1px solid #ffd894;
+    background-color: #f4e7ff;
+    border: 1px solid #DDB5FF;
     vertical-align: middle;
 
 }
