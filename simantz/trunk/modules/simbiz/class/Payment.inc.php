@@ -465,7 +465,7 @@ public function showPaymentline($wherestring){
         }
         $orderbystring="paymentline_id";
       
-        $subsql="select sum(pl1.amt) from sim_simbiz_paymentline pl1 ".
+        $subsql="select sum(pl1.amt * p1.multiplyvalue) from sim_simbiz_paymentline pl1 ".
             "inner join sim_simbiz_payment p1 on pl1.payment_id=p1.payment_id ".
             " where pl1.invoice_id=i.invoice_id and pl1.payment_id<>$this->payment_id and p1.iscomplete=1";
 $bpartner_id=$_REQUEST['bpartner_id'];
@@ -640,7 +640,7 @@ public function showSearchGrid($wherestring){
             " left join sim_currency c on c.currency_id=i.currency_id ".
             " left join sim_users u on u.uid=i.preparedbyuid ".
               " left join sim_organization o on o.organization_id=i.organization_id
-                  where issotrx=$this->issotrx".
+                  where issotrx=$this->issotrx and documenttype='$this->documenttype'".
 
         " $wherestring ORDER BY $sortcolumn $sortdirection";
 
@@ -815,11 +815,11 @@ public function fetchPayment($payment_id){
         "address_id","outstandingamt","note",
             "track1_id",
     "track2_id",
-    "track3_id",);
+    "track3_id","multiplyvalue");
     $arrInsertFieldType=array(
     "%d",
     "%d",
-    "%d",
+    "%s",
     "%s",
     "%d",
     "%d",
@@ -850,7 +850,7 @@ public function fetchPayment($payment_id){
         "%s",
             "%d",
     "%d",
-    "%d");
+    "%d","%d");
     $arrvalue=array($this->document_no,
    $this->organization_id,
    $this->documenttype,
@@ -884,7 +884,7 @@ public function fetchPayment($payment_id){
         $this->note,
            $this->track1_id,
    $this->track2_id,
-   $this->track3_id);
+   $this->track3_id,$this->multiplyvalue);
     if($save->InsertRecord($this->tablename,   $arrInsertField,
             $arrvalue,$arrInsertFieldType,$this->sppayment_prefix.$this->document_no,"payment_id")){
             $this->payment_id=$save->latestid;
@@ -1418,7 +1418,8 @@ $rowsperpage = 20;
     >
    <ntb:columns>
        <ntb:textcolumn  classname="{\$rh}" width="40" label="Org"  xdatafld="organization_code"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="70" label="Payment No"  xdatafld="payment_no"  editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="70" label="Doc No"  xdatafld="payment_no"  editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="70" label="Date"  xdatafld="document_date"  editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="200" label="BPartner"  xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="50" label="Currency"  xdatafld="currency_code"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="amt"   editable="false" ></ntb:textcolumn>
@@ -1601,26 +1602,22 @@ global $defaultcurrency_id;
                      success: function (xml) {
          
                      var status=$(xml).find("status").text();
-                 
+ 
                      if(status==1){
                     var grid= nitobi.getGrid('paymentgrid');
 
                        errordiv.style.display="none";
                          total_row = grid.getRowCount();
-              
-                              if(payment_id==0){
-                                     var id=$(xml).find("payment_id").text() ;
-
+                    var id=$(xml).find("payment_id").text() ;
+                              if(payment_id==0)
                                     document.getElementById("payment_id").value=id;
-
-                                    
-                           
+                                else
+                                    id=document.getElementById("payment_id").value;
+          
                                     for( var i = 0; i < total_row; i++ ) {
                                         var celly = grid.getCellObject( i, 14);
                                         celly.setValue(id);
                                     }
-
-                                }
                                         if( grid.getDataSource().getChangeLogXmlDoc().selectNodes("//ntb:data/*").length != 0 )
                                             {
                                                grid.save();
@@ -1845,10 +1842,22 @@ JS;
 
   public function posting(){
     include "../simbiz/class/AccountsAPI.php";
-        $multiply=1;
+        
 
-    if($this->issotrx==1)
+    if($this->issotrx==1 && $this->documenttype=="P")
         $multiply=-1;
+    elseif($this->issotrx==0 && $this->documenttype=="P")
+        $multiply=1;
+    elseif($this->issotrx==1 && $this->documenttype=="D") // debit note and payment for sales consider same operator, *-1
+        $multiply=-1;
+    elseif($this->issotrx==0 && $this->documenttype=="D") // debit note and payment for purchase consider same operator, *1
+        $multiply=1;
+    elseif($this->issotrx==1 && $this->documenttype=="C") // credit note and payment for sales consider difference operator, *-1
+        $multiply=1;
+    elseif($this->issotrx==0 && $this->documenttype=="C")// credit note and payment for sales consider difference operator, *1
+        $multiply=-1;
+
+
        $acc = new AccountsAPI();
        global $defaultcurrency_id,$defaultorganization_id,$userid,$taxaccount_id,$xoopsUser;
      $documentnoarray=array($this->sppayment_prefix.$this->document_no);
@@ -1899,8 +1908,10 @@ $this->log->showLog(4,"Posting payment with SQL:  $sql");
         array_push($track3array,$row['track3_id']);
         
 
-       }
-                ;
+       };
+               
+       $this->log->showLog(3,"Posting with amt array".print_r($amtarray,true));
+       
 //        $a=array($uid,
 //            $this->document_date,
 //            "simbiz",

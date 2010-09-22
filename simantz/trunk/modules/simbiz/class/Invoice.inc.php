@@ -1923,7 +1923,7 @@ JS;
        }
 
        function getOutstandingAmt($invoice_id){
-           $subsql="select sum(pl1.amt) from sim_simbiz_paymentline pl1 ".
+           $subsql="select sum(pl1.amt*p1.multiplyvalue) from sim_simbiz_paymentline pl1 ".
             " inner join sim_simbiz_payment p1 on pl1.payment_id=p1.payment_id ".
             " where pl1.invoice_id=$invoice_id and p1.iscomplete=1";
            $sql="SELECT i.granttotalamt -coalesce(($subsql),0) as balanceamt from sim_simbiz_invoice i where i.invoice_id=$invoice_id and i.iscomplete=1 ";
@@ -1940,7 +1940,7 @@ JS;
        }
 
        function getPaymentHistory($invoice_id){
-           $sql="SELECT p.payment_id, p.document_date, concat(sppayment_prefix,p.document_no) as docno, pl.amt,p.issotrx,p.documenttype from sim_simbiz_paymentline pl
+           $sql="SELECT p.payment_id, p.document_date, concat(sppayment_prefix,p.document_no) as docno, (pl.multiplyvalue*pl.amt) as amt,p.issotrx,p.documenttype from sim_simbiz_paymentline pl
                 inner join sim_simbiz_payment p  on p.payment_id=pl.payment_id where pl.invoice_id=$invoice_id and p.iscomplete=1";
            $query=$this->xoopsDB->query($sql);
            $result="";
