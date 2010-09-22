@@ -2395,7 +2395,7 @@ function selectAll(val){
 <div>
 <ntb:grid id="DataboundGrid"
      mode="standard"
-
+     editable="false"
      toolbarenabled='false'
      $permctrl
      ondatareadyevent="HandleReady(eventArgs);"
@@ -2419,21 +2419,21 @@ function selectAll(val){
 
  <ntb:columns>
 
-   <ntb:textcolumn classname="{\$rh}" width="80" label="B.Partner No" xdatafld="bpartner_no" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="80" label="B.Partner No" xdatafld="bpartner_no"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="220" label="Business Partner Name" xdatafld="bpartner_name" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="220" label="Business Partner Name" xdatafld="bpartner_name"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="140" label="Business Partner Group" xdatafld="bpartnergroup_name" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="140" label="Business Partner Group" xdatafld="bpartnergroup_name"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="140" label="In Charge Person" xdatafld="inchargeperson" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="140" label="In Charge Person" xdatafld="inchargeperson"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="80" label="Terms" xdatafld="terms_name" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="80" label="Terms" xdatafld="terms_name"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="180" label="Short Remarks" xdatafld="shortremarks" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="180" label="Short Remarks" xdatafld="shortremarks"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="40" label="Active"  xdatafld="isactive" ></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" width="40" label="Active"  xdatafld="isactive"      editable="false"></ntb:textcolumn>
 
-<ntb:textcolumn classname="{\$rh}" label="Edit"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:edit()">
+<ntb:textcolumn classname="{\$rh}" label="Edit"   xdatafld=""    width="25"  sortenabled="false"      editable="false" classname="{\$rh}" oncellclickevent="javascript:edit()">
             <ntb:imageeditor imageurl="images/edit.gif"></ntb:imageeditor> </ntb:textcolumn>
 
       <ntb:numbercolumn   label="ID"  width="0" xdatafld="bpartner_id" mask="###0" sortenabled="false">
@@ -2846,10 +2846,9 @@ if($num_results>0){
   		<tbody>
     			<tr>
 				<td class="searchformheader">No</td>
-				<td class="searchformheader">Contacts Name</td>
+				<td class="searchformheader">Name</td>
 				<td class="searchformheader">Email</td>
-				<td class="searchformheader">Hand Phone No.</td>
-				<td class="searchformheader">Address</td>
+				<td class="searchformheader">HP No.</td>
                                 <td class="searchformheader">Department</td>
                                 <td class="searchformheader">Position</td>
    	</tr>
@@ -2877,7 +2876,6 @@ EOF;
 			<td class="$rowtype" class="searchformheader">$contacts_name</td>
 			<td class="$rowtype" class="searchformheader">$email</td>
 			<td class="$rowtype" class="searchformheader">$hpno</td>
-			<td class="$rowtype" class="searchformheader">$address_name</td>
                         <td class="$rowtype" class="searchformheader">$department</td>
 			<td class="$rowtype" class="searchformheader">$position</td>
                </tr>
@@ -2906,12 +2904,12 @@ if($num_results>0){
   		<tbody>
     			<tr>
 				<td class="searchformheader">No</td>
-				<td class="searchformheader">Address Name</td>
+				<td class="searchformheader">Address</td>
 				<td class="searchformheader">Tel 1</td>
 				<td class="searchformheader">Tel 2</td>
 				<td class="searchformheader">Fax</td>
-                                <td class="searchformheader">Is Shipment</td>
-				<td class="searchformheader">Is Invoice</td>
+                                <td class="searchformheader">Ship.</td>
+				<td class="searchformheader">Inv.</td>
    	</tr>
 EOF;
 	$rowtype="";
@@ -2924,15 +2922,16 @@ EOF;
 		$fax=$row['fax'];
 		$isshipment=$row['isshipment'];
                 $isinvoice=$row['isinvoice'];
+                $address_street =$row['address_street'];
 
                 if($isshipment==1)
-                      $isshipment="Yes";
+                      $isshipment="Y";
                 else
-                      $isshipment="No";
+                      $isshipment="N";
                 if($isinvoice==1)
-                      $isinvoice="Yes";
+                      $isinvoice="Y";
                 else
-                      $isinvoice="No";
+                      $isinvoice="N";
 
 		if($rowtype=="odd")
 			$rowtype="even";
@@ -2943,7 +2942,7 @@ EOF;
 
 		<tr>
 			<td class="$rowtype" class="searchformheader">$i</td>
-			<td class="$rowtype" class="searchformheader">$address_name</td>
+			<td class="$rowtype" class="searchformheader">$address_name<br/>$address_street </td>
 			<td class="$rowtype" class="searchformheader">$tel_1</td>
 			<td class="$rowtype" class="searchformheader">$tel_2</td>
 			<td class="$rowtype" class="searchformheader">$fax</td>

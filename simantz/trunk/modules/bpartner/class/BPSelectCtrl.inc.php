@@ -47,12 +47,12 @@ public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlna
   }
 
 
-public function getSelectTerms($id,$showNull='N'){
+public function getSelectTerms($id,$showNull='N',$wherestring=""){
 global $defaultorganization_id,$tableterms;
 
 	$this->log->showLog(3,"Retrieve available system groups from database, with preselect id: $id");
 	$sql="SELECT terms_id,terms_name FROM $tableterms where (isactive=1 or terms_id=$id) 
-		AND terms_id>0 and organization_id=$defaultorganization_id
+		AND terms_id>0 
 		ORDER by seqno,terms_name	";
 	$this->log->showLog(3,"Retrieve available system groups with sql:$sql");
 	
@@ -84,7 +84,7 @@ global $defaultorganization_id,$tableterms;
 public function getSelectBPartnerGroup($id,$showNull='N') {
 	global $tablebpartnergroup,$defaultorganization_id;
 	 $sql="SELECT bpartnergroup_id,bpartnergroup_name from $tablebpartnergroup where (bpartnergroup_id='$id'
-		OR bpartnergroup_id>0) and isactive=1 AND organization_id=$defaultorganization_id
+		OR bpartnergroup_id>0) and isactive=1
 		order by seqno,bpartnergroup_name ;";
 	$this->log->showLog(4,"getSelectBPartnerGroup With SQL: $sql");
 
@@ -111,7 +111,7 @@ public function getSelectBPartnerGroup($id,$showNull='N') {
 public function getSelectIndustry($id,$showNull='N') {
 	global $tablebpartnergroup,$defaultorganization_id;
         
-	$sql="SELECT industry_id,industry_name from sim_industry where (isactive=1 or industry_id=$id) and industry_id>0 AND organization_id=$defaultorganization_id order by industry_name asc;";
+	$sql="SELECT industry_id,industry_name from sim_industry where (isactive=1 or industry_id=$id) and industry_id>0 order by industry_name asc;";
 	$this->log->showLog(3,"Generate Industry list with with SQL($id,$showNull): $sql");
 	if ($id==-1 || $showNull=='Y')
 		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
@@ -132,5 +132,71 @@ public function getSelectIndustry($id,$showNull='N') {
 
 	return $selectctl;
   }
+
+
+
+  public function getSelectAddress($id,$showNull='N',$bpartner_id="",$wherestr="") {
+
+      global $tableaddress,$defaultorganization_id;
+    if($bpartner_id!="")
+    $wherestr.=" and bpartner_id=$bpartner_id";
+	 $sql="SELECT address_id,address_name from $tableaddress where (isactive=1 or address_id=$id)
+            and address_id>0 $wherestr
+             order by seqno,address_name";
+	$this->log->showLog(3,"Generate Address list with id=:$id and shownull=$showNull SQL: $sql");
+	//$selectctl="<SELECT name='$ctrlname' id='$ctrlid' $onChangeFunction>";
+	if ($id==-1 || $showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$address_id=$row['address_id'];
+		$address_name=$row['address_name'];
+
+		if($id==$address_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$address_id' $selected>$address_name</OPTION>";
+
+	}
+
+	//$selectctl=$selectctl . "</SELECT>";
+
+	return $selectctl;
+  }
+
+  public function getSelectContacts($id,$showNull='N',$onchangefunction="", $ctrlname="contacts_id",$wherestr='', $ctrlid='contacts_id',$width="", $showsearch="N",$line=0) {
+	global $defaultorganization_id,$tablecontacts;
+
+
+	 $sql="SELECT contacts_id, contacts_name from $tablecontacts where (contacts_id=$id
+		OR contacts_id>0) and isactive=1 $wherestr
+		order by seqno ;";
+	$this->log->showLog(4,"getSelectcontacts With SQL: $sql");
+	//$selectctl="<SELECT name='$ctrlname' $onchangefunction id='$ctrlid'>";
+	if ($showNull=='Y')
+		$selectctl=$selectctl . "<OPTION value='0' SELECTED='SELECTED'>Null </OPTION>";
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$contacts_id=$row['contacts_id'];
+		$contacts_name=$row['contacts_name'];
+		if($id==$contacts_id)
+			$selected="SELECTED='SELECTED'";
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$contacts_id' $selected>$contacts_name</OPTION>";
+
+	}
+
+//	$selectctl=$selectctl . "</SELECT>";
+
+	return $selectctl;
+  }
+
+
+
 }
-?>
