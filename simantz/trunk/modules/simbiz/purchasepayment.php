@@ -20,6 +20,7 @@ $action=$_REQUEST['action'];
 $o = new Payment();
 
 $o->issotrx=0;
+$o->multiplyvalue=1;
 $o->paymentfilename="purchasepayment.php";
 $o->sppayment_prefix=$prefix_spp2;
 $o->documenttype="P";
