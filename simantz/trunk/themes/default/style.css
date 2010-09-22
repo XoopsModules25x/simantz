@@ -598,11 +598,7 @@ div.xoopsQuote {
 
 
 input {
-border-bottom:1px solid #afb5b6;
-border-left:1px solid #afb5b6;
-/*border-left:0 none;
-border-right:0 none;*/
-border-width:1px 1px 1px;
+border:1px solid #afb5b6;
 height: 18px;
 font-size:8pt; color: #333333;
 font-family: Verdana,Arial, Helvetica, sans-serif;
