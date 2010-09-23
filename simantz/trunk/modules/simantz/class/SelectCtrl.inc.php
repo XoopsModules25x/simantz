@@ -40,9 +40,9 @@ public function getSelectModule($id,$showNull='Y',$controlname="mid",$controlid=
 	return $selectctl;
 }
 
-public function selectionOrg($uid,$id,$showNull='N',$onchangefunction="location.href='index.php?switchorg=Y&defaultorganization_id='+this.value",$ishide='N'){
+public function selectionOrg($uid,$id,$showNull='N',$onchangefunction="",$ishide='N'){
         global $tablegroups_users_link,$tableorganization ;
-        
+        //location.href='index.php?switchorg=Y&defaultorganization_id='+this.value
 	$this->log->showLog(3,"Retrieve available organization (select organization_id: $id) to employee_id : $uid, ishide=$ishide");
 	$sql="SELECT distinct(organization_id) as organization_id,organization_code from $tableorganization o
 		INNER JOIN  $tablegroups_users_link ug on o.groupid=ug.groupid where o.organization_id>0 and isactive=1";
