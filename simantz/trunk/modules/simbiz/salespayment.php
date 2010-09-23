@@ -18,7 +18,7 @@ $action=$_REQUEST['action'];
 
 
 $o = new Payment();
-$o->multiplyvalue=-1;
+$o->multiplyvalue=1;
 $o->issotrx=1;
 $o->paymentfilename="salespayment.php";
 $o->sppayment_prefix=$prefix_spp;

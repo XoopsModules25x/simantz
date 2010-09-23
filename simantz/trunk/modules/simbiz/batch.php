@@ -199,8 +199,8 @@ $o->defineHeaderButton();
         $o->period_id=$fyl->period_id;
 
 	//$o->period_id = $o->checkPeriodID($batchdate);
-
-        if($o->period_id > 0 && $allowtrans == true){//check period id
+        $log->showLog(3,"Allow Trans: $allowtrans");
+        if($o->period_id > 0 && $allowtrans ){//check period id
 
             if($o->saveBatchAjax()){//success
             $batch_id = $o->getBatchID();
@@ -367,7 +367,7 @@ $o->defineHeaderButton();
     if($o->period_id=="")
         $o->period_id=0;
     $o->orgctrl=$ctrl->selectionOrg($o->createdby,$defaultorganization_id,'N',"",'Y');
-
+    $o->isreadonly=0;
     $o->getInputForm("new",0,$token);
     //$o->getBatchlineform();
 

@@ -254,9 +254,9 @@ if (isset($_POST["submit"])){
 		t1.amt  as refamt,a2.accounts_name as refaccounts_name,a2.accounts_code as refaccounts_code,
 		b.batch_id,t1.document_no2,t2.document_no2 as refdocument_no2,t1.linedesc 
 		FROM $tablebatch b  
-		INNER JOIN $tabletransaction t1 on b.batch_id=t1.batch_id and t1.branch_id = $organization_id
+		INNER JOIN $tabletransaction t1 on b.batch_id=t1.batch_id
 		INNER JOIN $tableaccounts a1 on a1.accounts_id=t1.accounts_id 
-		INNER JOIN $tabletransaction t2 on t1.reference_id=t2.trans_id and t2.branch_id = $organization_id
+		INNER JOIN $tabletransaction t2 on t1.reference_id=t2.trans_id
 		INNER JOIN $tableaccounts a2 on a2.accounts_id=t2.accounts_id 
 		WHERE b.batchdate between '$datefrom' and '$dateto' and t1.bpartner_id=$bpartner_id and b.iscomplete=1 and a1.account_type=3
 		and t1.reference_id>0
@@ -265,9 +265,9 @@ if (isset($_POST["submit"])){
 		t2.amt as refamt,a1.accounts_name as refaccounts_name,a1.accounts_code as refaccounts_code,b.batch_id,
 		t2.document_no2,t1.document_no2 as refdocument_no2,t1.linedesc 
 		FROM $tablebatch b  
-		INNER JOIN $tabletransaction t1 on b.batch_id=t1.batch_id and t1.branch_id = $organization_id
+		INNER JOIN $tabletransaction t1 on b.batch_id=t1.batch_id 
 		INNER JOIN $tableaccounts a1 on a1.accounts_id=t1.accounts_id 
-		INNER JOIN $tabletransaction t2 on t1.reference_id=t2.trans_id and t2.branch_id = $organization_id
+		INNER JOIN $tabletransaction t2 on t1.reference_id=t2.trans_id
 		INNER JOIN $tableaccounts a2 on a2.accounts_id=t2.accounts_id 
 		WHERE b.batchdate between '$datefrom' and '$dateto' and t2.bpartner_id=$bpartner_id and b.iscomplete=1 and a2.account_type=3
 		and t1.reference_id>0) a where a.accounts_id > 0 and a.batch_id>0 ORDER BY a.batchdate,a.batchno";

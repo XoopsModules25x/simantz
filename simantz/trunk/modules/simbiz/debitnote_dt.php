@@ -21,7 +21,9 @@ $o = new Payment();
 $o->multiplyvalue=-1;
 $o->issotrx=1;
 $o->paymentfilename="debitnote_dt.php";
-$o->sppayment_prefix=$prefix_spp;
+$o->paymentname="Debit note to debtor";
+
+$o->sppayment_prefix=$prefix_dnote_dt;
 $o->documenttype="D";
 $o->updated=date("Y-m-d H:i:s",time());
 $o->updatedby=$xoopsUser->getVar("uid");

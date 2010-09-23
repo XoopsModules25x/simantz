@@ -22,7 +22,9 @@ $o = new Payment();
 $o->issotrx=1;
 $o->multiplyvalue=1;
 $o->paymentfilename="creditnote_dt.php";
-$o->sppayment_prefix=$prefix_spp;
+
+$o->paymentname="Credit note to debtor";
+$o->sppayment_prefix=$prefix_cnote_dt;
 $o->documenttype="C";
 $o->updated=date("Y-m-d H:i:s",time());
 $o->updatedby=$xoopsUser->getVar("uid");

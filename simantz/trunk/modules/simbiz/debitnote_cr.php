@@ -18,10 +18,11 @@ $action=$_REQUEST['action'];
 
 
 $o = new Payment();
-$o->multiplyvalue=-1;
-$o->issotrx=1;
+$o->multiplyvalue=1;
+$o->issotrx=0;
 $o->paymentfilename="debitnote_cr.php";
-$o->sppayment_prefix=$prefix_spp;
+$o->paymentname="Debit note to creditor";
+$o->sppayment_prefix=$prefix_dnote_cr;
 $o->documenttype="D";
 $o->updated=date("Y-m-d H:i:s",time());
 $o->updatedby=$xoopsUser->getVar("uid");
