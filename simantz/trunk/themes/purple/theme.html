@@ -1,11 +1,13 @@
 <{php}>
-global $xoopsTheme;
+
 
 	if( ! empty( $_SESSION['redirect_message'] ) ) {
 		$this->_tpl_vars['xoops_msg'] = $_SESSION['redirect_message']; 
 		$this->_tpl_vars['wait_time'] = $_SESSION['redirect_time']; 
 		unset( $_SESSION['redirect_message'] ) ;
 	}
+
+$themes=$GLOBALS['xoopsConfig']['theme_set'];
 <{/php}>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns:ntb="http://www.nitobi.com" xml:lang="<{$xoops_langcode}>" lang="<{$xoops_langcode}>">
@@ -29,7 +31,7 @@ global $xoopsTheme;
 	<link rel="shortcut icon" type="image/ico" href="<{$xoops_url}>/favicon.ico" />
     <!-- Sheet Css -->
 	<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="<{$xoops_url}>/xoops.css" />
-	<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="<{$xoops_url}>/themes/<{php}>echo $xoopsTheme[thename];<{/php}>/style.css" />
+	<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="<{$xoops_url}>/themes/<{php}>echo $themes;<{/php}>/style.css" />
     <!-- customized header contents -->
 	<{$xoops_module_header}>
 </head>
@@ -44,7 +46,7 @@ global $xoopsTheme;
 <div id='blanket' style='display:none;'></div>
 <div id='popUpDiv' style='display:none;verticle-align:center'>
 
-     <div id='popupmessage' style='text-align:center'></div><div id='progressimage' style='text-align:center'><img src='<{$xoops_url}>/modules/<{$xoopsTheme[thename]}>/images/ajax_indicator_01.gif'></div>
+     <div id='popupmessage' style='text-align:center'></div><div id='progressimage' style='text-align:center'><img src='<{$xoops_url}>/modules/<{php}>echo $themes;<{/php}>/images/ajax_indicator_01.gif'></div>
 </div>
     
 <!-- Start Header -->
