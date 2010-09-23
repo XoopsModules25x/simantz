@@ -246,4 +246,24 @@ return $curr_date;
  }
  return $pageURL;
 }
+
+
+function isGroup($group_name, $user_id){
+
+    global $xoopsDB;
+      $sql = "select u.name, g.name as g_name from sim_users u, sim_groups g, sim_groups_users_link ug
+                    where u.uid=ug.uid and g.groupid=ug.groupid and u.uid=$user_id and g.name='$group_name'";
+     $rs = $xoopsDB->query($sql);
+     $allow = false;
+     while ($row=$xoopsDB->fetchArray($rs)){
+         //echo $row['g_name']." ".$group_name." ".$allow."|";
+
+         if($row['g_name']==$group_name){
+             $allow = true;
+         }
+     }
+     return $allow;
+ }
+
+
 ?>
