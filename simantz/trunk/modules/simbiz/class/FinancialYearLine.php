@@ -289,11 +289,12 @@ $this->log=$log;
 		
 			$isclosed=$row['isclosed'];
 			if($isclosed==0){
-				
+				$this->log->showLog(4,"Return isclose =0");
 				$this->period_id=$row['period_id'];
 				return true; //period not close then allow transaction
 			}
 			else{
+                            	$this->log->showLog(4,"Return isclose !=0");
 				$this->period_id=0;
 				return false; //if period not found or is closed(1), not allow transaction
 			}

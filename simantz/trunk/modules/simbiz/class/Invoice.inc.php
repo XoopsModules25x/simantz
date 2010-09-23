@@ -337,7 +337,7 @@ $noperm
      </td>
   <tr>
     <td class="head">
-            <a href='javascript:addLine()'>Add Line [+]</a>
+            <a href='javascript:addLine(1)'>Add Line [+]</a>
               </td>
 
                  <td class="head">
@@ -1407,6 +1407,8 @@ EOF;
 public function gridjs(){
 global $defaultcurrency_id;
   return  $js= <<< JS
+<script src="$url/modules/simantz/include/validatetext.js" type="text/javascript"></script>
+
       <script language="javascript" type="text/javascript">
         $(document).ready((function (){
         nitobi.loadComponent('invoicegrid');
@@ -1468,9 +1470,16 @@ global $defaultcurrency_id;
                                 });
           }
 
-        function addLine(){
+        function addLine(promptmsg){
+        
           var myGrid = nitobi.getGrid('invoicegrid');
           var invoice_id=document.getElementById('invoice_id').value;
+          if(invoice_id==0 && promptmsg==1)
+          if(confirm("You need to save invoice header before proceed to add invoice detail, confirm?"))
+            saverecord(0);
+          else
+            return false;
+         
           myGrid.insertAfterCurrentRow();
           
           if(invoice_id>0){
@@ -1483,6 +1492,8 @@ global $defaultcurrency_id;
                                     }
             }
         }
+
+          
     function viewlog(){
    	var g= nitobi.getGrid('invoicegrid');
         var selRow = g.getSelectedRow();
@@ -1499,8 +1510,28 @@ global $defaultcurrency_id;
         }
         }
 
+        function validation(){
+          var bpartner_id=document.getElementById("cmbbpartner_idSelectedValue0").value;
+          var docdate=document.getElementById("document_date").value;
+          if(bpartner_id=="" || bpartner_id==0){
+          alert("Please choose bpartner");
+          return false;
+          }
+          if(docdate=="" || !isDate(docdate)){
+          alert("Please insert appropriate date");
+          return false;
+          }
+          else
+          return true;
+          }
+
+
+
 
         function saverecord(iscomplete){
+            if(!validation())
+          return false;
+
             var iscompletectrl=document.getElementById("iscomplete");
              iscompletectrl.value=iscomplete;
               
@@ -1940,7 +1971,7 @@ JS;
        }
 
        function getPaymentHistory($invoice_id){
-           $sql="SELECT p.payment_id, p.document_date, concat(sppayment_prefix,p.document_no) as docno, (pl.multiplyvalue*pl.amt) as amt,p.issotrx,p.documenttype from sim_simbiz_paymentline pl
+            $sql="SELECT p.payment_id, p.document_date, concat(sppayment_prefix,p.document_no) as docno, (p.multiplyvalue*pl.amt) as amt,p.issotrx,p.documenttype from sim_simbiz_paymentline pl
                 inner join sim_simbiz_payment p  on p.payment_id=pl.payment_id where pl.invoice_id=$invoice_id and p.iscomplete=1";
            $query=$this->xoopsDB->query($sql);
            $result="";
@@ -1954,10 +1985,14 @@ JS;
             elseif($doctype=="P" && $issotrx==0) //credit note, sales
                 $filename="purchasepayment.php";
             elseif($doctype=="C" && $issotrx==1) //credit note, sales
-                $filename="creditnote.php";
+                $filename="creditnote_dt.php";
             elseif($doctype=="C" && $issotrx==0) //credit note, sales
-                $filename="debitnote.php";
-            
+                $filename="creditnote_cr.php";
+            elseif($doctype=="D" && $issotrx==1) //credit note, sales
+                $filename="debitnote_dt.php";
+            elseif($doctype=="D" && $issotrx==0) //credit note, sales
+                $filename="debitnote_cr.php";
+
              $docno=$row['docno'];
              $amt=$row['amt'];
              $payment_id=$row['payment_id'];

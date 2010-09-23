@@ -849,14 +849,17 @@ function getBPartnerCreditStatus($accounts_id,$bpartner_id,$type="D"){ //type D 
     else{
         $acctype=3;
     }
-
-    $sql="SELECT bp.bpartner_id,bp.bpartner_name, sum(t.amt) as balance,bp.salescreditlimit, bp.enforcesalescreditlimit,bp.purchasecreditlimit,bp.enforcepurchasecreditlimit
+$this->log->showLog(3,"Access  getBPartnerCreditStatus($accounts_id,$bpartner_id,$type");
+    $sql="SELECT bp.bpartner_id,bp.bpartner_name, sum(t.amt) as balance,
+            bp.salescreditlimit, bp.enforcesalescreditlimit,bp.purchasecreditlimit,bp.enforcepurchasecreditlimit
             from sim_simbiz_transaction t
             inner join sim_simbiz_batch b on t.batch_id=b.batch_id
             inner join sim_simbiz_accounts a on a.accounts_id=t.accounts_id
             inner join sim_bpartner bp on t.bpartner_id=bp.bpartner_id
-            where t.accounts_id=$accounts_id and t.bpartner_id=$bpartner_id and a.account_type =$acctype";
-    $query=$this->xoopsDB->query($sql);
+            where t.accounts_id=$accounts_id and t.bpartner_id=$bpartner_id and a.account_type =$acctype and b.iscomplete=1";
+$this->log->showLog(4,"With SQL : $sql");
+
+  $query=$this->xoopsDB->query($sql);
     while($row=$this->xoopsDB->fetchArray($query)){
             if($type=="D"){
                return array(abs($row['balance']),$row['salescreditlimit'],$row['enforcesalescreditlimit']);

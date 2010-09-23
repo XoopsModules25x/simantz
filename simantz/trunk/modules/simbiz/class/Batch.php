@@ -414,7 +414,7 @@ jQuery(document).ready((function (){
             $.ajax({
                  url: "batch.php",type: "POST",data: data,cache: false,
                      success: function (xml) {
-
+                     
 
                         jsonObj = eval( '(' + xml + ')');
 
@@ -1281,9 +1281,11 @@ $this->log->showLog(3,"Fetching batch detail into class Batch.php.<br>");
   public function saveBatchAjax(){
         global $defaultorganization_id,$selectspliter,$xoopsUser,$defcurrencycode_id;
         $uname=$xoopsUser->getVar('uname');
-        include "../simantz/class/Save_Data.inc.php";
-        include "../simbiz/class/Track.inc.php";
-
+              
+        include_once "../simantz/class/Save_Data.inc.php";
+        $this->log->showLog(3,"Access saveBatchAjax()");
+        include_once "../simbiz/class/Track.inc.php";
+  
         $save = new Save_Data();
         $track = new Trackclass();
         $track_array = $track->getTrackName();
@@ -2165,7 +2167,7 @@ echo <<< EOF
     //add line button will call this
     function addline(){
 
-            if($this->isreadonly==0 && $this->iscomplete==0){
+            if('$this->isreadonly'=='0' && '$this->iscomplete'=='0'){
 
             var grid= nitobi.getComponent('DataboundGrid');
             grid.insertRow();
@@ -2405,7 +2407,7 @@ echo <<< EOF
     }
 
         function onclickaddbutton(){
-              if($this->isreadonly==0 && $this->iscomplete==0){
+              if("$this->isreadonly"=="0" && "$this->iscomplete"=="0"){
             var g= nitobi.getGrid('DataboundGrid');
             g.insertAfterCurrentRow();
 

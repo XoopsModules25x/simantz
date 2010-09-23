@@ -227,6 +227,15 @@ HTML;
         $this->exchangerate=1;
         $this->subtotal=0;
         $this->localamt=0;
+         $bpartnerctrl=<<< EOF
+    <ntb:Combo id="cmbbpartner_id" Mode="classic" theme="$nitobicombothemes" InitialSearch="$this->bpartner_name" onselectevent="chooseBPartner();">
+             <ntb:ComboTextBox Width="250px" DataFieldIndex=1 ></ntb:ComboTextBox>
+             <ntb:ComboList Width="300px" Height="200px" DatasourceUrl="../simbiz/simbizlookup.php?action=searchbpartnercombo&showNull=Y" PageSize="25" >
+             <ntb:ComboColumnDefinition Width="130px" DataFieldIndex=1 ></ntb:ComboColumnDefinition>
+             <ntb:ComboMenu icon="images/add.gif" OnClickEvent="window.open('../bpartner/bpartner.php')" text=" &nbsp;Add product...">
+             </ntb:ComboList>
+            </ntb:Combo>
+EOF;
     }
     else{
         $tableheader="Edit Payment";
@@ -239,7 +248,7 @@ HTML;
     $bpartner_id=$_REQUEST['bpartner_id'];
     $bp->fetchBpartnerData($bpartner_id);
 
-    $addressxml= $bpctrl->getSelectAddress($this->address_id,"N",$o->bpartner_id);
+    $addressxml= $bpctrl->getSelectAddress($this->address_id,"N",$this->bpartner_id);
     $termsxml=  $bpctrl->getSelectTerms($this->terms_id,"N");
     $contactxml= $bpctrl->getSelectContacts($this->contacts_id,'N',"",""," and bpartner_id=$this->bpartner_id");
     $currencyxml=  $ctrl->getSelectCurrency($this->currency_id);
@@ -254,12 +263,17 @@ HTML;
     $addressoption=$addressxml;
     $currencyoption=$currencyxml;
    // $branchoption="<option value='1'>HQ</option>";
-
+   $bpartnerctrl=<<< EOF
+    <a href="../bpartner/bpartner.php?action=viewsummary&amp;bpartner_id=$this->bpartner_id" target="_blank">$this->bpartner_name</a>
+    <input name='cmbbpartner_idSelectedValue0' value='$this->bpartner_id' id='$this->bpartner_id' type="hidden">
+    <input name="cmbbpartner_idSelectedValue1" value="$this->bpartner_name" id="cmbbpartner_idSelectedValue1"  type="hidden">
+EOF;
     
     }
 
 $grid=$this->getGrid($this->payment_id);
-
+if($this->documenttype=="P")
+        $receiveallctrl='<input type="button" value="Receive All" onclick=javascript:receiveAll()>';
     $html =<<< HTML
     <br/>
     <div id='centercontainer'>
@@ -284,13 +298,7 @@ $noperm
                     Branch <select id='organization_id' name='organization_id'>&nbsp; $branchctrl</select></td>
           <td class="head">Business Partner</td>
           <td class="even">
-              <ntb:Combo id="cmbbpartner_id" Mode="classic" theme="$nitobicombothemes" InitialSearch="$this->bpartner_name" onselectevent="chooseBPartner();">
-             <ntb:ComboTextBox Width="250px" DataFieldIndex=1 ></ntb:ComboTextBox>
-             <ntb:ComboList Width="300px" Height="200px" DatasourceUrl="../simbiz/simbizlookup.php?action=searchbpartnercombo&showNull=Y" PageSize="25" >
-             <ntb:ComboColumnDefinition Width="130px" DataFieldIndex=1 ></ntb:ComboColumnDefinition>
-             <ntb:ComboMenu icon="images/add.gif" OnClickEvent="window.open('../bpartner/bpartner.php')" text=" &nbsp;Add product...">
-             </ntb:ComboList>
-            </ntb:Combo>
+                $bpartnerctrl
           </td>
      </tr>
      <tr>
@@ -328,7 +336,7 @@ $noperm
         <input name='save' onclick='deleterecord()' type='submit' id='delete' value='Delete'>
         <input name='action' name='action' value='ajaxsave'  type="hidden">
         <input type="button" value="Reload" onclick=javascript:reloadPayment()>
-        <input type="button" value="Receive All" onclick=javascript:receiveAll()>
+      $receiveallctrl
             <input type="button" value="Preview" onclick=javascript:previewPayment()>
         <input name="track1_name" id="track1_name" type="hidden" value="$this->track1_name">
          <input name="track2_name" id="track2_name" type="hidden" value="$this->track2_name">
@@ -341,7 +349,7 @@ $noperm
 <tr><td colspan='4'>
     <div id='detaildiv'>
     $grid
-              <small>* Update payment detail via edit column Account, Paid Amt and following column, leave Paid Amt = 0 to delete particular payment detail</small>
+              <small>* Update payment detail via edit column Account, Process Amt and following column, leave Process Amt = 0 to delete particular payment detail</small>
 
            <div style="width:476px;text-align:right" >
                         <b style="text-align:right; height:30px; border-top: 1px solid #000; border-bottom: 3px double #000; width:300px">
@@ -414,7 +422,7 @@ public function getGrid($payment_id=0,$showAll="Y"){
     <ntb:textcolumn classname="{\$rh}" label="Account" width="100" xdatafld="accounts_id" sortenabled="false" $editable>
                <ntb:listboxeditor gethandler="simbizlookup.php?action=getaccountlistgrid" displayfields="accounts_name" valuefield="accounts_id" ></ntb:listboxeditor>
            </ntb:textcolumn>
-    <ntb:numbercolumn classname="{\$rh}" label="Paid Amt" width="65" mask="#0.00" xdatafld="amt" $editable sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)"></ntb:numbercolumn>
+    <ntb:numbercolumn classname="{\$rh}" label="Process Amt" width="75" mask="#0.00" xdatafld="amt" $editable sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)"></ntb:numbercolumn>
            <ntb:textcolumn classname="{\$rh}" label="Cheque No" width="65"  xdatafld="chequeno" $editable sortenabled="false" ></ntb:textcolumn>
     <ntb:textcolumn classname="{\$rh}" label="Description"  width="150" xdatafld="description" sortenabled="false" $editable>
            <ntb:textareaeditor></ntb:textareaeditor>
@@ -930,7 +938,7 @@ public function fetchPayment($payment_id){
     "note",
             "track1_id",
     "track2_id",
-    "track3_id");
+    "track3_id","multiplyvalue");
     $arrUpdateFieldType=array(
         "%d",
     "%s",
@@ -961,7 +969,8 @@ public function fetchPayment($payment_id){
         "%s",
             "%d",
     "%d",
-    "%d");
+    "%d",
+        "%d");
     $arrvalue=array($this->document_no,
    $this->document_date,
    $this->batch_id,
@@ -991,7 +1000,7 @@ public function fetchPayment($payment_id){
         $this->note,
            $this->track1_id,
    $this->track2_id,
-   $this->track3_id);
+   $this->track3_id,$this->multiplyvalue);
 
     if( $save->UpdateRecord($this->tablename, "payment_id",
                 $this->payment_id,
@@ -1488,6 +1497,7 @@ _EOF;
 public function gridjs(){
 global $defaultcurrency_id;
   return  $js= <<< JS
+<script src="$url/modules/simantz/include/validatetext.js" type="text/javascript"></script>
       <script language="javascript" type="text/javascript">
         $(document).ready((function (){
         nitobi.loadComponent('paymentgrid');
@@ -1581,9 +1591,28 @@ global $defaultcurrency_id;
         }
         }
 
+        function validation(){
+          var bpartner_id=document.getElementById("cmbbpartner_idSelectedValue0").value;
+          var docdate=document.getElementById("document_date").value;
+          if(bpartner_id=="" || bpartner_id==0){
+          alert("Please choose bpartner");
+          return false;
+          }
+          if(docdate=="" || !isDate(docdate)){
+          alert("Please insert appropriate date");
+          return false;
+          }
+          else
+          return true;
+          }
+
 
         function saverecord(iscomplete){
+          var payment_id=document.getElementById("payment_id").value;
+          if(!validation())
+          return false;
             var iscompletectrl=document.getElementById("iscomplete");
+
              iscompletectrl.value=iscomplete;
               updateCurrentRow();
                 document.getElementById("popupmessage").innerHTML="Saving data...";
@@ -1703,7 +1732,7 @@ global $defaultcurrency_id;
               }
               document.getElementById("subtotal").value=total.toFixed(2);
               
-              document.getElementById("outstandingamt").value=outstandingtotal.toFixed(2)-total.toFixed(2);
+              document.getElementById("outstandingamt").value=parseFloat(outstandingtotal.toFixed(2))-(total.toFixed(2)*$this->multiplyvalue);
       
           }
 
@@ -1811,7 +1840,7 @@ JS;
 
   public function getNextNo() {
 
-   $sql="SELECT MAX(document_no ) + 1 as newno from $this->tablepayment where issotrx=$this->issotrx";
+   $sql="SELECT MAX(document_no ) + 1 as newno from $this->tablepayment where issotrx=$this->issotrx and documenttype='$this->documenttype'";
 	$this->log->showLog(3,"Checking next no: $sql");
 
 	$query=$this->xoopsDB->query($sql);
@@ -1849,11 +1878,11 @@ JS;
     elseif($this->issotrx==0 && $this->documenttype=="P")
         $multiply=1;
     elseif($this->issotrx==1 && $this->documenttype=="D") // debit note and payment for sales consider same operator, *-1
-        $multiply=-1;
+        $multiply=1;
     elseif($this->issotrx==0 && $this->documenttype=="D") // debit note and payment for purchase consider same operator, *1
         $multiply=1;
     elseif($this->issotrx==1 && $this->documenttype=="C") // credit note and payment for sales consider difference operator, *-1
-        $multiply=1;
+        $multiply=-1;
     elseif($this->issotrx==0 && $this->documenttype=="C")// credit note and payment for sales consider difference operator, *1
         $multiply=-1;
 
@@ -1901,7 +1930,7 @@ $this->log->showLog(4,"Posting payment with SQL:  $sql");
         array_push($linetypearray,1);
         array_push($transtypearray,"");
         array_push($chequenoarray,$row['chequeno']);
-        array_push($linedesc,"Payment ($this->sppayment_prefix$this->document_no), from $this->bpartner_name");
+        array_push($linedesc,"$this->paymentname: ($this->sppayment_prefix$this->document_no), from $this->bpartner_name");
         array_push($orgarray,$row['branch_id']);
         array_push($track1array,$row['track1_id']);
         array_push($track2array,$row['track2_id']);
