@@ -87,7 +87,7 @@ public function prepareAuditHistory($category,$tablename,$primarykey,$record_id,
                    // $this->log->showLog(4,"$i.".$arrfield[$i].": ".$row[$arrfield[$i]]." => ".$arrvalue[$i]);
                     $value=explode($this->selectspliter,$arrvalue[$i]);
                     if($value[0] != $row[$arrfield[$i]]){
-                        if($arrfield[$i]!="created" && $arrfield[$i]!= "updated" && $arrfield[$i]!="createdby" && $arrfield[$i]!="updatedby" ){
+                        if($arrfield[$i]!="created" && $arrfield[$i]!="createdby" && $arrfield[$i]!="updatedby" ){
                         $changecount++;
                         
                         if($value[1]!="")
