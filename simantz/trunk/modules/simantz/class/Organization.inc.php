@@ -15,6 +15,7 @@ class Organization
   public $organization_id;
   public $organization_code;
   public $organization_name;
+  public $companyname;
   public $companyno;
   public $created;
   public $createdby;
@@ -101,6 +102,7 @@ class Organization
 		if($organization_id==0){
 		$this->organization_name="";
 		$this->organization_code="";
+                $this->company_name="";
 		$this->tel_1="";
 		$this->tel_2="";
 		$this->fax="";
@@ -184,6 +186,7 @@ class Organization
 
      document.forms['frmOrganzation'].organization_code.value="";
      document.forms['frmOrganzation'].organization_name.value="";
+     document.forms['frmOrganzation'].companyname.value="";
      document.forms['frmOrganzation'].companyno.value="";
      document.forms['frmOrganzation'].tel_1.value="";
      document.forms['frmOrganzation'].tel_2.value="";
@@ -222,13 +225,18 @@ class Organization
       <tr>
         <td class='head'>Organization Code $selectorg</td>
 
-        <td class='odd'><input maxlength="10" size="10"  name="organization_code" value="$this->organization_code">&nbsp;
+        <td class='even'><input maxlength="10" size="10"  name="organization_code" value="$this->organization_code">&nbsp;
 	Active <input type="checkbox" $checked name="isactive">  $this->groupctrl</td>
-        
-        <td class='head'>Organization Name/No</td>
 
+      </tr>
+
+      <tr>
+        <td class='head'>Organization Name</td>
         <td class='odd'>
-            <input maxlength="40" size="40" name="organization_name"  id="organization_name" value="$this->organization_name">
+            <input maxlength="40" size="40" name="organization_name"  id="organization_name" value="$this->organization_name"></td>
+        <td class='head'>Company Name/No</td>
+        <td class='odd'>
+            <input maxlength="40" size="40" name="companyname"  id="companyname" value="$this->companyname">
 	    <input maxlength="15" size="15" name="companyno" id="companyno" value="$this->companyno"></td>
       </tr>
 
@@ -311,14 +319,14 @@ EOF;
 
       $arrfield=array("organization_name","organization_code","tel_1","tel_2","fax","url","email",
 	"updated","updatedby","isactive","groupid","currency_id","street1", "street2","street3","postcode","country_id",
-	"city","state","seqno","companyno");
+	"city","state","seqno","companyno","companyname");
        $arrfieldtype=array("%s","%s","%s","%s","%s","%s","%s",
 	"%s","%d","%d","%d","%d","%s", "%s","%s","%s","%d",
-	"%s","%s","%d","%s");
+	"%s","%s","%d","%s","%s");
 
     $arrvalue=array($this->organization_name,$this->organization_code,$this->tel_1,$this->tel_2,$this->fax,$this->url,$this->email,
 	$timestamp,$this->updatedby,$this->isactive,$this->groupid,$this->currency_id,$this->street1, $this->street2,$this->street3,
-            $this->postcode,$this->country_id,$this->city,$this->state,$this->seqno,$this->companyno);
+            $this->postcode,$this->country_id,$this->city,$this->state,$this->seqno,$this->companyno,$this->companyname);
    
 
  $controlvalue=$this->organization_code;
@@ -369,15 +377,15 @@ EOF;
    $arrfield=array("organization_name","organization_code","street1","street2",
 		"street3","postcode","city","state","country_id","tel_1","tel_2","fax",
                  "url","email","isactive", "created","createdby","updated","updatedby",
-		"seqno","groupid","currency_id","companyno");
+		"seqno","groupid","currency_id","companyno","companyname");
     $arrfieldtype=array("%s","%s","%s","%s",
 		"%s","%s","%s","%s","%d","%s","%s","%s",
                 "%s","%s","%d", "%s","%d","%s","%d",
-		"%d","%d","%d","%s");
+		"%d","%d","%d","%s","%s");
      $arrvalue=array($this->organization_name,$this->organization_code,$this->street1,$this->street2,
 		$this->street3,$this->postcode,$this->city,$this->state,$this->country_id,$this->tel_1,$this->tel_2,$this->fax,
                 $this->url,$this->email,$this->isactive,$timestamp,$this->createdby,$timestamp,$this->updatedby,
-		$this->seqno,$this->groupid,$this->currency_id,$this->companyno);
+		$this->seqno,$this->groupid,$this->currency_id,$this->companyno,$this->companyname);
 
  $controlvalue=$this->organization_code;
    if($save->InsertRecord($this->tableorganization, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"organization_id"))
