@@ -112,7 +112,7 @@ public function prepareAuditHistory($category,$tablename,$primarykey,$record_id,
                $changedesc.=$arrfield[$i]."='".$value[0]."',<br/>";
                else
                    $changedesc.=$arrfield[$i]."='".$value[1]."(".$value[0].")',<br/>";
-                $changedesc=substr_replace($changedesc,"",-6);
+                $changedesc=substr_replace($changedesc,"",-5);
               }
         }
       elseif($category=='D'){
