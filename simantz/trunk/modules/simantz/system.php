@@ -265,5 +265,11 @@ function isGroup($group_name, $user_id){
      return $allow;
  }
 
+function right($value, $count){
+    return substr($value, ($count*-1));
+}
 
+function left($string, $count){
+    return substr($string, 0, $count);
+}
 ?>
