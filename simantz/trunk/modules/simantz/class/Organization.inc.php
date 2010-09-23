@@ -434,7 +434,7 @@ EOF;
 		
 	 $sql="SELECT o.organization_code,o.organization_name,o.tel_1,o.tel_2,o.fax,o.url,o.email,o.currency_id,
 		o.country_id,o.isactive,o.groupid,o.street1,o.street2,o.street3,o.postcode,o.state,o.city,o.seqno,
-		o.companyno,ct.country_name,ct.country_code,cr.currency_name,cr.currency_code,ct.telcode
+		o.companyno,o.companyname,ct.country_name,ct.country_code,cr.currency_name,cr.currency_code,ct.telcode
 		from $this->tableorganization o
 		LEFT JOIN $this->tablecountry ct on o.country_id=ct.country_id
 		LEFT JOIN $this->tablecurrency cr on o.currency_id=cr.currency_id
@@ -470,6 +470,7 @@ EOF;
 		$this->country_name=$row['country_name'];
                 $this->telcode=$row['telcode'];
                 $this->country_code=$row['country_code'];
+                $this->companyname=$row['companyname'];
 		$this->currency_name=$row['currency_name'];
 		$this->companyno=$row['companyno'];
 		$this->currency_id=$row['currency_id'];
