@@ -163,37 +163,39 @@ public function getInputForm($module_id){
     $optionlist=$this->getSelectWindows(0,$module_id,"Y");
     return "
         <A href=javascript:addNew()>[Add New]</a><br/>
-    <form onsubmit='return false'>
+    <form id='frmwindow' onsubmit='return false'>
         <table>
             
             <tr><td class='head'>Windows Name</td>
-                    <td class='even'><input id='window_name'></td></tr>
+                    <td class='even'><input id='window_name' name='window_name'></td></tr>
             <tr><td class='head'>File Name</td>
-                    <td class='even'><input id='filename'></td></tr>
+                    <td class='even'><input id='filename'  name='filename'></td></tr>
             <tr><td class='head'>Table Name</td>
-                    <td class='even'><input id='table_name'></td></tr>
+                    <td class='even'><input id='table_name' name='table_name'></td></tr>
             <tr><td class='head'>Seq No</td>
                     <td class='even'><input id='seqno' value='10'></td></tr>
             <tr><td class='head'>Setting</td>
-                    <td class='even'><textarea id='windowsetting' rows='5' cols='50'></textarea></td></tr>
+                    <td class='even'><textarea id='windowsetting'  name='windowsetting' rows='5' cols='50'></textarea></td></tr>
             <tr><td class='head'>Description</td>
-                            <td class='even'><textarea id='description' rows='5' cols='50'></textarea></td></tr>
+                            <td class='even'><textarea name='description' id='description' rows='5' cols='50'></textarea></td></tr>
             <tr><td class='head'>Parent Window</td>
                             <td class='even'>
-                                <select id='parentwindows_id' onfocus=refreshparentwindowslist($module_id,this.value)>
+                                <select id='parentwindows_id' name='parentwindows_id' onfocus=refreshparentwindowslist($module_id,this.value)>
                                         $optionlist
                                 </select>
                             </td></tr>
 
             <tr><td class='head'>Display</td>
-                            <td class='even'><input type='checkbox' id='isactive' checked></td></tr>
+                            <td class='even'><input type='checkbox' id='isactive' name='isactive'  checked></td></tr>
             <tr><td class='head'>Help URL</td>
                             <td class='even'><input name='helpurl' size='70' id='helpurl'></td></tr>
-             <tr><td><input id='window_id' title='window_id'  type='hidden'>
-                    <input id='mid' title='mid' value='$module_id' type='hidden'>
+             <tr><td><input id='window_id' name='window_id' title='window_id'  type='hidden'>
+                    <input id='mid' name='mid'  title='mid' value='$module_id' type='hidden'>
                         </td>
              </tr>
         </table>
+
+        <input name='action'  type='hidden' id='action' value='ajaxsave'>
         <input name='save' onclick='saverecord()' type='submit' value='Save'>
         <input name='save' onclick='deleterecord()' type='button' value='Delete'>
         </form>
@@ -260,14 +262,15 @@ public function getSelectWindows($id,$mid,$showNull="N"){
     $sql="SELECT * FROM $this->tablename w where mid=$mid and (isactive=1 or window_id=$id or window_id=0) order by seqno";
     $query=$this->xoopsDB->query($sql);
     $result="";
+     if($showNull=="Y")
+    $result.="<option value='0' >Null</option>";
+   
     while($row=$this->xoopsDB->fetchArray($query)){
 
     $window_id=$row['window_id'];
     $window_name=$row['window_name'];
     $selected="";
 
-    if($showNull=="Y")
-    $result.="<option value='0' >Null</option>";
     if($id==$window_id)
         $selected="SELECTED='SELECTED'";
     $result.="<option value='$window_id' $selected>$window_name</option>";
