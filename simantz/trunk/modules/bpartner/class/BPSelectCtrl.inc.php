@@ -140,7 +140,7 @@ public function getSelectIndustry($id,$showNull='N') {
       global $tableaddress,$defaultorganization_id;
     if($bpartner_id!="")
     $wherestr.=" and bpartner_id=$bpartner_id";
-	 $sql="SELECT address_id,address_name from $tableaddress where (isactive=1 or address_id=$id)
+     $sql="SELECT address_id,address_name from $tableaddress where (isactive=1 or address_id=$id)
             and address_id>0 $wherestr
              order by seqno,address_name";
 	$this->log->showLog(3,"Generate Address list with id=:$id and shownull=$showNull SQL: $sql");
