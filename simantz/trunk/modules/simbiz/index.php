@@ -1,6 +1,7 @@
 <?php
+
 include "system.php";
-include_once ("menu.php");
+include_once "menu.php";
 include_once 'class/Accounts.php';
 
 $acc=new Accounts();
