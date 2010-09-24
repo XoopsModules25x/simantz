@@ -326,18 +326,3 @@ function getLastDayByMonth($period_name){
 
 }
 
-function left($string, $count){
-
-    return substr($string, 0, $count);
-
-}
-
-function right($value, $count){
-
-    $value = substr($value, (strlen($value) - $count), strlen($value));
-
-    return $value;
-
-}
-
-
