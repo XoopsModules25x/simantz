@@ -417,6 +417,7 @@ td#usermenu a.highlight {
 .head {
 	/*background-color: #e5c9a5;*/
 	color:#703232;
+        background-color: #ddbfff;
 	padding: 1px 2px 1px 5px;
 	font-weight: none;
 	font-size: 10pt;
@@ -451,7 +452,7 @@ td#usermenu a.highlight {
 }
 
 .foot {
-	background-color: #ebec95;
+	background-color: #eea5f7;
 	padding: 5px;
 	font-weight: bold;
 }
@@ -1173,7 +1174,7 @@ font-size : 12px;
 }
 
 .tdListRightHeader{
-	background-color: #ffd894;
+	background-color: #fbdcff;
 	color: #4D2222;
 	font-size : 11px;
 	padding: 1px 1px 1px 5px;
