@@ -50,7 +50,7 @@ class Window
 	$this->xoopsDB=$xoopsDB;
 	$this->log=$log;
    }
- 
+
   public function fetchWindow( $window_id) {
 
 	$this->log->showLog(3,"Fetching window detail into class Window.php.<br>");
@@ -97,12 +97,12 @@ class Window
 
 
    public function showParentWindowsTree($module_id){
-     
+
        return $this->showChildWindowsTree($module_id,0,0);
 
    }
    public function showChildWindowsTree($module_id,$parent_id,$level){
-       
+
        $result="";
        if($module_id==0)
            return $result;
@@ -152,7 +152,7 @@ class Window
             <td class="fieldtitle">Module</td>
             <td class="field"><select name="findmodule_id" id="findmodule_id" onchange=submit.click()>$this->modulectrl</select><input name="submit" value="Search" type="submit" onclick="search()"></td>
         </tr>
-      
+
 </table>
 </form>
 EOF;
@@ -165,7 +165,7 @@ public function getInputForm($module_id){
         <A href=javascript:addNew()>[Add New]</a><br/>
     <form id='frmwindow' onsubmit='return false'>
         <table>
-            
+
             <tr><td class='head'>Windows Name</td>
                     <td class='even'><input id='window_name' name='window_name'></td></tr>
             <tr><td class='head'>File Name</td>
@@ -246,7 +246,7 @@ public function insertWindow(){
     return $save->UpdateRecord($this->tablename, "window_id",
                 $this->window_id,
                     $this->arrUpdateField, $arrvalue,  $this->arrUpdateFieldType,$this->window_name);
-                    
+
 
 }
 
@@ -264,7 +264,7 @@ public function getSelectWindows($id,$mid,$showNull="N"){
     $result="";
      if($showNull=="Y")
     $result.="<option value='0' >Null</option>";
-   
+
     while($row=$this->xoopsDB->fetchArray($query)){
 
     $window_id=$row['window_id'];
@@ -274,9 +274,8 @@ public function getSelectWindows($id,$mid,$showNull="N"){
     if($id==$window_id)
         $selected="SELECTED='SELECTED'";
     $result.="<option value='$window_id' $selected>$window_name</option>";
-        
+
     }
     return $result;
 }
 } // end of ClassWindow
-?>
