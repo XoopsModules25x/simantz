@@ -173,7 +173,7 @@ public function getInputForm($module_id){
             <tr><td class='head'>Table Name</td>
                     <td class='even'><input id='table_name' name='table_name'></td></tr>
             <tr><td class='head'>Seq No</td>
-                    <td class='even'><input id='seqno' value='10'></td></tr>
+                    <td class='even'><input id='seqno' name='seqno' value='10'></td></tr>
             <tr><td class='head'>Setting</td>
                     <td class='even'><textarea id='windowsetting'  name='windowsetting' rows='5' cols='50'></textarea></td></tr>
             <tr><td class='head'>Description</td>
