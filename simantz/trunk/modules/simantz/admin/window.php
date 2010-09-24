@@ -26,10 +26,14 @@ case "ajaxdelete":
             echo "Warning! Cannot delete this window due to unknown reason.";
     break;
 case "ajaxsave":
-
+    //print_r($_POST);
     $window->window_id=$_POST['window_id'];
     $window->window_name=$_POST['window_name'];
-    $window->isactive=$_POST['isactive'];
+    if($_POST['isactive']=='on')
+    $window->isactive=1;
+    else
+        $window->isactive=0;
+    
     $window->filename=$_POST['filename'];
     $window->table_name=$_POST['table_name'];
     $window->windowsetting=$_POST['windowsetting'];
@@ -112,38 +116,19 @@ default:
         function saverecord(){
                 document.getElementById("popupmessage").innerHTML="Saving data...";
                 popup('popUpDiv');
+        var data = $("#frmwindow").serialize();
                 var wid=document.getElementById("window_id").value;
-                var wname=document.getElementById("window_name").value;
-                var mid=document.getElementById("mid").value;
-                var seqno=document.getElementById("seqno").value;
-                pwid=document.getElementById("parentwindows_id").value;
-                var wsetting=document.getElementById("windowsetting").value;
-                var desc=document.getElementById("description").value;
-                var fname=document.getElementById("filename").value;
-                var tbname=document.getElementById("table_name").value;
-                var helpurl=document.getElementById("helpurl").value.replace(/&/g,"%26");
-
+          
                 var isactive=0;
                 if(document.getElementById("isactive").checked==true)
                 isactive=1;
-            var data="action="+"ajaxsave"+
-                    "&window_id="+wid+
-                    "&window_name="+wname+
-                    "&mid="+mid+
-                    "&seqno="+seqno+
-                    "&parentwindows_id="+pwid+
-                    "&windowsetting="+wsetting+
-                    "&description="+desc+
-                    "&filename="+fname+
-                    "&table_name="+tbname+
-                    "&helpurl="+helpurl+
-                    "&isactive="+isactive;
+            var data=data;
 
             $.ajax({
                  url: "window.php",type: "POST",data: data,cache: false,
                      success: function (xml) {
-                     document.getElementById("popupmessage").innerHTML="Saving data successfully, reload windows...";
 
+                     document.getElementById("popupmessage").innerHTML="Saving data successfully, reload windows...";
                     showWindowsForm(wid);reloadWindows();
                     document.getElementById("popupmessage").innerHTML="Completed!";
                     popup('popUpDiv');
@@ -163,6 +148,7 @@ default:
                      success: function (xml) {
 
                       $("#parentwindows_id").html(xml);
+                      document.getElementById('parentwindows_id').value=window_id;
                     }
             });
 
@@ -201,6 +187,7 @@ default:
                                         document.getElementById("isactive").checked=true;
                                     else
                                         document.getElementById("isactive").checked=false;
+                      
                                 });//close each
                               }//close success
                 }); //close $.ajax
