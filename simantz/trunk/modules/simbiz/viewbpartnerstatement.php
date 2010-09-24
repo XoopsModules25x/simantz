@@ -2,7 +2,7 @@
 include "system.php";
 include_once('../simantz/class/fpdf/fpdf.php');
 include_once("../simantz/class/PHPJasperXML.inc");
-$companyname= "$o->company_name ($o->companyno)";
+$companyname= "$o->companyname ($o->companyno)";
 $company_addressinfo= "$o->street1 $o->street2 	$o->street3\n".
         "$o->city $o->state $o->country_name\n".
         "Tel: $o->tel_1 $o->tel_2 Fax: $o->fax \nWeb:$o->url Email: $o->email";
