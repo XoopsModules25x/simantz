@@ -5,8 +5,6 @@ include_once 'class/Accounts.php';
 
 $acc=new Accounts();
 
-if($acc->checkAccounts($defaultorganization_id))
-redirect_header("accounts.php?defaultacc=1",$pausetime,"New Organization..Generate New Accounts");
 	
 echo <<< EFO
 <table
