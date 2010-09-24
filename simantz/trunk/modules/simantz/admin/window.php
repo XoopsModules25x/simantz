@@ -58,7 +58,7 @@ default:
     $xoTheme->addStylesheet("$url/modules/simantz/include/window.css");
         $xoTheme->addStylesheet("$url/modules/simantz/include/popup.css");
         $xoTheme->addScript("$url/modules/simantz/include/popup.js");
-
+$xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
 
 
 
