@@ -2981,6 +2981,7 @@ if($num_results>0){
 				<td class="searchformheader">P.I.C</td>
 				<td class="searchformheader">Type</td>
 				<td class="searchformheader">N.F. Date</td>
+                        <td class="searchformheader">Active</td>
 				<td class="searchformheader">Contact Person</td>
                                 <td class="searchformheader">Contact Number</td>
    	</tr>
@@ -2995,12 +2996,16 @@ EOF;
 		$nextfollowupdate=$row['nextfollowupdate'];
 		$contactperson=$row['contactperson'];
                 $contactnumber=$row['contactnumber'];
+                $isactive=$row['isactive'];
                 $employee_name=$row['employee_name'];
 		if($rowtype=="odd")
 			$rowtype="even";
 		else
 			$rowtype="odd";
-
+                        if($isactive==1)
+                            $isactive="Y";
+                        else
+                            $isactive="N";
 		echo <<< EOF
 
 		<tr>
@@ -3009,6 +3014,7 @@ EOF;
 			<td class="$rowtype" class="searchformheader">$employee_name</td>
 			<td class="$rowtype" class="searchformheader">$followuptype_name</td>
 			<td class="$rowtype" class="searchformheader">$nextfollowupdate</td>
+                <td class="$rowtype" class="searchformheader">$isactive</td>
                         <td class="$rowtype" class="searchformheader">$contactperson</td>
 			<td class="$rowtype" class="searchformheader">$contactnumber</td>
                </tr>
@@ -4658,12 +4664,15 @@ echo <<< EOF
        </ntb:textcolumn>
 
    <ntb:datecolumn classname="{\$rh}" label="Follow Up Date" width="90" xdatafld="nextfollowupdate" sortenabled="true"  mask="yyyy-MM-dd"></ntb:datecolumn>
-
+   
    <ntb:textcolumn classname="{\$rh}" label="Contact Person" width="100" xdatafld="contactperson" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Contact No" width="65" xdatafld="contactnumber" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Description" width="200" xdatafld="description" ><ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
+<ntb:textcolumn classname="{\$rh}" label="Active" width="60" xdatafld="isactive"  align="center">
+     <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]" checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value">
+    </ntb:textcolumn>
 
 EOF;
 //only admin user will see record info and isdeleted column
@@ -4732,6 +4741,7 @@ EOF;
      	$getHandler->DefineField("followup_name");
      	$getHandler->DefineField("followuptype_id");
      	$getHandler->DefineField("bpartner_id");
+        $getHandler->DefineField("isactive");
         $getHandler->DefineField("employee_id");
         $getHandler->DefineField("nextfollowupdate");
      	$getHandler->DefineField("contactperson");
@@ -4759,6 +4769,7 @@ EOF;
              $getHandler->DefineRecordFieldValue("nextfollowupdate",$row['nextfollowupdate']);
              $getHandler->DefineRecordFieldValue("contactperson",$row['contactperson']);
              $getHandler->DefineRecordFieldValue("contactnumber", $row['contactnumber']);
+             $getHandler->DefineRecordFieldValue("isactive", $row['isactive']);
              $getHandler->DefineRecordFieldValue("description", $row['description']);
              $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['followup_id']."&tablename=sim_followup&idname=followup_id&title=Follow Up");
              $getHandler->DefineRecordFieldValue("followup_id",$row['followup_id']);
@@ -4794,10 +4805,10 @@ EOF;
     {
           $arrfield=array("issuedate", "followup_name", "followuptype_id","employee_id",
                           "nextfollowupdate","contactperson","contactnumber","description",
-                          "created","createdby","updated","updatedby","bpartner_id");
+                          "created","createdby","updated","updatedby","bpartner_id","isactive");
           $arrfieldtype=array('%s','%s','%d','%d',
                               '%s','%s','%s','%s',
-                              '%s','%d','%s','%d','%d');
+                              '%s','%d','%s','%d','%d','%d');
 
     // Yes there are INSERTs to perform...
      for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
@@ -4815,7 +4826,8 @@ EOF;
                     $createdby,
                     $timestamp,
                     $createdby,
-                    $this->bpartner_id);
+                    $this->bpartner_id,
+             $saveHandler->ReturnInsertField($currentRecord,"isactive"));
          $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "followup_name");
          $save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"followup_id");
   if($save->failfeedback!=""){
@@ -4833,10 +4845,10 @@ EOF;
     {
           $arrfield=array("issuedate", "followup_name", "followuptype_id","employee_id",
                           "nextfollowupdate","contactperson","contactnumber","description",
-                          "updated","updatedby");
+                          "updated","updatedby","isactive");
           $arrfieldtype=array('%s','%s','%d','%d',
                               '%s','%s','%s','%s',
-                              '%s','%d');
+                              '%s','%d','%d');
      // Yes there are UPDATEs to perform...
 
      for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
@@ -4859,7 +4871,7 @@ EOF;
                     $saveHandler->ReturnUpdateField($currentRecord,"contactnumber"),
                     $saveHandler->ReturnUpdateField($currentRecord,"description"),
                     $timestamp,
-                    $createdby);
+                    $createdby,$saveHandler->ReturnUpdateField($currentRecord,"isactive"));
 
             $this->log->showLog(3,"***updating record($currentRecord),new followup_name:".
                     $saveHandler->ReturnUpdateField($currentRecord, "followup_name").",id:".

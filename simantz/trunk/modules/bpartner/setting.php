@@ -1,16 +1,5 @@
 <?php
-$smtpserver="";
-$smtpuser="";
-$smtppassword="";
-$senderuser="";
-$tokenlife="3600";
-$pausetime="";
-$loglevel="5";
-$enddiscountpercent="";
-$statementpapersource="";
-$invoiceprefix="";
-$quotationprefix="";
-//$selectspliter="|*!*|";
 $financedepartment_id="-1";
 $approve_id="2";
+$homepagefollowupday=3;
 ?>

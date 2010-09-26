@@ -87,7 +87,36 @@ class Address
 	}
   } // end of member function fetchJobposition
 
- 
+ public function getAddress($bpartner_id,$type){
+//i =invoice,s=shipment
+
+if($type=="i")
+    $wherestr=" and a.isinvoice=1 ";
+else
+    $wherestr=" and a.isshipment=1";
+
+
+  $sql="SELECT a.*,c.country_name,r.region_name from $this->tableaddress a
+        left join sim_region r on a.region_id=r.region_id
+        left join sim_country c on c.country_id=a.country_id
+        where a.bpartner_id=$bpartner_id and a.isactive=1 $wherestr order by seqno ASC";
+$query=$this->xoopsDB->query($sql);
+
+while($row=$this->xoopsDB->fetchArray($query)){
+        $country_name=$row['country_name'];
+        $region_name=$row['region_name'];
+        $address_street =$row['address_street'];
+        $address_postcode=$row['address_postcode'];
+        $address_city=$row['address_city'];
+        $tel_1=$row['tel_1'];
+        $tel_2=$row['tel_2'];
+        $fax=$row['fax'];
+         $name= "$address_street\n".
+        "Tel:$tel_1 $tel_2 Fax:$fax";
+        return $name;
+ }
+return "";
+ }
 
 } // end of ClassJobposition
 ?>
