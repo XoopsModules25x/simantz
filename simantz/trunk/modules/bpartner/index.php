@@ -53,7 +53,7 @@ $newbpartnerlist.="</table>";
  $sqlfollowuplist="SELECT bp.bpartner_id,bp.bpartner_no,bp.bpartner_name, f.followup_name,f.followup_name,f.description,f.nextfollowupdate
     from sim_bpartner bp
     inner join sim_followup f on bp.bpartner_id=f.bpartner_id
-    where DATE_SUB(CURDATE(),INTERVAL $homepagefollowupday DAY)<= f.nextfollowupdate and f.isactive=1";
+    where DATE_ADD(CURDATE(),INTERVAL $homepagefollowupday DAY)>= f.nextfollowupdate and f.isactive=1";
 
 $followuplist=<<< EOF
   <table class="tblListRight">
