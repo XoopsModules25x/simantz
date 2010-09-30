@@ -601,4 +601,32 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
 	return $selectctl;
   }
 
+
+  public function getSelectRegion($id,$showNull='N') {
+
+	$sql="SELECT region_id,region_name from $this->tableregion where (isactive=1 or region_id=$id)
+            and region_id>0 order by region_name and organization_id=$this->defaultorganization_id";
+	$this->log->showLog(3,"Generate Region list with id=:$id and shownull=$showNull SQL: $sql");
+	//$selectctl="<SELECT name='region_id' >";
+	if ($id==-1 || $showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$region_id=$row['region_id'];
+		$region_name=$row['region_name'];
+
+		if($id==$region_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$region_id' $selected>$region_name</OPTION>";
+
+	}
+
+	//$selectctl=$selectctl . "</SELECT>";
+
+	return $selectctl;
+  } // end
 }

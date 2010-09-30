@@ -208,7 +208,7 @@ class Organization
 </script>
 <br>
 <div style="width: 970px;" id="statusDiv" align="center" class="ErrorstatusDiv"></div>
-<form onsubmit="return false" method="post" action="organization.php" name="frmOrganzation">
+<form onsubmit="return false" methreturn falseod="post" action="organization.php" name="frmOrganzation">
 <input name='organization_id' value='$this->organization_id' type='hidden'>
     <table>
       <tr>
@@ -290,13 +290,13 @@ class Organization
         <td>$savectrl  <input name="reset" value="Reset" type="button" onclick="resetdata()">
 	<input name="action" value="$action" type="hidden">
 	<input name="token" value="$token" type="hidden">
-        </td><td>
+        </td> </form><td>
         <td> $deletectrl</td>
       </tr>
 
     </tbody>
   </table>
- </form>
+
   <br>
 
 
@@ -311,7 +311,7 @@ EOF;
    */
   public function updateOrganization( ) {
 
-      $this->log->showLog(2,"Access updateOrganization");
+      $this->log->showLog(3,"Access updateOrganization");
      	$timestamp= date("y/m/d H:i:s", time()) ;
 	
         include_once XOOPS_ROOT_PATH."/modules/simantz/class/Save_Data.inc.php";
