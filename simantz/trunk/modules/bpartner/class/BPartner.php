@@ -5065,7 +5065,7 @@ echo <<< EOF
         <tr><td>
             <table class="searchformblock">
                 <tr>
-                    <td width="20%">Business Partner Name</td><td width="20%" id="bpartner_name">: $this->bpartner_name</td>
+                    <td width="20%">Business Partner Name</td><td width="20%" id="bpartner_name">: <a href='../bpartner/bpartner.php?action=viewsummary&bpartner_id=$this->bpartner_id'>$this->bpartner_name</a></td>
                     <td width="20%">Business Partner No</td><td width="20%" id="bpartner_no" >: $this->bpartner_no</td>
                     <td width="10%">Active</td><td width="20%" id="isactive" >: $isactive</td>
                 </tr>
