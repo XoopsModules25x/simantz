@@ -256,14 +256,19 @@ $themes=$GLOBALS['xoopsConfig']['theme_set'];
 echo <<< EOF
    <script type="text/javascript">
 	try {
-	document.getElementById('idApprovalTotal').innerHTML = "$approval_status";
+		
+	var idapptotoal=document.getElementById('idApprovalTotal');
+	if(idapptotoal!=null)
+		idapptotoal.innerHTML = "$approval_status";
+
 	var menubar=document.getElementById('navbarCP');
 
 	if(menubar==null){
 	document.getElementById('menubartr').style.display="none";
         document.getElementById('xo-globalnav').style.display="none";
-    }
+    	}
 	}catch (error) {
+
 	}
 
 	
