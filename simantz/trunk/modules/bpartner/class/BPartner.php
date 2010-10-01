@@ -2668,6 +2668,9 @@ else{ //user dun have write permission, cannot save grid
 			$enforcepurchasecreditlimitchecked="Yes";
 		else
 			$enforcepurchasecreditlimitchecked="No";
+
+                if(left($this->bpartner_url,4)=="http")
+                        $this->bpartner_url="<a href='$this->bpartner_url' target='_blank'>$this->bpartner_url</a>";
   echo <<< EOF
 
  <table><tr >
@@ -2739,7 +2742,7 @@ else{ //user dun have write permission, cannot save grid
     <td class="head">In Charge Person</td>
     <td class="even">$this->employee_name</td>
     <td class="head">Short Description</td>
-    <td class="even">$this->shortremarks</td>
+    <td class="even"><b>$this->shortremarks</b></td>
    </tr>
 
    <tr>
