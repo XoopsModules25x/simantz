@@ -2747,7 +2747,7 @@ else{ //user dun have write permission, cannot save grid
 
    <tr>
     <td class="head">Description</td>
-    <td class="even" colspan="3">$this->description</td>
+    <td class="even" colspan="3"><b>$this->description</b></td>
    </tr>
 
    <tr>
@@ -2851,7 +2851,7 @@ if($num_results>0){
 				<td class="searchformheader">No</td>
 				<td class="searchformheader">Name</td>
 				<td class="searchformheader">Email</td>
-				<td class="searchformheader">HP No.</td>
+				<td class="searchformheader">HP</td>
                                 <td class="searchformheader">Department</td>
                                 <td class="searchformheader">Position</td>
    	</tr>
@@ -2964,7 +2964,7 @@ EOF;
   public function showFollowupTable(){
 
 
-	$sql="SELECT fol.*,folty.followuptype_name, emp.employee_name  FROM sim_followup fol
+	$sql="SELECT fol.*,folty.followuptype_name, emp.employee_name,emp.employee_altname  FROM sim_followup fol
              left join sim_followuptype folty on folty.followuptype_id = fol.followuptype_id
              inner join sim_hr_employee emp on emp.employee_id = fol.employee_id
              WHERE fol.bpartner_id=$this->bpartner_id ORDER BY fol.issuedate DESC";
@@ -2976,7 +2976,7 @@ if($num_results>0){
 
 	echo <<< EOF
 	<table border='0' cellspacing='3'>
-            <td colspan="7" class="searchformheader">Follow Up</td>
+            <td colspan="8" class="searchformheader">Follow Up</td>
   		<tbody>
     			<tr>
 				<td class="searchformheader">No</td>
@@ -2985,8 +2985,8 @@ if($num_results>0){
 				<td class="searchformheader">Type</td>
 				<td class="searchformheader">N.F. Date</td>
                         <td class="searchformheader">Active</td>
-				<td class="searchformheader">Contact Person</td>
-                                <td class="searchformheader">Contact Number</td>
+				<td class="searchformheader">Person</td>
+                                <td class="searchformheader">Number</td>
    	</tr>
 EOF;
 	$rowtype="";
@@ -3000,7 +3000,8 @@ EOF;
 		$contactperson=$row['contactperson'];
                 $contactnumber=$row['contactnumber'];
                 $isactive=$row['isactive'];
-                $employee_name=$row['employee_name'];
+                $employee_altname=$row['employee_altname'];
+                $employee_id=$row['employee_id'];
 		if($rowtype=="odd")
 			$rowtype="even";
 		else
@@ -3014,7 +3015,7 @@ EOF;
 		<tr>
 			<td class="$rowtype" class="searchformheader">$i</td>
 			<td class="$rowtype" class="searchformheader">$followup_name</td>
-			<td class="$rowtype" class="searchformheader">$employee_name</td>
+			<td class="$rowtype" class="searchformheader"><a href='../hr/employee.php?action=viewsummary&employee_id=$employee_id'>$employee_altname<a></td>
 			<td class="$rowtype" class="searchformheader">$followuptype_name</td>
 			<td class="$rowtype" class="searchformheader">$nextfollowupdate</td>
                 <td class="$rowtype" class="searchformheader">$isactive</td>
