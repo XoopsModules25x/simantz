@@ -14,6 +14,8 @@
 #treeModuleWindows {
 
     vertical-align:top;
+    overflow: auto;
+    height: 500px;
 }
 
 #formModuleWindows {

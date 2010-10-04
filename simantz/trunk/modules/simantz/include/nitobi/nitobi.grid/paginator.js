@@ -47,15 +47,16 @@ var Pager = {
     }
 }
 function HandleReady(eventArgs) {
-	var g = eventArgs.source;
-    Pager.TotalRows = parseInt(g.datatable.handlerError);
-    if(g.datatable.handlerError == null)
-    Pager.TotalRows = 0;
 
+	var g = eventArgs.source;
+
+    Pager.TotalRows = parseInt(g.getRowCount());
+
+    
     Pager.PageSize = document.getElementById('totalRowGrid').value;
 
     Pager.TotalPages = Math.ceil(Pager.TotalRows/Pager.PageSize);
-
+   // alert(Pager.TotalRows+","+Pager.PageSize );
     //$('pager_total').innerHTML = Pager.TotalPages;
     document.getElementById('pager_total').innerHTML = Pager.TotalPages;
 

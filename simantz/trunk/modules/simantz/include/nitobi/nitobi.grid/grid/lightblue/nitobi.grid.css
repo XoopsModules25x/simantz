@@ -221,12 +221,13 @@
 
 .lightblue textarea {
 	/*NOTE: Inputs don't inherit front styles*/
-	color:#333333;
+	color:#000;
 	font-family:Tahoma, Arial, Verdana;
 	font-size: 12px;
 	padding:0px 2px 0px 4px;
-    border:0px solid #000000;
+        border:0px solid #000000;
 	width:100px;
+        height: 200px;
 }
 
 .lightblue .ntb-input-border { 
