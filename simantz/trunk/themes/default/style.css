@@ -1335,3 +1335,12 @@ tr.journalChild td {
     font-weight:bold;
 }
 /* end */
+
+
+
+#treeAccount {
+
+    vertical-align:top;
+    overflow: auto;
+    height: 500px;
+}
