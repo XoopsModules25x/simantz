@@ -1,7 +1,8 @@
 <?php
 include_once "system.php";
 include_once "../simantz/class/SelectCtrl.inc.php";
-include_once '../themes/default/style.css';
+$xoTheme->addStylesheet("$url/modules/system/class/gui/oxygen/css/navbar.css");
+        
 global $menuname;
 $ctrl= new SelectCtrl();
 

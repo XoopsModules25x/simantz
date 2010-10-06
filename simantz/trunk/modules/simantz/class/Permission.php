@@ -291,13 +291,17 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
         $prefix="";
         for($i=0;$i<$level;$i++)
         $prefix.="&nbsp;";
-        if($row['filename']!="")
+        if($row['filename']!=""){
            $linkname=" href='".$row['filename']."'";
-        else
+           $cssclass="class='menulink'";
+        }
+        else{
+            $cssclass="class='sub menulink'";
             $linkname="";
+        }
        
        
-        $output .= "<li><a $linkname class='menulink'>".$row['window_name']."</a><ul>";
+        $output .= "<li><a $linkname $cssclass>".$row['window_name']."</a><ul>";
 
 
         $output .= $this->showMenu($row['window_id'],$level,$uid,$module_id);
