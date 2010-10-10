@@ -121,7 +121,3 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
            <div style="float:right; text-align:right; v-align:top;color: #4D2222;">Organization $orgctrl </div>
        </div><br/><br/><br/>
 EOF;
-
-
-?>
-
