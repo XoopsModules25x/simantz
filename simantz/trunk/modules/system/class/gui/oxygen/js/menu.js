@@ -1,7 +1,7 @@
 // from: http://www.leigeber.com/2008/11/drop-down-menu/ 
 // by: Michael Leigeber ( www.leigeber.com )
    var menu=function(){
-	var t=15,z=50,s=1,a;
+	var t=15,z=50,s=2,a;
 	function dd(n){this.n=n; this.h=[]; this.c=[]}
 	dd.prototype.init=function(p,c){
 		a=c; var w=document.getElementById(p), s=w.getElementsByTagName('ul'), l=s.length, i=0;
