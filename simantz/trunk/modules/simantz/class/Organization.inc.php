@@ -144,7 +144,7 @@ class Organization
  <script language="javascript" type="text/javascript">
         
   function deleterecord(){
-    if(confirm("Save record?")){
+    if(confirm("Delete record?")){
     document.frmOrganzation.action.value="delete";
     document.frmOrganzation.submit();
     }
@@ -208,7 +208,7 @@ class Organization
 </script>
 <br>
 <div style="width: 970px;" id="statusDiv" align="center" class="ErrorstatusDiv"></div>
-<form onsubmit="return false" methreturn falseod="post" action="organization.php" name="frmOrganzation">
+<form onsubmit="return false" method="post" action="organization.php" name="frmOrganzation">
 <input name='organization_id' value='$this->organization_id' type='hidden'>
     <table>
       <tr>
@@ -398,7 +398,7 @@ EOF;
 
   public function deleteOrganization( $organization_id ) {
     	$this->log->showLog(2,"Warning: Performing delete organization id : $organization_id !");
-      include_once XOOPS_ROOT_PATH."/modules/simantz/class/Save_Data.inc.php";
+         include_once XOOPS_ROOT_PATH."/modules/simantz/class/Save_Data.inc.php";
           $save = new Save_Data();
           $this->fetchOrganization($organization_id);
 	if (!$save->DeleteRecord($this->tableorganization,"organization_id",$organization_id,$this->organization_code,1)){
