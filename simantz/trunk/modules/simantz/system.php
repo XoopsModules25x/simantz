@@ -90,6 +90,9 @@
         $tablefollowuptype=$tableprefix."followuptype";
         $tablefollowup=$tableprefix."followup";
 
+        $tablegroupuserslink=$tableprefix."groups_users_link";
+        $tablegroups=$tableprefix."groups";
+
 //	session_start();
 	$log=new Log();
 	$o = new Organization();
