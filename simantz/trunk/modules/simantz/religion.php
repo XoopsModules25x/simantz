@@ -1,4 +1,4 @@
- <?php
+<?php
 include "system.php";
 include_once '../simantz/class/Religion.inc.php';
 
