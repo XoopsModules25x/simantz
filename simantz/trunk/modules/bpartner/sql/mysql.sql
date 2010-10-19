@@ -213,3 +213,66 @@ CREATE TABLE address   (
   KEY   organization_id   (  organization_id  )
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+
+CREATE TABLE bpartner_quotation (
+  quotation_id int(11) NOT NULL AUTO_INCREMENT,
+  document_no int(20) NOT NULL,
+  organization_id int(11) NOT NULL,
+  documenttype smallint(1) NOT NULL,
+  document_date date NOT NULL,
+  amt decimal(12,2) NOT NULL,
+  currency_id int(11) NOT NULL,
+  exchangerate decimal(12,2) NOT NULL,
+  subtotal decimal(12,2) NOT NULL,
+  created datetime NOT NULL,
+  createdby int(11) NOT NULL,
+  updated datetime NOT NULL,
+  updatedby int(11) NOT NULL,
+  itemqty int(11) NOT NULL,
+  ref_no varchar(30) NOT NULL,
+  description varchar(255) NOT NULL,
+  bpartner_id int(11) NOT NULL,
+  iscomplete smallint(1) NOT NULL,
+  spquotation_prefix varchar(20) NOT NULL,
+  issotrx smallint(1) NOT NULL,
+  terms_id int(11) NOT NULL,
+  contacts_id int(11) NOT NULL,
+  preparedbyuid int(11) NOT NULL,
+  salesagentname varchar(70) NOT NULL,
+  isprinted smallint(1) NOT NULL,
+  localamt decimal(12,2) NOT NULL,
+  address_text text NOT NULL,
+  address_id int(11) NOT NULL,
+  quotation_title varchar(100) NOT NULL,
+  note text NOT NULL,
+  quotation_status char(1) NOT NULL,
+  PRIMARY KEY (quotation_id),
+  UNIQUE KEY uniquedocumentno (issotrx,document_no),
+  KEY document_no (document_no),
+  KEY bpartner_id (bpartner_id)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table sim_bpartner_quotationline
+--
+
+CREATE TABLE bpartner_quotationline (
+  quotationline_id int(11) NOT NULL AUTO_INCREMENT,
+  quotation_id int(11) NOT NULL,
+  subject varchar(60) NOT NULL,
+  amt decimal(12,2) NOT NULL,
+  qty decimal(12,2) NOT NULL,
+  description text NOT NULL,
+  uom varchar(10) NOT NULL,
+  unitprice decimal(12,4) NOT NULL,
+  seqno int(11) NOT NULL,
+  uprice decimal(12,4) NOT NULL,
+  created datetime NOT NULL,
+  createdby int(11) NOT NULL,
+  updated datetime NOT NULL,
+  updatedby int(11) NOT NULL,
+  PRIMARY KEY (quotationline_id),
+  KEY subject (subject)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;

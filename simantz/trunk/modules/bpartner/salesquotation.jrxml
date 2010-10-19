@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.100000000000001"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="211"/>
+	<parameter name="quotation_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[new java.lang.Integer(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     concat(sim_address.`address_street`,"
+",   sim_address.`address_postcode` , " ",sim_address.`address_city`,"
+",   sim_region.`region_name`, " ",sim_country_A.`country_name`)AS sim_address_address_street,
+     sim_address.`tel_1` AS sim_address_tel_1,
+     sim_address.`tel_2` AS sim_address_tel_2,
+     sim_address.`fax` AS sim_address_fax,
+     concat("Tel : ",sim_address.`tel_1`,"/",sim_address.`tel_2`,"  Fax: ",sim_address.`fax`)as sim_address_officecontact,
+     concat(sim_bpartner_quotation.`spquotation_prefix`,sim_bpartner_quotation.`document_no`) AS sim_bpartner_quotation_quotation_no,
+     concat(" ",sim_bpartner_quotation.`document_date`)AS sim_bpartner_quotation_quotation_date,
+     sim_bpartner_quotation.iscomplete,
+     sim_bpartner_quotationline.`subject` AS sim_bpartner_quotationline_item_name,
+     sim_bpartner_quotationline.`description` AS sim_bpartner_quotationline_linedesc,
+     sim_bpartner_quotationline.`unitprice` AS sim_bpartner_quotationline_unitprice,
+     sim_bpartner_quotationline.`amt` AS sim_bpartner_quotationline_line_amt,
+     sim_bpartner_quotationline.`qty` AS sim_bpartner_quotationline_line_enterqty,
+     sim_bpartner_quotationline.uom AS sim_simbiz_uom_uom_code,
+     sim_bpartner_quotation.`ref_no` AS sim_bpartner_quotation_reference_no,
+     sim_bpartner_quotation.`note` AS sim_bpartner_quotation_salesquotation_remarks,
+     sim_bpartner_quotation.`subtotal` AS sim_bpartner_quotation_salesquotation_subtotal,
+     sim_bpartner_quotation.`description` AS sim_bpartner_quotation_salesquotation_description,
+     sim_users.`name` AS sim_users_name,
+     sim_country.`country_name` AS sim_country_country_name,
+     sim_organization.`organization_code` AS sim_organization_organization_code,
+     sim_organization.`tel_1` AS sim_organization_tel_1,
+     sim_organization.`tel_2` AS sim_organization_tel_2,
+     sim_organization.`organization_name` AS sim_organization_organization_name,
+     sim_organization.`companyno` AS sim_organization_companyno,
+     concat(sim_organization.`organization_name`,"(",sim_organization.`companyno`,")")AS sim_organization_organization_title,
+     sim_bpartner.`bpartner_name` AS sim_bpartner_bpartner_name,
+     sim_organization.`street1` AS sim_organization_street1,
+     sim_organization.`street2` AS sim_organization_street2,
+     sim_organization.`street3` AS sim_organization_street3,
+     sim_organization.`city` AS sim_organization_city,
+	sim_bpartner_quotation.address_text,
+     sim_organization.`state` AS sim_organization_state,
+     concat(sim_organization.`street1`,sim_organization.`street2`,sim_organization.`street3`,sim_organization.`postcode`,sim_organization.`city`,sim_organization.`state`,sim_country_A.`country_name`)as sim_organization_address,
+     concat("Tel :",sim_organization.`tel_1`,"/",sim_organization.`tel_2`,"  Fax:",sim_organization.`fax`,"  Website:",sim_organization.`url`," Email: ",sim_organization.`email`)as sim_organization_contacts,
+     sim_organization.`url` AS sim_organization_url,
+     sim_organization.`email` AS sim_organization_email,
+     sim_organization.`postcode` AS sim_organization_postcode,
+     sim_terms.`terms_name` AS sim_terms_terms_name,
+     sim_contacts.`contacts_name` AS sim_contacts_contacts_name,
+     sim_contacts.`hpno` AS sim_contacts_hpno,
+     concat("Attn :  ",sim_contacts.`greeting`," ",sim_contacts.`contacts_name`," / ",sim_contacts.`hpno`)AS sim_contacts_no,
+     sim_bpartner_quotationline.`uprice` AS sim_bpartner_quotationline_unitprice,
+     sim_bpartner_quotationline.`qty` AS sim_bpartner_quotationline_line_enterqty,
+    `sim_currency`.currency_code
+FROM
+     `sim_bpartner` sim_bpartner INNER JOIN `sim_bpartner_quotation` sim_bpartner_quotation ON sim_bpartner.`bpartner_id` = sim_bpartner_quotation.`bpartner_id`
+     INNER JOIN `sim_bpartner_quotationline` sim_bpartner_quotationline ON sim_bpartner_quotation.`quotation_id` = sim_bpartner_quotationline.`quotation_id`
+     INNER JOIN `sim_address` sim_address ON sim_bpartner_quotation.`address_id` = sim_address.`address_id`
+     INNER JOIN `sim_users` sim_users ON sim_bpartner_quotation.`preparedbyuid` = sim_users.`uid`
+     INNER JOIN `sim_organization` sim_organization ON sim_bpartner_quotation.`organization_id` = sim_organization.`organization_id`
+     INNER JOIN `sim_terms` sim_terms ON sim_bpartner_quotation.`terms_id` = sim_terms.`terms_id`
+     INNER JOIN `sim_contacts` sim_contacts ON sim_bpartner_quotation.`contacts_id` = sim_contacts.`contacts_id`
+     INNER JOIN `sim_country` sim_country_A ON sim_organization.`country_id` = sim_country_A.`country_id`
+     INNER JOIN `sim_country` sim_country ON sim_address.`country_id` = sim_country.`country_id`
+     INNER JOIN `sim_region` sim_region ON sim_address.`region_id` = sim_region.`region_id`
+     INNER JOIN `sim_currency` sim_currency on sim_currency.`currency_id`=sim_bpartner_quotation.`currency_id`
+
+WHERE
+     sim_bpartner_quotation.`quotation_id` =$P{quotation_id} and sim_bpartner_quotation.issotrx=1]]>
+	</queryString>
+	<field name="sim_address_address_street" class="java.lang.String"/>
+	<field name="sim_address_tel_1" class="java.lang.String"/>
+	<field name="sim_address_tel_2" class="java.lang.String"/>
+	<field name="sim_address_fax" class="java.lang.String"/>
+	<field name="sim_address_officecontact" class="java.lang.String"/>
+	<field name="sim_bpartner_quotation_quotation_no" class="java.lang.Object"/>
+	<field name="sim_bpartner_quotation_quotation_date" class="java.lang.Object"/>
+	<field name="iscomplete" class="java.lang.Integer"/>
+	<field name="sim_bpartner_quotationline_item_name" class="java.lang.String"/>
+	<field name="sim_bpartner_quotationline_linedesc" class="java.lang.String"/>
+	<field name="sim_bpartner_quotationline_unitprice" class="java.math.BigDecimal"/>
+	<field name="sim_bpartner_quotationline_line_amt" class="java.math.BigDecimal"/>
+	<field name="sim_bpartner_quotationline_line_enterqty" class="java.math.BigDecimal"/>
+	<field name="sim_simbiz_uom_uom_code" class="java.lang.String"/>
+	<field name="sim_bpartner_quotation_reference_no" class="java.lang.String"/>
+	<field name="sim_bpartner_quotation_salesquotation_remarks" class="java.lang.String"/>
+	<field name="sim_bpartner_quotation_salesquotation_subtotal" class="java.math.BigDecimal"/>
+	<field name="sim_bpartner_quotation_salesquotation_description" class="java.lang.String"/>
+	<field name="sim_users_name" class="java.lang.String"/>
+	<field name="sim_country_country_name" class="java.lang.String"/>
+	<field name="sim_organization_organization_code" class="java.lang.String"/>
+	<field name="sim_organization_tel_1" class="java.lang.String"/>
+	<field name="sim_organization_tel_2" class="java.lang.String"/>
+	<field name="sim_organization_organization_name" class="java.lang.String"/>
+	<field name="sim_organization_companyno" class="java.lang.String"/>
+	<field name="sim_organization_organization_title" class="java.lang.String"/>
+	<field name="sim_bpartner_bpartner_name" class="java.lang.String"/>
+	<field name="sim_organization_street1" class="java.lang.String"/>
+	<field name="sim_organization_street2" class="java.lang.String"/>
+	<field name="sim_organization_street3" class="java.lang.String"/>
+	<field name="sim_organization_city" class="java.lang.String"/>
+	<field name="address_text" class="java.lang.String"/>
+	<field name="sim_organization_state" class="java.lang.String"/>
+	<field name="sim_organization_address" class="java.lang.String"/>
+	<field name="sim_organization_contacts" class="java.lang.String"/>
+	<field name="sim_organization_url" class="java.lang.String"/>
+	<field name="sim_organization_email" class="java.lang.String"/>
+	<field name="sim_organization_postcode" class="java.lang.String"/>
+	<field name="sim_terms_terms_name" class="java.lang.String"/>
+	<field name="sim_contacts_contacts_name" class="java.lang.String"/>
+	<field name="sim_contacts_hpno" class="java.lang.String"/>
+	<field name="sim_contacts_no" class="java.lang.String"/>
+	<field name="currency_code" class="java.lang.String"/>
+	<background>
+		<band height="802" splitType="Stretch">
+			<rectangle>
+				<reportElement x="10" y="180" width="544" height="457"/>
+			</rectangle>
+			<line>
+				<reportElement x="26" y="180" width="1" height="440"/>
+			</line>
+			<line>
+				<reportElement x="481" y="180" width="1" height="440"/>
+			</line>
+			<line>
+				<reportElement x="335" y="180" width="1" height="457"/>
+			</line>
+			<line>
+				<reportElement x="401" y="180" width="1" height="440"/>
+			</line>
+			<line>
+				<reportElement x="10" y="620" width="544" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="240" y="622" width="86" height="15"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="205" splitType="Stretch">
+			<staticText>
+				<reportElement x="393" y="121" width="64" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[QTT No:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="456" y="62" width="89" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotation_quotation_date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="393" y="62" width="66" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="251" y="61" width="129" height="20"/>
+				<textElement>
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Sales Quotation]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="15" y="63" width="223" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_bpartner_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="15" y="77" width="223" height="14" isPrintWhenDetailOverflows="true"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address_text}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="181" width="27" height="14"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="26" y="181" width="309" height="14"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Item / Description]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="402" y="181" width="78" height="14"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Qty]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="335" y="181" width="67" height="14"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[U. Price]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="181" width="75" height="14"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<line>
+				<reportElement x="11" y="56" width="538" height="1"/>
+			</line>
+			<textField>
+				<reportElement x="80" y="23" width="475" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_organization_address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="39" width="475" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_organization_contacts}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="459" y="121" width="87" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotation_quotation_no}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="10" y="204" width="544" height="1"/>
+			</line>
+			<textField evaluationTime="Report">
+				<reportElement x="524" y="101" width="22" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="393" y="82" width="66" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Terms:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="458" y="82" width="90" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_terms_terms_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="458" y="101" width="20" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="393" y="102" width="66" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Page :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="488" y="102" width="28" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Of]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="17" y="148" width="240" height="17"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_contacts_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="17" y="164" width="240" height="17"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_address_officecontact}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="2" width="462" height="20"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_organization_organization_title}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="22" y="5" width="45" height="45"/>
+				<imageExpression class="java.lang.String"><![CDATA["../simantz/images/logobk.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="393" y="140" width="64" height="19"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ref. No:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="459" y="140" width="87" height="20"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotation_reference_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="260" y="82" width="100" height="20">
+					<printWhenExpression><![CDATA[$F{iscomplete}=="0"]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA["**DRAFT**"]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="37" splitType="Stretch">
+			<textField>
+				<reportElement x="450" y="0" width="30" height="15"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_simbiz_uom_uom_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="0" width="308" height="15"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotationline_item_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="26" y="14" width="308" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotationline_linedesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="480" y="0" width="75" height="15"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sim_bpartner_quotationline_line_amt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="0" width="16" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="402" y="0" width="48" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sim_bpartner_quotationline_line_enterqty}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="335" y="0" width="67" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sim_bpartner_quotationline_unitprice}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="181" splitType="Stretch">
+			<staticText>
+				<reportElement x="17" y="83" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Prepared By:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="17" y="151" width="180" height="1"/>
+			</line>
+			<line>
+				<reportElement x="362" y="150" width="180" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="362" y="97" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Confirmed By]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="197" y="60" width="145" height="20"/>
+				<textElement/>
+				<text><![CDATA[== Continue next page ==]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="4" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remarks:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="151" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Customer:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="164" width="161" height="16"/>
+				<textElement/>
+				<text><![CDATA[(Please chop,sign and return)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="17" y="153" width="234" height="16"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_users_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="179">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="14" y="38" width="535" height="12"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotation_salesquotation_description}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="90" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Prepared By:]]></text>
+			</staticText>
+			<line>
+				<reportElement x="362" y="150" width="180" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="361" y="90" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Confirmed By]]></text>
+			</staticText>
+			<line>
+				<reportElement x="17" y="150" width="180" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="16" y="24" width="100" height="14"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Remarks:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="149" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Customer:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="362" y="162" width="161" height="16"/>
+				<textElement/>
+				<text><![CDATA[(Please chop,sign and return)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="17" y="153" width="234" height="16"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_users_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="2" width="53" height="15"/>
+				<textElement textAlignment="Right">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currency_code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="463" y="2" width="92" height="15"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sim_bpartner_quotation_salesquotation_subtotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -10,7 +10,7 @@ class BPSelectCtrl extends SelectCtrl{
 
 
 public function getSelectBPartner($id,$showNull='N',$onchangefunction="",$ctrlname="bpartner_id",$wherestr="",$showLastBalance='N',
-		$ctrlid="bpartner_id",$width="") {
+		$ctrlid="searchbpartner_id",$width="") {
 	global $tablebpartner,$defaultorganization_id;
 	 $sql="SELECT bpartner_id,bpartner_name,currentbalance
 		from $tablebpartner where (bpartner_id=$id
