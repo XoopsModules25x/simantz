@@ -10,6 +10,74 @@ $s = new XoopsSecurity();
 $action=$_REQUEST['action'];
 $isadmin=$xoopsUser->isAdmin();
 $uid = $xoopsUser->getVar('uid');
+//
+
+
+$sqllastquote="SELECT bp.bpartner_id,bp.bpartner_no,bp.bpartner_name,q.subtotal,q.quotation_id,
+        q.document_date,concat(spquotation_prefix,q.document_no) as quotation_no,quotation_status,iscomplete
+            from sim_bpartner bp
+    inner join sim_bpartner_quotation q on bp.bpartner_id=q.bpartner_id
+    where  DATE_SUB(CURDATE(),INTERVAL 10 DAY)<= q.document_date ";
+
+$lastquotelist=<<< EOF
+  <table class="tblListRight">
+    <tr>
+    <td class="tdListRightTitle" colspan="6">Previous Quotation ($showpreviousquoteinday days)</td>
+    </tr>
+    <tr>
+    <td class="tdListRightHeader">No.</td>
+    <td class="tdListRightHeader">Date</td>
+    <td class="tdListRightHeader">B.Partner</td>
+    <td class="tdListRightHeader">Amount</td>
+    <td class="tdListRightHeader">Complete</td>
+    <td class="tdListRightHeader">Status</td>
+
+    </tr>
+
+EOF;
+$querlastquote=$xoopsDB->query($sqllastquote);
+$rowtype='odd';
+while($row=$xoopsDB->fetchArray($querlastquote)){
+    $bpartner_no=$row['bpartner_no'];
+    $bpartner_id=$row['bpartner_id'];
+    $bpartner_name=$row['bpartner_name'];
+    $quotation_no=$row['quotation_no'];
+    $subtotal=$row['subtotal'];
+    $document_date=$row['document_date'];
+    $iscomplete=$row['iscomplete'];
+    $quotation_id=$row['quotation_id'];
+    if($iscomplete==1){
+        $iscomplete="Y";
+        $viewmethod="view";
+    }
+    else{
+        $iscomplete="N";
+        $viewmethod="edit";
+    }
+
+    if($rowtype=='odd')
+        $rowtype='even';
+    else
+        $rowtype='odd';
+
+    $quotation_status=$row['quotation_status'];
+  $lastquotelist.="<tr>
+    <td class='$rowtype'><a href='salesquotation.php?action=$viewmethod&quotation_id=$quotation_id'>$quotation_no</a></td>
+    <td class='$rowtype'>$document_date</td>
+    <td class='$rowtype'><a href='bpartner.php?action=viewsummary&bpartner_id=$bpartner_id'>$bpartner_name</a></td>
+    <td class='$rowtype'>$subtotal</td>
+        <td class='$rowtype'>$iscomplete</td>
+        <td class='$rowtype'>$quotation_status</td>
+        
+    </tr>";
+
+}
+$lastquotelist.="</table>";
+
+
+
+
+
 
 $sqlbpartnerlist="SELECT bp.bpartner_id,bp.bpartner_no,bp.bpartner_name, bp.created,g.bpartnergroup_name from sim_bpartner bp
     inner join sim_bpartnergroup g on bp.bpartnergroup_id=g.bpartnergroup_id
@@ -97,7 +165,7 @@ echo <<< EOF
 <tr>
 <td  style=" text-align:center">
  <input name='btnSearchBpartner' style='height:30px; width=400px' type='button' value='Search Business Partner' onclick=javascript:window.location='bpartner.php?action=search'>
-
+$lastquotelist<br/>
 $newbpartnerlist
 
 </td>
