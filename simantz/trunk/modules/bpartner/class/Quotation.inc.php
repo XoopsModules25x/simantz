@@ -326,7 +326,7 @@ $noperm
           <input type="button" value="Reload" onclick=javascript:reloadQuotation()>
             <input type="button" value="Preview" onclick=javascript:previewQuotation()>
         <input name='quotation_id' id='quotation_id'  value='$this->quotation_id'  title='quotation_id' type='hidden'>
-        <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='1hidden'>
+        <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
             </td>
               <td class="head">Success or Failed</td>
             <td class="even"><select name="quotation_status" id="quotation_status">
