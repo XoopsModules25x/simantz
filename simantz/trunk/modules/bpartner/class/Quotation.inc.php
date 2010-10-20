@@ -315,10 +315,7 @@ $noperm
             </tr>
   <tr>
     <td class="head" colspan='2'>
-            <a onclick='javascript:addLine(1)'>Add Line [+]</a>
-              
-
-              
+            <a onclick='javascript:addLine(1)'>Add Line [+]</a>     
         <input name='save' onclick='saverecord(0)' type='submit' id='submit' value='Save'>
         <input name='save' onclick='saverecord(1);' type='submit' id='submit' value='Complete'>
         <input name='save' onclick='deleterecord()' type='submit' id='delete' value='Delete'>
