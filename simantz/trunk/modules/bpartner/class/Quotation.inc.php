@@ -271,7 +271,7 @@ $noperm
           <td class="even">
               <ntb:Combo id="cmbbpartner_id" Mode="classic" theme="$nitobicombothemes" InitialSearch="$this->bpartner_name" onselectevent="chooseBPartner();">
              <ntb:ComboTextBox Width="250px" DataFieldIndex=1 ></ntb:ComboTextBox>
-             <ntb:ComboList Width="300px" Height="200px" DatasourceUrl="../bpartner/bpartnerlookup.php?action=searchbpartnercombo&showNull=Y&bpartnertype=$bpartnertype&bpartner_id=$this->bpartner_id" PageSize="25" >
+             <ntb:ComboList Width="300px" Height="200px" DatasourceUrl="../bpartner/bpartnerlookup.php?action=searchbpartnercombo&showNull=Y&bpartner_id=$this->bpartner_id" PageSize="25" >
              <ntb:ComboColumnDefinition Width="130px" DataFieldIndex=1 ></ntb:ComboColumnDefinition>
              <ntb:ComboMenu icon="images/add.gif" OnClickEvent="window.open('../bpartner/bpartner.php')" text=" &nbsp;Add product...">
              </ntb:ComboList>
@@ -337,7 +337,7 @@ $noperm
     $grid
            <div style="width:895px;text-align:right" >
             Total: <label id='lblsubtotal'><input id='subtotal' size="10" name='subtotal' readonly="readonly" value='$this->subtotal'></label><br/>
-          <input id='localamt' size="5" type='1hidden' name='localamt' readonly="readonly"  value='$this->localamt'>
+          <input id='localamt' size="5" type='hidden' name='localamt' readonly="readonly"  value='$this->localamt'>
             </div>
 </div>
 </td></tr>
