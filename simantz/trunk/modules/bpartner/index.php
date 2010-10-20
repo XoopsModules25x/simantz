@@ -14,9 +14,11 @@ $uid = $xoopsUser->getVar('uid');
 
 
 $sqllastquote="SELECT bp.bpartner_id,bp.bpartner_no,bp.bpartner_name,q.subtotal,q.quotation_id,
-        q.document_date,concat(spquotation_prefix,q.document_no) as quotation_no,quotation_status,iscomplete
+        q.document_date,concat(spquotation_prefix,q.document_no) as quotation_no,
+        quotation_status,iscomplete,c.currency_code
             from sim_bpartner bp
     inner join sim_bpartner_quotation q on bp.bpartner_id=q.bpartner_id
+    inner join sim_currency c on c.currency_id=q.currency_id
     where  DATE_SUB(CURDATE(),INTERVAL 10 DAY)<= q.document_date ";
 
 $lastquotelist=<<< EOF
@@ -46,6 +48,7 @@ while($row=$xoopsDB->fetchArray($querlastquote)){
     $document_date=$row['document_date'];
     $iscomplete=$row['iscomplete'];
     $quotation_id=$row['quotation_id'];
+    $currency_code=$row['currency_code'];
     if($iscomplete==1){
         $iscomplete="Y";
         $viewmethod="view";
@@ -65,7 +68,7 @@ while($row=$xoopsDB->fetchArray($querlastquote)){
     <td class='$rowtype'><a href='salesquotation.php?action=$viewmethod&quotation_id=$quotation_id'>$quotation_no</a></td>
     <td class='$rowtype'>$document_date</td>
     <td class='$rowtype'><a href='bpartner.php?action=viewsummary&bpartner_id=$bpartner_id'>$bpartner_name</a></td>
-    <td class='$rowtype'>$subtotal</td>
+    <td class='$rowtype'>$currency_code $subtotal</td>
         <td class='$rowtype'>$iscomplete</td>
         <td class='$rowtype'>$quotation_status</td>
         
@@ -163,16 +166,17 @@ echo <<< EOF
 
 <table class="tblMainHR">
 <tr>
-<td  style=" text-align:center">
- <input name='btnSearchBpartner' style='height:30px; width=400px' type='button' value='Search Business Partner' onclick=javascript:window.location='bpartner.php?action=search'>
-$lastquotelist<br/>
-$newbpartnerlist
-
+<td  style=" text-align:center;width=50%">
+ <input name='btnSearchBpartner' style='height:30px; width=400px' type='button' value='Search Business Partner' onclick=javascript:window.location='bpartner.php?action=search'><br/>
+<img src="chartsalequoteqty_6month.php">
+<img src="chartsalequoteamt_6month.php">
 </td>
 
-<td >
+<td style="width=50%">
 
  <input name='btnSearchBpartner' style='height:30px; width=400px'  type='button' value='Add Business Partner' onclick=javascript:window.location='bpartner.php'>
+$lastquotelist<br/>
+$newbpartnerlist<br/>
 
     $followuplist
 </td>

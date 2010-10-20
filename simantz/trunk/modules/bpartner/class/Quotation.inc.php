@@ -340,7 +340,7 @@ $noperm
     $grid
            <div style="width:895px;text-align:right" >
             Total: <label id='lblsubtotal'><input id='subtotal' size="10" name='subtotal' readonly="readonly" value='$this->subtotal'></label><br/>
-          <input id='localamt' size="5" type='hidden' name='localamt' readonly="readonly"  value='$this->localamt'>
+          <input id='localamt' size="5" type='1hidden' name='localamt' readonly="readonly"  value='$this->localamt'>
             </div>
 </div>
 </td></tr>
@@ -567,7 +567,7 @@ public function showSearchGrid($wherestring){
 
     
       ////$sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-       $sql = "SELECT i.quotation_id,  concat(i.spquotation_prefix,i.document_no) as quotation_no, i.document_date, i.amt, i.iscomplete,  ".
+       $sql = "SELECT i.quotation_id,  concat(i.spquotation_prefix,i.document_no) as quotation_no, i.document_date, i.subtotal, i.iscomplete,  ".
                 " bp.bpartner_id, bp.bpartner_no,bp.bpartner_name, t.terms_name, c.currency_code, u.uname,o.organization_code,i.quotation_status  ".
             "  FROM sim_bpartner_quotation i ".
               " left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id ".
@@ -586,7 +586,7 @@ public function showSearchGrid($wherestring){
         $getHandler->DefineField("bpartner_id");
         $getHandler->DefineField("quotation_no");
         $getHandler->DefineField("document_date");
-     	$getHandler->DefineField("amt");
+     	$getHandler->DefineField("subtotal");
         $getHandler->DefineField("iscomplete");
      	$getHandler->DefineField("bpartner_no");
      	$getHandler->DefineField("bpartner_name");
@@ -625,7 +625,7 @@ public function showSearchGrid($wherestring){
              $getHandler->DefineRecordFieldValue("bpartner_id",$row['bpartner_id']);
              $getHandler->DefineRecordFieldValue("quotation_no", $row['quotation_no']);
              $getHandler->DefineRecordFieldValue("document_date", $row['document_date']);
-             $getHandler->DefineRecordFieldValue("amt", $row['amt']);
+             $getHandler->DefineRecordFieldValue("subtotal", $row['subtotal']);
 
              $getHandler->DefineRecordFieldValue("iscomplete",$iscomplete);
              $getHandler->DefineRecordFieldValue("bpartner_no",$row['bpartner_no']);
@@ -1298,7 +1298,7 @@ return false;
        <ntb:textcolumn  classname="{\$rh}" width="200" label="BPartner"  xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="80" label="Terms"  xdatafld="terms_name"   editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="60" label="Currency"  xdatafld="currency_code"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="amt"   editable="false" ></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="subtotal"   editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="70" label="Complete"  xdatafld="iscomplete"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="70" label="Status"  xdatafld="quotation_status"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="40" label="Edit"  xdatafld="edit"  oncellclickevent="javascript:viewquotation()">
@@ -1576,6 +1576,7 @@ global $defaultcurrency_id,$url;
                     
               }
               document.getElementById("subtotal").value=total.toFixed(2);
+          updateCurrency();
          
           }
           

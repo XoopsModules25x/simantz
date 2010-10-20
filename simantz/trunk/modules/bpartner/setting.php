@@ -4,3 +4,6 @@ $approve_id="2";
 $homepagefollowupday=3;
 $spquotation_prefix="SQ";
 $showpreviousquoteinday=30;
+$minquoteqtyinmonth=5;
+$minquoteamtinmonth=100;
+
