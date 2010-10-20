@@ -166,17 +166,17 @@ echo <<< EOF
 
 <table class="tblMainHR">
 <tr>
-<td  style=" text-align:center;width=50%">
- 
+<td  style=" text-align:center;width=40%">
+<input name='btnSearchBpartner' style='height:20px; width=100px' type='button' value='Search B/Partner' onclick=javascript:window.location='bpartner.php?action=search'>
+<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Add B/Partner' onclick=javascript:window.location='bpartner.php'>
+<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='New Quotation' onclick=javascript:window.location='salesquotation.php'>
+<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Search Quotation' onclick=javascript:window.location='salesquotation.php?action=search'>
+<br/>
 <img src="chartsalequoteqty_6month.php"><br/>
 <img src="chartsalequoteamt_6month.php">
 </td>
 
-<td style="width=50%">
-<input name='btnSearchBpartner' style='height:20px; width=100px' type='button' value='Search B/Partner' onclick=javascript:window.location='bpartner.php?action=search'>
- <input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Add B/Partner' onclick=javascript:window.location='bpartner.php'>
-<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Add Quotation' onclick=javascript:window.location='salesquotation.php'>
-<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Search Quotation' onclick=javascript:window.location='salesquotation.php?action=search'>
+<td style="width=60%">
 $lastquotelist<br/>
 $newbpartnerlist<br/>
 
