@@ -86,7 +86,7 @@
   
  // Draw the legend
 	 $Test->setFontProperties("../simantz/class/pchart/Fonts/tahoma.ttf",8);
-	 $Test->drawLegend(510,150,$DataSet->GetDataDescription(),254,254,254);
+	 $Test->drawLegend(10,150,$DataSet->GetDataDescription(),254,254,254);
  // Render the chart
 	$photofile=$uploadpath."chartsalequoteamt_6month.png";
 
