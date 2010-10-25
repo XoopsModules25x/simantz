@@ -1143,6 +1143,7 @@ class PHPJasperXML {
                     $checkpoint=$this->arraydetail[0]["y_axis"];
                     $biggestY = 0;
                     $tempY=$this->arraydetail[0]["y_axis"];
+                     $this->group_count=0;
                 }
 
                 foreach($this->arraydetail as $compare)	//this loop is to count possible biggest Y of the coming row
@@ -1153,11 +1154,11 @@ class PHPJasperXML {
                             //check group footer existed or not
 
                             if(isset($this->arraygroup[$this->group_name]["groupFooter"])&&(($checkpoint+($compare["height"]*$txt))>($this->arrayPageSetting[pageHeight]-$this->arraygroup["$this->group_name"][groupFooter][0]["height"]-$this->arrayPageSetting["bottomMargin"]))) {
-                                $this->showGroupHeader();
+                             //   $this->showGroupHeader();
                                 $this->showGroupFooter();
                                 $this->pageFooter();
-                                $this->pdf->AddPage();
-                                $this->background();
+                               // $this->pdf->AddPage();
+                             //   $this->background();
                                 $this->pageHeaderNewPage();
 
                                 $checkpoint=$this->arraydetail[0]["y_axis"];
@@ -1168,10 +1169,10 @@ class PHPJasperXML {
                             elseif(isset($this->arraypageFooter)&&(($checkpoint+($compare["height"]*($this->NbLines($compare["width"],$txt))))>($this->arrayPageSetting["pageHeight"]-$this->arraypageFooter[0]["height"]-$this->arrayPageSetting["bottomMargin"]))) {
                                 $this->showGroupFooter();
                                 $this->pageFooter();
-                                $this->pdf->AddPage();
+                              //  $this->pdf->AddPage();
                                 $this->pageHeaderNewPage();
-                                $this->showGroupHeader();
-                                $this->background();
+                           //     $this->showGroupHeader();
+                             //   $this->background();
                                 $headerY = $this->arrayPageSetting["topMargin"]+$this->arraypageHeader[0]["height"];
 
                                 $checkpoint=$this->arraydetail[0]["y_axis"];
@@ -1183,11 +1184,11 @@ class PHPJasperXML {
 
                                 $this->showGroupFooter();
                                 $this->lastPageFooter();
-                                $this->pdf->AddPage();
-                                $this->background();
+                             //   $this->pdf->AddPage();
+                               // $this->background();
                                 $this->pageHeaderNewPage();
 
-                                $this->showGroupHeader();
+                              //  $this->showGroupHeader();
                                 $checkpoint=$this->arraydetail[0]["y_axis"];
                                 $biggestY=0;
                                 $tempY=$this->arraydetail[0]["y_axis"];
@@ -1202,6 +1203,10 @@ class PHPJasperXML {
                         case "report_count":
                             $this->report_count++;
                             break;
+                               case "group_count":
+                            $this->group_count++;
+
+                            break;
                         default:
                             $this->display($compare,$checkpoint);
 
@@ -1215,11 +1220,11 @@ class PHPJasperXML {
                 {
                     $this->pageFooter();
 
-                    $this->pdf->AddPage();
-                    $this->background();
+              //      $this->pdf->AddPage();
+                //    $this->background();
                     $headerY = $this->arrayPageSetting["topMargin"]+$this->arraypageHeader[0]["height"];
                     $this->pageHeaderNewPage();
-                    $this->showGroupHeader();
+                  //  $this->showGroupHeader();
 
                     $checkpoint=$this->arraydetail[0]["y_axis"];
                     $biggestY=0;
@@ -1270,9 +1275,11 @@ class PHPJasperXML {
         }
         $this->global_pointer--;
         if(isset($this->arraylastPageFooter)) {
+             $this->showGroupFooter();
             $this->lastPageFooter();
         }
         else {
+             $this->showGroupFooter();
             $this->pageFooter();
         }
 
