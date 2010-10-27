@@ -48,6 +48,7 @@ $token=$_POST['token'];
   $o->organization_code = $_POST['organization_code'];
   $o->organization_name = $_POST['organization_name'];
   $o->companyno = $_POST['companyno'];
+  $o->description = $_POST['description'];
  
   $o->isactive = $_POST['isactive'];
   $o->street1 = $_POST['street1'];
