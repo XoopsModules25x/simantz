@@ -76,7 +76,7 @@ class Organization
    */
   public function getSQLStr_AllOrganization( $wherestring,  $orderbystring,  $startlimitno ) {
      $sql= "SELECT organization_id,organization_code,organization_name,tel_1,tel_2,fax," .
-	"email,url,isactive,country_id,companyno
+	"email,url,isactive,country_id,companyno, description
       FROM $this->tableorganization $wherestring $orderbystring";
 	$this->log->showLog(4,"Calling getSQLStr_AllOrganization:" .$sql);
    return $sql;
@@ -113,6 +113,7 @@ class Organization
 		$this->seqno=10;
 		$this->url="";
 		$this->groupid=0;
+                $this->description="";
 		}
 		$savectrl="<input name='btnsave' value='save' type='submit' onclick='save()'>";
 		$checked="CHECKED";
@@ -203,6 +204,7 @@ class Organization
      document.forms['frmOrganzation'].postcode.value="";
      document.forms['frmOrganzation'].country_id.value="0";
      document.forms['frmOrganzation'].currency_id.value="0";
+     document.forms['frmOrganzation'].description.value="";
    }
 
 </script>
@@ -284,6 +286,12 @@ class Organization
         <td class='head'>Seq No</td>
         <td class='odd'><input maxlength="3" size="3" name="seqno" value="$this->seqno"></td>
      </tr>
+     <tr colspan='4'>
+        <td class='head'>Description</td>
+        <td class='odd'><textarea name='description' id='description' rows='10' cols='50'>$this->description</textarea></td>
+        <td class='head'>&nbsp;</td>
+        <td class='odd'>&nbsp;</td>
+     </tr>
             
      <tr>
         <td></td>
@@ -293,6 +301,7 @@ class Organization
         </td> </form><td>
         <td> $deletectrl</td>
       </tr>
+
 
     </tbody>
   </table>
@@ -319,14 +328,14 @@ EOF;
 
       $arrfield=array("organization_name","organization_code","tel_1","tel_2","fax","url","email",
 	"updated","updatedby","isactive","groupid","currency_id","street1", "street2","street3","postcode","country_id",
-	"city","state","seqno","companyno","companyname");
+	"city","state","seqno","companyno","companyname","description");
        $arrfieldtype=array("%s","%s","%s","%s","%s","%s","%s",
 	"%s","%d","%d","%d","%d","%s", "%s","%s","%s","%d",
-	"%s","%s","%d","%s","%s");
+	"%s","%s","%d","%s","%s","%s");
 
     $arrvalue=array($this->organization_name,$this->organization_code,$this->tel_1,$this->tel_2,$this->fax,$this->url,$this->email,
 	$timestamp,$this->updatedby,$this->isactive,$this->groupid,$this->currency_id,$this->street1, $this->street2,$this->street3,
-            $this->postcode,$this->country_id,$this->city,$this->state,$this->seqno,$this->companyno,$this->companyname);
+            $this->postcode,$this->country_id,$this->city,$this->state,$this->seqno,$this->companyno,$this->companyname, $this->description);
    
 
  $controlvalue=$this->organization_code;
@@ -377,15 +386,15 @@ EOF;
    $arrfield=array("organization_name","organization_code","street1","street2",
 		"street3","postcode","city","state","country_id","tel_1","tel_2","fax",
                  "url","email","isactive", "created","createdby","updated","updatedby",
-		"seqno","groupid","currency_id","companyno","companyname");
+		"seqno","groupid","currency_id","companyno","companyname","description");
     $arrfieldtype=array("%s","%s","%s","%s",
 		"%s","%s","%s","%s","%d","%s","%s","%s",
                 "%s","%s","%d", "%s","%d","%s","%d",
-		"%d","%d","%d","%s","%s");
+		"%d","%d","%d","%s","%s","%s");
      $arrvalue=array($this->organization_name,$this->organization_code,$this->street1,$this->street2,
 		$this->street3,$this->postcode,$this->city,$this->state,$this->country_id,$this->tel_1,$this->tel_2,$this->fax,
                 $this->url,$this->email,$this->isactive,$timestamp,$this->createdby,$timestamp,$this->updatedby,
-		$this->seqno,$this->groupid,$this->currency_id,$this->companyno,$this->companyname);
+		$this->seqno,$this->groupid,$this->currency_id,$this->companyno,$this->companyname, $this->description);
 
  $controlvalue=$this->organization_code;
    if($save->InsertRecord($this->tableorganization, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"organization_id"))
@@ -434,7 +443,7 @@ EOF;
 		
 	 $sql="SELECT o.organization_code,o.organization_name,o.tel_1,o.tel_2,o.fax,o.url,o.email,o.currency_id,
 		o.country_id,o.isactive,o.groupid,o.street1,o.street2,o.street3,o.postcode,o.state,o.city,o.seqno,
-		o.companyno,o.companyname,ct.country_name,ct.country_code,cr.currency_name,cr.currency_code,ct.telcode
+		o.companyno,o.companyname,o.description, ct.country_name,ct.country_code,cr.currency_name,cr.currency_code,ct.telcode
 		from $this->tableorganization o
 		LEFT JOIN $this->tablecountry ct on o.country_id=ct.country_id
 		LEFT JOIN $this->tablecurrency cr on o.currency_id=cr.currency_id
@@ -473,6 +482,7 @@ EOF;
                 $this->companyname=$row['companyname'];
 		$this->currency_name=$row['currency_name'];
 		$this->companyno=$row['companyno'];
+                $this->description=$row['description'];
 		$this->currency_id=$row['currency_id'];
 		$this->currency_code=$row['currency_code'];
 	$this->log->showLog(4,"Organization->fetchOrganization,database fetch into class successfully");
