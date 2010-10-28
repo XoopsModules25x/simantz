@@ -34,7 +34,6 @@ class Address
 
   private $log;
 
-
 //constructor
    public function Address(){
 	global $xoopsDB,$log,$defaultorganization_id;
@@ -64,7 +63,6 @@ class Address
 		$this->isinvoice=$row['isinvoice'];
 		$this->address_street=$row['address_street'];
 		$this->description=$row['description'];
-
 		$this->address_postcode=$row['address_postcode'];
 		$this->address_city=$row['address_city'];
 		$this->region_id=$row['region_id'];
@@ -73,6 +71,7 @@ class Address
 		$this->tel_1=$row['tel_1'];
 		$this->tel_2=$row['tel_2'];
 		$this->fax=$row['fax'];
+
    	$this->log->showLog(4,"Address->fetchAddress,database fetch into class successfully");
 	$this->log->showLog(4,"Address Name:$this->address_name");
 
@@ -115,6 +114,35 @@ while($row=$this->xoopsDB->fetchArray($query)){
         "Tel:$tel_1 $tel_2 Fax:$fax";
         return $name;
  }
+return "";
+ }
+
+
+ public function getAddressTxt($address_id){
+//i =invoice,s=shipment
+
+
+$sql="SELECT a.*,c.country_name,r.region_name from $this->tableaddress a
+        left join sim_region r on a.region_id=r.region_id
+        left join sim_country c on c.country_id=a.country_id
+        where a.address_id=$address_id ";
+$query=$this->xoopsDB->query($sql);
+
+while($row=$this->xoopsDB->fetchArray($query)){
+        $country_name=$row['country_name'];
+        $region_name=$row['region_name'];
+        $address_street =$row['address_street'];
+        $address_postcode=$row['address_postcode'];
+        $address_city=$row['address_city'];
+        $tel_1=$row['tel_1'];
+        $tel_2=$row['tel_2'];
+        $fax=$row['fax'];
+         $name= "$address_street\n".
+        "$address_postcode $address_city\n".
+        "$region_name $country_name";
+        return $name;
+ }
+ 
 return "";
  }
 
