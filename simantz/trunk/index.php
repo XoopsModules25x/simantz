@@ -74,7 +74,7 @@ if (isset($xoopsConfig['startpage']) && $xoopsConfig['startpage'] != "" && $xoop
     include $GLOBALS['xoops']->path('modules/' . $xoopsConfig['startpage'] . '/index.php');
     exit();
 } else {
-    redirect_header(XOOPS_URL . "/user.php", 1, "Loading..");
+    //redirect_header(XOOPS_URL . "/user.php", 1, "Loading..");
     $xoopsOption['show_cblock'] = 1;
     $xoopsOption['template_main'] = "db:system_homepage.html";
     include $GLOBALS['xoops']->path('header.php');
