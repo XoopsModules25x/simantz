@@ -190,7 +190,7 @@ class PHPJasperXML {
             $this->newPageGroup=true;
         else
             $this->newPageGroup="";
-        // print_r($xml_path->groupHeader);die;
+        
         foreach($xml_path as $tag=>$out) {
             switch ($tag) {
                 case "groupHeader":
@@ -201,14 +201,13 @@ class PHPJasperXML {
                     $this->arraygroupheadheight=$out->band["height"];
                     $this->arrayband[]=array("name"=>"group", "gname"=>$xml_path["name"],"isStartNewPage"=>$xml_path["isStartNewPage"],"groupExpression"=>substr($xml_path->groupExpression,3,-1));
                     $this->pointer[]=array("type"=>"band","height"=>$out->band["height"]+0,"y_axis"=>"","groupExpression"=>substr($xml_path->groupExpression,3,-1));
-                    // print_r($this->arraygrouphead);
-                    // echo "<br/><br/><br/>";
+                    
+                    
                     foreach($out as $band) {
                         $this->default_handler($band);
 
                     }
-                    // print_r($this->arraygrouphead);
-                    //         die;
+                    
                     $this->y_axis=$this->y_axis+$out->band["height"];		//after handle , then adjust y axis
                     break;
                 case "groupFooter":
@@ -269,6 +268,7 @@ class PHPJasperXML {
         $textcolor = array("r"=>0,"g"=>0,"b"=>0);
         $fillcolor = array("r"=>255,"g"=>255,"b"=>255);
         $txt="";
+        $rotation="";
         $drawcolor=array("r"=>0,"g"=>0,"b"=>0);
         $height=$data->reportElement["height"];
         $stretchoverflow="true";
@@ -298,6 +298,9 @@ class PHPJasperXML {
         if(isset($data->textElement["textAlignment"])) {
             $align=$this->get_first_value($data->textElement["textAlignment"]);
         }
+        if(isset($data->textElement["rotation"])) {
+            $rotation=$data->textElement["rotation"];
+        }
         if(isset($data->textElement->font["pdfFontName"])) {
             $font=$data->textElement->font["pdfFontName"];
         }
@@ -322,7 +325,7 @@ class PHPJasperXML {
         $this->pointer[]=array("type"=>"SetFillColor","r"=>$fillcolor["r"],"g"=>$fillcolor["g"],"b"=>$fillcolor["b"],"hidden_type"=>"fillcolor");
         $this->pointer[]=array("type"=>"SetFont","font"=>$font,"fontstyle"=>$fontstyle,"fontsize"=>$fontsize,"hidden_type"=>"font");
         //"height"=>$data->reportElement["height"]
-        $this->pointer[]=array("type"=>"MultiCell","width"=>$data->reportElement["width"],"height"=>$height,"txt"=>$data->text,"border"=>$border,"align"=>$align,"fill"=>$fill,"hidden_type"=>"statictext","soverflow"=>$stretchoverflow,"poverflow"=>$printoverflow);
+        $this->pointer[]=array("type"=>"MultiCell","width"=>$data->reportElement["width"],"height"=>$height,"txt"=>$data->text,"border"=>$border,"align"=>$align,"fill"=>$fill,"hidden_type"=>"statictext","soverflow"=>$stretchoverflow,"poverflow"=>$printoverflow,"rotation"=>$rotation);
 
     }
 
@@ -363,10 +366,12 @@ class PHPJasperXML {
     }
 
     public function element_rectangle($data) {
+          
         $drawcolor=array("r"=>0,"g"=>0,"b"=>0);
         if(isset($data->reportElement["forecolor"])) {
             $drawcolor=array("r"=>hexdec(substr($data->reportElement["forecolor"],1,2)),"g"=>hexdec(substr($data->reportElement["forecolor"],3,2)),"b"=>hexdec(substr($data->reportElement["forecolor"],5,2)));
         }
+
         $this->pointer[]=array("type"=>"SetDrawColor","r"=>$drawcolor["r"],"g"=>$drawcolor["g"],"b"=>$drawcolor["b"],"hidden_type"=>"drawcolor");
         $this->pointer[]=array("type"=>"Rect","x"=>$data->reportElement["x"],"y"=>$data->reportElement["y"],"width"=>$data->reportElement["width"],"height"=>$data->reportElement["height"],"hidden_type"=>"rect");
         $this->pointer[]=array("type"=>"SetDrawColor","r"=>0,"g"=>0,"b"=>0,"hidden_type"=>"drawcolor");
@@ -378,6 +383,7 @@ class PHPJasperXML {
         $border=0;
         $fontsize=10;
         $font="helvetica";
+        $rotation="";
         $fontstyle="";
         $textcolor = array("r"=>0,"g"=>0,"b"=>0);
         $fillcolor = array("r"=>255,"g"=>255,"b"=>255);
@@ -411,6 +417,9 @@ class PHPJasperXML {
         }
         if(isset($data->textElement["textAlignment"])) {
             $align=$this->get_first_value($data->textElement["textAlignment"]);
+        }
+        if(isset($data->textElement["rotation"])) {
+            $rotation=$data->textElement["rotation"];
         }
         if(isset($data->textElement->font["pdfFontName"])) {
             $font=$data->textElement->font["pdfFontName"];
@@ -467,14 +476,14 @@ class PHPJasperXML {
                     $writeHTML=$data->reportElement->property["value"];
                 if(isset($data->reportElement["isPrintRepeatedValues"]))
                     $isPrintRepeatedValues=$data->reportElement["isPrintRepeatedValues"];
-//echo print_r($data,true)."<br/><br/>";//->hyperlinkReferenceExpression."<br/>";
+
 
                 $this->pointer[]=array("type"=>"MultiCell","width"=>$data->reportElement["width"],"height"=>$height,"txt"=>$data->textFieldExpression,
                         "border"=>$border,"align"=>$align,"fill"=>$fill,
                         "hidden_type"=>"field","soverflow"=>$stretchoverflow,"poverflow"=>$printoverflow,
                         "printWhenExpression"=>$data->reportElement->printWhenExpression,
                         "link"=>substr($data->hyperlinkReferenceExpression,1,-1),"pattern"=>$data["pattern"],
-                        "writeHTML"=>$writeHTML,"isPrintRepeatedValues"=>$isPrintRepeatedValues);
+                        "writeHTML"=>$writeHTML,"isPrintRepeatedValues"=>$isPrintRepeatedValues,"rotation"=>$rotation);
                 break;
         }
     }
@@ -587,17 +596,14 @@ class PHPJasperXML {
                 case "Average":
 
                     $sum=0;
-                    //echo  "<br/>".$table["$out[target]"]."..";
-                    //  $this->arrayVariable[$k]['class']="average class";
-                    // print_r($this->arrayVariable);
-                    //  echo $this->arrayVariable[$k]['class'];
+                    
                     if(isset($this->arrayVariable[$k]['class'])&&$this->arrayVariable[$k]['class']=="java.sql.Time") {
                         $m=0;
                         foreach($this->arraysqltable as $table) {
                             $m++;
-                            //echo $table["$out[target]"];
+                            
                             $sum=$sum+$this->time_to_sec($table["$out[target]"]);
-                            //echo ",".$sum."/$m<br/>";
+                            
 
                         }
 
@@ -772,7 +778,7 @@ class PHPJasperXML {
     }
 
     public function group($headerY) {
-        //echo "??? $headerY ???";
+        
 
         $gname=$this->arrayband[0]["gname"]."";
         if(isset($this->arraypageHeader)) {
@@ -828,10 +834,7 @@ class PHPJasperXML {
 
     public function groupNewPage() {
         $gname=$this->arrayband[0]["gname"]."";
-        //print_r($this->arrayband);echo "<br/><br/>";
-        //  foreach($this->arraygroup as $a)
-        //{print_r($a["name"]);echo "<br/>";}
-        //        {print_r($a);echo "<br/>";}
+        
         if(isset($this->arraypageHeader)) {
             $this->arraygroup[$gname]["groupHeader"][0]["y_axis"]=$this->arrayPageSetting["topMargin"]+$this->arraypageHeader[0]["height"];
         }
@@ -1292,21 +1295,30 @@ class PHPJasperXML {
         foreach ($this->arraygrouphead as $out) {
             $this->display($out,$y,true);
         }
-//     $this->display($this->arraygrouphead,0,true);
-//echo "<br/>";
-//echo "<br/>";
 
     }
     public function showGroupFooter($y) {
         foreach ($this->arraygroupfoot as $out) {
             $this->display($out,$y,true);
 
-//$this->pdf->Cell(10,10,"--".$this->pdf->getY());
         }
     }
 
 
     public function display($arraydata,$y_axis=0,$fielddata=false) {
+  //print_r($arraydata);echo "<br/>";
+    $this->Rotate($arraydata["rotation"]);
+    if($arraydata["rotation"]=="Left" || $arraydata["rotation"]=="Right"){
+        $w=$arraydata["width"];
+        $arraydata["width"]=$arraydata["height"];
+        $arraydata["height"]=$w;
+
+
+    if($arraydata["rotation"]=="Left")
+            $this->pdf->SetXY($this->pdf->GetX()-$arraydata["width"],$this->pdf->GetY());
+    elseif($arraydata["rotation"]=="Right")
+            $this->pdf->SetXY($this->pdf->GetX(),$this->pdf->GetY()-$arraydata["height"]);
+    }
 
         if($arraydata["type"]=="SetFont") {
             if($arraydata["font"]=='uGB')
@@ -1318,24 +1330,28 @@ class PHPJasperXML {
 
         }
         elseif($arraydata["type"]=="subreport") {
-            echo "a,$y_axis,$fielddata<br/>";
+            
             $this->runSubReport($arraydata);
         }
         elseif($arraydata["type"]=="MultiCell") {
-
+            
             if($fielddata==false) {
                 $this->checkoverflow($arraydata,$this->updatePageNo($arraydata["txt"]));
             }
             elseif($fielddata==true) {
 
-                //    echo $arraydata["isPrintRepeatedValues"];
+                
                 $this->checkoverflow($arraydata,$this->updatePageNo($this->analyse_expression($arraydata["txt"],$arraydata["isPrintRepeatedValues"] )));
             }
         }
         elseif($arraydata["type"]=="SetXY") {
+            
+
             $this->pdf->SetXY($arraydata["x"]+$this->arrayPageSetting["leftMargin"],$arraydata["y"]+$y_axis);
         }
         elseif($arraydata["type"]=="Cell") {
+
+
             $this->pdf->Cell($arraydata["width"],$arraydata["height"],$this->updatePageNo($arraydata["txt"]),$arraydata["border"],$arraydata["ln"],$arraydata["align"],$arraydata["fill"],$arraydata["link"]);
             if($this->debuggroup==1)
                 $this->pdf->MultiCell(100,10, "SampleText");
@@ -1383,6 +1399,8 @@ class PHPJasperXML {
     }
 
     public function checkoverflow($arraydata,$txt="") {
+
+                
         $this->print_expression($arraydata);
         if($this->print_expression_result==true) {
 
@@ -1427,6 +1445,7 @@ class PHPJasperXML {
         if($this->debuggroup==1)
             $this->pdf->MultiCell(100,10, "SampleText");
 
+        
     }
 
     public function hex_code_color($value) {
@@ -1462,9 +1481,9 @@ class PHPJasperXML {
                     $arrdata[$num]=$this->arraysqltable[$this->global_pointer][substr($out,3,-1)];
                 }
                 else {
-                    // echo $out.":".$this->previousarraydata[$out].":".$this->arraysqltable[$this->global_pointer][substr($out,3,-1)]."<br/>";
+                    
                     if($this->previousarraydata[$arrdata[$num]]==$this->arraysqltable[$this->global_pointer][substr($out,3,-1)]) {
-                        // echo $this->previousarraydata[$arrdata[$num]]."==".$this->arraysqltable[$this->global_pointer][substr($out,3,-1)]." *<br/>";
+                    
                         $arrdata[$num]="";
                     }
                     else {
@@ -1487,7 +1506,7 @@ class PHPJasperXML {
             foreach($arrdata as $num=>$out) {
                 if($num>0 && $num<$i)
                     $total+=$out;
-//           echo "$num = $out to $total<br/>";
+
             }
             return $total;
 
@@ -1552,11 +1571,11 @@ class PHPJasperXML {
         elseif($expression=="") {
             $this->print_expression_result=true;
         }
-        //echo 'if('.$expression.'){return true;}'."<br>";
+        
     }
 
     public function runSubReport($d) {
-        //  echo "a<br/>";
+        
         foreach($d["subreportparameterarray"] as $b) {
 
             $t = $b->subreportParameterExpression;
@@ -1616,5 +1635,35 @@ class PHPJasperXML {
         else
             return $Data;
     }
+
+
+private function Rotate($type, $x=-1, $y=-1)
+{
+    if($type=="")
+    $angle=0;
+    elseif($type=="Left")
+    $angle=90;
+    elseif($type=="Right")
+    $angle=270;
+    elseif($type=="UpsideDown")
+    $angle=180;
+   
+    if($x==-1)
+        $x=$this->pdf->getX();
+    if($y==-1)
+        $y=$this->pdf->getY();
+    if($this->angle!=0)
+        $this->pdf->_out('Q');
+    $this->angle=$angle;
+    if($angle!=0)
+    {
+        $angle*=M_PI/180;
+        $c=cos($angle);
+        $s=sin($angle);
+        $cx=$x*$this->pdf->k;
+        $cy=($this->pdf->h-$y)*$this->pdf->k;
+        $this->pdf->_out(sprintf('q %.5f %.5f %.5f %.5f %.2f %.2f cm 1 0 0 1 %.2f %.2f cm', $c, $s, -$s, $c, $cx, $cy, -$cx, -$cy));
+    }
+}
 
 }
