@@ -770,7 +770,7 @@ class PHPJasperXML {
                     $this->display($out,$this->arraypageHeader[0]["y_axis"],true);
                     break;
                 default:
-                    $this->display($out,$this->arraypageHeader[0]["y_axis"],false);
+                    $this->display($out,$this->arraypageHeader[0]["y_axis"],true);
                     break;
             }
         }
@@ -967,6 +967,9 @@ class PHPJasperXML {
         $this->showGroupHeader($this->arrayPageSetting["topMargin"]+$this->arraypageHeader[0]["height"]);
                  
         if($this->arraysqltable) {
+
+
+
             foreach($this->arraysqltable as $row) {
 
                 if(isset($this->arraygroup)&&($this->global_pointer>0)&&
@@ -984,8 +987,7 @@ class PHPJasperXML {
                           $biggestY=$this->arrayPageSetting["topMargin"]+$this->arraypageHeader[0]["height"];
                           $tempY=$headerY;
                     }
-                    $this->showGroupFooter($compare["height"]+$biggestY);
-
+                
                      if($this->arrayPageSetting["pageHeight"]< $this->pdf->getY()+ $this->arraygroupheaderheight+$this->arrayPageSetting["bottomMargin"]+$compare["height"]){
                        
                           $this->pageHeader();
@@ -996,13 +998,6 @@ class PHPJasperXML {
                     $this->showGroupHeader($this->pdf->getY());
                     
                     $checkpoint=$this->pdf->getY();
-                 
-//                         $this->pageHeader($headerY);
-
-                         //       $checkpoint=$this->arraydetail[0]["y_axis"];
-                              //  $biggestY=0;
-                              //  $tempY=$this->arraydetail[0]["y_axis"];
-                               //  $this->showGroupHeader($checkpoint-$compare["height"]);
                 }
 
                 foreach($this->arraydetail as $compare)	//this loop is to count possible biggest Y of the coming row
@@ -1010,7 +1005,7 @@ class PHPJasperXML {
                     switch($compare["hidden_type"]) {
                         case "field":
                             $txt=$this->analyse_expression($row[$compare["txt"]]);
-                            if(isset($this->arraygroup["$this->group_name"]["groupFooter"])&&(($checkpoint+($compare["height"]*$txt))>($this->arrayPageSetting["pageHeight"]-$this->arraygroupfootheight-$this->arrayPageSetting["bottomMargin"])))//check group footer existed or not
+                            if(isset($this->arraygroup[$this->group_name]["groupFooter"])&&(($checkpoint+($compare["height"]*$txt))>($this->arrayPageSetting["pageHeight"]-$this->arraygroupfootheight-$this->arrayPageSetting["bottomMargin"])))//check group footer existed or not
                             {
                                 $this->pageFooter();
                                 $checkpoint=$this->arraydetail[0]["y_axis"];
@@ -1028,7 +1023,7 @@ class PHPJasperXML {
                           //       $this->showGroupHeader($checkpoint-$compare["height"]);
                             }
                             elseif(isset($this->arraylastPageFooter)&&(($checkpoint+($compare["height"]*($this->NbLines($compare["width"],$txt))))>($this->arrayPageSetting["pageHeight"]-$this->arraylastPageFooter[0]["height"]-$this->arrayPageSetting["bottomMargin"])))//check lastpagefooter existed or not
-                            {   $this->showGroupFooter($compare["height"]+$biggestY);
+                            {   //$this->showGroupFooter($compare["height"]+$biggestY);
                                 $this->lastPageFooter();
                          
                                 $checkpoint=$this->arraydetail[0]["y_axis"];
@@ -1054,6 +1049,7 @@ class PHPJasperXML {
                             $this->display($compare,$checkpoint);
                             break;
                     }
+                
                 }
 
 
@@ -1103,21 +1099,29 @@ class PHPJasperXML {
                 else {
                     $checkpoint=$biggestY;
                 }
-
+        if(isset($this->arraygroup)&&($this->global_pointer>0)&&
+                        ($this->arraysqltable[$this->global_pointer][$this->group_pointer]!=$this->arraysqltable[$this->global_pointer+1][$this->group_pointer])){
+                               $this->showGroupFooter($compare["height"]+$biggestY);
+                                $checkpoint=$this->pdf->getY();
+                                $biggestY=0;
+//                                  $tempY=$checkpoint+($compare["height"]*($this->NbLines($compare["width"],$txt)));
+                                //$tempY=$this->arraydetail[0]["y_axis"];
+                        }
                 //if(isset($this->arraygroup)){$this->global_pointer++;}
                 $this->global_pointer++;
             }
+
         }else {
             echo "No data found";
             exit(0);
         }
         $this->global_pointer--;
         if(isset($this->arraylastPageFooter)) {
-             $this->showGroupFooter($compare["height"]+$biggestY);
+         //  $this->showGroupFooter($compare["height"]+$biggestY);
             $this->lastPageFooter();
         }
         else {
-             $this->showGroupFooter($compare["height"]+$biggestY);
+         //    $this->showGroupFooter($compare["height"]+$biggestY);
             $this->pageFooter();
         }
     }
@@ -1140,7 +1144,7 @@ class PHPJasperXML {
                 //check the group's groupExpression existed and same or not
 
                 if(isset($this->arraygroup)&&($this->global_pointer>0)&&($this->arraysqltable[$this->global_pointer][$this->group_pointer]!=$this->arraysqltable[$this->global_pointer-1][$this->group_pointer])) {
-                    $this->showGroupFooter($tempY);
+              
                     $this->pageFooter();
                     $this->pageHeaderNewPage();
                     $checkpoint=$this->arraydetail[0]["y_axis"];
@@ -1268,7 +1272,8 @@ class PHPJasperXML {
                 else {
                     $checkpoint=$biggestY;
                 }
-
+if(isset($this->arraygroup)&&($this->global_pointer>0)&&($this->arraysqltable[$this->global_pointer][$this->group_pointer]!=$this->arraysqltable[$this->global_pointer+1][$this->group_pointer]))
+      $this->showGroupFooter($tempY);
                 //if(isset($this->arraygroup)){$this->global_pointer++;}
                 $this->global_pointer++;
             }
@@ -1278,11 +1283,11 @@ class PHPJasperXML {
         }
         $this->global_pointer--;
         if(isset($this->arraylastPageFooter)) {
-             $this->showGroupFooter();
+        //     $this->showGroupFooter();
             $this->lastPageFooter();
         }
         else {
-             $this->showGroupFooter();
+        //     $this->showGroupFooter();
             $this->pageFooter();
         }
 
@@ -1308,16 +1313,32 @@ class PHPJasperXML {
     public function display($arraydata,$y_axis=0,$fielddata=false) {
   //print_r($arraydata);echo "<br/>";
     $this->Rotate($arraydata["rotation"]);
-    if($arraydata["rotation"]=="Left" || $arraydata["rotation"]=="Right"){
-        $w=$arraydata["width"];
+    if($arraydata["rotation"]!=""){
+       
+
+
+    if($arraydata["rotation"]=="Left"){
+         $w=$arraydata["width"];
         $arraydata["width"]=$arraydata["height"];
         $arraydata["height"]=$w;
-
-
-    if($arraydata["rotation"]=="Left")
             $this->pdf->SetXY($this->pdf->GetX()-$arraydata["width"],$this->pdf->GetY());
-    elseif($arraydata["rotation"]=="Right")
+    }
+    elseif($arraydata["rotation"]=="Right"){
+         $w=$arraydata["width"];
+        $arraydata["width"]=$arraydata["height"];
+        $arraydata["height"]=$w;
             $this->pdf->SetXY($this->pdf->GetX(),$this->pdf->GetY()-$arraydata["height"]);
+    }
+    elseif($arraydata["rotation"]=="UpsideDown"){
+        //soverflow"=>$stretchoverflow,"poverflow"
+        $arraydata["soverflow"]=true;
+        $arraydata["poverflow"]=true;
+       //   $w=$arraydata["width"];
+       // $arraydata["width"]=$arraydata["height"];
+        //$arraydata["height"]=$w;
+        $this->pdf->SetXY($this->pdf->GetX()- $arraydata["width"],$this->pdf->GetY()-$arraydata["height"]);
+    }
+
     }
 
         if($arraydata["type"]=="SetFont") {
