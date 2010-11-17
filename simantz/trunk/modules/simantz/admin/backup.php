@@ -33,7 +33,7 @@ system("echo 'SET FOREIGN_KEY_CHECKS=0;' > $backupFile");
 system("echo 'SET SQL_MODE=\"NO_AUTO_VALUE_ON_ZERO\";' >> $backupFile");
 system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p'$dbpass' --add-drop-table --routines  $dbname >> $backupFile");
 system("zip -q -P '$dbpass' $backupFile.zip $backupFile");
-system("rm -y $backupFile");
+system("rm -f $backupFile");
 
 }
 //echo  "???".filesize("$backupFile.zip");
@@ -57,4 +57,4 @@ fclose($fp);
 if(PHP_OS=='WINNT')
     system("del $backupFile");
 else
-system("rm -y $backupFile");
+system("rm -f $backupFile");
