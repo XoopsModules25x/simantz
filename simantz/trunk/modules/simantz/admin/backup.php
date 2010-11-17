@@ -19,7 +19,7 @@ system("del backup\\backup*;");
 system("echo SET FOREIGN_KEY_CHECKS=0; > $backupFile");
 system("echo SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO'; >> $backupFile");
 system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p'$dbpass' --add-drop-table --routines  $dbname >> $backupFile");
-system("zip -q -P '$dbpass' $backupFile.zip $backupFile ");
+system("zip -q -D -P '$dbpass' $backupFile.zip $backupFile ");
 system("del $backupFile");
 }
 else{
@@ -32,7 +32,7 @@ system("rm -rf ../$uploadpath/*.sql;");
 system("echo 'SET FOREIGN_KEY_CHECKS=0;' > $backupFile");
 system("echo 'SET SQL_MODE=\"NO_AUTO_VALUE_ON_ZERO\";' >> $backupFile");
 system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p'$dbpass' --add-drop-table --routines  $dbname >> $backupFile");
-system("zip -q -P '$dbpass' $backupFile.zip $backupFile");
+system("zip -q -D -P '$dbpass' $backupFile.zip $backupFile");
 system("rm -f $backupFile");
 
 }
@@ -47,6 +47,7 @@ header("Content-disposition: attachment; filename=$backupFile".".zip");
 
 
 $fp = fopen("$backupFile.zip", "r");
+
 while (!feof($fp))
 {
     echo fread($fp, 65536);
@@ -55,6 +56,6 @@ while (!feof($fp))
 fclose($fp);
 
 if(PHP_OS=='WINNT')
-    system("del $backupFile");
+    system("del $backupFile.zip");
 else
-system("rm -f $backupFile");
+system("rm -f $backupFile.zip");
