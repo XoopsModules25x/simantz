@@ -18,7 +18,7 @@ $mysqlaction="d:\wamp\bin\mysql\mysql5.0.51a\bin\mysqldump.exe";
 system("del backup\\backup*;");
 system("echo SET FOREIGN_KEY_CHECKS=0; > $backupFile");
 system("echo SET SQL_MODE='NO_AUTO_VALUE_ON_ZERO'; >> $backupFile");
-system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p$dbpass --add-drop-table --routines  $dbname >> $backupFile");
+system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p'$dbpass' --add-drop-table --routines  $dbname >> $backupFile");
 system("zip -q -P '$dbpass' $backupFile.zip $backupFile > backup\\log.log");
 }
 else{
@@ -30,9 +30,9 @@ system("rm -rf ../$uploadpath/*.sql;");
 
 system("echo 'SET FOREIGN_KEY_CHECKS=0;' > $backupFile");
 system("echo 'SET SQL_MODE=\"NO_AUTO_VALUE_ON_ZERO\";' >> $backupFile");
-system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p$dbpass --add-drop-table --routines  $dbname >> $backupFile");
+system("$mysqlaction --routines --no-create-db -h $dbhost -u $dbuser -p'$dbpass' --add-drop-table --routines  $dbname >> $backupFile");
 system("zip -q -P  '$dbpass' $backupFile.zip $backupFile");
-
+die;
 }
 //echo  "???".filesize("$backupFile.zip");
 //die;
