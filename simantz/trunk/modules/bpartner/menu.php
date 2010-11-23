@@ -10,5 +10,3 @@ $bpctrl = new BPSelectCtrl();
 
 echo "<script type='text/javascript'>function tooltip(){;}</script>";
 
-?>
-

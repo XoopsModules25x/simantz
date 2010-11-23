@@ -199,4 +199,35 @@ public function getSelectIndustry($id,$showNull='N') {
 
 
 
+  public function getSelectFollowUpType($id,$showNull='N',$wherestr="") {
+
+      
+    
+     $sql="SELECT followuptype_id,followuptype_name from sim_followuptype where (isactive=1 or followuptype_id=$id)
+            and followuptype_id>0 
+             order by seqno,followuptype_name";
+    
+	$this->log->showLog(3,"Generate followup type with id=:$id and shownull=$showNull SQL: $sql");
+	//$selectctl="<SELECT name='$ctrlname' id='$ctrlid' $onChangeFunction>";
+	if ($id==-1 || $showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$followuptype_id=$row['followuptype_id'];
+		$followuptype_name=$row['followuptype_name'];
+
+		if($id==$followuptype_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$followuptype_id' $selected>$followuptype_name</OPTION>";
+
+	}
+
+	//$selectctl=$selectctl . "</SELECT>";
+
+	return $selectctl;
+  }
 }

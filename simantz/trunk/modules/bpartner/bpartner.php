@@ -580,6 +580,15 @@ $wherestring=" WHERE isactive!=0 ";
 $o->getSelectFollowuptype($wherestring);
 $getHandler->completeGet();
 break;
+case "editfollowuplayer":
+    $followup_id=$_POST['followup_id'];
+    $o->showEditFollowUpLayer($followup_id);
+    die;
+    break;
+case "savefollowuplayer";
+    $o->saveFollowUpLayer();
+    die;
+    break;
 
 case "getemployeelist": //return xml table to grid
 include_once "../simantz/class/EBAGetHandler.php";
