@@ -4104,11 +4104,11 @@ echo <<< EOF
    <ntb:textcolumn classname="{\$rh}" label="City" width="130" xdatafld="address_city" editable="true" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Region" width="90" xdatafld="region_id" editable="true" >
-            <ntb:lookupeditor delay="1000" gethandler="bpartner.php?action=regionlist" displayfields="region_name" valuefield="region_id" ></ntb:lookupeditor>
+            <ntb:listboxeditor gethandler="bpartner.php?action=regionlist" displayfields="region_name" valuefield="region_id" ></ntb:lookupeditor>
         </ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Country" width="90" xdatafld="country_id" sortenabled="true">
-           <ntb:lookupeditor delay="1000" gethandler="bpartner.php?action=countrylist" displayfields="country_name" valuefield="country_id" ></ntb:lookupeditor>
+           <ntb:listboxeditor  gethandler="bpartner.php?action=countrylist" displayfields="country_name" valuefield="country_id" ></ntb:lookupeditor>
         </ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Tel 1" width="70" xdatafld="tel_1" sortenabled="true" onaftercelleditevent="javascript:valiedatetelno()"></ntb:textcolumn>
@@ -5482,7 +5482,7 @@ EOF;
            $sortdirection="ASC";
         }
 
-       $wherestring.= " AND organization_id='$defaultorganization_id'";
+       //$wherestring.= " AND organization_id='$defaultorganization_id'";
 
        $sql = "SELECT * FROM sim_country $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
        $this->log->showLog(4," with SQL: $sql");
@@ -5526,7 +5526,7 @@ EOF;
            $sortdirection="ASC";
         }
 
-       $wherestring.= " AND organization_id='$defaultorganization_id'";
+       //$wherestring.= " AND organization_id='$defaultorganization_id'";
 
        $sql = "SELECT * FROM sim_region $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
        $this->log->showLog(4," with SQL: $sql");
