@@ -4729,9 +4729,7 @@ echo <<< EOF
               <ntb:lookupeditor delay="1000" gethandler="bpartner.php?action=getfollowuptype" displayfields="followuptype_name" valuefield="followuptype_id" ></ntb:lookupeditor>
         </ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" label="P.I.C" width="140" xdatafld="employee_id" sortenabled="true">
-           <ntb:lookupeditor delay="1000" gethandler="bpartner.php?action=getemployeelist" displayfields="employee_name" valuefield="employee_id" ></ntb:lookupeditor>
-       </ntb:textcolumn>
+   <ntb:textcolumn classname="{\$rh}" label="P.I.C" width="140" xdatafld="employee_name" sortenabled="true"></ntb:textcolumn>
 
    <ntb:datecolumn classname="{\$rh}" label="Follow Up Date" width="90" xdatafld="nextfollowupdate" sortenabled="true"  mask="yyyy-MM-dd"></ntb:datecolumn>
    
@@ -4812,7 +4810,7 @@ EOF;
      	$getHandler->DefineField("followuptype_id");
      	$getHandler->DefineField("bpartner_id");
         $getHandler->DefineField("isactive");
-        $getHandler->DefineField("employee_id");
+        $getHandler->DefineField("employee_name");
         $getHandler->DefineField("nextfollowupdate");
      	$getHandler->DefineField("contactperson");
         $getHandler->DefineField("contactnumber");
@@ -4835,7 +4833,7 @@ EOF;
              $getHandler->DefineRecordFieldValue("followup_name", $row['followup_name']);
              $getHandler->DefineRecordFieldValue("followuptype_id",$row['followuptype_id']);
              $getHandler->DefineRecordFieldValue("bpartner_id", $row['bpartner_id']);
-             $getHandler->DefineRecordFieldValue("employee_id", $row['employee_id']);
+             $getHandler->DefineRecordFieldValue("employee_name", $row['employee_name']);
              $getHandler->DefineRecordFieldValue("nextfollowupdate",$row['nextfollowupdate']);
              $getHandler->DefineRecordFieldValue("contactperson",$row['contactperson']);
              $getHandler->DefineRecordFieldValue("contactnumber", $row['contactnumber']);
@@ -4873,10 +4871,10 @@ EOF;
 
     if ($insertCount > 0)
     {
-          $arrfield=array("issuedate", "followup_name", "followuptype_id","employee_id",
+          $arrfield=array("issuedate", "followup_name", "followuptype_id","employee_name",
                           "nextfollowupdate","contactperson","contactnumber","description",
                           "created","createdby","updated","updatedby","bpartner_id","isactive");
-          $arrfieldtype=array('%s','%s','%d','%d',
+          $arrfieldtype=array('%s','%s','%d','%s',
                               '%s','%s','%s','%s',
                               '%s','%d','%s','%d','%d','%d');
 
@@ -4887,7 +4885,7 @@ EOF;
          $arrvalue=array($saveHandler->ReturnInsertField($currentRecord,"issuedate"),
                     $saveHandler->ReturnInsertField($currentRecord,"followup_name"),
                     $saveHandler->ReturnInsertField($currentRecord,"followuptype_id"),
-                    $saveHandler->ReturnInsertField($currentRecord,"employee_id"),
+                    $saveHandler->ReturnInsertField($currentRecord,"employee_name"),
                     $saveHandler->ReturnInsertField($currentRecord,"nextfollowupdate"),
                     $saveHandler->ReturnInsertField($currentRecord,"contactperson"),
                     $saveHandler->ReturnInsertField($currentRecord,"contactnumber"),
@@ -4913,21 +4911,13 @@ EOF;
 
     if ($updateCount > 0)
     {
-          $arrfield=array("issuedate", "followup_name", "followuptype_id","employee_id",
+          $arrfield=array("issuedate", "followup_name", "followuptype_id","employee_name",
                           "nextfollowupdate","contactperson","contactnumber","description",
                           "updated","updatedby","isactive");
-          $arrfieldtype=array('%s','%s','%d','%d',
+          $arrfieldtype=array('%s','%s','%d','%s',
                               '%s','%s','%s','%s',
                               '%s','%d','%d');
      // Yes there are UPDATEs to perform...
-
-     for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
-             $this->log->showLog(3,"***updating record($currentRecord),new followup_name:".
-                    $saveHandler->ReturnUpdateField($currentRecord, "followup_name").",id:".
-                    $saveHandler->ReturnUpdateField($currentRecord, "followup_id")."\n");
-             $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "followup_name");
-
-     }
 
      for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
      {
@@ -4935,7 +4925,7 @@ EOF;
          $arrvalue=array($saveHandler->ReturnUpdateField($currentRecord,"issuedate"),
                     $saveHandler->ReturnUpdateField($currentRecord,"followup_name"),
                     $saveHandler->ReturnUpdateField($currentRecord,"followuptype_id"),
-                    $saveHandler->ReturnUpdateField($currentRecord,"employee_id"),
+                    $saveHandler->ReturnUpdateField($currentRecord,"employee_name"),
                     $saveHandler->ReturnUpdateField($currentRecord,"nextfollowupdate"),
                     $saveHandler->ReturnUpdateField($currentRecord,"contactperson"),
                     $saveHandler->ReturnUpdateField($currentRecord,"contactnumber"),
