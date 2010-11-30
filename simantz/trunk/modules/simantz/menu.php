@@ -117,7 +117,7 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
 
 	<div style='color: #4D2222; v-align:top; line-height:3em;'>
 	   <div style='float:left;font-weight:bold;text-align:left;font-size:24px;'>$menuname  </div>
-           <div style='float:left;padding-left:1em;'> $helpctrl</div>
+           <div style='float:left;padding-left:1em;'> $alertmsg</div>
            <div style="float:right; v-align:top; padding-left:1em;color: #4D2222;">User: <a href='$url/user.php'>$uname</a></div>
            <div style="float:right; text-align:right; v-align:top;color: #4D2222;">Organization $orgctrl </div>
        </div><br/><br/><br/>

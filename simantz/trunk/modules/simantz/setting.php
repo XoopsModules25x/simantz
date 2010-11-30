@@ -1,16 +1,16 @@
 <?php
-$smtpserver="mail.1eralearning.com";
-$smtpuser="info@1eralearning.com";
-$smtppassword="infoerasystem";
+$smtpserver="mail.simit.com.my";
+$smtpuser="simtrain@simit.com.my";
+$smtppassword="";
 $smsurl="http://219.93.241.218:8080/siriesoftSMS/smsBulkERA";
-$smsid="44";
-$smspassword="wankee";
-$smssender_name="ERA";
+$smsid="";
+$smspassword="";
+$smssender_name="";
 $urlchecksmsbalance="http://219.93.241.218:8080/siriesoftSMS/smsRequestBalance?owner_id=$smsid&password=$smspassword";
-$senderuser="ERA";
+$senderuser="";
 $tokenlife="100000";
 $pausetime="0";
-$loglevel="10";
+$loglevel="0";
 $logfile=XOOPS_ROOT_PATH."/modules/simantz/log.txt";
 $windowsettingautosave="0";
 $nitobigridthemes="vista";
@@ -19,7 +19,8 @@ $selectspliter="|*!*|";
 $allowbrowser=array("Firefox/3.6","MSIE 8","AppleWebKit");
 $sendsmsgroup="Webmasters";
 $supportbrowserurl="";
-$uploadpath=XOOPS_ROOT_PATH."/simantz/upload/";
+$uploadpath=XOOPS_ROOT_PATH."/modules/simantz/upload/";
+$uploadviewpath=XOOPS_URL."/modules/simantz/upload/";
 $mandatorysign="<b style='color:red;'>*</b>";
 $enforcemanager=1;
-?>
+$alertmsg="";

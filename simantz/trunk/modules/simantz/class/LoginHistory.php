@@ -121,6 +121,7 @@ EOF;
 
     function insertEventRecord($uid,$activity,$loginactivity="R"){
         global $_SERVER;
+        
         //$loginactivity: R= keep, k = kill previous session
         $datetime=date("Y-m-d h:m:d",time());
         $logineventtable=XOOPS_DB_PREFIX . "_loginevent";
