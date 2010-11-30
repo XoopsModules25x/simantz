@@ -48,7 +48,7 @@ public function selectionOrg($uid,$id,$showNull='N',$onchangefunction="",$ishide
 		INNER JOIN  $tablegroups_users_link ug on o.groupid=ug.groupid where o.organization_id>0 and isactive=1";
 
 	$this->log->showLog(3,"Wtih SQL: $sql");
-	$selectctl="<SELECT name='organization_id' onchange=\"$onchangefunction\">";
+	$selectctl="<SELECT id='organization_id' name='organization_id' onchange=\"$onchangefunction\">";
 	if ($showNull=='Y')
 		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null</OPTION>';
 
