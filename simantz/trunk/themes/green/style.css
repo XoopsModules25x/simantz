@@ -144,7 +144,7 @@ th {
         -moz-background-inline-policy:continuous;
         -moz-background-origin:padding;
         background:transparent url(cellpic.jpg) repeat-x scroll 0 0;
-        color:#000000;
+        color:#fff !important;
         /*font-style: italic;*/
         font-weight:normal;
         vertical-align:middle;
@@ -262,12 +262,15 @@ td#leftcolumn div.blockContent {
 }
 
 #centerCcolumn, #bottomCcolumn {
+    background-color:#fff;
 	padding: 0px 3px 1px 3px;
 }
 
 #centerCcolumn .blockTitle, #bottomCcolumn .blockTitle {
+    background-color:#fff;
+
 	padding: 3px;
-	color: #639ACE;
+	color: #000;
 	font-weight: bold;
 	margin-top: 0px;
 	margin-right: 0px;
@@ -275,9 +278,7 @@ td#leftcolumn div.blockContent {
 }
 
 #centerCcolumn .blockContent, #bottomCcolumn .blockContent {
-	border-left: 1px solid #cccccc;
-	border-right: 1px solid #cccccc;
-	border-bottom: 1px solid #dddddd;
+	
 	padding: 3px;
 	margin-right: 0px;
 	margin-left: 0px;
@@ -292,28 +293,27 @@ td#leftcolumn div.blockContent {
 
 #centerLcolumn .blockTitle, #bottomLcolumn .blockTitle, #centerRcolumn .blockTitle, #bottomRcolumn .blockTitle {
 	padding: 3px;
-	color: #555;
+	color: #000;
 	font-weight: bold;
 	margin-top: 0px;
+        background-color: #fff;
 }
 
 #centerLcolumn .blockContent, #centerRcolumn .blockContent, #bottomLcolumn .blockContent, #bottomRcolumn .blockContent {
-	border-left: 1px solid #cccccc;
-	border-right: 1px solid #cccccc;
-	border-bottom: 1px solid #dddddd;
+	
 	padding: 0px;
 	margin-left: 2px;
 	margin-right: 3px;
 	margin-bottom: 2px;
 	line-height: 120%;
-	background: #e7edf9;
+	
 }
 /*End of Center Column*/
 
 /*Right Column*/
 td#rightcolumn {
 	width: 170px;
-	border-left: 1px solid #488248;
+	
 	font-size:12px;
 }
 
@@ -340,7 +340,7 @@ td#rightcolumn div.blockContent {
 /*Footer*/
 td#footerbar {
 	border: 1px solid #fde6a0;
-	color:#000;
+	color:#fff;
 	text-align:center;
 	background: url(Lbar.gif) repeat-x;
 }
@@ -416,7 +416,8 @@ td#usermenu a.highlight {
 
 .head {
 	/*background-color: #e5c9a5;*/
-	color:#703232;
+	color:#303b1c;
+        background-color: #ddeae3;
 	padding: 1px 2px 1px 5px;
 	font-weight: none;
 	font-size: 10pt;
@@ -425,14 +426,14 @@ td#usermenu a.highlight {
 
 .even {
 	/*background-color: #fff;*/
-        background-color: #fff8ec;
+        background-color: #ddeae3;
 	padding: 2px;
 	font-size: 9pt;
 	vertical-align:middle;
 }
 
 .odd {
-	background-color: #fff4d2;
+	background-color: #ddeae3;
 	padding: 2px;
 	font-size: 9pt;
         vertical-align:middle;
@@ -451,7 +452,7 @@ td#usermenu a.highlight {
 }
 
 .foot {
-	background-color: #ebec95;
+	background-color: #97f697;
 	padding: 5px;
 	font-weight: bold;
 }
@@ -661,7 +662,7 @@ input[type="file"]:hover, input[type="file"]:focus{
 	border: 1px solid;
 	color: #454cdb;
 	background: #ccc;
-	background-image: url("btnimage2.gif");
+	background-image: url("btnimage.gif");
 	cursor:pointer;
 	font-size: 8pt;
 	font-weight: normal;
@@ -710,14 +711,16 @@ input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]
 
 fieldset
 {
-border: 1px solid #781351;
-width: 20em
+border: 1px solid #DDB5FF;
+        background-color:       #e9ffe9;
+
+
 }
 
 legend
 {
 color: #fff;
-background: #ffa20c;
+background-color: #1d5f17;
 border: 1px solid #781351;
 padding: 2px 6px
 }
@@ -867,7 +870,7 @@ padding: 2px 6px
 	border: 1px;
 	list-style: none;
 	display: inline;
-	color:#fff!important;
+	color:#fff !important;
 	}
 
 #headerdiv ul li.activemodulepattern {
@@ -876,7 +879,7 @@ padding: 2px 6px
 	list-style: none;
 	display: inline;
 	font-weight : bold;
-	color:#ffffff!important;
+	color:#ffffff !important;
 	text-shadow: #ffff04 1px 2px 3px;
 	}
 
@@ -965,8 +968,8 @@ font-weight: bold;
     margin: 5px;
     padding: 3px;
     height: 100%;
-    background-color: #fff8ec;
-    border: 1px solid #ffd894;
+    background-color: #e9ffe9;
+    border: 1px solid #DDB5FF;
     vertical-align: middle;
 
 }
@@ -984,7 +987,7 @@ font-weight: bold;
 
 .searchformheader
 {
-	background:url(modpic.jpg) repeat-x;
+	background:url(searchmodpic.jpg) repeat-x;
 	vertical-align: middle;
 	text-align:center;
         /*font-style: italic;*/
@@ -1173,8 +1176,8 @@ font-size : 12px;
 }
 
 .tdListRightHeader{
-	background-color: #ffd894;
-	color: #4D2222;
+	background-color: #29b029;
+	color: #fff;
 	font-size : 11px;
 	padding: 1px 1px 1px 5px;
 }
