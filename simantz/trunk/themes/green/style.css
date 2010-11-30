@@ -58,7 +58,7 @@ ol {
 
 li {
 	margin-left: 2px;
-	color: #4D2222;
+	color: #22324d;
 }
 
 input.formButton {}
@@ -344,6 +344,15 @@ td#footerbar {
 	text-align:center;
 	background: url(Lbar.gif) repeat-x;
 }
+
+td#footerbar a {
+	color:#90ede1;
+}
+
+td#footerbar a:hover {
+	color:#f83204;
+}
+
 /*End of Footer*/
 
 /*Main Menu*/
@@ -452,7 +461,7 @@ td#usermenu a.highlight {
 }
 
 .foot {
-	background-color: #97f697;
+	background-color: #6ebc6e;
 	padding: 5px;
 	font-weight: bold;
 }
@@ -669,7 +678,7 @@ input[type="file"]:hover, input[type="file"]:focus{
 	}
 
 input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]   {
-	border: #c99f7c 1px solid;
+	border: #7c95c9 1px solid;
 	font-size: 8pt;
 	font-weight: normal;
 	color: #41415b;
@@ -817,16 +826,16 @@ padding: 2px 6px
 	display: inline;
         font-size: 13px;
         height: 25px;
-	color: #4D2222;
+	color: #100b6b;
 	}
 
 #headerdiv ul a {
-	color: #4D2222;
+	color: #100b6b;
 	}
 
 #headerdiv ul a:active, a:hover {
 	color: #ff0000;
-	text-shadow: #fff 1px 1px 3px;
+/*	text-shadow: #fff 1px 1px 3px;*/
 	}
 
 #headerdiv ul li:active{
@@ -880,7 +889,7 @@ padding: 2px 6px
 	display: inline;
 	font-weight : bold;
 	color:#ffffff !important;
-	text-shadow: #ffff04 1px 2px 3px;
+/*	text-shadow: #ffff04 1px 2px 3px;*/
 	}
 
 li#pendingno {
@@ -992,7 +1001,7 @@ font-weight: bold;
 	text-align:center;
         /*font-style: italic;*/
         font-weight: none;
-	color: #4D2222;
+	color: #223a4d;
         height:18px;
 }
 
@@ -1221,7 +1230,7 @@ font-size : 12px;
 }
 
 .tdSearchEmployeeTitle{
-    color : #4D2222;
+    color : #223a4d;
     font-size : 12px;
 }
 
