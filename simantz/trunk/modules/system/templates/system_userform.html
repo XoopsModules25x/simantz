@@ -2,9 +2,9 @@
   <legend style="font-weight: bold;"><{$lang_login}></legend>
   <form action="user.php" method="post">
     <{$lang_username}> <input type="text" name="uname" size="26" maxlength="25" value="<{$usercookie}>" /><br /><br />
-    <{$lang_password}> <input type="password" name="pass" size="21" maxlength="32" /><br /><br />
+    <{$lang_password}> <input type="password" name="pass" size="21" maxlength="32" /><br /><br />ss
     <{if isset($lang_rememberme)}>
-        <input type="checkbox" name="rememberme" value="On" checked /> <{$lang_rememberme}><br /><br />
+        <input type="checkbox" name="rememberme" value="On" /> <{$lang_rememberme}><br /><br />
     <{/if}>
     
     <input type="hidden" name="op" value="login" />
@@ -17,7 +17,7 @@
 </fieldset>
 
 <br />
-
+sss
 <fieldset style="padding: 10px;">
   <legend style="font-weight: bold;"><{$lang_lostpassword}></legend>
   <div><br /><{$lang_noproblem}></div>
