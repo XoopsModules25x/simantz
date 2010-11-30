@@ -31,7 +31,6 @@ case "lookup": //return xml table to grid
     exit; //after return xml shall not run more code.
     break;
 case "save": //process submited xml data from grid
-
      $o->saveUser();
 
     break;
@@ -46,17 +45,6 @@ $xoTheme->addScript("$url/modules/simantz/include/nitobi/nitobi.grid/nitobi.grid
 $xoTheme->addScript("$url/modules/simantz/include/firefox3_6fix.js");
 
 $o->showSearchForm(); //produce search form, comment here to hide search form
-if($isadmin==1){
-    $grIdColumn=6; //define primary key column index, it will set as readonly afterwards (count from 0)
-     //   $deleteddefaultvalue_js="myGrid.getCellObject(rowNo,9).setValue(0);"; //if admin login got deleted column, during admin insert new record shall set it default =0 (not deleted)
-    $changewidth="width='265'";
-
-}
-else{
-    $grIdColumn=5;//define primary key column index for normal user
-    $deleteddefaultvalue_js="";
-        $changewidth="width='340'";
-}
 
 if($havewriteperm==1){ //user with write permission can edit grid, have button
 
@@ -65,7 +53,7 @@ if($havewriteperm==1){ //user with write permission can edit grid, have button
    $savectrl='<input name="btnAdd" onclick="addline()" value="Add New" type="button">
      <input name="btnSave" onclick="save()" value="Save" type="button">';
     // <input name="btnDelete" onclick="onclickdeletebutton()" value="Delete" type="button">
-    $alloweditgrid= "col!=$grIdColumn";
+    $alloweditgrid= "true";
 }
 else{ //user dun have write permission, cannot save grid
     $savectrl="";
@@ -76,12 +64,33 @@ else{ //user dun have write permission, cannot save grid
  echo <<< EOF
 
   <script language="javascript" type="text/javascript">
+    var gc = new Array();
+    jQuery(document).ready((function (){
+        nitobi.loadComponent('DataboundGrid');
+        getgridcol();
+    }));
+    
 
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
+    function getgridcol(){
+        var grid = nitobi.getGrid("DataboundGrid");
+        var totalcol = grid.columnCount();
+        var i;
+
+        for( var i = 0; i < totalcol; i++ ){
+          var col =  grid.getColumnObject(i).getxdatafld();
+          gc[col]=i;
+        }
+        
+    }
+
+
+
+
 
     function init(){}
 
      function search(){
+
         var grid = nitobi.getGrid("DataboundGrid");
         var searchname=document.getElementById("searchname").value;
         var searchuname=document.getElementById("searchuname").value;
@@ -91,14 +100,14 @@ else{ //user dun have write permission, cannot save grid
          *only user isadmin will have element searchisdeleted (apply in every windows and records)
          *check element is exist before submit variable to avoid javascript failure
          */
-        if(document.getElementById("searchisdeleted"))
-        var searchisdeleted=document.getElementById("searchisdeleted").checked;
-
+     
+        
+        
         //Submit javascript to grid with _GET method
 	grid.getDataSource().setGetHandlerParameter('searchname',searchname);
 	grid.getDataSource().setGetHandlerParameter('searchuname',searchuname);
 	grid.getDataSource().setGetHandlerParameter('searchuser_isactive',searchuser_isactive);
-	grid.getDataSource().setGetHandlerParameter('searchisdeleted',searchisdeleted);
+	
 
         //reload grid data
 	grid.dataBind();
@@ -173,56 +182,64 @@ else{ //user dun have write permission, cannot save grid
     }
 
 
-    //if user click particular column, auto fall into edit mode
-    function clickrecord(eventArgs){
-                    row=eventArgs.getCell().getRow();
-                    col=eventArgs.getCell().getColumn();
-                    var  myGrid = nitobi.getGrid('DataboundGrid');
-                    var myCell = myGrid.getCellObject(row, col);
-                   // myCell.edit();
-    }
+
 
     //add line button will call this
     function addline(){
     var g= nitobi.getGrid('DataboundGrid');
         g.insertRow();
     }
+    function validateEmpty(){
+
+   	var g= nitobi.getGrid('DataboundGrid');
+         var total_row = g.getRowCount();
+        var  uname= "";
+        var  email= "";
+        var  pass= "";
+        var  pass2= "";
+        for( var i = 0; i < total_row; i++ ) {
+
+          uname= g.getCellValue( i, gc['uname']);
+          email= g.getCellValue( i, gc['email']);
+          pass= g.getCellValue( i, gc['pass']);
+          pass2= g.getCellValue( i, gc['pass2']);
+          if(pass != pass2)
+       
+          if(uname=="" || email=="" || pass != pass2){
+            
+            return false;
+            }
+
+
+        }
+
+        return true;
+    }
 
     //trigger save activity from javascript
    function save()
      {
+   	var g= nitobi.getGrid('DataboundGrid');
+
       if(validateEmpty()){
-        if(validateMonth()){
-                if(document.getElementById("afterconfirm").value==1){  //Ask for confirmation from delete activity already, process data immediately
-                   var g= nitobi.getGrid('DataboundGrid');
-                   document.getElementById("afterconfirm").value=0;
+       
                    g.save();
-                   }
-                else{ // not yet request confirmation
-                  if(confirm("Confirm the changes? Data will save into database immediately")){
-                  //popup('popUpDiv');
-                  var g= nitobi.getGrid('DataboundGrid');
-                    document.getElementById("afterconfirm").value=0;
-                    g.save();
-                    search();
-                   }
-                  // else //cancel request
-                    //search();
-                }
-         }
-        else{
-        document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Month error, please enter value between 1~12.</b><br/>";
-         }
+       
       }
       else{
-      document.getElementById('msgbox').innerHTML="<b style=\"color:red\">User name, month and year cannot be null</b><br/>";
-
+      document.getElementById('msgbox').innerHTML="<b style=\"color:red\">Please make sure user name, email is not empty. If you change password, please reconfirm with correct password</b><br/>";
       }
     }
 
     function beforesave(){
         document.getElementById('popupmessage').innerHTML="Please Wait.....";
         popup('popUpDiv');
+        if(validateEmpty())
+        return true;
+        else{
+       popup('popUpDiv');
+        return false;
+        }
     }
 
    function onclickdeletebutton(){ //when press delete button will triger this function and ask for confirmation
@@ -236,17 +253,7 @@ else{ //user dun have write permission, cannot save grid
          g.deleteCurrentRow();
     }
 
-   function onclicklogbutton(){ //when press delete button will triger this function and ask for confirmation
-       window.open('','y');
-//   	var g= nitobi.getGrid('DataboundGrid');
-//        var selRow = g.getSelectedRow();
-//	var cellObj = g.getCellValue(selRow, 8);
-//
-//        window.open('','y');
-
-       //alert(cellObj);
-    }
-
+ 
     function checkAllowEdit(eventArgs){
 	var g= nitobi.getGrid('DataboundGrid');
         col=eventArgs.getCell().getColumn();
@@ -259,15 +266,6 @@ else{ //user dun have write permission, cannot save grid
 
 
 //after insert a new line will automatically fill in some value here
-  function setDefaultValue(eventArgs)
-   {
-   var myGrid = eventArgs.getSource();
-   var r = eventArgs.getRow();
-   var rowNo = r.Row;
-   myGrid.getCellObject(rowNo,4).setValue(10);
-        $deleteddefaultvalue_js
-   myGrid.selectCellByCoords(rowNo, 0);
-}
 
 	function beforeDelete(){
 		if(confirm('Delete this record? Data will save into database immediately.')){
@@ -280,63 +278,7 @@ else{ //user dun have write permission, cannot save grid
 			return false;
 			}
 		}
-    function viewlog(){
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        var selCol = g.getSelectedColumn();
-        var cellObj = g.getCellValue(selRow, selCol);
-      window.open(cellObj,"");
-    }
 
-    function validateEmpty(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var isallow = true;
-        var total_row = grid.getRowCount();
-        var name ="";
-        var month ="";
-        var year ="";
-
-        for( var i = 0; i < total_row; i++ ) {
-        var namecell = grid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
-        var monthcell = grid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
-        var yearcell = grid.getCellObject( i, 2);//1st para : row , 2nd para : column seq
-
-           name = namecell.getValue();
-           month = monthcell.getValue();
-           year= yearcell.getValue();
-           if(name=="" || month=="" || year=="")
-           {
-            isallow = false;
-           }
-        }
-
-        if(isallow)
-          return true;
-        else
-          return false;
-    }
-    function validateMonth(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var isallow = true;
-        var total_row = grid.getRowCount();
-        var month ="";
-
-        for( var i = 0; i < total_row; i++ ) {
-        var monthcell = grid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
-           month = monthcell.getValue();
-           if(month>12)
-           {
-            isallow = false;
-           }
-        }
-
-        if(isallow)
-          return true;
-        else
-          return false;
-    }
 </script>
 <br/>
 
@@ -356,8 +298,8 @@ else{ //user dun have write permission, cannot save grid
 
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
-     gethandler="period.php?action=search"
-     savehandler="period.php?action=save"
+     gethandler="user.php?action=search"
+     savehandler="user.php?action=save"
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
      onafterrowinsertevent="setDefaultValue(eventArgs)"
      rowhighlightenabled="true"
@@ -369,23 +311,19 @@ else{ //user dun have write permission, cannot save grid
      theme="$nitobigridthemes">
  <ntb:columns>
    <ntb:textcolumn width="210" label="User Name" xdatafld="uname"  classname="{\$rh}"></ntb:textcolumn>
-   <ntb:numbercolumn  width="85" label="Full Name" xdatafld="name"  classname="{\$rh}" maxLength="4" mask="0000"></ntb:numbercolumn>
-   <ntb:numbercolumn width="85" label="Email" xdatafld="email" classname="{\$rh}" maxLength="2" mask="###0" ></ntb:numbercolumn>
+   <ntb:textcolumn  width="85" label="Full Name" xdatafld="name"  classname="{\$rh}" ></ntb:textcolumn>
+   <ntb:textcolumn width="150" label="Email" xdatafld="email" classname="{\$rh}"  ></ntb:textcolumn>
    <ntb:textcolumn label="Active" width="45" xdatafld="user_isactive" sortenabled="true"  classname="{\$rh}">
          <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
           checkedvalue="1" uncheckedvalue="0" displayfields="display" valuefield="value"></ntb:checkboxeditor>
         </ntb:textcolumn>
-   <ntb:numbercolumn maxlength="5" label="Seq No"  width="50" xdatafld="pass" mask="###0"  classname="{\$rh}"></ntb:numbercolumn>
-EOF;
-//only admin user will see record info and isdeleted column
-if($isadmin==1)
-{
-echo<<< EOF
-<ntb:textcolumn  label="Log"   xdatafld="info"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:viewlog()">
-            <ntb:imageeditor imageurl="images/history.gif"></ntb:imageeditor> </ntb:textcolumn>
-EOF;
-}
- echo <<< EOF
+
+   <ntb:textcolumn label="New Password"  width="150" xdatafld="pass"  classname="{\$rh}">
+<ntb:passwordeditor></ntb:passwordeditor>
+</ntb:textcolumn>
+   <ntb:textcolumn label="Reconfirm Password"  width="150" xdatafld="pass2"  classname="{\$rh}">
+<ntb:passwordeditor></ntb:passwordeditor>
+</ntb:textcolumn>
       <ntb:numbercolumn   label="ID"  width="0" xdatafld="uid" mask="###0" sortenabled="false"></ntb:numbercolumn>
       <ntb:textcolumn  label="Del"   xdatafld="" $hidewidth  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()">
             <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>

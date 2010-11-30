@@ -1,16 +1,17 @@
 <?php
 include "system.php";
-include_once '../class/Log.inc.php';
-include_once 'class/Window.php';
-include_once '../class/Permission.php';
+include "menu.php";
+include_once XOOPS_ROOT_PATH.'class/Window.php';
+include_once XOOPS_ROOT_PATH.'/class/Permission.php';
 
-xoops_cp_header();
+
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 $log = new Log();
 $o = new Permission();
 
 $o->groupid=0;
+
 
 if (isset($_POST['action'])){
 	$action=$_POST['action'];
@@ -76,6 +77,6 @@ break;
 
 };
 
-xoops_cp_footer();
+require(XOOPS_ROOT_PATH.'/footer.php');
 
 ?>

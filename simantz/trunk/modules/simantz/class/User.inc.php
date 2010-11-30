@@ -13,8 +13,7 @@ class User
   
   private $xoopsDB;
   private $tableprefix;
-  private $tablejobposition;
-  private $tablebpartner;
+  
 
   private $log;
 
@@ -62,30 +61,28 @@ class User
 <table style="width:100%;" > 
  <tr>
   <td align="center">
+ <form name="frmUser" onsubmit="search();return false;">
 
 <table id='centercontainer' class="searchformblock" style="width:943px;">
  <tr><td nowrap>
-       <form name="frmJobposition">
-
+      
     <div align="center" class="searchformheader">Search User</div>
-
-           <div class="divfield" style="width:250px"><label>User Year &nbsp;
-			<input name="searchname" id="searchname" ></label></div>
 
             <div class="divfield" style="width:250px"><label>User Name &nbsp;
 			<input name="searchuname" id="searchuname" ></label></div>
-
+           <div class="divfield" style="width:250px"><label>Full Name &nbsp;
+			<input name="searchname" id="searchname" ></label></div>
 	    <div class="divfield" style="width:120px"> <label>Active &nbsp;
                 <select name="searchuser_isactive" id="searchuser_isactive">
                     <option value="-">Null</option>
                     <option value="1" SELECTED="SELECTED">Yes</option>
                     <option value="0">No</option>
                 </select></label></div>
-           <div class="divfield" style="text-align:right; width:160px"> <input name="submit" value="Search" type="button" onclick="search()"></div>
-</form>
+           <div class="divfield" style="text-align:right; width:160px"> <input name="submit" value="Search" type="submit" ></div>
+
  </td></tr>
 </table>
-
+</form>
 </td></tr></table>
 
 EOF;
@@ -101,7 +98,7 @@ EOF;
         $ordinalStart=$_GET["StartRecordIndex"];
         $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
-    global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
+    global $xoopsDB,$wherestring,$xoopsUser,$isadmin,$uid;
 
     $tablename="sim_users";
     $searchname=$_GET['searchname'];
@@ -116,19 +113,21 @@ EOF;
           $ordinalStart=0;
         }
         if(empty($sortcolumn)){
-           $sortcolumn="pass, uname";
+           $sortcolumn="uname,name";
         }
         if(empty($sortdirection)){
            $sortdirection="ASC";
         }
 
      if($searchname !="")
-           $wherestring.= " AND name LIKE '".$searchname."'";
+           $wherestring.= " AND name LIKE '%".$searchname."%'";
      if($searchuname !="")
            $wherestring.= " AND uname LIKE '%".$searchuname."%'";
      if($searchuser_isactive !="-" && $searchuser_isactive !="")
            $wherestring.= " AND user_isactive =$searchuser_isactive";
 
+if($uid>1)
+    $wherestring.= " and uid >1";
 
      $sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
       $this->log->showLog(4,"With SQL: $sql");
@@ -139,6 +138,7 @@ EOF;
      	$getHandler->DefineField("uname");
      	$getHandler->DefineField("user_isactive");
         $getHandler->DefineField("pass");
+        $getHandler->DefineField("pass2");
         $getHandler->DefineField("info");
         $getHandler->DefineField("email");
         $getHandler->DefineField("uid");
@@ -160,7 +160,8 @@ EOF;
              $getHandler->DefineRecordFieldValue("name", $row['name']);
              $getHandler->DefineRecordFieldValue("uname",$row['uname']);
              $getHandler->DefineRecordFieldValue("user_isactive", $row['user_isactive']);
-             $getHandler->DefineRecordFieldValue("pass", $row['pass']);
+             $getHandler->DefineRecordFieldValue("pass", "");
+             $getHandler->DefineRecordFieldValue("pass2", "");
              $getHandler->DefineRecordFieldValue("info","recordinfo.php?id=".$row['uid']."&tablename=sim_users&idname=uid&title=User");
              $getHandler->DefineRecordFieldValue("email",$row['email']);
              $getHandler->DefineRecordFieldValue("uid",$row['uid']);
@@ -169,7 +170,7 @@ EOF;
              }
       }
     $getHandler->CompleteGet();
-          $this->log->showLog(2,"complete function showUser()");
+          $this->log->showLog(2,"complete function showUser(),uid=$uid");
     }
 
  public function saveUser(){
@@ -194,24 +195,32 @@ EOF;
 
 if ($insertCount > 0)
 {
-    $arrfield=array("name", "uname","user_isactive","pass",
-                    "created","createdby","updated","updatedby","email");
-    $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s','%d','%s');
 
 // Yes there are INSERTs to perform...
  for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
  {
-
+ $pass =  trim($saveHandler->ReturnInsertField($currentRecord,"pass"));
+ if($pass==""){
+    $arrfield=array("name", "uname","user_isactive","email");
+    $arrfieldtype=array('%s','%s','%d','%s');
      $arrvalue=array($saveHandler->ReturnInsertField($currentRecord, "name"),
                 $saveHandler->ReturnInsertField($currentRecord, "uname"),
                 $saveHandler->ReturnInsertField($currentRecord,"user_isactive"),
-                $saveHandler->ReturnInsertField($currentRecord,"pass"),
-                $timestamp,
-                $createdby,
-                $timestamp,
-                $createdby,
                 $saveHandler->ReturnInsertField($currentRecord,"email")
          );
+
+ }
+ else{
+    $arrfield=array("name", "uname","user_isactive","pass","email");
+    $arrfieldtype=array('%s','%s','%d','%s','%s');
+     $arrvalue=array($saveHandler->ReturnInsertField($currentRecord, "name"),
+                $saveHandler->ReturnInsertField($currentRecord, "uname"),
+                $saveHandler->ReturnInsertField($currentRecord,"user_isactive"),
+                md5($saveHandler->ReturnInsertField($currentRecord,"pass")),
+                $saveHandler->ReturnInsertField($currentRecord,"email")
+         );
+
+ }
      $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "name");
      $save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype,$controlvalue,"uid");
   if($save->failfeedback!=""){
@@ -228,30 +237,34 @@ $this->log->showLog(3,"Start update($updateCount records)");
 if ($updateCount > 0)
 {
 
-      $arrfield=array("name", "uname", "user_isactive","pass",
-           "updated","updatedby","email");
-      $arrfieldtype=array('%s','%s','%d','%d','%s','%d','%s');
  // Yes there are UPDATEs to perform...
-
- for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++){
-         $this->log->showLog(3,"***updating record($currentRecord),new uname:".
-                $saveHandler->ReturnUpdateField($currentRecord, "uname").",id:".
-                $saveHandler->ReturnUpdateField($currentRecord)."\n");
-                $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "name");
-
- }
 
  for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
  {
-
+       $pass =  trim($saveHandler->ReturnUpdateField($currentRecord,"pass"));
+         if($pass==""){
+          $arrfield=array("name", "uname", "user_isactive", "email");
+          $arrfieldtype=array('%s','%s','%d','%s');
         $arrvalue=array($saveHandler->ReturnUpdateField($currentRecord, "name"),
                 $saveHandler->ReturnUpdateField($currentRecord, "uname"),
                 $saveHandler->ReturnUpdateField($currentRecord,"user_isactive"),
-                $saveHandler->ReturnUpdateField($currentRecord,"pass"),
-                $timestamp,
-                $createdby,
                 $saveHandler->ReturnUpdateField($currentRecord,"email"),
                 );
+
+         }
+         else{
+          $arrfield=array("name", "uname", "user_isactive","pass", "email");
+          $arrfieldtype=array('%s','%s','%d','%s','%s');
+        $arrvalue=array($saveHandler->ReturnUpdateField($currentRecord, "name"),
+                $saveHandler->ReturnUpdateField($currentRecord, "uname"),
+                $saveHandler->ReturnUpdateField($currentRecord,"user_isactive"),
+                md5($saveHandler->ReturnUpdateField($currentRecord,"pass")),
+                $saveHandler->ReturnUpdateField($currentRecord,"email"),
+                );
+
+         }
+
+
         $this->log->showLog(3,"***updating record($currentRecord),new uname:".
               $saveHandler->ReturnUpdateField($currentRecord, "uname").",id:".
               $saveHandler->ReturnUpdateField($currentRecord,"uid")."\n");

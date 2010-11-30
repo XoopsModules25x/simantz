@@ -91,7 +91,7 @@ public function Permission (){
 		<TR><TH colspan='5' style='text-align: center'>Search Groups</TH></TR>
 		<TR><FORM method='GET' action='permission.php'>
 			<TD class="head">Group</TD>
-			<TD class="odd">$selectgroup <A href='../../system/admin.php?fct=groups'>Add/Edit Groups</A></TD>
+			<TD class="odd">$selectgroup <A href='group.php'>Add/Edit Groups</A></TD>
 			<TD class="head">Module</TD><TD class="odd">$selectmodule</TD>
 
                     <TD class="even"><INPUT type='submit' name="action" value="search"></TD>
