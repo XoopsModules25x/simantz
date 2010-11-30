@@ -140,7 +140,7 @@
  
 
 
-	if($menuname == "" && $userid > 0)
+	if($menuname == "" && $userid > 1)
 		 redirect_header("index.php",$pausetime,
 			"<b style='color:red'>You don't have permission to access this page, back to home.</b> ");
         
