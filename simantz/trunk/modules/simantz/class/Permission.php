@@ -62,8 +62,8 @@ public function Permission (){
 	$selectgroup=$selectgroup."</SELECT>";
 	$this->log->showLog(4,"With SQL: $sql");
 
-        $sql="SELECT m.mid,m.name from sim_modules m
-		 order by m.name";
+        $sql="SELECT m.mid,m.name from sim_modules m where m.weight>0
+		 order by m.name ";
 	$selectmodule="<SELECT name='findmodule_id' onchange='action.click();'>";
 	$i=0;
 	$query=$this->xoopsDB->query($sql);
@@ -283,7 +283,7 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
                     and w.mid=$module_id
                     and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
                     w.isactive=1 and w.window_id>0
-                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.seqno";
+                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.seqno, w.window_name ASC";
    
   $level++;
  $query=$this->xoopsDB->query($sql);
