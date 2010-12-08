@@ -9,7 +9,7 @@ echo <<< EFO
 1. Create Country &nbsp;&nbsp;<a href='country.php' target="_blank">[Go]</a><br>
 2. Create Period &nbsp;&nbsp;<a href='period.php' target="_blank">[Go]</a><br> 
 3. Create Currency &nbsp;&nbsp; <a href='currency.php' target="_blank">[Go]</a><br>
-4. Create Organization &nbsp;&nbsp; <a href='admin/organization.php' target="_blank">[Go]</a><br>
+4. Create Organization &nbsp;&nbsp; <a href='organization.php' target="_blank">[Go]</a><br>
 5. Create Races &nbsp;&nbsp;<a href='races.php' target="_blank">[Go]</a><br>
 6. Create Religion &nbsp;&nbsp;<a href='religion.php' target="_blank">[Go]</a><br>
 EFO;
