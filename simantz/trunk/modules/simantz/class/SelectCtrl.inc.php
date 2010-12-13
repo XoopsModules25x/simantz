@@ -15,7 +15,7 @@ class SelectCtrl{
 
 public function getSelectModule($id,$showNull='Y',$controlname="mid",$controlid="mid",$onchangefunction=""){
 
-	$sql="SELECT mid,name from sim_modules order by weight where weight>0";
+	$sql="SELECT mid,name from sim_modules where weight>0 order by weight ";
 
 	//$selectctl="<SELECT name=\"$controlname\" id=\"$controlid\" $onchangefunction>";
 	if ($showNull=='Y')
