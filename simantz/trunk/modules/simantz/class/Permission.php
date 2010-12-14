@@ -86,17 +86,17 @@ public function Permission (){
 
 	echo <<<EOF
 <A href='index.php'>Back To This Module Administration Menu</A>
-	 <TABLE>
+	 <TABLE class="searchformblock">
 		<TBODY>
-		<TR><TH colspan='5' style='text-align: center'>Search Groups</TH></TR>
-		<TR><FORM method='GET' action='permission.php'>
+		<tr><td colspan='5' style='text-align: center' class='tdListRightTitle'>Search Groups</td></tr>
+		<tr><FORM method='GET' action='permission.php'>
 			<TD class="head">Group</TD>
 			<TD class="odd">$selectgroup <A href='group.php'>Add/Edit Groups</A></TD>
 			<TD class="head">Module</TD><TD class="odd">$selectmodule</TD>
 
                     <TD class="even"><INPUT type='submit' name="action" value="search"></TD>
 			</FORM>
-		</TR>
+		</tr>
 		</TBODY>
 	 </TABLE>
 <br>
@@ -113,12 +113,12 @@ EOF;
 //show table header
 echo <<< EOF
 <FORM method='POST' action='permission.php' name='frmUpdatePermission'>
-	 <TABLE>
+	 <TABLE class='searchformblock'>
 		<TBODY>
-		<TR><TH colspan='10' style='text-align: center'>Add/Edit Group Permission
+		<tr><td colspan='10' style='text-align: center' class='tdListRightTitle'>Add/Edit Group Permission
                         <INPUT TYPE='submit' value='save' name='submit'>
                         <INPUT TYPE='hidden' value='$this->groupid' name='groupid'>
-                        </TH></TR>
+                        </td></tr>
 		<TR>
 			<Th>No</Th>
 			<Th>Function Name</Th>
