@@ -20,7 +20,7 @@ $modversion['hasAdmin'] = 1;
 $modversion['hasMain'] = 1;
 $modversion['adminindex'] = "admin/index.php";
 
-$modversion['sqlfile']['mysql'] = "sql/mysql.sql";
+//$modversion['sqlfile']['mysql'] = "sql/mysql.sql";
 
 //$modversion['sqlfile']['mysql'] = "sql/simtrain_visi.sql";
 //$modversion['tables'][0] = "simtrain_visi_student";

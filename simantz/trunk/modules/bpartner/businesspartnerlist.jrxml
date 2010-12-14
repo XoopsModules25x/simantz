@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Business Partner Listing" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="companyname" class="java.lang.String"/>
+	<parameter name="companyno" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT
+bp.companyno AS code,
+bp.bpartner_name AS name,
+bpg.bpartnergroup_name AS groups,
+ids.industry_name  AS industry,
+tm.terms_name AS terms,
+bp.inchargeperson AS salesreprentative,
+bp.shortremarks AS shortremarks
+
+FROM sim_bpartner bp
+LEFT JOIN sim_bpartnergroup bpg on bpg.bpartnergroup_id=bp.bpartnergroup_id
+LEFT JOIN sim_industry ids on ids.industry_id=bp.industry_id
+LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
+	</queryString>
+	<field name="code" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="groups" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="industry" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="terms" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="salesreprentative" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="shortremarks" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="96" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="47" width="802" height="27"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="18" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Business Partner List]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="79" width="43" height="14"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Code]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="43" y="79" width="208" height="14"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="251" y="79" width="84" height="14"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Groups]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="335" y="79" width="99" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Industry]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="434" y="79" width="47" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Terms]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="79" width="79" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[City]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="696" y="79" width="106" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Short Remarks]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="560" y="79" width="136" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Sales Representative]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="594" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyname}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="594" y="0" width="208" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyno}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="77" width="802" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="93" width="802" height="1"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="18" splitType="Stretch">
+			<textField>
+				<reportElement x="335" y="2" width="99" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{industry}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="251" y="2" width="84" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{groups}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="436" y="2" width="45" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{terms}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="2" width="135" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{salesreprentative}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="695" y="2" width="100" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{shortremarks}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="2" width="43" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{code}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="43" y="2" width="208" height="14"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="356" y="2" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="436" y="2" width="40" height="20"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="h.mm a">
+				<reportElement x="0" y="2" width="100" height="20"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -247,8 +247,10 @@ if($o->creditoraccounts_id=="")
                 $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id","");
         }
         else{
-                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
-                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
+               $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
+               $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
+//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
+//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
         }
 
  if($mode == "new"){//go to new record
@@ -311,10 +313,10 @@ if($o->currency_id=="")
                 $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id"," and a.account_type=3 ");
         }
         else{
-
-                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
-                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
-
+               $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
+               $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
+//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
+//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
         }
                 
  $o->includeGeneralFile();
@@ -619,9 +621,10 @@ if($o->creditoraccounts_id=="")
                 $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id"," and a.account_type=3 ");
         }
         else{
-
-                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
-                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
+               $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
+               $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
+//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
+//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
 
         }
 

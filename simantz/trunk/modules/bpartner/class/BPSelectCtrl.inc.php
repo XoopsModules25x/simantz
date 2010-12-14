@@ -111,7 +111,7 @@ public function getSelectBPartnerGroup($id,$showNull='N') {
 public function getSelectIndustry($id,$showNull='N') {
 	global $tablebpartnergroup,$defaultorganization_id;
         
-	$sql="SELECT industry_id,industry_name from sim_industry where (isactive=1 or industry_id=$id) and industry_id>0 order by industry_name asc;";
+	$sql="SELECT industry_id,industry_name from sim_industry where (isactive=1 or industry_id='$id') and industry_id>0 order by industry_name asc;";
 	$this->log->showLog(3,"Generate Industry list with with SQL($id,$showNull): $sql");
 	if ($id==-1 || $showNull=='Y')
 		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
