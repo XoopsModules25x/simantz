@@ -539,7 +539,7 @@ var gc = new Array();
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
      onafterrowinsertevent="setDefaultValue(eventArgs)"
      rowhighlightenabled="true"
-     width="430"
+     width="400"
      height="550"
      onaftersaveevent="savedone(eventArgs)"
      onbeforerowdeleteevent="beforeDelete()"
@@ -574,7 +574,7 @@ var gc = new Array();
              gethandler="group.php?action=searchgroupline"
              savehandler="group.php?action=savegroupline"
              rowhighlightenabled="true"
-             width="470"
+             width="485"
              height="550"
              
              onaftersaveevent="savedonegroupline(eventArgs)"
