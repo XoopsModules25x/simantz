@@ -112,7 +112,7 @@ public function prepareAuditHistory($category,$tablename,$primarykey,$record_id,
                $changedesc.=$arrfield[$i]."='".$value[0]."',<br/>";
                else
                    $changedesc.=$arrfield[$i]."='".$value[1]."(".$value[0].")',<br/>";
-                $changedesc=substr_replace($changedesc,"",-5);
+                $changedesc=substr_replace($changedesc,"",-6);
               }
         }
       elseif($category=='D'){
@@ -168,7 +168,8 @@ public function InsertRecord($tablename,$arrfield,$arrvalue,$arrfieldtype,$contr
     for($i=0;$i<$fieldcount;$i++){
     	$this->log->showLog(4,"Field sequence:".$arrfield[$i].",".$arrfieldtype[$i]);
         $fieldname.=$arrfield[$i].",";
-         $fieldtype.=$arrfieldtype[$i].",";
+        $fieldtype.=$arrfieldtype[$i].",";
+        $arrvalue[$i]=htmlspecialchars_decode($arrvalue[$i]);
     }
 
     $fieldname=substr_replace($fieldname,"",-1);
@@ -246,6 +247,7 @@ public function UpdateRecord($tablename,$primarykey,$record_id,$arrfield,$arrval
     
     if($changedesc==""){
          $this->failfeedback.="Have some data are nothing change!<br/>\n";
+          
         return false;
     }
     $rs=$this->xoopsDB->query($sql);

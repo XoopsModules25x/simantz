@@ -166,6 +166,33 @@ public function getAllSystemGroup($gid){
 
   } //getAllSystemGroup
 
+public function getUserGroup($gid,$showNull='Y'){
+       global $tablegroups;
+	$this->log->showLog(3,"Retrieve available system groups from database, with preselect id: $id");
+	$sql="SELECT groupid,name FROM $tablegroups WHERE groupid>1";
+	$this->log->showLog(3,"Retrieve available system groups with sql:$sql");
+	$this->log->showLog(4,"SQL: $sql");
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+        	if ($showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null</OPTION>';
+
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$groupid=$row['groupid'];
+		$name=$row['name'];
+		if($gid==$groupid)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$groupid' $selected>$name</OPTION>";
+	}
+
+	return $selectctl;
+
+
+
+  } //getAllSystemGroup
+
 public function getSelectCountry($id,$showNull='Y') {
     global $tablecountry;
 	 $sql=sprintf("SELECT country_id,country_name from $tablecountry where (isactive=1 or country_id= %d) and country_id>0
