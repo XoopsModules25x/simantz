@@ -1099,7 +1099,8 @@ class PHPJasperXML {
                 else {
                     $checkpoint=$biggestY;
                 }
-        if(isset($this->arraygroup)&&($this->global_pointer>0)&&
+                //Remove $this->global_pointer>0 , becouse when only one row data will cause group footer no show.
+        if(isset($this->arraygroup)&&
                         ($this->arraysqltable[$this->global_pointer][$this->group_pointer]!=$this->arraysqltable[$this->global_pointer+1][$this->group_pointer])){
                                $this->showGroupFooter($compare["height"]+$biggestY);
                                 $checkpoint=$this->pdf->getY();
