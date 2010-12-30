@@ -153,7 +153,7 @@ $grIdColumn=0;
 $grIdColumnGroupline=0;
 $seqid=4;
 
-if($havewriteperm==1){ //user with write permission can edit grid, have button
+if($havewriteperm==1 || $this->isAdmin){ //user with write permission can edit grid, have button
 
    $permctrl=" rowinsertenabled=\"true\" rowdeleteenabled=\"true\" onbeforesaveevent=\"beforesave()\"";
    $permctrlgroupline=" rowinsertenabled=\"true\" rowdeleteenabled=\"true\" onbeforesaveevent=\"beforesave()\"";
@@ -563,7 +563,7 @@ var gc = new Array();
 </td>
 
 <td align="left">
-        <ntb:grid id="DetailGrid"
+      <ntb:grid id="DetailGrid"
              mode="standard"
              toolbarenabled='false'
              $permctrlgroupline

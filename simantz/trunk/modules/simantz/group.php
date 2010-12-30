@@ -5,7 +5,7 @@ include '../simantz/class/Group.inc.php';
 $o = new Group();
 $s = new XoopsSecurity();
 $action=$_REQUEST['action'];
-$isadmin=$xoopsUser->isAdmin();
+$o->isAdmin=$xoopsUser->isAdmin();
 $uid = $xoopsUser->getVar('uid');
 
 
