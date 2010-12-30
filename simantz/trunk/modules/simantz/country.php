@@ -74,7 +74,7 @@ if($havewriteperm==1){ //user with write permission can edit grid, have button
    $permctrlregion=" rowinsertenabled=\"true\" rowdeleteenabled=\"true\" onbeforesaveevent=\"beforesave()\"";
    $savectrl='<input name="btnAdd" onclick="addline()" value="Add New" type="button">
      <input name="btnSave" onclick="save()" value="Save" type="button">';
-   $saveregionctrl='<input name="btnAddregion" id="btnAddregion"  onclick="addlineregion()" value="Add New Region" type="button" style="display:none">
+   $saveregionctrl='<input name="btnAddregion" id="btnAddregion"  onclick="addlineregion()" value="Add New State" type="button" style="display:none">
      <input name="btnSaveregion" id="btnSaveregion" onclick="saveregion()" value="Save" type="button" style="display:none">';
     // <input name="btnDelete" onclick="onclickdeletebutton()" value="Delete" type="button">
     $alloweditgrid= "col!=$grIdColumn";
@@ -347,7 +347,7 @@ else{ //user dun have write permission, cannot save grid
    var myGrid = eventArgs.getSource();
    var r = eventArgs.getRow();
    var rowNo = r.Row;
-   myGrid.getCellObject(rowNo,4).setValue(10);
+   myGrid.getCellObject(rowNo,5).setValue(10);
         $deleteddefaultvalue_js
    myGrid.selectCellByCoords(rowNo, 0);
 }
@@ -490,7 +490,7 @@ else{ //user dun have write permission, cannot save grid
      mode="nonpaging"
      toolbarenabled='false'
      $permctrl
-     singleclickeditenabled="true"
+     singleclickeditenabled="false"
      onhtmlreadyevent="dataready()"
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
@@ -508,7 +508,7 @@ else{ //user dun have write permission, cannot save grid
      autosaveenabled="false"
      theme="$nitobigridthemes">
  <ntb:columns>
-   <ntb:textcolumn  width="80" label="Country Code" xdatafld="country_code"  classname="{\$rh}" ></ntb:textcolumn>
+   <ntb:textcolumn  width="75" label="Country Code" xdatafld="country_code"  classname="{\$rh}" ></ntb:textcolumn>
    <ntb:textcolumn width="145" label="Country Name" xdatafld="country_name"  classname="{\$rh}"></ntb:textcolumn>
    <ntb:textcolumn  $changewidth label="Citizenship" xdatafld="citizenship" classname="{\$rh}" ></ntb:textcolumn>
    <ntb:textcolumn  width="49" label="Tel Code" xdatafld="telcode" classname="{\$rh}" ></ntb:textcolumn>
@@ -558,7 +558,7 @@ EOF;
              >
 
 <ntb:columns>
-   <ntb:textcolumn width="180" label="Region Name" xdatafld="region_name"  classname="{\$rh}"></ntb:textcolumn>
+   <ntb:textcolumn width="180" label="State Name" xdatafld="region_name"  classname="{\$rh}"></ntb:textcolumn>
   
    <ntb:textcolumn label="Active" width="45" xdatafld="isactive" sortenabled="true"  classname="{\$rh}" align="center">
          <ntb:checkboxeditor datasource="[{value:'1',display:''},{value:'0',display:''}]"
