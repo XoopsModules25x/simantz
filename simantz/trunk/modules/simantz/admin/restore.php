@@ -1,5 +1,6 @@
 <?php
 include_once "admin_header.php" ;
+include "../setting.php";
 xoops_cp_header();
 
 
@@ -16,13 +17,13 @@ $filesize=$_FILES["upload_file"]["size"] / 1024;
 $filetype=$_FILES["upload_file"]["type"];
 $filename=$_FILES["upload_file"]["name"];
 //echo "$tmpfile, $filesize, $filetype, $filename";
+// text/x-sql or application/zip
 
-move_uploaded_file($tmpfile, "backup/restore.sql.zip");
+
 
 if(PHP_OS=='WINNT'){
-$backupFile = "backup\\backup.sql";
-$restoreFile="backup\\restore.sql.zip";
-$unzipRestoreFile="backup\\backup.sql";
+$restoreFile="..\\$uploadpath\\restore.sql.zip";
+$unzipRestoreFile="..\\$uploadpath\\backup.sql";
 system("unzip -P $dbpass $restoreFile");
 if(!file_exists($unzipRestoreFile))
  redirect_header("restore.php",3,"<b style='color: red;'>Restoration Failed! Please check you source file.</b>");
@@ -30,21 +31,40 @@ else
 $command = "d:\\wamp\\bin\\mysql\\mysql5.0.51a\\bin\\mysql -h $dbhost -u $dbuser -p$dbpass -D$dbname< $unzipRestoreFile ";
 }
 else{
-$backupFile = "backup/backup.sql";
-$restoreFile="backup/restore.sql.zip";
-$unzipRestoreFile="backup/backup.sql";
-system("unzip -P $dbpass $restoreFile");
-if(!file_exists($unzipRestoreFile))
- redirect_header("restore.php",3,"<b style='color: red;'>Restoration Failed! Please check you source file.</b>");
-else
-  $command = "mysql -h $dbhost -u $dbuser -p$dbpass -D$dbname< $unzipRestoreFile 2>backup/error.log;";
+
+if($filetype=="application/zip"){
+    
+    $restoreFile = "../$uploadpath/restore.zip";
+ 
+    move_uploaded_file($tmpfile, $restoreFile);
+    system("cd '../$uploadpath';unzip -P '$dbpass' $restoreFile");
+    system("rm -f $restoreFile");
+    $restoreFile= "../$uploadpath/backup.sql";
+
 }
-//system($command);
+elseif($filetype=="text/x-sql"){
+    $restoreFile = "../$uploadpath/restore.sql";
+    move_uploaded_file($tmpfile, $restoreFile);
+}
+else
+{echo "unsupported file type";die;}
+
+
+if(!file_exists($restoreFile))
+ redirect_header("restore.php",3,"<b style='color: red;'>Restoration Failed! Please check you source file.</b>");
+else{
+  $command = "mysql -h $dbhost -u $dbuser -p$dbpass -D$dbname< $restoreFile"; 
+ 
+}
+
+}
+
+
+
 if(system("$command") == 1 || system("$command") == 2)
  redirect_header("restore.php",3,"<b style='color: red;'>Restoration Failed! Please check you source file.</b>");
 else
  redirect_header("restore.php",3,"<b>Restoration successfully</b>");
-
 
 
 }
