@@ -571,7 +571,7 @@ EOF;
 
 <tr><td align="left">
   <input id='afterconfirm' value='0' type='hidden'>
-    Status:
+
 <div id="msgbox" class="blockContent"></div>
 </td></tr></table></div>
 EOF;
