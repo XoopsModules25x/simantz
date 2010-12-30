@@ -109,6 +109,10 @@
 		$defaultorganization_id=$o->getDefaultOrganization($userid);
 		$_SESSION['defaultorganization_id']=$defaultorganization_id; 
 
+		if($defaultorganization_id=='' || $defaultorganization_id==0){
+	$defaultorganization_id=1;	
+		$_SESSION['defaultorganization_id']=$defaultorganization_id; 
+		}
 	}
 
 	if( $_GET['setSessionDate']=='Y')
