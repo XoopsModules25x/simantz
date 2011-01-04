@@ -164,7 +164,7 @@ $o->creditoraccounts_id=$_POST['creditoraccounts_id'];
 $o->debtoraccounts_id=$_POST['debtoraccounts_id'];
 $o->salescreditlimit=$_POST['salescreditlimit'];
 $o->purchasecreditlimit=$_POST['purchasecreditlimit'];
-
+$o->groupid=$_POST['groupid'];
 $o->enforcesalescreditlimit=$_POST['enforcesalescreditlimit'];
 $o->enforcepurchasecreditlimit=$_POST['enforcepurchasecreditlimit'];
 $o->currentsalescreditstatus=$_POST['currentsalescreditstatus'];
@@ -303,7 +303,7 @@ if($o->currency_id=="")
                 $o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
                 $o->bpartnergroupctrl=$bpctrl->getSelectBPartnerGroup($o->bpartnergroup_id,'Y');
                 $o->industryctrl=$bpctrl->getSelectIndustry($o->industry_id,'Y');
-
+                $o->groupctrl=$ctrl->getUserGroup($o->groupid,'Y');
                 $o->pricelistctrl="<input name='pricelist_id' value='0' type='hidden'>";
                 $o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'N');
                 $o->termsctrl=$bpctrl->getSelectTerms($o->terms_id,'Y');
@@ -354,6 +354,7 @@ $o->istransporter=$_POST['istransporter'];
 $o->isdealer=$_POST['isdealer'];
 $o->isprospect=$_POST['isprospect'];
 $o->currency_id=$_POST['currency_id'];
+$o->groupid=$_POST['groupid'];
 
 $o->creditoraccounts_id=$_POST['creditoraccounts_id'];
 $o->debtoraccounts_id=$_POST['debtoraccounts_id'];
@@ -641,6 +642,7 @@ if($o->terms_id=="")
                 $o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
                 $o->bpartnergroupctrl=$bpctrl->getSelectBPartnerGroup($o->bpartnergroup_id,'Y');
                 $o->industryctrl=$bpctrl->getSelectIndustry($o->industry_id,'Y');
+                $o->groupctrl=$ctrl->getUserGroup($o->groupid,'Y');
 
                 $o->pricelistctrl="<input name='pricelist_id' value='0' type='hidden'>";
                 $o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'Y');

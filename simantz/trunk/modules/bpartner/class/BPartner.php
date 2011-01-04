@@ -348,7 +348,12 @@ else{ //user dun have write permission, cannot save grid
             $this->industryctrl
              </select>
             </td>
-
+    	<td class="head">User Group</td>
+	    <td class="even" >
+             <select name="groupid" id="groupid">
+            $this->groupctrl
+             </select>
+            </td>
       </tr>
 
      <tr>
@@ -672,7 +677,12 @@ else{ //user dun have write permission, cannot save grid
             $this->industryctrl
              </select>
             </td>
-
+    	<td class="head">User Group</td>
+	    <td class="even" >
+             <select name="groupid" id="groupid">
+            $this->groupctrl
+             </select>
+            </td>
       </tr>
 
      <tr>
@@ -1251,7 +1261,7 @@ EOF;
 	"isdebtor","iscreditor","istransporter","isdealer","isprospect","currency_id",
 
 	"creditoraccounts_id","debtoraccounts_id","tax_id",
-	"salescreditlimit","purchasecreditlimit",
+	"salescreditlimit","purchasecreditlimit","groupid",
 
 	"enforcesalescreditlimit","enforcepurchasecreditlimit",
 	"currentsalescreditstatus","currentpurchasecreditstatus",
@@ -1268,7 +1278,7 @@ EOF;
                                     "%d","%d","%d","%d","%d","%d",
 
                                     "%s","%s","%d",
-                                    "%f","%f",
+                                    "%f","%f","%d",
 
                                     "%d","%d",
                                     "%f","%f",
@@ -1283,7 +1293,7 @@ EOF;
 	$this->isdebtor,$this->iscreditor,$this->istransporter,	$this->isdealer,$this->isprospect,$this->currency_id,
 
 	$this->creditoraccounts_id,$this->debtoraccounts_id,0,
-	$this->salescreditlimit,$this->purchasecreditlimit,
+	$this->salescreditlimit,$this->purchasecreditlimit,$this->groupid,
 
 	$this->enforcesalescreditlimit,$this->enforcepurchasecreditlimit,
 	$this->currentsalescreditstatus,$this->currentpurchasecreditstatus,
@@ -1302,7 +1312,7 @@ EOF;
 	"isdebtor","iscreditor","istransporter","isdealer","isprospect","currency_id",
 
 	"creditoraccounts_id","debtoraccounts_id","tax_id",
-	"salescreditlimit","purchasecreditlimit",
+	"salescreditlimit","purchasecreditlimit","groupid",
 
 	"enforcesalescreditlimit","enforcepurchasecreditlimit",
 	"currentsalescreditstatus","currentpurchasecreditstatus",
@@ -1319,7 +1329,7 @@ EOF;
                                     "%d","%d","%d","%d","%d","%d",
 
                                     "%s","%s","%d",
-                                    "%f","%f",
+                                    "%f","%f","%d",
 
                                     "%d","%d",
                                     "%f","%f",
@@ -1337,7 +1347,7 @@ EOF;
 	$this->isdebtor,$this->iscreditor,$this->istransporter,	$this->isdealer,$this->isprospect,$this->currency_id,
 
 	$this->creditoraccounts_id,$this->debtoraccounts_id,0,
-	$this->salescreditlimit,$this->purchasecreditlimit,
+	$this->salescreditlimit,$this->purchasecreditlimit,$this->groupid,
 
 	$this->enforcesalescreditlimit,$this->enforcepurchasecreditlimit,
 	$this->currentsalescreditstatus,$this->currentpurchasecreditstatus,
@@ -1376,7 +1386,7 @@ EOF;
 	 bp.isdebtor,bp.iscreditor,bp.istransporter,bp.isdealer,bp.isprospect,bp.currency_id,
 
          bp.debtoraccounts_id,bp.creditoraccounts_id,bp.tax_id,
-         bp.salescreditlimit,bp.purchasecreditlimit,
+         bp.salescreditlimit,bp.purchasecreditlimit,bp.groupid,
        
 	 bp.enforcesalescreditlimit,bp.enforcepurchasecreditlimit,
 	 bp.currentsalescreditstatus,bp.currentpurchasecreditstatus,
@@ -1433,6 +1443,7 @@ EOF;
 	$this->iscreditor=$row['iscreditor'];
 	$this->istransporter=$row['istransporter'];
 	$this->purchasecreditlimit=$row['purchasecreditlimit'];
+        $this->groupid=$row['groupid'];
 	$this->enforcesalescreditlimit=$row['enforcesalescreditlimit'];
 	$this->enforcepurchasecreditlimit=$row['enforcepurchasecreditlimit'];
 	$this->currentsalescreditstatus=$row['currentsalescreditstatus'];
