@@ -39,8 +39,8 @@ if($searchbpartnergroup_id != 0 && $searchbpartnergroup_id!="")
 if($companyno!="")
     $wherestring .=" AND bp.companyno='$companyno'";
 
-if($bpartner_name != 0 && $bpartner_name!="")
-    $wherestring .=" AND bp.bpartner_name='$bpartner_name'";
+if($bpartner_name!="")
+    $wherestring .=" AND bp.bpartner_name LIKE '%$bpartner_name%'";
 if($searchindustry_id != 0 && $searchindustry_id!="")
     $wherestring .=" AND bp.industry_id='$searchindustry_id'";
 

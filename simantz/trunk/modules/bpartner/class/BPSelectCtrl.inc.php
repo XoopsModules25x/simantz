@@ -51,7 +51,7 @@ public function getSelectTerms($id,$showNull='N',$wherestring=""){
 global $defaultorganization_id,$tableterms;
 
 	$this->log->showLog(3,"Retrieve available system groups from database, with preselect id: $id");
-	$sql="SELECT terms_id,terms_name FROM $tableterms where (isactive=1 or terms_id=$id) 
+	$sql="SELECT terms_id,terms_name FROM sim_terms where (isactive=1 or terms_id='$id')
 		AND terms_id>0 
 		ORDER by seqno,terms_name	";
 	$this->log->showLog(3,"Retrieve available system groups with sql:$sql");
