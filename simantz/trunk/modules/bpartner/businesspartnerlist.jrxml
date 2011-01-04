@@ -5,6 +5,7 @@
 	<property name="ireport.y" value="0"/>
 	<parameter name="companyname" class="java.lang.String"/>
 	<parameter name="companyno" class="java.lang.String"/>
+	<parameter name="wherestring" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
 bp.companyno AS code,
@@ -18,7 +19,9 @@ bp.shortremarks AS shortremarks
 FROM sim_bpartner bp
 LEFT JOIN sim_bpartnergroup bpg on bpg.bpartnergroup_id=bp.bpartnergroup_id
 LEFT JOIN sim_industry ids on ids.industry_id=bp.industry_id
-LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
+LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id
+WHERE bp.bpartner_id>0
+$P{wherestring}]]>
 	</queryString>
 	<field name="code" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -50,9 +53,9 @@ LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
 	<pageHeader>
 		<band height="96" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="47" width="802" height="27"/>
+				<reportElement x="0" y="38" width="802" height="17"/>
 				<textElement textAlignment="Center">
-					<font fontName="Serif" size="18" isBold="true" pdfFontName="times"/>
+					<font fontName="Serif" size="14" isBold="true" pdfFontName="times"/>
 				</textElement>
 				<text><![CDATA[Business Partner List]]></text>
 			</staticText>
@@ -64,7 +67,7 @@ LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
 				<text><![CDATA[Code]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="43" y="79" width="208" height="14"/>
+				<reportElement x="53" y="79" width="198" height="14"/>
 				<textElement textAlignment="Left">
 					<font fontName="Serif" isBold="true" pdfFontName="times"/>
 				</textElement>
@@ -78,15 +81,15 @@ LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
 				<text><![CDATA[Groups]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="335" y="79" width="99" height="14"/>
-				<textElement textAlignment="Center">
+				<reportElement x="344" y="79" width="79" height="14"/>
+				<textElement>
 					<font fontName="Serif" isBold="true" pdfFontName="times"/>
 				</textElement>
 				<text><![CDATA[Industry]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="434" y="79" width="47" height="14"/>
-				<textElement textAlignment="Center">
+				<textElement>
 					<font fontName="Serif" isBold="true" pdfFontName="times"/>
 				</textElement>
 				<text><![CDATA[Terms]]></text>
@@ -99,34 +102,38 @@ LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
 				<text><![CDATA[City]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="696" y="79" width="106" height="14"/>
-				<textElement textAlignment="Center">
+				<reportElement x="706" y="79" width="96" height="14"/>
+				<textElement>
 					<font fontName="Serif" isBold="true" pdfFontName="times"/>
 				</textElement>
 				<text><![CDATA[Short Remarks]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="560" y="79" width="136" height="14"/>
-				<textElement textAlignment="Center">
+				<reportElement x="570" y="79" width="126" height="14"/>
+				<textElement>
 					<font fontName="Serif" isBold="true" pdfFontName="times"/>
 				</textElement>
 				<text><![CDATA[Sales Representative]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="0" y="0" width="594" height="20"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="594" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="594" y="0" width="208" height="20"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="594" y="0" width="208" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyno}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="0" y="77" width="802" height="1"/>
+				<reportElement x="0" y="79" width="802" height="1"/>
 			</line>
 			<line>
-				<reportElement x="0" y="93" width="802" height="1"/>
+				<reportElement x="0" y="92" width="802" height="1"/>
 			</line>
 		</band>
 	</pageHeader>
@@ -134,40 +141,54 @@ LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
 		<band splitType="Stretch"/>
 	</columnHeader>
 	<detail>
-		<band height="18" splitType="Stretch">
-			<textField>
-				<reportElement x="335" y="2" width="99" height="14"/>
-				<textElement/>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="344" y="2" width="79" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{industry}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="251" y="2" width="84" height="14"/>
-				<textElement/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{groups}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="436" y="2" width="45" height="14"/>
-				<textElement/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{terms}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="560" y="2" width="135" height="14"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="570" y="2" width="125" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{salesreprentative}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="695" y="2" width="100" height="14"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="706" y="2" width="89" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{shortremarks}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="2" width="43" height="14"/>
-				<textElement/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{code}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="43" y="2" width="208" height="14"/>
-				<textElement/>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="53" y="2" width="187" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
 			</textField>
 		</band>
@@ -176,23 +197,23 @@ LEFT JOIN sim_terms tm on tm.terms_id=bp.terms_id]]>
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="23" splitType="Stretch">
-			<textField>
-				<reportElement x="356" y="2" width="80" height="20"/>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="356" y="2" width="80" height="14"/>
 				<textElement textAlignment="Right">
 					<font fontName="Serif" pdfFontName="times"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
 			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="436" y="2" width="40" height="20"/>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="436" y="2" width="40" height="14"/>
 				<textElement>
 					<font fontName="Serif" pdfFontName="times"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
-			<textField pattern="h.mm a">
-				<reportElement x="0" y="2" width="100" height="20"/>
+			<textField isStretchWithOverflow="true" pattern="h.mm a">
+				<reportElement x="0" y="2" width="100" height="14"/>
 				<textElement>
 					<font fontName="Serif" pdfFontName="times"/>
 				</textElement>

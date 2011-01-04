@@ -32,11 +32,11 @@ $PHPJasperXML = new PHPJasperXML();
 
 
 
-if($searchbpartner_no != 0 && $searchbpartner_no!="")
+if($searchbpartner_no!="")
     $wherestring .=" AND bp.bpartner_no='$searchbpartner_no'";
 if($searchbpartnergroup_id != 0 && $searchbpartnergroup_id!="")
     $wherestring .=" AND bp.bpartnergroup_id='$searchbpartnergroup_id'";
-if($companyno != 0 && $companyno!="")
+if($companyno!="")
     $wherestring .=" AND bp.companyno='$companyno'";
 
 if($bpartner_name != 0 && $bpartner_name!="")
