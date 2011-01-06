@@ -338,7 +338,7 @@ if($isadmin==1)
 echo<<< EOF
 <ntb:textcolumn  label="Log"   xdatafld="info"    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:viewlog()">
             <ntb:imageeditor imageurl="images/history.gif"></ntb:imageeditor> </ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" label="Restore"   width="0"  xdatafld="isdeleted">
+       <ntb:textcolumn  classname="{\$rh}" label="Restore"  visible="false" width="0"  xdatafld="isdeleted">
             <ntb:checkboxeditor datasource="[{valuedd:'1',displaydd:'No'},{valuedd:'0',displaydd:'Yes'}]"
                     checkedvalue="0" uncheckedvalue="1" displayfields="displaydd" valuefield="valuedd">
            </ntb:checkboxeditor>
@@ -347,7 +347,7 @@ EOF;
 }
 
  echo <<< EOF
-      <ntb:numbercolumn   label="ID"  width="0" xdatafld="followuptype_id" mask="###0" sortenabled="false">
+      <ntb:numbercolumn   label="ID"  width="0" visible="false" xdatafld="followuptype_id" mask="###0" sortenabled="false">
                     </ntb:numbercolumn>
      <ntb:textcolumn  label="Del"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()">
             <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>
