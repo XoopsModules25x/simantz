@@ -527,7 +527,7 @@ echo<<< EOF
 EOF;
 }
  echo <<< EOF
-      <ntb:numbercolumn   label="ID"  width="0" xdatafld="country_id" mask="###0" sortenabled="false"></ntb:numbercolumn>
+      <ntb:numbercolumn   label="ID"  visible="false" width="0" xdatafld="country_id" mask="###0" sortenabled="false"></ntb:numbercolumn>
       <ntb:textcolumn  label="Del"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()">
             <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>
 </ntb:columns>
@@ -575,8 +575,8 @@ echo<<< EOF
 EOF;
 }
  echo <<< EOF
-      <ntb:numbercolumn   label="countryID"  width="0" xdatafld="country_id" mask="###0" sortenabled="false" editable="false"></ntb:numbercolumn>
-      <ntb:numbercolumn   label="ID"  width="0" xdatafld="region_id" mask="###0" sortenabled="false" editable="false"></ntb:numbercolumn>
+      <ntb:numbercolumn   label="countryID" visible="false" width="0" xdatafld="country_id" mask="###0" sortenabled="false" editable="false"></ntb:numbercolumn>
+      <ntb:numbercolumn   label="ID"   visible="false" width="0" xdatafld="region_id" mask="###0" sortenabled="false" editable="false"></ntb:numbercolumn>
       <ntb:textcolumn  label="Del"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebuttonregion()">
             <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>
 </ntb:columns>
