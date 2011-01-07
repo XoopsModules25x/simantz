@@ -47,14 +47,14 @@ if($row=$xoopsDB->fetchArray($query)){
 	Last Updated On: $updated <br>
 	
 
-	<table border='1'><tbody>
+	<table border='1' class="searchformblock"><tbody>
 		<tr>
-		<th style="text-align:center;" >No</th>
-		<th style="text-align:center;">Date/Time</th>
-		<th style="text-align:center;">User</th>
-		<th style="text-align:center;">Category</th>
-		<th style="text-align:center;">Event Type</th>
-		<th  style="text-align:center;">Activity</th></tr>
+		<td class="searchformheader" style="text-align:center;" >No</td>
+		<td class="searchformheader" style="text-align:center;">Date/Time</td>
+		<td class="searchformheader" style="text-align:center;">User</td>
+		<td class="searchformheader" style="text-align:center;">Category</td>
+		<td class="searchformheader" style="text-align:center;">Event Type</td>
+		<td class="searchformheader"  style="text-align:center;">Activity</td></tr>
 
 EOF;
 $query2=$xoopsDB->query($sql2);
