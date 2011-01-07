@@ -56,7 +56,7 @@ $token=$_POST['token'];
   $o->epf_acc = $_POST['epf_acc'];
   $o->salary_acc = $_POST['salary_acc'];
   $o->accrued_acc = $_POST['accrued_acc'];
-
+  $o->description = $_POST['description'];
   $o->createdby=$xoopsUser->getVar('uid');
   $o->updatedby=$xoopsUser->getVar('uid');
 
