@@ -136,6 +136,7 @@
         $totalpermissionsetting=count($permissionsetting);
         $i=0;
         while($i < $totalpermissionsetting){
+	if(strpos($permissionsetting[$i],'$'))
         eval($permissionsetting[$i].";");
         $i++;
         }
