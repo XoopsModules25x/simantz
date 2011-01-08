@@ -730,7 +730,7 @@ else{ //user dun have write permission, cannot save grid
       <tr>
         <td class="head" >Description</td>
 	    <td class="even"><textarea cols="42" rows="6" name="description" id="description">$this->description</textarea></td>
-  
+
       </tr>
 
       <tr>
@@ -1256,7 +1256,7 @@ EOF;
       $this->arrUpdateField=array(
         "bpartnergroup_id","bpartner_no","bpartner_name","isactive","seqno",
         "organization_id","employeecount","alternatename","companyno","industry_id",
-          
+
         "tooltips","bpartner_url","inchargeperson","description","shortremarks",
 	"isdebtor","iscreditor","istransporter","isdealer","isprospect","currency_id",
 
@@ -1387,7 +1387,7 @@ EOF;
 
          bp.debtoraccounts_id,bp.creditoraccounts_id,bp.tax_id,
          bp.salescreditlimit,bp.purchasecreditlimit,bp.groupid,
-       
+
 	 bp.enforcesalescreditlimit,bp.enforcepurchasecreditlimit,
 	 bp.currentsalescreditstatus,bp.currentpurchasecreditstatus,
 
@@ -1828,7 +1828,7 @@ EOF;
 	$query=$this->xoopsDB->query($sqlfilter);
 	$i=0;
 	$firstname="";
-       
+
 	$searchatoz= "<b>Business Partner Grouping By Name: </b><br>";
 	while ($row=$this->xoopsDB->fetchArray($query)){
 
@@ -1849,7 +1849,7 @@ EOF;
 return $searchatoz;
 
   	}
-        
+
   public function searchAToZforDetail(){
 	global $mode,$defaultorganization_id;
 
@@ -1924,7 +1924,7 @@ return $searchAToZ;
 <table style="width:990px;" align="center">
 
  <tr><td>$search</td></tr>
-  
+
  <tr>
   <td align="center" >
 <div align="left">$new_button</div>
@@ -2127,7 +2127,7 @@ else{ //user dun have write permission, cannot save grid
         //reload grid data
 
 	grid.dataBind();
-    Pager.First('DataboundGrid');
+         Pager.First('DataboundGrid');
     }
 
     //optional function to generate primary key value, ignore this function because we use autogen method
@@ -2346,7 +2346,7 @@ function selectAll(val){
     }
   }
      function validate(){
-         if(checkedBpartner()){ 
+         if(checkedBpartner()){
             var action=document.frmBpartnerListTable.action.value;
             var confirmtext="";
             if(action=='sendsms')
@@ -2374,7 +2374,6 @@ function selectAll(val){
       window.open("bpartner.php?action=tablist&mode=edit&bpartner_id="+bpartner_id,"");
     }
 </script>
-<br/>
 
 <div align="center">
 
@@ -2385,8 +2384,7 @@ function selectAll(val){
 <table style="width:700px;" class="searchformblock" >
 
  <tr >
-    <td class="head tdPager" colspan="2" >
-
+    <td class="head tdPager" colspan="2">
     <div id="pager_control" class="inline">
     <div id="pager_first" class="inline FirstPage" onclick="Pager.First('DataboundGrid');" onmouseover="this.className+=' FirstPageHover';" onmouseout="this.className='inline FirstPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
     <div id="pager_prev" class="inline PreviousPage" onclick="Pager.Previous('DataboundGrid');" onmouseover="this.className+=' PreviousPageHover';" onmouseout="this.className='inline PreviousPage';" style="margin:0;"></div>
@@ -2410,20 +2408,13 @@ function selectAll(val){
      toolbarenabled='false'
      $permctrl
      ondatareadyevent="HandleReady(eventArgs);"
-     oncelldblclickevent="doubleclickrecord(eventArgs)"
-     oncellclickevent="clickrecord(eventArgs)"
+
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
      gethandler="bpartner.php?action=searchbpartner&isactive=1$filterstring"
-     onbeforecelleditevent="checkAllowEdit(eventArgs)"
-     onafterrowinsertevent="setDefaultValue(eventArgs)"
-     rowhighlightenabled="true"
      width="970"
-     height="245"
-     onaftersaveevent="savedone(eventArgs)"
-     onbeforerowdeleteevent="beforeDelete()"
-     onafterrowdeleteevent="save()"
-     autosaveenabled="false"
+     height="405"
+    rowheight="15"
      theme="$nitobigridthemes"
      rowsperpage="$rowsperpage">
 
@@ -2432,7 +2423,7 @@ function selectAll(val){
 
    <ntb:textcolumn classname="{\$rh}" width="80" label="B.Partner No" xdatafld="bpartner_no"      editable="false"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" width="220" label="Business Partner Name" xdatafld="bpartner_name"      editable="false"></ntb:textcolumn>
+   <ntb:textcolumn classname="{\$gridlink}" width="220" label="Business Partner Name" xdatafld="bpartner_name"   oncelldblclickevent="doubleclickrecord(eventArgs)"   editable="false"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" width="140" label="Business Partner Group" xdatafld="bpartnergroup_name"      editable="false"></ntb:textcolumn>
 
@@ -2447,7 +2438,7 @@ function selectAll(val){
 <ntb:textcolumn classname="{\$rh}" label="Edit"   xdatafld=""    width="25"  sortenabled="false"      editable="false" classname="{\$rh}" oncellclickevent="javascript:edit()">
             <ntb:imageeditor imageurl="images/edit.gif"></ntb:imageeditor> </ntb:textcolumn>
 
-      <ntb:numbercolumn   label="ID"  width="0" xdatafld="bpartner_id" mask="###0" sortenabled="false">
+      <ntb:numbercolumn   label="ID"  width="0" visible="false" xdatafld="bpartner_id" mask="###0" sortenabled="false">
                     </ntb:numbercolumn>
  </ntb:columns>
  </ntb:grid>
@@ -2537,12 +2528,12 @@ else
            $wherestring.= " AND bp.isactive=0";
     }
            $wherestring.= " AND bp.organization_id=$defaultorganization_id";
-           
+
       $sql = "SELECT bp.*, bpg.bpartnergroup_name, terms_name
               FROM $tablename bp
               inner join sim_bpartnergroup bpg on bpg.bpartnergroup_id = bp.bpartnergroup_id
               left join sim_terms te on te.terms_id = bp.terms_id
-                  
+
              $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
 
         $rcode = $_GET['rcode'];
@@ -2563,6 +2554,7 @@ else
         $getHandler->DefineField("inchargeperson");
         $getHandler->DefineField("bpartner_id");
         $getHandler->DefineField("rh");
+        $getHandler->DefineField("gridlink");
 	$currentRecord = 0; // This will assist us finding the ordinalStart position
                     $rh="odd";
       while ($row=$xoopsDB->fetchArray($query))
@@ -2571,6 +2563,7 @@ else
             $rh="odd";
           else
             $rh="even";
+          $gridlink = "gridlink $rh";
      	    $currentRecord = $currentRecord +1;
             if($currentRecord > $ordinalStart){
              $getHandler->CreateNewRecord($row['bpartner_id']);
@@ -2584,6 +2577,7 @@ else
              $getHandler->DefineRecordFieldValue("edit","bpartner.php?action=tablist&mode=edit&bpartner_id=".$row['bpartner_id']);
              $getHandler->DefineRecordFieldValue("bpartner_id",$row['bpartner_id']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
+             $getHandler->DefineRecordFieldValue("gridlink",$gridlink);
              $getHandler->SaveRecord();
              }
       }
@@ -2629,10 +2623,11 @@ else
   public function showSummary(){
  global $havewriteperm;
 $this->fetchBpartnerData($this->bpartner_id);
-
+$search_button = $this->getFormButton("Search","bpartner.php",array("action"=>"search") );
    $style="style='height:25px; vertical-align:middle;'";
 if($havewriteperm==1){ //user with write permission can edit grid, have button
   $edit_button = $this->getFormButton("Edit","bpartner.php",array("action"=>"tablist","mode"=>"edit","bpartner_id"=>"$this->bpartner_id") );
+  $new_button = $this->getFormButton("New","bpartner.php",array("action"=>"","mode"=>"edit","bpartner_id"=>"") );
 }
 
 else{ //user dun have write permission, cannot save grid
@@ -2684,16 +2679,19 @@ else{ //user dun have write permission, cannot save grid
                         $this->bpartner_url="<a href='$this->bpartner_url' target='_blank'>$this->bpartner_url</a>";
   echo <<< EOF
 
+
  <table><tr >
 
 <td width="50%" colspan="3">
 
  <table  class="emplpoyeesummaryblock">
-   <tr 
-    <td class="searchformheader" colspan="4">Basic Info</td>
+   <tr
+    <td class="searchformheader" colspan="4"><div style="float:left; width:20%; text-align:left">$new_button</div>
+                    <div  style="float:left; width:60%; text-align:center">Basic Info</div>
+                    <div  style="float:left; width:20%; text-align:right">$search_button</div></td>
    </tr>
 
-   <tr > 	
+   <tr >
     <td class="head">Business Partner No</td>
       <td class="even">$this->bpartner_no</td>
     <td class="head">Active</td>
@@ -2796,7 +2794,7 @@ else{ //user dun have write permission, cannot save grid
     <td class="head">Current Purchase Limit Status</td>
     <td class="even">$this->currentpurchasecreditstatus</td>
    </tr>
-          
+
    <tr>
     <td class="head">Terms</td>
     <td class="even">$this->terms_name</td>
@@ -2810,7 +2808,7 @@ else{ //user dun have write permission, cannot save grid
     <td class="head">Bank Account No</td>
     <td class="even">$this->bankaccountno</td>
    </tr>
- 
+
  </table>
 
 </td>
@@ -2981,7 +2979,7 @@ if($num_results>0){
 	echo <<< EOF
 	<table border='0' cellspacing='3'>		<tbody>
             <td colspan="7" class="tdListRightTitle">Address</td>
-  
+
     			<tr>
 				<td class="searchformheader">No</td>
 				<td class="searchformheader">Address</td>
@@ -3054,7 +3052,7 @@ if($num_results>0){
 	echo <<< EOF
 	<table border='0' cellspacing='3'>	<tbody>
             <td colspan="8" class="tdListRightTitle">Follow Up</td>
-  	
+
     			<tr>
 				<td class="searchformheader">No</td>
                                 <td class="searchformheader">N.F. Name</td>
@@ -3488,11 +3486,11 @@ echo <<< EOF
      theme="$nitobigridthemes">
 
  <ntb:columns>
-        
+
    <ntb:textcolumn classname="{\$rh}" label="Greeting" width="60" xdatafld="greeting" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Contact Name" width="140" xdatafld="contacts_name" sortenabled="true"></ntb:textcolumn>
-        
+
    <ntb:textcolumn classname="{\$rh}" label="Alternate Name" width="90" xdatafld="alternatename" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Position" width="100" xdatafld="position" sortenabled="true"></ntb:textcolumn>
@@ -4203,7 +4201,7 @@ EOF;
         if(empty($sortdirection)){
            $sortdirection="ASC";
         }
-   
+
      $sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
       $this->log->showLog(4,"With SQL: $sql");
         $query = $xoopsDB->query($sql);
@@ -4344,7 +4342,7 @@ EOF;
 
      for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
      {
-   
+
          $arrvalue=array($saveHandler->ReturnUpdateField($currentRecord,"address_name"),
                     $saveHandler->ReturnUpdateField($currentRecord,"address_street"),
                     $saveHandler->ReturnUpdateField($currentRecord,"address_postcode"),
@@ -4661,7 +4659,7 @@ echo <<< EOF
         type = typecelly.getValue();
         pic = piccelly.getValue();
         cname = cnamecelly.getValue();
-    
+
            if(cname=="")
            {
             isallow = false;
@@ -4743,7 +4741,7 @@ echo <<< EOF
    <ntb:textcolumn classname="{\$rh}" label="P.I.C" width="140" xdatafld="employee_name" sortenabled="true"></ntb:textcolumn>
 
    <ntb:datecolumn classname="{\$rh}" label="Follow Up Date" width="90" xdatafld="nextfollowupdate" sortenabled="true"  mask="yyyy-MM-dd"></ntb:datecolumn>
-   
+
    <ntb:textcolumn classname="{\$rh}" label="Contact Person" width="100" xdatafld="contactperson" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Contact No" width="65" xdatafld="contactnumber" sortenabled="true"></ntb:textcolumn>
@@ -5297,7 +5295,7 @@ EOF;
         }
 
        $wherestring.= "AND organization_id='$defaultorganization_id'";
-       
+
        $sql = "SELECT * FROM sim_hr_employee $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
        $this->log->showLog(4," with SQL: $sql");
        $query = $this->xoopsDB->query($sql);
@@ -5346,7 +5344,7 @@ EOF;
        $query = $this->xoopsDB->query($sql);
 
        $currentRecord = 0; // This will assist us finding the ordinalStart position
-       
+
                        $getHandler->CreateNewRecord($row["races_id"]);
                        $getHandler->DefineRecordFieldValue("races_id", 0);
                        $getHandler->DefineRecordFieldValue("races_name", "-Select One-");
@@ -5444,7 +5442,7 @@ EOF;
                        $getHandler->DefineRecordFieldValue("address_id", 0);
                        $getHandler->DefineRecordFieldValue("address_name", "-Select One-");
                        $getHandler->SaveRecord();
-                       
+
        $currentRecord = 0; // This will assist us finding the ordinalStart position
       while ($row=$this->xoopsDB->fetchArray($query))
      {
@@ -5619,7 +5617,7 @@ echo <<< EOF
           <td class="head" >Type</td>
           <td><select id="followuptype_id" name="followuptype_id">$followtypectrl</select></td>
         </tr>
-     
+
         <tr>
           <td class="head" >Title</td>
           <td><input $colstyle   id="followup_name" name="followup_name" type="text" value="$followup_name" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /></td>
@@ -5642,7 +5640,7 @@ echo <<< EOF
           <td class="head" >Description</td>
           <td colspan="3"><textarea $colstyle  cols="70" rows="10" id="description" name="description" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''">$description</textarea>
                     <Label>Active <input name="isactive" id="isactive" type="checkbox" $ischecked></Label></td>
-          
+
         </tr>
         <tr>
           <td class="head"></td>
@@ -5660,7 +5658,7 @@ echo <<< EOF
 </form>
 
 EOF;
-      
+
   }
 
 
@@ -5713,4 +5711,3 @@ EOF;
 
   }
 } // end of ClassBPartner
-?>
