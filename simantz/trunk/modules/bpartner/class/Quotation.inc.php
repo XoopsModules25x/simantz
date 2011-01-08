@@ -268,14 +268,14 @@ $noperm
                             <input name='document_no' id='document_no'  value='$this->document_no' size='10'>
                     Branch <select id='organization_id' name='organization_id'>&nbsp; $branchctrl</select></td>
           <td class="head">Business Partner</td>
-          <td class="even">
+          <td class="even"><div style="float: left">
               <ntb:Combo id="cmbbpartner_id" Mode="classic" theme="$nitobicombothemes" InitialSearch="$this->bpartner_name" onselectevent="chooseBPartner();">
              <ntb:ComboTextBox Width="250px" DataFieldIndex=1 ></ntb:ComboTextBox>
              <ntb:ComboList Width="300px" Height="200px" DatasourceUrl="../bpartner/bpartnerlookup.php?action=searchbpartnercombo&showNull=Y&bpartner_id=$this->bpartner_id" PageSize="25" >
              <ntb:ComboColumnDefinition Width="130px" DataFieldIndex=1 ></ntb:ComboColumnDefinition>
              <ntb:ComboMenu icon="images/add.gif" OnClickEvent="window.open('../bpartner/bpartner.php')" text=" &nbsp;Add product...">
              </ntb:ComboList>
-            </ntb:Combo>
+            </ntb:Combo></div><div style="float: left"><a onclick="zoomBPartner()"><img src="../simantz/images/zoom.png"></a></div>
           </td>
      </tr>
      <tr>
@@ -504,7 +504,8 @@ public function showSearchGrid($wherestring){
 
    $this->log->showLog(3,"Load Grid with Query String=".$_SERVER['QUERY_STRING']);
         $pagesize=$_GET["PageSize"];
-        $ordinalStart=$_GET["StartRecordIndex"];
+
+        $ordinalStart=$_GET["StartRecord"];
         $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
     global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
@@ -517,6 +518,18 @@ public function showSearchGrid($wherestring){
         if(empty($ordinalStart)){
           $ordinalStart=0;
         }
+
+        $sortcolumn=$_GET["SortColumn"];
+        $sortdirection=$_GET["SortDirection"];
+        if(empty($sortcolumn)){
+           $sortcolumn="concat(i.payment_prefix,i.document_no)";
+
+        }
+        if(empty($sortdirection)){
+           $sortdirection="DESC";
+        }
+
+
 
                 $sortcolumn=$_GET["SortColumn"];
         $sortdirection=$_GET["SortDirection"];
@@ -565,7 +578,7 @@ public function showSearchGrid($wherestring){
     
       ////$sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
        $sql = "SELECT i.quotation_id,  concat(i.spquotation_prefix,i.document_no) as quotation_no, i.document_date, i.subtotal, i.iscomplete,  ".
-                " bp.bpartner_id, bp.bpartner_no,bp.bpartner_name, t.terms_name, c.currency_code, u.uname,o.organization_code,i.quotation_status  ".
+                " bp.bpartner_id, bp.bpartner_no,bp.bpartner_name, t.terms_name, c.currency_code, u.uname,o.organization_code,i.quotation_status,i.quotation_title  ".
             "  FROM sim_bpartner_quotation i ".
               " left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id ".
             " left join sim_terms t on t.terms_id=i.terms_id ".
@@ -590,7 +603,8 @@ public function showSearchGrid($wherestring){
      	$getHandler->DefineField("terms_name");
         $getHandler->DefineField("currency_code");
         $getHandler->DefineField("uname");
-        
+        $getHandler->DefineField("rh");
+        $getHandler->DefineField("gridlink");
         $getHandler->DefineField("quotation_title");
         $getHandler->DefineField("quotation_status");
 	$currentRecord = 0; // This will assist us finding the ordinalStart position
@@ -603,6 +617,7 @@ public function showSearchGrid($wherestring){
                     $rh="even";
              else
                     $rh="odd";
+             $gridlink="gridlink $rh";
        if($row['iscomplete']==1){
           $iscomplete="Y";
           $edit="view";
@@ -631,14 +646,16 @@ public function showSearchGrid($wherestring){
              $getHandler->DefineRecordFieldValue("currency_code", $row['currency_code']);
              $getHandler->DefineRecordFieldValue("organization_code",$row['organization_code']);
              $getHandler->DefineRecordFieldValue("quotation_title",$row['quotation_title']);
-                          $getHandler->DefineRecordFieldValue("quotation_status",$row['quotation_status']);
+             $getHandler->DefineRecordFieldValue("quotation_status",$row['quotation_status']);
             
              $getHandler->DefineRecordFieldValue("rh",$rh);
+             $getHandler->DefineRecordFieldValue("gridlink",$gridlink);
              $getHandler->DefineRecordFieldValue("edit","$this->quotationfilename?action=$edit&quotation_id=".$row['quotation_id']);
 
              $getHandler->SaveRecord();
              }
       }
+      $getHandler->setErrorMessage($currentRecord);
     $getHandler->CompleteGet();
           $this->log->showLog(2,"complete function showQuotationline()");
 }
@@ -1256,18 +1273,18 @@ return false;
 
  <tr >
     <td class="head tdPager" colspan="2" >
-    <small>* Double click BPartner to view business partner</small>
+    
     <div id="pager_control" class="inline">
-    <div id="pager_first" class="inline FirstPage" onclick="Pager.First('DataboundGrid');" onmouseover="this.className+=' FirstPageHover';" onmouseout="this.className='inline FirstPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
-    <div id="pager_prev" class="inline PreviousPage" onclick="Pager.Previous('DataboundGrid');" onmouseover="this.className+=' PreviousPageHover';" onmouseout="this.className='inline PreviousPage';" style="margin:0;"></div>
+    <div id="pager_first" class="inline FirstPage" onclick="Pager.First('searchgrid');" onmouseover="this.className+=' FirstPageHover';" onmouseout="this.className='inline FirstPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
+    <div id="pager_prev" class="inline PreviousPage" onclick="Pager.Previous('searchgrid');" onmouseover="this.className+=' PreviousPageHover';" onmouseout="this.className='inline PreviousPage';" style="margin:0;"></div>
     <div class="inline" style="height:22px;top:3px;">
         <span class="inline">Page</span>
         <span class="inline" id="pager_current">0</span>
         <span class="inline">of</span>
         <span class="inline" id="pager_total">0</span>
     </div>
-    <div id="pager_next" class="inline NextPage" onclick="Pager.Next('DataboundGrid');" onmouseover="this.className+=' NextPageHover';" onmouseout="this.className='inline NextPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
-    <div id="pager_last" class="inline LastPage" onclick="Pager.Last('DataboundGrid');" onmouseover="this.className+=' LastPageHover';" onmouseout="this.className='inline LastPage';" style="margin:0;"></div>
+    <div id="pager_next" class="inline NextPage" onclick="Pager.Next('searchgrid');" onmouseover="this.className+=' NextPageHover';" onmouseout="this.className='inline NextPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
+    <div id="pager_last" class="inline LastPage" onclick="Pager.Last('searchgrid');" onmouseover="this.className+=' LastPageHover';" onmouseout="this.className='inline LastPage';" style="margin:0;"></div>
     </div>
     </td>
  </tr>
@@ -1278,26 +1295,29 @@ return false;
 
 
     <ntb:grid id="searchgrid"
-     mode="livescrolling"
+     mode="standard"
      gethandler="$this->quotationfilename?action=ajaxsearch"
      theme="$nitobigridthemes"
      rowhighlightenabled="true"
      toolbarenabled="false"
          ondatareadyevent="HandleReady(eventArgs);"
-     editable="false"
+     editmode="false"
      width="970"
-     height="255"
+     height="420"
+          rowheight="15"
+        rowsperpage="$rowsperpage"
     >
    <ntb:columns>
        <ntb:textcolumn  classname="{\$rh}" width="40" label="Org"  xdatafld="organization_code"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="80" label="Quotation No"  xdatafld="quotation_no"  editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="70" label="Date"  xdatafld="document_date"  editable="false" ></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="200" label="BPartner"  xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$gridlink}" width="220" label="BPartner" editable="false" xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="80" label="Terms"  xdatafld="terms_name"   editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="60" label="Currency"  xdatafld="currency_code"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="subtotal"   editable="false" ></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="70" label="Complete"  xdatafld="iscomplete"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="70" label="Status"  xdatafld="quotation_status"   editable="false"></ntb:textcolumn>
+       <ntb:textcolumn  classname="{\$rh}" width="70" label="Short Title"  xdatafld="quotation_title"   editable="false"></ntb:textcolumn>
        <ntb:textcolumn  classname="{\$rh}" width="40" label="Edit"  xdatafld="edit"  oncellclickevent="javascript:viewquotation()">
         <ntb:imageeditor imageurl="images/edit.gif"></ntb:imageeditor></ntb:textcolumn>
         <ntb:textcolumn  classname="{\$rh}" width="70" label="bpartner_id" visible="false" xdatafld="bpartner_id" ></ntb:textcolumn>
@@ -1401,6 +1421,13 @@ global $defaultcurrency_id,$url;
             }
         }
 
+    function zoomBPartner(){
+          var bpartner_id=document.getElementById("cmbbpartner_idSelectedValue0").value;
+          if(bpartner_id>0)
+           window.open ("../bpartner/bpartner.php?action=viewsummary&bpartner_id="+bpartner_id,"bpartner");
+          else
+          alert("You need to choose business partner!");
+          }
           
     function viewlog(){
    	var g= nitobi.getGrid('quotationgrid');
