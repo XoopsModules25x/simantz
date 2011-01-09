@@ -2,7 +2,7 @@
 include_once "system.php";
 include_once "../simantz/class/SelectCtrl.inc.php";
 $xoTheme->addStylesheet("$url/modules/system/class/gui/oxygen/css/navbar.css");
-        
+
 global $menuname;
 $url=XOOPS_URL;
 $ctrl= new SelectCtrl();
@@ -12,8 +12,8 @@ $deniedaccess=true;
 
 $i=0;
 foreach($allowbrowser as $ab){
-        
-$i++;        
+
+$i++;
     if(strpos($browser, $ab)>0)
         {
         $deniedaccess=false;
@@ -24,7 +24,7 @@ $i++;
     else
         continue;
 
-}       
+}
    if($deniedaccess!="" && $i>0) {//if user define will enforce checking
     redirect_header("$url",300,"<b style='color:red'>Your browser {$browser} is not supported, please click <a href='{$supportbrowserurl}' target='_blank'>here</a> to get supported browser.</b>");
    }
@@ -55,7 +55,7 @@ echo <<< EOF
     <ul class="menu" id="menu">
     <li><a href='index.php' class='menulink'>Home</a></li>-->
 
-    
+
 EOF;
         $menulist = "<div style='height:30px'><div id='navbarCP'><ul class='menu' id='menu'>
         <li>
@@ -90,7 +90,7 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
             onblur='setSessionDate(this.value,"$currenturl")'
                  title='Change value to preset prefered default date, this column will effect content of some chart too.'>
             <small title='Change value to preset prefered default date, this column will effect content of some chart too.'><U>* Default Date(YYYY-MM-DD)</U></small></div>
-                
+
 		<div style="float:right; v-align:bottom; padding-left:1em;color: #4D2222;">User: $uname</div><div style="float:right; text-align:right; v-align:bottom;color: #4D2222;">Organization $orgctrl</div>
 	<br>
 
@@ -115,10 +115,10 @@ location.href=url+'?setSessionDate=Y&defaultDateSession='+value;
 }
 </script>
 
-	<div style='color: #4D2222; v-align:top; line-height:3em;'>
+	<div style='color: #223a4d; v-align:top; line-height:3em;'>
 	   <div style='float:left;font-weight:bold;text-align:left;font-size:24px;'>$menuname  </div>
            <div style='float:left;padding-left:1em;'> $alertmsg</div>
-           <div style="float:right; v-align:top; padding-left:1em;color: #4D2222;">User: <a href='$url/user.php'>$uname</a></div>
-           <div style="float:right; text-align:right; v-align:top;color: #4D2222;">Organization $orgctrl </div>
+           <div style="float:right; v-align:top; padding-left:1em;color: #223a4d;">User: <a href='$url/user.php'>$uname</a></div>
+           <div style="float:right; text-align:right; v-align:top;color: #223a4d;">Organization $orgctrl </div>
        </div><br/><br/><br/>
 EOF;
