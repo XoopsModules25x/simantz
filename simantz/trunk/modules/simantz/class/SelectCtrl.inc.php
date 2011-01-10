@@ -222,7 +222,7 @@ public function getSelectCountry($id,$showNull='Y') {
 public function getSelectCurrency($id,$showNull='Y',$ctrlname='currency_id',$wherestr="",$onchangefunction="") {
 
   global $tablecurrency;
-	$sql="SELECT currency_id,currency_code from $tablecurrency where (isactive=1 or currency_id=$id) and currency_id>0
+	$sql="SELECT currency_id,currency_code from $tablecurrency where (isactive=1 or currency_id='$id') and currency_id>0
 		$wherestr order by seqno,currency_name ;";
 $this->log->showLog(4,"getSelectCurrency With SQL: $sql");
 	//$selectctl="<SELECT name='$ctrlname' $onchangefunction>";
@@ -604,7 +604,7 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
 
 
 	 $sql="SELECT uid, uname from $tableusers where (uid=$id
-		OR uid>0) and uid>0
+		OR uid>0) and uid>0 $wherestr
 		order by uname ;";
 	$this->log->showLog(4,"getSelectUsername With SQL: $sql");
 	//$selectctl="<SELECT name='$ctrlname' $onchangefunction>";
