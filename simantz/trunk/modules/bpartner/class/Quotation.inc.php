@@ -66,7 +66,7 @@ class Quotation{
 
         }
 
-        public function viewInputForm(){
+public function viewInputForm(){
 
     $grid=$this->getGrid($this->quotation_id);
     $this->address_text= str_replace("\n", "<br/>", $this->address_text);
@@ -167,7 +167,8 @@ class Quotation{
 HTML;
     return $html;
     }
-    public function getInputForm($action="new"){
+
+public function getInputForm($action="new"){
 
     global $userid,$simbizctrl,$ctrl,$defaultorganization_id;
     $this->log->showLog(3,"Access Quotation getInputForm()");
@@ -246,6 +247,7 @@ else
  $selectquotestatus_s="";
     }
     $html =<<< HTML
+    <div id="idApprovalWindows" style="display:none"></div>
     <br/>
     <div id='centercontainer'>
     <div align="center" >
@@ -253,8 +255,6 @@ else
         <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
 $noperm
 
-   
-    <br/>
     <div id='errormsg' class='red' style='display:none'></div>
 <form onsubmit='return false' method='post' name='frmQuotation' id='frmQuotation'  action='$this->quotationfilename'  enctype="multipart/form-data">
    <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
@@ -342,7 +342,10 @@ $noperm
 </div>
 </td></tr>
  <td class="head">Description</td>
-<td class="even" colspan='2'><textarea cols='70' rows='3' id='description'  name='description'>$this->description</textarea></td>
+<td class="even" colspan='2'><textarea cols='70' rows='3' id='description'  name='description'>$this->description</textarea>
+          <div id="temp" $display><a onclick="openWindowTemp()" style='cursor:pointer'><u>Browse Template<u></a>
+          <a onclick="openWindowsaveTemp()" style='cursor:pointer'><u>Save Template<u></a></div>
+            </td>
             <td rowspan="3">
 </tr><tr>
    <td class="head">Note</td>
@@ -354,7 +357,6 @@ $noperm
 HTML;
     return $html;
    }
-
 
 public function getGrid($quotation_id=0){
     global $permctrl, $readonlypermctrl,$windowsetting,$nitobigridthemes;
@@ -412,6 +414,272 @@ public function getGrid($quotation_id=0){
 _XML_;
 
 }
+
+public function GetTempWindow(){
+   global $nitobigridthemes,$havewriteperm,$defcurrencycode;
+
+        $sql = "SELECT * FROM simerp_descriptiontemp order by descriptiontemp_name ASC";
+        $this->log->showLog(4,"GetTempWindow :" . $sql . "<br>");
+        $query=$this->xoopsDB->query($sql);
+
+echo <<< EOF
+<div class="dimBackground"></div>
+<div align="center" >
+ <form action="course.php" method="POST" name="frmDoc" id="frmDocid" enctype="multipart/form-data">
+    <input type="hidden" id="course_id" name="course_id" value="$this->course_id">
+    <input type="hidden" name="action" value="updatedoc">
+    <input type="hidden" name="intake_id" id="intake_id" value="">
+<div style="height:480px;overflow:auto;"  class="floatWindow" id="tblSub">
+<table>
+ <tr>
+  <td astyle="vertical-align:middle;" align="center">
+
+    <table class="" style="width:800px">
+
+       <tr class="tdListRightTitle" >
+          <td colspan="4">
+                <table><tr>
+                <td id="idHeaderText" align="center">Description Template</td>
+                <td align="right" width="30px"><img src="../simbiz/images/close.png" onclick="closeWindow();" style="cursor:pointer" title="Close"></td>
+                </tr></table>
+          </td>
+       </tr>
+
+       <tr>
+          <td align="left" class="searchformblock">
+            <table  align="left">
+
+               <tr>
+                  <td class="tdListRightTitle" style="width:20%">Description Name</td>
+                  <td class="tdListRightTitle" style="width:70%">Content</td>
+                  <td class="tdListRightTitle" style="width:10%" align="center">Action</td>
+               </tr>
+
+EOF;
+     $i=0;
+     while($row=$this->xoopsDB->fetchArray($query)){
+        $i++;
+        if($rowtype=="odd")
+        $rowtype="even";
+        else
+        $rowtype="odd";
+        $descriptiontemp_id = $row['descriptiontemp_id'];
+        $descriptiontemp_name = $row['descriptiontemp_name'];
+        $descriptiontemp_content = $row['descriptiontemp_content'];
+echo <<< EOF
+             <tr>
+                <td class="$rowtype">$descriptiontemp_name</td>
+                <td class="$rowtype"><textarea cols="80" rows="6" name="desc" id="desc$descriptiontemp_id">$descriptiontemp_content</textarea></td>
+                <td class="$rowtype" align="center"><img src="../simbiz/images/approval.gif" onclick="returndescription('desc$descriptiontemp_id');" style="cursor:pointer">
+                                                    <img src="../simbiz/images/del.gif" onclick="deletedescription('$descriptiontemp_id');" style="cursor:pointer"></td>
+             </tr>
+EOF;
+      }
+echo <<< EOF
+           </table>
+         </td>
+      </tr>
+ </table>
+
+    </td>
+  </tr>
+</table>
+</div>
+   </form>
+</div>
+EOF;
+
+  }
+
+public function includeTempFormJavescript(){
+
+     $link="salesquotation.php";
+
+ echo <<< EOF
+
+  <script language="javascript" type="text/javascript">
+
+
+// open temp window
+
+    function openWindowTemp(){
+
+        var data="action=gettempwindow";
+            $.ajax({
+                url: "$link",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            self.parent.scrollTo(0,0);
+                }});
+    }
+
+    function returndescription(descriptiontemp_id){
+
+      document.getElementById('description').value = document.getElementById(descriptiontemp_id).value;
+      closeWindow();
+    }
+
+    function deletedescription(descriptiontemp_id){
+      if(confirm('Confirm Delete this Template?')){
+        var data = "action=deletetemp&descriptiontemp_id="+descriptiontemp_id;
+               document.getElementById('popupmessage').innerHTML="Please Wait...";
+               popup('popUpDiv');
+        $.ajax({
+           url: "$link",type: "POST",data: data,cache: false,
+             success: function (xml) {
+                jsonObj = eval( '(' + xml + ')');
+                var status = jsonObj.status;
+                   if(status == 1){
+                    closeWindow();
+                   }
+                popup('popUpDiv');
+            }});
+       }
+    }
+
+    function openWindowsaveTemp(){
+
+        var data="action=getsavetempwindow";
+            $.ajax({
+                url: "$link",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            document.getElementById('descriptiontemp_content').value = document.getElementById('description').value;
+                            self.parent.scrollTo(0,0);
+                }});
+    }
+
+    function savetemp(){
+
+        var data = $("#frmTempid").serialize();
+               document.getElementById('popupmessage').innerHTML="Please Wait...";
+               popup('popUpDiv');
+        $.ajax({
+           url: "$link",type: "POST",data: data,cache: false,
+             success: function (xml) {
+                jsonObj = eval( '(' + xml + ')');
+                var status = jsonObj.status;
+                   if(status == 1){
+                    closeWindow();
+                   }
+                popup('popUpDiv');
+            }});
+    }
+    function closeWindow(){
+      document.getElementById('idApprovalWindows').style.display = "none";
+      document.getElementById('idApprovalWindows').innerHTML = "";
+    }
+
+// end of open temp window
+
+
+  </script>
+
+EOF;
+
+  }
+
+public function GetSaveTempWindow(){
+   global $nitobigridthemes,$havewriteperm,$defcurrencycode;
+
+        $sql = "SELECT * FROM simerp_descriptiontemp order by descriptiontemp_name ASC";
+        $this->log->showLog(4,"GetTempWindow :" . $sql . "<br>");
+        $query=$this->xoopsDB->query($sql);
+
+echo <<< EOF
+<div class="dimBackground"></div>
+<div align="center" >
+
+ <form method="POST" name="frmTemp" id="frmTempid" enctype="multipart/form-data">
+    <input type="hidden" name="action" value="savetemp">
+
+<table>
+ <tr>
+  <td astyle="vertical-align:middle;" align="center">
+
+    <table class="floatWindow" style="width:600px">
+
+       <tr class="tdListRightTitle" >
+          <td colspan="4">
+                <table><tr>
+                <td id="idHeaderText" align="center">Save Description Template</td>
+                <td align="right" width="30px"><img src="../simbiz/images/close.png" onclick="closeWindow();" style="cursor:pointer" title="Close"></td>
+                </tr></table>
+          </td>
+       </tr>
+
+       <tr>
+          <td align="left" class="searchformblock">
+            <table  align="left">
+
+              <tr>
+                  <td class="tdListRightTitle" width="20px">Description Name</td>
+                  <td colspan="3">&nbsp;</td>
+              </tr>
+
+              <tr>
+                 <td class="even"><input size="50px" type="text" name="descriptiontemp_name" id="descriptiontemp_name"></td>
+                 <td colspan="3"></td>
+              </tr>
+
+              <tr>
+                 <td class="tdListRightTitle" colspan="4" >Description Content</td>
+              </tr>
+
+              <tr>
+                <td class="even" colspan="4"><textarea cols="90" rows="6" name="descriptiontemp_content" id="descriptiontemp_content"></textarea></td>
+             </tr>
+
+              <tr>
+                <td class="head" colspan="4" align="right"><input type="button" value="Save" onclick="savetemp()"></td>
+             </tr>
+
+           </table>
+         </td>
+      </tr>
+ </table>
+
+    </td>
+  </tr>
+</table>
+
+   </form>
+</div>
+EOF;
+
+  }
+
+public function saveTemp(){
+    global $defaultcurrency_id;
+    include_once "../simantz/class/Save_Data.inc.php";
+    global $defaultpicture,$uploadpath,$selectspliter,$xoopsDB,$xoopsUser,$defaultorganization_id;
+    $save = new Save_Data();
+    $timestamp=date("Y-m-d H:i:s",time());
+    $createdby=$xoopsUser->getVar('uid');
+    $uname=$xoopsUser->getVar('uname');
+
+    $arrInsertField=array("descriptiontemp_name","descriptiontemp_content",
+                                "created","createdby","updated","updatedby");
+
+    $arrInsertFieldType=array("%s","%s","%s","%d","%s","%d");
+
+    $arrvalue=array($this->descriptiontemp_name,
+                    $this->descriptiontemp_content,
+                    $timestamp,
+                    $createdby.$selectspliter.$uname,
+                    $timestamp,
+                    $createdby.$selectspliter.$uname);
+
+    return $save->InsertRecord("simerp_descriptiontemp", $arrInsertField, $arrvalue, $arrInsertFieldType, $this->descriptiontemp_name,"descriptiontemp_id");
+ }
+
+public function deleteTemp($descriptiontemp_id) {
+    include_once "../simantz/class/Save_Data.inc.php";
+    $save = new Save_Data();
+    return $save->DeleteRecord("simerp_descriptiontemp","descriptiontemp_id ",$descriptiontemp_id ,$descriptiontemp_id,1);
+  }
 
 public function showQuotationline($wherestring){
       include "../simantz/class/nitobi.xml.php";

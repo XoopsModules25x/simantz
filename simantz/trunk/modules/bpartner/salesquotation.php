@@ -218,6 +218,47 @@ case "ajaxdelete":
             echo "<status>1</status><detail><msg>C</msg></detail>";
     echo "</Result>";
     break;
+
+
+case "gettempwindow":
+   $o->GetTempWindow();
+   exit;
+break;
+
+case "savetemp" :
+
+$o->descriptiontemp_name=$_POST['descriptiontemp_name'];
+$o->descriptiontemp_content=$_POST['descriptiontemp_content'];
+
+	if($o->saveTemp()){
+            $msg = "<a class='statusmsg'>Record saved successfully.</a>";
+            $arr = array("msg"=>$msg,"status"=>1);
+            echo json_encode($arr);
+	}else {
+            $msg = "<a class='statusmsg'>Failed to saved Record. Please try again.</a>";
+            $arr = array("msg"=>$msg,"status"=>2);
+            echo json_encode($arr);
+        }
+break;
+case "deletetemp" :
+$o->descriptiontemp_id=$_POST['descriptiontemp_id'];
+
+	if($o->deleteTemp($o->descriptiontemp_id)){
+            $msg = "<a class='statusmsg'>Record delete successfully.</a>";
+            $arr = array("msg"=>$msg,"status"=>1);
+            echo json_encode($arr);
+	}else {
+            $msg = "<a class='statusmsg'>Failed to delete Record. Please try again.</a>";
+            $arr = array("msg"=>$msg,"status"=>2);
+            echo json_encode($arr);
+        }
+break;
+
+case "getsavetempwindow":
+   $o->GetSaveTempWindow();
+   exit;
+break;
+
     default:
 
         $o->iscomplete=0;
@@ -226,6 +267,7 @@ case "ajaxdelete":
         
         echo $o->gridjs();
         echo $o->getInputForm();
+             $o->includeTempFormJavescript();
         require(XOOPS_ROOT_PATH.'/footer.php');
     break;
 }
