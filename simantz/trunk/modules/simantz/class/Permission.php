@@ -85,10 +85,10 @@ public function Permission (){
 	$this->log->showLog(4,"With SQL: $sql");
 
 	echo <<<EOF
-<A href='index.php'>Back To This Module Administration Menu</A>
-	 <TABLE>
+
+	 <TABLE class="searchformblock">
 		<TBODY>
-		<TR><TH colspan='5' style='text-align: center'>Search Groups</TH></TR>
+		<TR><Td class="searchformheader" colspan='5' style='text-align: center'>Search Groups</Td></TR>
 		<TR><FORM method='GET' action='permission.php'>
 			<TD class="head">Group</TD>
 			<TD class="odd">$selectgroup <A href='group.php'>Add/Edit Groups</A></TD>
@@ -113,25 +113,25 @@ EOF;
 //show table header
 echo <<< EOF
 <FORM method='POST' action='permission.php' name='frmUpdatePermission'>
-	 <TABLE>
-		<TBODY>
-		<TR><TH colspan='10' style='text-align: center'>Add/Edit Group Permission
+	 <TABLE class="searchformblock">
+		<TBODY >
+		<TR><Td class="searchformheader" colspan='10' style='text-align: center'>Add/Edit Group Permission
                         <INPUT TYPE='submit' value='save' name='submit'>
                         <INPUT TYPE='hidden' value='$this->groupid' name='groupid'>
-                        </TH></TR>
+                        </d></TR>
 		<TR>
-			<Th>No</Th>
-			<Th>Function Name</Th>
-			<Th>Module Name</Th>
-			<Th>File Name</Th>
-			<Th>Description</Th>
-			<Th>Seq</Th>
-                        <Th>R<br/><input name="readperm" type="checkbox"  onclick=selectall(this.checked)><br>
-				</Th>
-                        <Th>W<br/><input type="checkbox" name="writeperm" onclick=selectallwriteperm(this.checked)><br>
-				</Th>
-			<Th>Valid Until</Th>
-			<Th>Setting</Th>
+			<Td class="tdListRightHeader">No</Td>
+			<Td class="tdListRightHeader">Function Name</Td>
+			<Td class="tdListRightHeader">Module Name</Td>
+			<Td class="tdListRightHeader">File Name</Td>
+			<Td class="tdListRightHeader">Description</Td>
+			<Td class="tdListRightHeader">Seq</Td>
+                        <Td class="tdListRightHeader">R<br/><input name="readperm" type="checkbox"  onclick=selectall(this.checked)><br>
+				</Td>
+                        <Td class="tdListRightHeader">W<br/><input type="checkbox" name="writeperm" onclick=selectallwriteperm(this.checked)><br>
+				</Td>
+			<Td class="tdListRightHeader">Valid Until</Td>
+			<Td class="tdListRightHeader">Setting</Td>
 
 </TR>
 EOF;
