@@ -88,7 +88,7 @@ switch($action){
 
         echo $o->gridjs();
         echo $o->getInputForm("edit");
-        
+             $o->includeTempFormJavescript();
         }
           else{
             echo "cannot access database";

@@ -4761,7 +4761,7 @@ echo<<< EOF
 EOF;
 }
  echo <<< EOF
-      <ntb:numbercolumn   label="ID"  width="0" xdatafld="followup_id" mask="###0" sortenabled="false">
+      <ntb:numbercolumn   label="ID" visible="false" width="0" xdatafld="followup_id" mask="###0" sortenabled="false">
                     </ntb:numbercolumn>
          <ntb:textcolumn  label="Del"   xdatafld=""    width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:onclickdeletebutton()">
             <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor> </ntb:textcolumn>

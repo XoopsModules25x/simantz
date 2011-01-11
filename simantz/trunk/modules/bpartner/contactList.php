@@ -118,9 +118,9 @@ function checktextlength(){
 }
 
 </script>
-<table border='1'>
+<table border='1' class="searchformblock">
 	<tbody>
-		<tr><th style="text-align:center;" colspan='4'>Search Contact List</th></tr>
+		<tr><td class="searchformheader" style="text-align:center;" colspan='4'>Search Contact List</td></tr>
 		<form name='frmContactList' method='GET' action='contactList.php' >
 		
 		<tr><td class='head'>Name</td><td class='odd'><input name='contacts_name' value='$contacts_name'></td>
@@ -146,22 +146,22 @@ EOF;
 if(isset($_GET['submit'])){
 echo <<< EOF
 <form action='contactList.php' method='POST'>
-<table>
+<table class="searchformblock">
     <tr>
-        <th align='center' colspan='11'> Contact List</th>
+        <td class="searchformheader" align='center' colspan='11'> Contact List</td>
     </tr>
     <tr>
-        <th align='center'>No</th>
-        <th align='center'>Name</th>
-        <th align='center'>B.Partner</th>
-        <th align='center'>Position</th>
-        <th align='center'>Races</th>
-        <th align='center'>Religion</th>
-        <th align='center'>Tel</th>
-        <th align='center'>HP No</th>
-        <th align='center'>Fax</th>
-        <th align='center'>Email</th>
-        <th align='center'>Select <input type='checkbox' onclick='selectAll(this.checked)'></th>
+        <td class="searchformheader" align='center'>No</td>
+        <td class="searchformheader" align='center'>Name</td>
+        <td class="searchformheader" align='center'>B.Partner</td>
+        <td class="searchformheader" align='center'>Position</td>
+        <td class="searchformheader" align='center'>Races</td>
+        <td class="searchformheader" align='center'>Religion</td>
+        <td class="searchformheader" align='center'>Tel</td>
+        <td class="searchformheader" align='center'>HP No</td>
+        <td class="searchformheader" align='center'>Fax</td>
+        <td class="searchformheader" align='center'>Email</td>
+        <td class="searchformheader" align='center'>Select <input type='checkbox' onclick='selectAll(this.checked)'></td>
     </tr>
 EOF;
 
@@ -199,7 +199,7 @@ $contacts_name=$row['contacts_name'];
 $bpartner_name=$row['bpartner_name'];
 $position=$row['position'];
 $races_name=$row['races_name'];
-$religion_name=$row['religioin_name'];
+$religion_name=$row['religion_name'];
 $tel_1=$row['tel_1'];
 $hpno=$row['hpno'];
 $fax=$row['fax'];

@@ -1735,6 +1735,13 @@ global $defaultcurrency_id,$url;
             if(!validation())
                 return false;
             updateCurrentRow();
+            if(iscomplete==1){
+              if(!confirm("Confirm Complete?"))
+                 return false
+            }else{
+              if(!confirm("Confirm Save?"))
+                 return false
+            }
             var iscompletectrl=document.getElementById("iscomplete");
              iscompletectrl.value=iscomplete;
               
