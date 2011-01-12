@@ -232,13 +232,13 @@ echo <<< EOF
                     }
 
                     if(col == 7){
-                    //alert(workflowtransaction_id);
+//                    alert(workflowtransaction_id);
                         //if(primarykey_name == "leave_id"){
                             var data="action=approvalwindows&primarykey_value="+primarykey_value+"&primarykey_name="+primarykey_name+"&tablename="+tablename+"&window_workflow="+window_workflow+"&workflowtransaction_id="+workflowtransaction_id;
 
                             $.ajax({
                             url: "approvallist.php",type: "GET",data: data,cache: false,
-                            success: function (xml) {
+                            success: function (xml) { 
 
                             document.getElementById('idApprovalWindows').innerHTML = xml;
                             document.getElementById('idApprovalWindows').style.display = "";
@@ -418,12 +418,12 @@ echo <<< EOF
             <ntb:imageeditor></ntb:imageeditor>
             </ntb:textcolumn>
 
-           <ntb:textcolumn   label=""  width="0" xdatafld="workflowtransaction_id" sortenabled="false"></ntb:textcolumn>
-           <ntb:textcolumn   label=""  width="0" xdatafld="tablename" sortenabled="false"></ntb:textcolumn>
-           <ntb:textcolumn   label=""  width="0" xdatafld="primarykey_name" sortenabled="false"></ntb:textcolumn>
-           <ntb:textcolumn   label=""  width="0" xdatafld="primarykey_value" sortenabled="false"></ntb:textcolumn>
-           <ntb:textcolumn   label=""  width="0" xdatafld="window_workflow" sortenabled="false"></ntb:textcolumn>
-           <ntb:textcolumn   label=""  width="0" xdatafld="hyperlink" sortenabled="false"></ntb:textcolumn>
+           <ntb:textcolumn   label=""  visible="false" width="0" xdatafld="workflowtransaction_id" sortenabled="false"></ntb:textcolumn>
+           <ntb:textcolumn   label=""  visible="false" width="0" xdatafld="tablename" sortenabled="false"></ntb:textcolumn>
+           <ntb:textcolumn   label=""  visible="false" width="0" xdatafld="primarykey_name" sortenabled="false"></ntb:textcolumn>
+           <ntb:textcolumn   label=""  visible="false" width="0" xdatafld="primarykey_value" sortenabled="false"></ntb:textcolumn>
+           <ntb:textcolumn   label=""  visible="false" width="0" xdatafld="window_workflow" sortenabled="false"></ntb:textcolumn>
+           <ntb:textcolumn   label=""  visible="false" width="0" xdatafld="hyperlink" sortenabled="false"></ntb:textcolumn>
 
 </ntb:columns>
          </ntb:grid>
@@ -629,10 +629,13 @@ EOF;
       CASE  "OVERCLAIM":
 
         include_once "../hr/class/Overtimeclaim.php";
+
         $ov = new Overtimeclaim();
+
                $ov->overtimeclaim_id=$this->primarykey_value;
                $ov->person_id=$this->person_id;
                $ov->window_workflow= $this->window_workflow;
+
         return $ov->defineWorkflowParameter();
      break;
 
@@ -757,6 +760,7 @@ EOF;
                 $workflowtransaction_description = $rowdetails['workflowtransaction_description'];
             }
         }
+//        $this->window_workflow = $workflow_code;
         $this->parameter_array = $this->defineWorkflowParameter();
         $workflowtransaction_description = str_replace("\n","<br>",$workflowtransaction_description);
         $viewdetails = "$hyperlink?action=edit&$primarykey_name=$primarykey_value";

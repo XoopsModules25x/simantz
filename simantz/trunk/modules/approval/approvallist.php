@@ -59,7 +59,6 @@ $o->lecturer_remarks=$_REQUEST["lecturer_remarks"];
 $o->description=$_REQUEST["description"];
 $o->window_workflow=$_REQUEST["window_workflow"];
 
-
 if(isset($_POST['iscomplete']))
 $iscomplete=$_POST['iscomplete'];
 else
@@ -89,7 +88,7 @@ $o->leavetype_id=$_REQUEST["leavetype_id"];
 /* end */
 
 $o->failfeedback = "";
-
+//$log->showLog(3,"in window_workflow: $o->window_workflow");
 /* define workflow API */
 $workflowapi = new WorkflowAPI();
 $o->parameter_array = $o->defineWorkflowParameter();
@@ -102,6 +101,7 @@ $o->defineHeaderButton();
 
     //compulsory action for Workflow API
     case "next_node":
+
 
         if($o->primarykey_value > 0){
 
