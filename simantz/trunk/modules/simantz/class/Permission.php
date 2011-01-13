@@ -37,11 +37,16 @@ public function Permission (){
 }
 
   public function showControlHeader($groupid,$mid){
-
-
+  global $xoopsUser;
+         $uid=$xoopsUser->getVar('uid');
+        if($uid>1)
+           $wherestring=" WHERE g.groupid>1";
+        else
+           $wherestring="";
+        
 	$this->log->showLog(4,"Accessing showcontrolheader with groupid: $groupid");
 
-	$sql="SELECT g.groupid, g.name from sim_groups g
+        $sql="SELECT g.groupid, g.name from sim_groups g $wherestring
 		 order by g.name";
 	$selectgroup="<SELECT name='groupid' onchange='action.click();'>";
 	$i=0;
