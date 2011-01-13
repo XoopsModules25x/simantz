@@ -78,6 +78,7 @@ else
 				 redirect_header("organization.php?action=edit&organization_id=$latest_id",$pausetime,"Your data is saved.");
 			}
 			else {
+                                include 'menu.php';
 				$o->groupctrl=$ctrl->getAllSystemGroup(0);
 				$token=$s->createToken($tokenlife,"CREATE_ORG");
 				if($o->country_id=="")
@@ -92,7 +93,8 @@ else
 		}
 	
 	else{	// if the token is not valid or the token is expired, it back to previous form with previous inputed data
-		$o->groupctrl=$ctrl->getAllSystemGroup(0);
+		     include 'menu.php';
+                $o->groupctrl=$ctrl->getAllSystemGroup(0);
 		$token=$s->createToken($tokenlife,"CREATE_ORG");
 				if($o->country_id=="")
 					$o->country_id=0;
