@@ -979,7 +979,7 @@ class PHPJasperXML {
                     $checkpoint=$headerY;//+40;
                     $biggestY = $headerY;//+40;
                     $tempY=$this->arraydetail[0]["y_axis"];
-                  //  $this->pdf->Cell(10,10,"??".$this->arrayPageSetting["pageHeight"].",". $this->pdf->getY() .",". $this->arraygroupfootheight.",".$this->arrayPageSetting["bottomMargin"].",".$this->arraypageFooter[0]["height"]."??");
+//                    $this->pdf->Cell(10,10,"??".$this->arrayPageSetting["pageHeight"].",". $this->pdf->getY() .",". $this->arraygroupfootheight.",".$this->arrayPageSetting["bottomMargin"].",".$this->arraypageFooter[0]["height"]."??");
                     if($this->arrayPageSetting["pageHeight"]< $this->pdf->getY() + $this->arraygroupfootheight+$this->arrayPageSetting["bottomMargin"]+$this->arraypageFooter[0]["height"]){
                            $this->pageFooter();
                           $this->pageHeader();
@@ -996,8 +996,9 @@ class PHPJasperXML {
                           $tempY=$headerY;
                     }
                     $this->showGroupHeader($this->pdf->getY());
+//                    $this->pdf->Cell(10,10,"??".$this->arrayPageSetting["pageHeight"].",". $this->pdf->getY() .",". $this->arraygroupfootheight.",".$this->arrayPageSetting["bottomMargin"].",".$this->arraypageFooter[0]["height"]."??");
                     
-                    $checkpoint=$this->pdf->getY();
+                    $checkpoint=$this->pdf->getY()+$this->arraygroupheadheight; //after group header add height band, so detail no crash with group header.
                 }
 
                 foreach($this->arraydetail as $compare)	//this loop is to count possible biggest Y of the coming row
