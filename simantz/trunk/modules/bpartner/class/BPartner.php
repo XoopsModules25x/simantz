@@ -1418,8 +1418,8 @@ EOF;
 	$this->bpartner_id=$row['bpartner_id'];
 	$this->bpartnergroup_id=$row['bpartnergroup_id'];
 	$this->bpartner_no=$row['bpartner_no'];
-	$this->bpartner_name=$row['bpartner_name'];
-        $this->inchargeperson=$row['inchargeperson'];
+	$this->bpartner_name=htmlentities($row['bpartner_name'], ENT_QUOTES);
+        $this->inchargeperson=htmlentities($row['inchargeperson'], ENT_QUOTES);
 	$this->isactive=$row['isactive'];
 	$this->seqno=$row['seqno'];
 	$this->created=$row['created'];
@@ -1430,15 +1430,15 @@ EOF;
 	$this->terms_id=$row['terms_id'];
 	$this->salescreditlimit=$row['salescreditlimit'];
 	$this->organization_id=$row['organization_id'];
-	$this->bpartner_url=$row['bpartner_url'];
+	$this->bpartner_url=htmlentities($row['bpartner_url'], ENT_QUOTES);
 	$this->debtoraccounts_id=$row['debtoraccounts_id'];
 	$this->description=$row['description'];
 	$this->tax_id=$row['tax_id'];
-	$this->shortremarks=$row['shortremarks'];
+	$this->shortremarks=htmlentities($row['shortremarks'], ENT_QUOTES);
 	$this->currentbalance=$row['currentbalance'];
 	$this->creditoraccounts_id=$row['creditoraccounts_id'];
-        	$this->creditoraccountsname=$row['creditoraccountsname'];
-                $this->debtoraccountsname=$row['debtoraccountsname'];
+        	$this->creditoraccountsname=htmlentities($row['creditoraccountsname'], ENT_QUOTES);
+                $this->debtoraccountsname=htmlentities($row['debtoraccountsname'], ENT_QUOTES);
 	$this->isdebtor=$row['isdebtor'];
 	$this->iscreditor=$row['iscreditor'];
 	$this->istransporter=$row['istransporter'];
@@ -1448,22 +1448,22 @@ EOF;
 	$this->enforcepurchasecreditlimit=$row['enforcepurchasecreditlimit'];
 	$this->currentsalescreditstatus=$row['currentsalescreditstatus'];
 	$this->currentpurchasecreditstatus=$row['currentpurchasecreditstatus'];
-	$this->bankaccountname=$row['bankaccountname'];
-	$this->bankname=$row['bankname'];
+	$this->bankaccountname=htmlentities($row['bankaccountname'], ENT_QUOTES);
+	$this->bankname=htmlentities($row['bankname'], ENT_QUOTES);
 	$this->bankaccountno=$row['bankaccountno'];
 	$this->isdealer=$row['isdealer'];
 	$this->isprospect=$row['isprospect'];
 	$this->employeecount=$row['employeecount'];
-	$this->alternatename=$row['alternatename'];
-	$this->companyno=$row['companyno'];
+	$this->alternatename=htmlentities($row['alternatename'], ENT_QUOTES);
+	$this->companyno=htmlentities($row['companyno'], ENT_QUOTES);
 	$this->industry_id=$row['industry_id'];
-    $this->tooltips=$row['tooltips'];
+    $this->tooltips=htmlentities($row['tooltips'], ENT_QUOTES);
 	$this->terms_name=$row['terms_name'];
     $this->bpartnergroup_name=$row['bpartnergroup_name'];
     $this->currency_code=$row['currency_code'];
     $this->industry_name=$row['industry_name'];
     $this->employee_id=$row['employee_id'];
-    $this->employee_name=$row['employee_name'];
+    $this->employee_name=htmlentities($row['employee_name'], ENT_QUOTES);
     $this->employee_no=$row['employee_no'];
     $this->pricelist_id=$row['pricelist_id'];
     $this->pricelist_name=$row['pricelist_name'];
@@ -3201,7 +3201,7 @@ echo <<< EOF
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/popup.css">
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/nitobi/nitobi.grid/nitobi.grid.css">
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/xoops.css">
-<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/themes/default/style.css">
+<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/themes/blue/style.css">
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/nitobi/nitobi.combo/nitobi.combo.css">
 EOF;
 
@@ -4112,7 +4112,7 @@ echo <<< EOF
 
    <ntb:textcolumn classname="{\$rh}" label="City" width="130" xdatafld="address_city" editable="true" sortenabled="true"></ntb:textcolumn>
 
-   <ntb:textcolumn classname="{\$rh}" label="Region" width="90" xdatafld="region_id" editable="true" >
+   <ntb:textcolumn classname="{\$rh}" label="State" width="90" xdatafld="region_id" editable="true" >
             <ntb:listboxeditor gethandler="bpartner.php?action=regionlist" displayfields="region_name" valuefield="region_id" ></ntb:lookupeditor>
         </ntb:textcolumn>
 
