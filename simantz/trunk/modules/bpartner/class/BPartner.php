@@ -462,6 +462,7 @@ EOF;
   } // end of member function getInputForm
 
   public function getBpartnerForm($bpartner_id) {
+      
 	global $havewriteperm, $showOrganization, $isadmin;
         $mandatorysign="<b style='color:red'>*</b>";
 
@@ -1378,7 +1379,7 @@ EOF;
                      LEFT JOIN sim_simbiz_accounts ac2 on ac2.accounts_id=bp.creditoraccounts_id";
             }
 
-	 $sql="SELECT
+	echo $sql="SELECT
          bp.bpartner_id,bp.bpartnergroup_id,bp.bpartner_no,bp.bpartner_name,bp.isactive,bp.seqno,
 	 bp.organization_id,bp.employeecount,bp.alternatename,bp.companyno,bp.industry_id,
 
@@ -5551,14 +5552,26 @@ EOF;
 
     global $xoTheme,$nitobigridthemes,$url,$issuedatecal,$nextfollowupdatecal;
     include "../bpartner/class/BPSelectCtrl.inc.php";
+      include "../hr/class/HRSelectCtrl.inc.php";
     include_once "../simantz/class/datepicker/class.datepicker.php";
 
         $dp=new datepicker("$url");
         $dp->dateFormat='Y-m-d';
         $issuedatecal =$dp->show('issuedate');
-        $nextfollowupdatecal=$dp->show('nextfollowupdate');
-
+        $nextfollowupdatecal =$dp->show('nextfollowupdate');
     $bpctrl=new BPSelectCtrl();
+    $hrctrl=new HRSelectCtrl();
+
+    if($followup_id==0){
+            $bpcontrol=$bpctrl->getSelectBPartner(0,"Y");
+                $followtypectrl=$bpctrl->getSelectFollowUpType(0,'N');
+                $empcontrol="<select  name='employee_id'  id='employee_id'>".$hrctrl->getSelectEmployee(0,"Y")."</select>";
+                $ischecked="checked";
+                     $issuedate=date("Y-m-d",time());
+        $nextfollowupdate=date("Y-m-d",time());
+
+    }
+    else{
    $sql="SELECT f.*,bp.bpartner_name,bp.bpartner_no,ft.followuptype_name,e.employee_name
     FROM sim_followup f
     inner join sim_bpartner bp on f.bpartner_id=bp.bpartner_id
@@ -5582,6 +5595,9 @@ while($row=$this->xoopsDB->fetchArray($query)){
     $nextfollowupdate=htmlspecialchars($row['nextfollowupdate']);
     $isactive=$row['isactive'];
     $followtypectrl=$bpctrl->getSelectFollowUpType($followuptype_id,'N');
+    $bpcontrol="<a href='bpartner.php?action=viewsummary&bpartner_id=$bpartner_id'>$bpartner_no-$bpartner_name</a>";
+      $empcontrol="<select  name='employee_id'  id='employee_id'>".$hrctrl->getSelectEmployee($employee_id,"Y")."</select>";
+//    $empcontrol="<a href='../hr/employee.php?action=viewsummary&employee_id=$employee_id'>$employee_name</a>";
 //Netgate
 
     if($isactive==1)
@@ -5589,7 +5605,7 @@ while($row=$this->xoopsDB->fetchArray($query)){
     else
         $ischecked="";
 }
-
+   }
 echo <<< EOF
 
 <div class="dimBackground"></div>
@@ -5613,14 +5629,14 @@ echo <<< EOF
      <table>
    <tr>
           <td class="head" >Business Partner</td>
-          <td><a href="bpartner.php?action=viewsummary&bpartner_id=$bpartner_id">$bpartner_no-$bpartner_name</a></td>
+          <td>$bpcontrol</td>
           <td class="head" >Type</td>
           <td><select id="followuptype_id" name="followuptype_id">$followtypectrl</select></td>
         </tr>
 
         <tr>
           <td class="head" >Title</td>
-          <td><input $colstyle   id="followup_name" name="followup_name" type="text" value="$followup_name" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /></td>
+          <td><input $colstyle   id="followup_name" name="followup_name" size="60" type="text" value="$followup_name" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /></td>
           <td class="head" >Date</td>
           <td><input $colstyle  id="issuedate" name="issuedate" type="text" value="$issuedate" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /><input type="button" onclick="$issuedatecal" value='Date'></td>
         </tr>
@@ -5632,7 +5648,7 @@ echo <<< EOF
         </tr>
         <tr>
           <td class="head">Employee</td>
-          <td><a href="../hr/employee.php?action=viewsummary&employee_id=$employee_id">$employee_name</a></td>
+          <td>$empcontrol</td>
           <td class="head" >Next Follow Up Date</td>
           <td><input $colstyle   id="nextfollowupdate" name="nextfollowupdate" type="text" value="$nextfollowupdate" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /><input type="button" onclick="$nextfollowupdatecal" value='Date'></td>
         </tr>
@@ -5675,19 +5691,20 @@ EOF;
             $this->updatedby=$xoopsUser->getVar('uid');
             $tablename="sim_followup";
 
+           if($_POST['followup_id']>0){
           $arrfield=array("issuedate", "followup_name", "followuptype_id",
                           "nextfollowupdate","contactperson","contactnumber","description",
-                          "updated","updatedby","isactive");
+                          "updated","updatedby","isactive","employee_id");
           $arrfieldtype=array('%s','%s','%d',
                               '%s','%s','%s','%s',
-                              '%s','%d','%d');
+                              '%s','%d','%d','%d');
              $controlvalue=$_POST["followup_name"];
 
              if($_POST['isactive']=="on")
                  $isactive=1;
              else
                  $isactive=0;
-         $arrvalue=array($_POST["issuedate"],
+                    $arrvalue=array($_POST["issuedate"],
                     $_POST["followup_name"],
                     $_POST["followuptype_id"],
                     $_POST["nextfollowupdate"],
@@ -5695,7 +5712,7 @@ EOF;
                     $_POST["contactnumber"],
                     $_POST["description"],
                     $timestamp,
-                    $createdby,$isactive);
+                    $createdby,$isactive,$_POST['employee_id']);
 
 
              if($save->UpdateRecord($tablename, "followup_id", $_POST['followup_id'],
@@ -5707,6 +5724,41 @@ EOF;
                     $arr = array("msg"=>"Cannot save record","status"=>0);
                     echo json_encode($arr);
                 }
+           }
+           else{
+    $arrfield=array("issuedate", "followup_name", "followuptype_id",
+                          "nextfollowupdate","contactperson","contactnumber","description",
+                          "created","createdby","updated","updatedby","isactive","employee_id","bpartner_id");
+          $arrfieldtype=array('%s','%s','%d',
+                              '%s','%s','%s','%s',
+                              '%s','%d','%s','%d','%d','%d','%d');
+             $controlvalue=$_POST["followup_name"];
+
+             if($_POST['isactive']=="on")
+                 $isactive=1;
+             else
+                 $isactive=0;
+                    $arrvalue=array($_POST["issuedate"],
+                    $_POST["followup_name"],
+                    $_POST["followuptype_id"],
+                    $_POST["nextfollowupdate"],
+                    $_POST["contactperson"],
+                    $_POST["contactnumber"],
+                    $_POST["description"],
+                    $timestamp, $createdby,
+                        $timestamp, $createdby,$isactive,$_POST['employee_id'],$_POST['bpartner_id']);
+
+ 
+             if($save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype, $_POST["followup_name"],"followup_id")){
+                  $arr = array("msg"=>"Record save successfully","status"=>1);
+                  echo json_encode($arr);
+                        }
+                else{
+                    $arr = array("msg"=>"Cannot save record","status"=>0);
+                    echo json_encode($arr);
+                }
+               
+           }
 
 
   }

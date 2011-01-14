@@ -1,8 +1,21 @@
 <?php
 
 include "system.php";
-include "menu.php";
 include_once 'class/BPartnerList.php';
+if($_REQUEST['action']=="refreshfollowup"){
+$o = new BPartnerList();
+$s = new XoopsSecurity();
+$action=$_REQUEST['action'];
+$isadmin=$xoopsUser->isAdmin();
+$uid = $xoopsUser->getVar('uid');
+//
+echo refreshFollowUp();
+    die;
+}
+
+
+include "menu.php";
+
 
 error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
@@ -124,8 +137,130 @@ while($row=$xoopsDB->fetchArray($querybpartnerlist)){
 }
 $newbpartnerlist.="</table>";
 
+$followuplist=refreshFollowUp();
+
+echo <<< EOF
+<div id="idApprovalWindows" style="display:none"></div>
+<div id='blanket' style='display:none;'></div>
+<div id='popUpDiv' style='display:none;verticle-align:center'>
+  <div id='popupmessage' style='text-align:center'></div>
+  <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
+</div>
+
+<table class="tblMainHR">
+<tr>
+<td  style=" text-align:center;width=40%">
+<input name='btnSearchBpartner' style='height:20px; width=100px' type='button' value='Search B/Partner' onclick=javascript:window.location='bpartner.php?action=search'>
+<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Add B/Partner' onclick=javascript:window.location='bpartner.php'>
+<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='New Quotation' onclick=javascript:window.location='salesquotation.php'>
+<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Search Quotation' onclick=javascript:window.location='salesquotation.php?action=search'>
+<br/>
+<img src="chartsalequoteqty_6month.php"><br/>
+<img src="chartsalequoteamt_6month.php">
+</td>
+
+<td style="width=60%">
+$lastquotelist<br/>
+$newbpartnerlist<br/>
+<div id="followuptable">
+    $followuplist
+        </div>
+</td>
+</tr>
+</table>
 
 
+
+
+<script type="text/javascript">
+
+function save(){
+    if(confirm("Save record?")){
+            var data = $("#getFWformid").serialize();
+            
+            $.ajax({
+
+                 url: "bpartner.php",type: "POST",data: data,cache: false,
+                     success: function (xml) {
+                     
+                        jsonObj = eval( '(' + xml + ')');
+                        var status = jsonObj.status;
+                        var msg = jsonObj.msg;
+                        
+
+                        if(status == 1){
+                        closeWindow();
+                         followuptable();
+                        }
+                        else{
+                        alert("Cannot update follow up status, please double check your input.");
+                        }
+
+                }});
+
+   }
+                return false;
+
+}
+
+
+function followuptable(){
+document.getElementById('popupmessage').innerHTML="Please Wait.....";
+
+           
+           
+             var data="action=refreshfollowup";
+                $.ajax({
+                url: "index.php",type: "POST",data: data,cache: false,
+                success: function (xml) {
+
+                            document.getElementById('followuptable').innerHTML = xml;
+
+           
+
+           
+
+                        
+                }});
+}
+
+function editFollowUp(followup_id){
+document.getElementById('popupmessage').innerHTML="Please Wait.....";
+
+                document.getElementById('idApprovalWindows').style.display = "none";
+                popup('popUpDiv');
+             var data="action=editfollowuplayer&followup_id="+followup_id;
+                $.ajax({
+                url: "bpartner.php",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+                            
+                            document.getElementById('idApprovalWindows').style.display = "";
+              
+                            popup('popUpDiv');
+                            
+                            self.parent.scrollTo(0,0);
+                           
+                           
+                        
+                }});
+        }
+
+   function closeWindow(){
+     document.getElementById('idApprovalWindows').style.display = "none";
+   }
+</script>
+EOF;
+
+require(XOOPS_ROOT_PATH.'/footer.php');
+
+
+
+
+function refreshFollowUp(){
+
+global $xoopsDB,$homepagefollowupday;
  $sqlfollowuplist="SELECT bp.bpartner_id,bp.bpartner_no,bp.bpartner_name, f.followup_name,f.followup_name,f.description,
     f.followup_id,f.nextfollowupdate
     from sim_bpartner bp
@@ -135,13 +270,15 @@ $newbpartnerlist.="</table>";
 $followuplist=<<< EOF
   <table class="tblListRight">
     <tr>
-    <td class="tdListRightTitle" colspan="4">Follow Issue</td>
+    <td class="tdListRightTitle" colspan="4">Follow Up Issue (<a href="javascript:followuptable()">Refresh</a>)
+    &nbsp;<a href="javascript:editFollowUp(0)">Add</a>
+        </td>
     </tr>
     <tr>
     <td class="tdListRightHeader">No.</td>
     <td class="tdListRightHeader">Name</td>
     <td class="tdListRightHeader">Date</td>
-    <td class="tdListRightHeader">Issue</td>
+    <td class="tdListRightHeader">Issue </td>
     </tr>
 
 EOF;
@@ -168,95 +305,6 @@ while($rowfu=$xoopsDB->fetchArray($queryfollowuplist)){
     </tr>";
 
 }
-$followuplist.="</table>";
-echo <<< EOF
-<div id="idApprovalWindows" style="display:none"></div>
-<div id='blanket' style='display:none;'></div>
-<div id='popUpDiv' style='display:none;verticle-align:center'>
-  <div id='popupmessage' style='text-align:center'></div>
-  <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
-</div>
-
-<table class="tblMainHR">
-<tr>
-<td  style=" text-align:center;width=40%">
-<input name='btnSearchBpartner' style='height:20px; width=100px' type='button' value='Search B/Partner' onclick=javascript:window.location='bpartner.php?action=search'>
-<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Add B/Partner' onclick=javascript:window.location='bpartner.php'>
-<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='New Quotation' onclick=javascript:window.location='salesquotation.php'>
-<input name='btnSearchBpartner' style='height:20px; width=100px'  type='button' value='Search Quotation' onclick=javascript:window.location='salesquotation.php?action=search'>
-<br/>
-<img src="chartsalequoteqty_6month.php"><br/>
-<img src="chartsalequoteamt_6month.php">
-</td>
-
-<td style="width=60%">
-$lastquotelist<br/>
-$newbpartnerlist<br/>
-
-    $followuplist
-</td>
-</tr>
-</table>
-
-
-
-
-<script type="text/javascript">
-
-function save(){
-    if(confirm("Save record?")){
-            var data = $("#getFWformid").serialize();
-            
-            $.ajax({
-
-                 url: "bpartner.php",type: "POST",data: data,cache: false,
-                     success: function (xml) {
-                     
-                        jsonObj = eval( '(' + xml + ')');
-                        var status = jsonObj.status;
-                        var msg = jsonObj.msg;
-                        
-
-                        if(status == 1){
-                        closeWindow();
-                        }
-                        else{
-                        alert("Cannot update follow up status, please double check your input.");
-                        }
-
-                }});
-
-   }
-                return false;
-
+return $followuplist.="</table>";
+    
 }
-
-
-function editFollowUp(followup_id){
-document.getElementById('popupmessage').innerHTML="Please Wait.....";
-
-                document.getElementById('idApprovalWindows').style.display = "none";
-                popup('popUpDiv');
-             var data="action=editfollowuplayer&followup_id="+followup_id;
-                $.ajax({
-                url: "bpartner.php",type: "POST",data: data,cache: false,
-                success: function (xml) {
-                
-                            document.getElementById('idApprovalWindows').innerHTML = xml;
-                            
-                            document.getElementById('idApprovalWindows').style.display = "";
-              
-                            popup('popUpDiv');
-                            
-                            self.parent.scrollTo(0,0);
-                }});
-        }
-
-   function closeWindow(){
-     document.getElementById('idApprovalWindows').style.display = "none";
-   }
-</script>
-EOF;
-
-require(XOOPS_ROOT_PATH.'/footer.php');
-

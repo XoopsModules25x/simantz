@@ -20,6 +20,7 @@ include_once "../simbiz/class/SimbizSelectCtrl.inc.php";
 $simbizctrl = new SimbizSelectCtrl();
 $issimbiz = true;
 }
+
 $action=$_REQUEST['action'];
 $mode=$_REQUEST['mode'];
 $o->mode=$_REQUEST['mode'];
@@ -122,10 +123,21 @@ require(XOOPS_ROOT_PATH.'/footer.php');
 case "tablist":
     include_once "menu.php";
     $o->getIncludeFileMenu();
-$o->fetchBpartnerData($o->bpartner_id);
+    $o->fetchBpartnerData($o->bpartner_id);
     $o->showTabList();
 
     require(XOOPS_ROOT_PATH.'/footer.php');
+    die;
+    break;
+case "edit":
+        include_once "menu.php";
+    $o->getIncludeFileMenu();
+    if($o->fetchBpartnerData($o->bpartner_id))
+    $o->getBpartnerForm($o->bpartner_id);
+    else
+        echo "Error! Cannot fetch data! Please contact administrator to know more info.";
+require(XOOPS_ROOT_PATH.'/footer.php');
+    die;
 break;
 
 //frontpage of add new bpartner
