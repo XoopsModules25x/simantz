@@ -22,8 +22,7 @@ $issimbiz = true;
 }
 
 $action=$_REQUEST['action'];
-$mode=$_REQUEST['mode'];
-$o->mode=$_REQUEST['mode'];
+
 $isaddnew=$_REQUEST['isaddnew'];
 // get POST/GET data
 $o->bpartner_id = $_REQUEST['bpartner_id'];
@@ -33,7 +32,7 @@ $o->bpartner_name = $_REQUEST['bpartner_name'];
 
 // define tab iframe
 $bpartneridonly= "bpartner_id=$o->bpartner_id";
-$bpartnertab = "mode=$mode&bpartner_id=$o->bpartner_id";
+//$bpartnertab = "mode=$mode&bpartner_id=$o->bpartner_id";
 
 // end
 switch ($action){
@@ -131,9 +130,43 @@ case "tablist":
     break;
 case "edit":
         include_once "menu.php";
-    $o->getIncludeFileMenu();
-    if($o->fetchBpartnerData($o->bpartner_id))
+    //$o->geIncludeFileMenu();
+    $o->includeGeneralFile();
+    if($o->fetchBpartnerData($o->bpartner_id)){
+
+            if($o->organization_id=="")
+                     $o->organization_id=0;
+            if($o->industry_id=="")
+                     $o->industry_id=0;
+            if($o->bpartnergroup_id=="")
+                     $o->bpartnergroup_id=0;
+            if($o->currency_id=="")
+                     $o->currency_id=0;
+
+                $o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
+                $o->bpartnergroupctrl=$bpctrl->getSelectBPartnerGroup($o->bpartnergroup_id,'Y');
+                $o->industryctrl=$bpctrl->getSelectIndustry($o->industry_id,'Y');
+                $o->groupctrl=$ctrl->getUserGroup($o->groupid,'Y');
+                $o->pricelistctrl="<input name='pricelist_id' value='0' type='hidden'>";
+                $o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'N');
+                $o->termsctrl=$bpctrl->getSelectTerms($o->terms_id,'Y');
+
+       if($issimbiz){
+                $o->debtoraccountsctrl=$simbizctrl->getSelectAccounts($o->debtoraccounts_id,'Y',"onchange=''","debtoraccounts_id"," and a.account_type=2 ");
+                $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id"," and a.account_type=3 ");
+        }
+        else{
+               $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
+               $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
+//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
+//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
+        }
+
+   //  $o->includeGeneralFile();
+
+    
     $o->getBpartnerForm($o->bpartner_id);
+    }
     else
         echo "Error! Cannot fetch data! Please contact administrator to know more info.";
 require(XOOPS_ROOT_PATH.'/footer.php');
@@ -141,7 +174,7 @@ require(XOOPS_ROOT_PATH.'/footer.php');
 break;
 
 //frontpage of add new bpartner
-case "bpartner":
+case "create":
  include_once "menu.php";
 
 $o->bpartnergroup_id=$_POST['bpartnergroup_id'];
@@ -253,7 +286,7 @@ if($o->creditoraccounts_id=="")
                 $o->pricelistctrl="<input name='pricelist_id' value='0' type='hidden'>";
                 $o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'N');
                 $o->termsctrl=$bpctrl->getSelectTerms($o->terms_id,'Y');
-                
+
         if($issimbiz){
                 $o->debtoraccountsctrl=$simbizctrl->getSelectAccounts($o->debtoraccounts_id,'Y',"onchange=''","debtoraccounts_id","");
                 $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id","");
@@ -265,18 +298,13 @@ if($o->creditoraccounts_id=="")
 //                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
         }
 
- if($mode == "new"){//go to new record
-    $o->getInputForm("new","0");
- }
- else if($mode == "save"){//insert new record
-
       if($o->saveBPartner()){
           if($isaddnew == "1"){
              redirect_header("bpartner.php",$pausetime,"Your data is saved, redirect to add employee.");
           }
           else{
              $getid=$o->getLatestBPartnerID();
-             redirect_header("bpartner.php?action=tablist&mode=edit&bpartner_id=$getid",$pausetime,"Your data is saved, redirect to employee details.");
+             redirect_header("bpartner.php?action=edit&bpartner_id=$getid",$pausetime,"Your data is saved, redirect to employee details.");
           }
       }
       else{
@@ -285,59 +313,14 @@ if($o->creditoraccounts_id=="")
          $o->getInputForm("new");
        }
 
-    }
+    
 
     require(XOOPS_ROOT_PATH.'/footer.php');
 break;
 
 /* start iframe bpartner nitobi */
-
-case "bpartnerinfo"://bpartnerinfo tab
-echo '<html  xmlns:ntb="http://www.nitobi.com">';
-include_once "class/BPSelectCtrl.inc.php";
-$bpctrl = new BPSelectCtrl();
-$o->fetchBpartnerData($o->bpartner_id);
-
-//$o->pricelist_id=$_POST['pricelist_id'];
-//if($o->pricelist_id=="")
-//$o->pricelist_id=0;
-
-
-if($o->organization_id=="")
-         $o->organization_id=0;
-if($o->industry_id=="")
-         $o->industry_id=0;
-if($o->bpartnergroup_id=="")
-         $o->bpartnergroup_id=0;
-if($o->currency_id=="")
-         $o->currency_id=0;
-
-                $o->orgctrl=$ctrl->selectionOrg($o->createdby,$o->organization_id,'N',"",'Y');
-                $o->bpartnergroupctrl=$bpctrl->getSelectBPartnerGroup($o->bpartnergroup_id,'Y');
-                $o->industryctrl=$bpctrl->getSelectIndustry($o->industry_id,'Y');
-                $o->groupctrl=$ctrl->getUserGroup($o->groupid,'Y');
-                $o->pricelistctrl="<input name='pricelist_id' value='0' type='hidden'>";
-                $o->currencyctrl=$ctrl->getSelectCurrency($o->currency_id,'N');
-                $o->termsctrl=$bpctrl->getSelectTerms($o->terms_id,'Y');
-                
-       if($issimbiz){
-                $o->debtoraccountsctrl=$simbizctrl->getSelectAccounts($o->debtoraccounts_id,'Y',"onchange=''","debtoraccounts_id"," and a.account_type=2 ");
-                $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id"," and a.account_type=3 ");
-        }
-        else{
-               $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
-               $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
-//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
-//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
-        }
-                
- $o->includeGeneralFile();
-  if($mode == "edit"){//show form with employee data
-        $o->getBpartnerForm();
-  }else if($mode == "view"){//show preview with employee data
-        $o->getBpartnerview();
-
-  }else if($mode == "save"){//update / insert record here
+//
+case "update"://bpartnerinfo tab
 
 $o->bpartnergroup_id=$_POST['bpartnergroup_id'];
 $o->bpartner_no=$_POST['bpartner_no'];
@@ -427,46 +410,19 @@ $o->isprospect=0;
         //if success
         $getid=$o->bpartner_id;
 
-         redirect_header("bpartner.php?action=bpartnerinfo&mode=view&bpartner_id=$getid",$pausetime,"Your data is saved, redirect to employee details.");
+         redirect_header("bpartner.php?action=viewsummary&bpartner_id=$getid",$pausetime,"Your data is saved, redirect to employee details.");
         }else{
         //if failed
            $getid=$o->bpartner_id;
-           redirect_header("bpartner.php?action=bpartnerinfo&mode=edit&bpartner_id=$o->bpartner_id",$pausetime,"Error! Connot save the data!");
+           redirect_header("bpartner.php?action=viewsummary&bpartner_id=$o->bpartner_id",$pausetime,"Error! Connot save the data!");
         }
 
-        $o->getBPartnerform();// show form again
-   }
-   else if($mode == "delete"){
-          if($o->deleteBPartner($o->bpartner_id)){
-
-			redirect_header("bpartner.php",$pausetime,"Data removed successfully.");
-          }else{
-
-			redirect_header("bpartner.php?action=tablist&mode=edit&bpartner_id=$o->bpartner_id",$pausetime,"Warning! Can't delete data from database due to this employee have be used.");
-          }
-
-   }
-
-echo '</html>';
-
+     
+  
   break;
 
 
-/* start Contact nitobi */
-case "searchcontact": //return xml table to grid
-    $wherestring=" WHERE bpartner_id=$o->bpartner_id";
-    $o->showContact($wherestring);
-    exit; //after return xml shall not run more code.
-break;
-case "savecontact": //process submited xml data from grid
-     $o->saveContact();
-break;
-case "contact":
-echo '<html  xmlns:ntb="http://www.nitobi.com">';
-$o->includeGeneralFile();
-$o->getContactform();//use nitobi
-echo '</html>';
-break;
+
 case "races": //return xml table to grid
 include_once "../simantz/class/EBAGetHandler.php";
 header('Content-type: text/xml');
@@ -497,6 +453,21 @@ $wherestring=" WHERE isactive!=0";
 $o->getSelectReligion($wherestring);
 $getHandler->completeGet();
 break;
+/* start Contact nitobi */
+case "searchcontact": //return xml table to grid
+    $wherestring=" WHERE bpartner_id=$o->bpartner_id";
+    $o->showContact($wherestring);
+    exit; //after return xml shall not run more code.
+break;
+case "savecontact": //process submited xml data from grid
+     $o->saveContact();
+break;
+case "contacts":
+
+$o->getContactform();//use nitobi
+die;
+    break;
+
 case "addresslist": //return xml table to grid
 include_once "../simantz/class/EBAGetHandler.php";
 header('Content-type: text/xml');
@@ -525,10 +496,11 @@ case "saveaddress": //process submited xml data from grid
      $o->saveAddress();
 break;
 case "address":
-echo '<html  xmlns:ntb="http://www.nitobi.com">';
-$o->includeGeneralFile();
+//echo '<html  xmlns:ntb="http://www.nitobi.com">';
+//$o->includeGeneralFile();
 $o->getAddressform();//use nitobi
-echo '</html>';
+//echo '</html>';
+die;
 break;
 case "countrylist": //return xml table to grid
 include_once "../simantz/class/EBAGetHandler.php";
@@ -574,10 +546,11 @@ case "savefollowup": //process submited xml data from grid
      $o->saveFollowup();
 break;
 case "followup":
-echo '<html  xmlns:ntb="http://www.nitobi.com">';
-$o->includeGeneralFile();
+
+//$o->includeGeneralFile();
 $o->getFollowupform();//use nitobi
-echo '</html>';
+
+die;
 break;
 
 case "getfollowuptype": //return xml table to grid
@@ -605,22 +578,7 @@ case "savefollowuplayer";
     die;
     break;
 
-case "getemployeelist": //return xml table to grid
-include_once "../simantz/class/EBAGetHandler.php";
-header('Content-type: text/xml');
-$lookupdelay=1000;
-$pagesize=&$_GET["pagesize"];
-$ordinalStart=&$_GET["startrecordindex"];
-$sortcolumn=&$_GET["sortcolumn"];
-$sortdirection=&$_GET["sortdirection"];
-$getHandler = new EBAGetHandler();
-$getHandler->ProcessRecords();
-$getHandler->DefineField("employee_id");
-$wherestring=" WHERE isactive!=0 ";
-$o->getSelectEmployeeList($wherestring);
-$getHandler->completeGet();
-break;
-/* end followup */
+
 
 
 default :

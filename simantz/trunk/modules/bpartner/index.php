@@ -268,6 +268,7 @@ global $xoopsDB,$homepagefollowupday;
     where DATE_ADD(CURDATE(),INTERVAL $homepagefollowupday DAY)>= f.nextfollowupdate and f.isactive=1 order by f.nextfollowupdate desc,bp.bpartner_name ASC";
 
 $followuplist=<<< EOF
+   
   <table class="tblListRight">
     <tr>
     <td class="tdListRightTitle" colspan="4">Follow Up Issue (<a href="javascript:followuptable()">Refresh</a>)
@@ -284,6 +285,7 @@ $followuplist=<<< EOF
 EOF;
 $queryfollowuplist=$xoopsDB->query($sqlfollowuplist);
 $rowtype='odd';
+$date=date("Y-m-d H:i:s");
 while($rowfu=$xoopsDB->fetchArray($queryfollowuplist)){
     $bpartner_no=$rowfu['bpartner_no'];
     $bpartner_id=$rowfu['bpartner_id'];

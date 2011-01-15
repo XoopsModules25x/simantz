@@ -132,80 +132,7 @@ class BPartner
 
 
 	}
-	else
-	{
-
-		$action="update";
-		$savectrl="<input name='bpartner_id' value='$this->bpartner_id' type='hidden'>
-			<input style='height: 40px;' name='submit' value='Save'
-            type='submit' onclick='action.value=\"update\"'></td><td>
-            <input style='height: 40px;' name='submit' value='Cancel'
-            type='submit' onclick='action.value=\"view\"'>";
-
-
-
-		if($this->isAdmin)
-		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
-		"<input name='tablename' value='$this->tablebpartner' type='hidden'>".
-		"<input name='id' value='$this->bpartner_id' type='hidden'>".
-		"<input name='idname' value='bpartner_id' type='hidden'>".
-		"<input name='title' value='BPartner' type='hidden'>".
-		"<input name='submit' value='View Record Info' type='submit'>".
-		"</form>";
-
-
-		//force isactive checkbox been checked if the value in db is 'Y'
-		if ($this->isactive==1)
-			$checked="CHECKED";
-		else
-			$checked="";
-
-		if ($this->isdebtor==1)
-			$isdebtorchecked="CHECKED";
-		else
-			$isdebtorchecked="";
-
-		if ($this->iscreditor==1)
-			$iscreditorchecked="CHECKED";
-		else
-			$iscreditorchecked="";
-
-		if ($this->istransporter==1)
-			$istransporterchecked="CHECKED";
-		else
-			$istransporterchecked="";
-
-		if ($this->isdealer==1)
-			$isdealerchecked="CHECKED";
-		else
-			$isdealerchecked="";
-
-		if ($this->isprospect==1)
-			$isprospectchecked="CHECKED";
-		else
-			$isprospectchecked="";
-
-		if ($this->enforcesalescreditlimit==1)
-			$enforcesalescreditlimitchecked="CHECKED";
-		else
-			$enforcesalescreditlimitchecked="";
-
-		if ($this->enforcepurchasecreditlimit==1)
-			$enforcepurchasecreditlimitchecked="CHECKED";
-		else
-			$enforcepurchasecreditlimitchecked="";
-
-		$header="Edit Business Partner";
-
-		if($this->allowDelete($this->bpartner_id))
-		$deletectrl="<FORM action='bpartner.php' method='POST' onSubmit='return confirm(".
-		'"confirm to remove this bpartner?"'.")'><input type='submit' value='Delete' name='submit'>".
-		"<input type='hidden' value='$this->bpartner_id' name='bpartner_id'>".
-		"<input type='hidden' value='delete' name='action'><input name='token' value='$token' type='hidden'></form>";
-		else
-		$deletectrl="";
-		$addnewctrl="<Form action='bpartner.php' method='POST'><input name='submit' value='New' type='submit'></form>";
-	}
+	
 
 if($havewriteperm==1){ //user with write permission can edit data, have button
    $savectrl="<input astyle='height: 40px;' name='btnsubmit' value='Save and Add More Details' type='button' onclick='validateBPartner()'>";
@@ -216,6 +143,7 @@ else{ //user dun have write permission, cannot save grid
    $saveandnewctrl="";
    $noperm="<div>You No Have Write Permission</div>";
 }
+
     $search_button = $this->getFormButton("Search","bpartner.php",array("action"=>"search") );
     $new_button = $this->getFormButton("New","bpartner.php");
 
@@ -223,7 +151,7 @@ else{ //user dun have write permission, cannot save grid
         $hideOganization="style='display:none'";
    else
         $hideOganization="";
-
+   echo $this->searchAToZforDetail();
     echo <<< EOF
 <script type='text/javascript'>
     function showAccountParameter(){
@@ -296,7 +224,7 @@ else{ //user dun have write permission, cannot save grid
     </tr>
   </table>
 <form method="post" action="bpartner.php" name="frmBPartner" id="frmBPartner" enctype="multipart/form-data" onsubmit="return false">
-<input type="hidden" name="action" value="bpartner">
+<input type="hidden" name="action" value="create">
 <input type="hidden" name="mode" value="save">
 <input type="hidden" name="isaddnew" id="isaddnew" value="0">
 <input type="hidden" name="bpartner_id" value="0">
@@ -534,14 +462,38 @@ EOF;
 
 		$header="Edit Business Partner";
 
-		if($this->allowDelete($this->bpartner_id))
+                if($this->allowDelete($this->bpartner_id))
 		$deletectrl="<FORM action='bpartner.php' method='POST' onSubmit='return confirm(".
-		'"confirm to remove this bpartner?"'.")'><input type='submit' value='Delete' name='submit'>".
+		'"confirm to remove this bpartner?"'.")'><input type='submit' value='Delete' name='submit' style='width: 200px; cursor: pointer;'>".
 		"<input type='hidden' value='$this->bpartner_id' name='bpartner_id'>".
-		"<input type='hidden' value='delete' name='action'><input name='token' value='$token' type='hidden'></form>";
+		"<input type='hidden' value='delete' name='action'></form>";
 		else
 		$deletectrl="";
 		$addnewctrl="<Form action='bpartner.php' method='POST'><input name='submit' value='New' type='submit'></form>";
+                $layerlink=<<<LAYERLINK
+   
+                <table style="width: 105px;" class="searchformblock" border="1">
+
+                   <tbody><tr>
+
+                    <td align="left"><input type="button" onclick="openFollowUp()" value="Follow Up History" style="width: 200px; cursor: pointer;"><br/><br/></td>
+                   </tr>
+
+                   <tr>
+                    <td align="left"><input type="button" onclick="openAddress()" value="Address" style="cursor: pointer;width: 200px;"><br/><br/></td>
+                     </tr>
+
+                   <tr>
+                    <td align="left"><input type="button" onclick="openContacts()" value="Contacts" style="cursor: pointer;width: 200px;"><br/><br/></td>
+                   </tr>
+                   <tr>
+                                    <td align="left">$deletectrl<br/></td>
+                   </tr>
+
+                </tbody></table>
+
+LAYERLINK;
+		
 
 
 if($havewriteperm==1){ //user with write permission can edit data, have button
@@ -561,8 +513,36 @@ else{ //user dun have write permission, cannot save grid
    else
         $hideOganization="";
 
+   echo $this->searchAToZforDetail();
     echo <<< EOF
+<link rel="stylesheet" type="text/css" href="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.css" />
+<script type="text/javascript" src="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.js"></script>
+   
+
+
 <script type='text/javascript'>
+
+function loadjscssfile(filename, filetype){
+ if (filetype=="js"){ //if filename is a external JavaScript file
+  var fileref=document.createElement('script')
+  fileref.setAttribute("type","text/javascript")
+  fileref.setAttribute("src", filename)
+  document.getElementsByTagName("head")[0].appendChild(fileref)
+
+    }
+   }
+
+   function removejscssfile(filename, filetype){
+ var targetelement=(filetype=="js")? "script" : (filetype=="css")? "link" : "none" //determine element type to create nodelist from
+ var targetattr=(filetype=="js")? "src" : (filetype=="css")? "href" : "none" //determine corresponding attribute to test for
+ var allsuspects=document.getElementsByTagName(targetelement)
+ for (var i=allsuspects.length; i>=0; i--){ //search backwards within nodelist for matching elements to remove
+  if (allsuspects[i] && allsuspects[i].getAttribute(targetattr)!=null && allsuspects[i].getAttribute(targetattr).indexOf(filename)!=-1)
+   allsuspects[i].parentNode.removeChild(allsuspects[i]) //remove element by calling parentNode.removeChild()
+ }
+}
+
+
     function showAccountParameter(){
         var trAccountParameter=document.getElementById("trAccountParameter");
         var btnShowAccountParameter=document.getElementById("btnShowAccountParameter");
@@ -575,6 +555,88 @@ else{ //user dun have write permission, cannot save grid
             btnShowAccountParameter.value="Display Account Info";
         }
     }
+
+  function closeWindow(file){
+     document.getElementById('idApprovalWindows').style.display = "none";
+     document.getElementById('idApprovalWindows').innerHTML="";
+
+
+
+     removejscssfile("bpartnerjslayer.php?type="+file, "js") //remove all occurences of "somescript.js" on page
+
+   }
+   
+
+   function openFollowUp(){
+            document.getElementById('popupmessage').innerHTML="Please Wait.....";
+            bpid=document.getElementById('frmBPartner').elements["bpartner_id"].value;
+            
+            document.getElementById('idApprovalWindows').style.display = "none";
+            popup('popUpDiv');
+            var data="action=followup&bpartner_id="+bpid;
+                $.ajax({
+                url: "bpartner.php",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                       
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            popup('popUpDiv');
+                            self.parent.scrollTo(0,0);
+                              loadjscssfile("bpartnerjslayer.php?type=followup","js");
+                          // 
+                         
+
+                }});
+   }
+
+
+   function openAddress(){
+    document.getElementById('popupmessage').innerHTML="Please Wait.....";
+            bpid=document.getElementById('frmBPartner').elements["bpartner_id"].value;
+
+            document.getElementById('idApprovalWindows').style.display = "none";
+            popup('popUpDiv');
+            var data="action=address&bpartner_id="+bpid;
+                $.ajax({
+                url: "bpartner.php",type: "POST",data: data,cache: false,
+                success: function (xml) {
+
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            popup('popUpDiv');
+                            self.parent.scrollTo(0,0);
+                              loadjscssfile("bpartnerjslayer.php?type=address","js");
+                          //
+
+
+                }});
+   }
+
+   function openContacts(){
+   
+    document.getElementById('popupmessage').innerHTML="Please Wait.....";
+            bpid=document.getElementById('frmBPartner').elements["bpartner_id"].value;
+
+            document.getElementById('idApprovalWindows').style.display = "none";
+            popup('popUpDiv');
+            var data="action=contacts&bpartner_id="+bpid;
+                $.ajax({
+                url: "bpartner.php",type: "POST",data: data,cache: false,
+                success: function (xml) {
+
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            popup('popUpDiv');
+                            self.parent.scrollTo(0,0);
+                              loadjscssfile("bpartnerjslayer.php?type=contacts","js");
+                          //
+
+
+                }});
+   }
 
      function validateBPartner(){
 
@@ -610,7 +672,7 @@ else{ //user dun have write permission, cannot save grid
 
              if(isallow){
              document.frmBPartner.submit();
-                                jsonObj = eval( '(' + xml + ')');
+                        //        jsonObj = eval( '(' + xml + ')');
 
               }else{
                  document.getElementById("statusDiv").innerHTML="Failed to save record...Please Check :<br/>"+errorMsg;
@@ -621,12 +683,22 @@ else{ //user dun have write permission, cannot save grid
          return false;
      }
 
+   
+
 </script>
+<div id="idApprovalWindows" style="display:none"></div>
+<div id='blanket' style='display:none;'></div>
+<div id='popUpDiv' style='display:none;verticle-align:center'>
+  <div id='popupmessage' style='text-align:center'></div>
+  <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
+</div>
 
  <div id="statusDiv" align="center" class="ErrorstatusDiv">$noperm</div>
+<table><td>
+    <table style="text-align:center; width:970px;" align="center" border="0" cellpadding="0" cellspacing="1" ><td  style='text-align:left'>$new_button</td><td style='text-align:right'>$search_button</td></table>
 
-<form method="post" action="bpartner.php" name="frmBPartner" id="frmBPartner" enctype="multipart/form-data" onsubmit="return false">
-<input type="hidden" name="action" value="bpartnerinfo">
+   <form method="post" action="bpartner.php" name="frmBPartner" id="frmBPartner" enctype="multipart/form-data" onsubmit="return false">
+<input type="hidden" name="action" value="update">
 <input type="hidden" name="mode" value="save">
 <input type="hidden" name="isaddnew" id="isaddnew" value="0">
 <input type="hidden" name="bpartner_id" value="$this->bpartner_id">
@@ -782,457 +854,462 @@ else{ //user dun have write permission, cannot save grid
        </tbody></table></td>
       </tr>
 
-      <tr><td align="left"><br>$savectrl</td>
-              	<td class="head"></td>
+      <tr><td align="left">$savectrl</td>
+              	
        </tr>
 
 
   </table>
 </form>
+</td>
+            <td><br/><br/>
+            $layerlink
+                
+                </td></table>
 
 EOF;
   } // end of member function getInputForm
-
-  public function getBpartnerview($bpartner_id) {
-	global $havewriteperm, $showOrganization, $isadmin;
-        $mandatorysign="<b style='color:red'>*</b>";
-
-    	$header=""; // parameter to display form header
-	$action="";
-
-	$orgctrl="";
-	$this->created=0;
-
-		$mode="save";
-		$savectrl="<input name='bpartner_id' value='$this->bpartner_id' type='hidden'>
-			<input style='height: 40px;' name='submit' value='Save'
-            type='submit' onclick='action.value=\"update\"'></td><td>
-            <input style='height: 40px;' name='submit' value='Cancel'
-            type='submit' onclick='action.value=\"view\"'>";
-
-
-
-		if($this->isAdmin)
-		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
-		"<input name='tablename' value='$this->tablebpartner' type='hidden'>".
-		"<input name='id' value='$this->bpartner_id' type='hidden'>".
-		"<input name='idname' value='bpartner_id' type='hidden'>".
-		"<input name='title' value='BPartner' type='hidden'>".
-		"<input name='submit' value='View Record Info' type='submit'>".
-		"</form>";
-
-
-		//force isactive checkbox been checked if the value in db is 'Y'
-		if ($this->isactive==1)
-			$checked="Yes";
-		else
-			$checked="No";
-
-		if ($this->isdebtor==1)
-			$isdebtorchecked="Yes";
-		else
-			$isdebtorchecked="No";
-
-		if ($this->iscreditor==1)
-			$iscreditorchecked="Yes";
-		else
-			$iscreditorchecked="No";
-
-		if ($this->istransporter==1)
-			$istransporterchecked="Yes";
-		else
-			$istransporterchecked="No";
-
-		if ($this->isdealer==1)
-			$isdealerchecked="Yes";
-		else
-			$isdealerchecked="No";
-
-		if ($this->isprospect==1)
-			$isprospectchecked="Yes";
-		else
-			$isprospectchecked="No";
-
-		if ($this->enforcesalescreditlimit==1)
-			$enforcesalescreditlimitchecked="Yes";
-		else
-			$enforcesalescreditlimitchecked="No";
-
-		if ($this->enforcepurchasecreditlimit==1)
-			$enforcepurchasecreditlimitchecked="Yes";
-		else
-			$enforcepurchasecreditlimitchecked="No";
-
-		$header="View Business Partner";
-
-		if($this->allowDelete($this->bpartner_id))
-		$deletectrl="<FORM action='bpartner.php' method='POST' onSubmit='return confirm(".
-		'"confirm to remove this bpartner?"'.")'><input type='submit' value='Delete' name='submit'>".
-		"<input type='hidden' value='$this->bpartner_id' name='bpartner_id'>".
-		"<input type='hidden' value='delete' name='action'><input name='token' value='$token' type='hidden'></form>";
-		else
-		$deletectrl="";
-		$addnewctrl="<Form action='bpartner.php' method='POST'><input name='submit' value='New' type='submit'></form>";
-
-
-if($havewriteperm==1){ //user with write permission can edit data, have button
-     $editctrl=$this->getFormButton("Edit","bpartner.php",array("action"=>"bpartnerinfo","mode"=>"edit","bpartner_id"=>"$this->bpartner_id"));
-}
-else{ //user dun have write permission, cannot save grid
-   $editctrl="";
-   $noperm="<div>You No Have Write Permission</div>";
-}
-
-
-   if($showOrganization!=1)
-        $hideOganization="style='display:none'";
-   else
-        $hideOganization="";
-
-    echo <<< EOF
-<script type='text/javascript'>
-
-</script>
-
- <div id="statusDiv" align="center" class="ErrorstatusDiv">$noperm</div>
-
-<form method="post" action="bpartner.php" name="frmBPartner" id="frmBPartner" enctype="multipart/form-data" onsubmit="return false">
-<input type="hidden" name="action" value="bpartnerinfo">
-<input type="hidden" name="mode" value="save">
-<input type="hidden" name="bpartner_id" value="$this->bpartner_id">
-
-  <table style="text-align:left; width:970px;" align="center" border="0" cellpadding="0" cellspacing="1" >
-
-      <tr>
-        <td colspan="4" rowspan="1" class="searchformheader">$header</td>
-      </tr>
-
-      <tr><td class="searchformblock">
-        <table >
-
-      <tr $hideOganization>
-        <td class="head">Organization $mandatorysign</td>
-        <td class="even" >$this->orgctrl</td>
-
-      </tr>
-
-      <tr>
-       <td class="head">Business Partner No $mandatorysign</td>
-        <td class="even" >$this->bpartner_no</td>
-	<td class="head">Business Partner Group $mandatorysign</td>
-          <td class="even" >
-               $this->bpartnergroup_name </td>
-      </tr>
-
-      <tr>
-    	<td class="head">Company No</td>
-	    <td class="even" >$this->companyno</td>
-        <td class="head">Business Partner Name</td>
-          <td class="even" >$this->bpartner_name</td>
-      </tr>
-
-      <tr>
-        <td class="head">Alternate Name</td>
-	    <td class="even" >$this->alternatename</td>
-        <td class="head">Employee Count</td>
-	    <td class="even" >$this->employeecount</td>
-      </tr>
-
-      <tr>
-    	<td class="head">Industry</td>
-	    <td class="even" >$this->industry_name</td>
-  	<td class="head">Active</td>
-	    <td class="even" >$checked</td>
-      </tr>
-
-     <tr>
-    	<td><br></td>
-     </tr>
-
-     <tr>
-    	<td class="head">Is Debtor (Customer)</td>
-	    <td class="even" >$isdebtorchecked</td>
-        <td class="head">Is Creditor (Supplier)</td>
-	    <td class="even" >$iscreditorchecked</td>
-      </tr>
-     <tr>
-    	<td class="head">Is Transporter</td>
-	    <td class="even" >$istransporterchecked</td>
-        <td class="head">Is Dealer</td>
-	    <td class="even" >$isdealerchecked</td>
-      </tr>
-     <tr>
-    	<td class="head">Is Prospect</td>
-	    <td class="even" >$isprospectchecked</td>
-           <td class="head">Currency</td>
-        <td class="even" >$this->currency_code</td>
-      </tr>
-
-       <tr>
-    	<td><br></td>
-      </tr>
-
-
-       <tr>
-        <td class="head">Tooltips</td>
-	    <td class="even">$this->tooltips</td>
-        <td class="head">Website</td>
-	    <td class="even">$this->bpartner_url</td>
-      </tr>
-
-      <tr>
-       <td class="head">In Charge Person</td>
-	    <td class="even">$this->inchargeperson</td>
-       <td class="head">Short Description</td>
-            <td class="even">$this->shortremarks</td>
-      </tr>
-
-      <tr>
-        <td class="head" >Description</td>
-	    <td class="even">$this->description</td>
-
-      </tr>
-
-      <tr>
-    	<td><br></td>
-      </tr>
-
-          <tr><td class="searchformheader" colspan="4">Accounting Parameter:</td></tr>
-
-           <tr>
-            <td class="head">Debtor Account</td>
-	        <td class="even" id="iddebtoraccountsctrl">$this->debtoraccountsname<input type="hidden" name="previousaccounts_id" value="$this->debtoraccounts_id"></td>
-            <td class="head">Creditor Account</td>
-	        <td class="even" id="idcreditoraccountsctrl">$this->creditoraccountsname<input type="hidden" name="previousaccounts_id" value="$this->creditoraccounts_id"></td>
-           </tr>
-           <tr>
-            <td class="head">Sales Credit Limit</td>
-	        <td class="even">$this->salescreditlimit</td>
-            <td class="head">Purchase Credit Limit</td>
-	        <td class="even">$this->purchasecreditlimit</td>
-           </tr>
-           <tr>
-            <td class="head">Control Sales Credit Limit</td>
-	        <td class="even">$enforcesalescreditlimitchecked</td>
-            <td class="head">Control Purchase Credit Limit</td>
-	        <td class="even">$enforcepurchasecreditlimitchecked</td>
-           </tr>
-           <tr>
-            <td class="head">Current Sales Limit Status</td>
-	        <td class="even">$this->currentsalescreditstatus</td>
-            <td class="head">Current Purchase Limit Status</td>
-	        <td class="even">$this->currentpurchasecreditstatus</td>
-           </tr>
-           <tr>
-          <td class="head">Terms</td>
-	    <td class="even" >$this->terms_name</td>
-            <td class="head">Bank Name</td>
-	        <td class="even">$this->bankname</td>
-           </tr>
-           <tr>
-            <td class="head">Bank Account Name</td>
-	        <td class="even">$this->bankaccountname</td>
-            <td class="head">Bank Account No</td>
-	        <td class="even">$this->bankaccountno</td>
-           </tr>
-       </tbody></table></td>
-      </tr>
-
-  </table>
-</form>
-     <table style="text-align:left; width:970px;" align="center" border="0" cellpadding="0" cellspacing="1" >
-             <tr><td align="left">$editctrl</td>
-              	<td class="head"></td>
-       </tr>
-     </table>
-<script>
-window.onload = function(){
-// this runs when the iframe has been loaded
-
-    var isactive = "";
-    if($this->isactive==1)
-            isactive="YES";
-    else if($this->isactive==0)
-            isactive="NO";
-
-parent.document.getElementById("bpartner_no").innerHTML=": $this->bpartner_no";
-parent.document.getElementById("bpartner_name").innerHTML=": $this->bpartner_name";
-parent.document.getElementById("bpartnergroup_name").innerHTML=": $this->bpartnergroup_name";
-parent.document.getElementById("industry_name").innerHTML=": $this->industry_name";
-parent.document.getElementById("industry_name").innerHTML=": $this->industry_name";
-parent.document.getElementById("isactive").innerHTML=": "+isactive;
-}
-</script>
-EOF;
-  } // end of member function getInputForm
-
-  public function viewBpartnerInfo( ) {
-		$mandatorysign="<b style='color:red'>*</b>";
-
-    	$header=""; // parameter to display form header
-	$action="";
-	$savectrl="";
-	$deletectrl="";
-	$itemselect="";
-
-	$orgctrl="";
-	$this->created=0;
-
-
-
-		$editctrl="<input name='bpartner_id' value='$this->bpartner_id' type='hidden'>".
-			 "<input style='height: 40px;' name='submit' value='Edit' type='submit'>";
-
-
-
-		if($this->isAdmin)
-		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
-		"<input name='tablename' value='$this->tablebpartner' type='hidden'>".
-		"<input name='id' value='$this->bpartner_id' type='hidden'>".
-		"<input name='idname' value='bpartner_id' type='hidden'>".
-		"<input name='title' value='BPartner' type='hidden'>".
-		"<input name='submit' value='View Record Info' type='submit'>".
-		"</form>";
-
-
-		//force isactive checkbox been checked if the value in db is 'Y'
-		if ($this->isactive==1)
-			$checked="CHECKED";
-		else
-			$checked="";
-
-		if ($this->isdebtor==1)
-			$isdebtorchecked="CHECKED";
-		else
-			$isdebtorchecked="";
-
-		if ($this->iscreditor==1)
-			$iscreditorchecked="CHECKED";
-		else
-			$iscreditorchecked="";
-
-		if ($this->istransporter==1)
-			$istransporterchecked="CHECKED";
-		else
-			$istransporterchecked="";
-
-		if ($this->isdealer==1)
-			$isdealerchecked="CHECKED";
-		else
-			$isdealerchecked="";
-
-		if ($this->isprospect==1)
-			$isprospectchecked="CHECKED";
-		else
-			$isprospectchecked="";
-
-		if ($this->enforcesalescreditlimit==1)
-			$enforcesalescreditlimitchecked="CHECKED";
-		else
-			$enforcesalescreditlimitchecked="";
-
-		if ($this->enforcepurchasecreditlimit==1)
-			$enforcepurchasecreditlimitchecked="CHECKED";
-		else
-			$enforcepurchasecreditlimitchecked="";
-
-		$header="View Business Partner Info";
-
-
-    echo <<< EOF
-
-<form onsubmit="return validateBPartner()" method="post" action="bpartner.php" name="frmBPartner">
-
-  <table style="width:140px;"><tbody><td><input name="reset" value="Reset" type="reset"></td></tbody></table>
-
-  <table style="text-align: left; width: 100%;" border="1" cellpadding="0" cellspacing="1" >
-
-      <tr >
-        <th colspan="4" rowspan="1">$header</th>
-      </tr>
-
-      <tr class="searchformblock">
-        <td class="head">Organization $mandatorysign</td>
-        <td class="even" >$this->orgctrl</td>
-   	<td class="head">Business Partner Group $mandatorysign</td>
-        <td class="even" >$this->bpartnergroup_name</td>
-      </tr>
-      <tr>
-       <td class="head">Business Partner No $mandatorysign</td>
-        <td class="even" >$this->bpartner_no
-	&nbsp;Active <input type="checkbox" $checked name="isactive" disabled='disabled'>
-        Default Level $mandatorysign =$this->seqno
-        <td class="head">Business Partner Name $mandatorysign</td>
-        <td class="even" >$this->bpartner_name</td>
-      </tr>
-
-      <tr>
-    	<td class="head">Company No</td>
-	    <td class="even" >$this->companyno</td>
-        <td class="head">Alternate Name</td>
-	    <td class="even" >$this->alternatename</td>
-      </tr>
-      <tr>
-    	<td class="head">Industry</td>
-	    <td class="even" >$this->industry_name</td>
-        <td class="head">Employee Quantity</td>
-	    <td class="even" >$this->employeecount</td>
-      </tr>
-     <tr>
-    	<td class="head">Is Debtor (Customer)</td>
-	    <td class="even" ><input type='checkbox' name='isdebtor' $isdebtorchecked disabled='disabled'></td>
-        <td class="head">Is Creditor (Supplier)</td>
-	    <td class="even" ><input type='checkbox' name='iscreditor' $iscreditorchecked disabled='disabled'></td>
-      </tr>
-     <tr>
-    	<td class="head">Is Transporter</td>
-	    <td class="even" ><input type='checkbox' name='istransporter' $istransporterchecked disabled='disabled'></td>
-        <td class="head">Is Dealer</td>
-	    <td class="even" ><input type='checkbox' name='isdealer' $isdealerchecked disabled='disabled'></td>
-      </tr>
-     <tr>
-    	<td class="head">Is Prospect</td>
-	    <td class="even" ><input type='checkbox' name='isprospect' $isprospectchecked disabled='disabled'></td>
-        <td class="head">Terms</td>
-	    <td class="even" >$this->terms_name</td>
-      </tr>
-      <tr>
-        <td class="head">Currency</td>
-        <td class="even" >$this->currency_code</td>
-    	<td class="head">Price List</td>
-    	<td class="even" >$this->pricelist_name</td>
-       <tr>
-        <td class="head">Tooltips</td>
-	    <td class="even">$this->tooltips</td>
-        <td class="head">Website</td>
-	    <td class="even">$this->bpartner_url</td>
-      </tr>
-      <tr>
-        <td class="head">Description</td>
-	    <td class="even" colspan='3'>$this->description <br/>Short Desc: $this->shortremarks</td>
-      </tr>
-
-      <tr>
-        <td class="head">Company Representative</td>
-        <td class="even" >$this->employee_name</td>
-    	<td class="head"></td>
-    	<td class="even" >
-
-        </td>
-      </tr>
-
-
-  </table>
-<table style="width:150px;"><tbody><td>$editctrl
-	<input name="action" value="edit" type="hidden">
-</form></td>
-   <td>$recordctrl</td>
-	</tbody></table>
-
-  <br>
-
-EOF;
-  }
+//
+//  public function getBpartnerview($bpartner_id) {
+//	global $havewriteperm, $showOrganization, $isadmin;
+//        $mandatorysign="<b style='color:red'>*</b>";
+//
+//    	$header=""; // parameter to display form header
+//	$action="";
+//
+//	$orgctrl="";
+//	$this->created=0;
+//
+//		$mode="save";
+//		$savectrl="<input name='bpartner_id' value='$this->bpartner_id' type='hidden'>
+//			<input style='height: 40px;' name='submit' value='Save'
+//            type='submit' onclick='action.value=\"update\"'></td><td>
+//            <input style='height: 40px;' name='submit' value='Cancel'
+//            type='submit' onclick='action.value=\"view\"'>";
+//
+//
+//
+//		if($this->isAdmin)
+//		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
+//		"<input name='tablename' value='$this->tablebpartner' type='hidden'>".
+//		"<input name='id' value='$this->bpartner_id' type='hidden'>".
+//		"<input name='idname' value='bpartner_id' type='hidden'>".
+//		"<input name='title' value='BPartner' type='hidden'>".
+//		"<input name='submit' value='View Record Info' type='submit'>".
+//		"</form>";
+//
+//
+//		//force isactive checkbox been checked if the value in db is 'Y'
+//		if ($this->isactive==1)
+//			$checked="Yes";
+//		else
+//			$checked="No";
+//
+//		if ($this->isdebtor==1)
+//			$isdebtorchecked="Yes";
+//		else
+//			$isdebtorchecked="No";
+//
+//		if ($this->iscreditor==1)
+//			$iscreditorchecked="Yes";
+//		else
+//			$iscreditorchecked="No";
+//
+//		if ($this->istransporter==1)
+//			$istransporterchecked="Yes";
+//		else
+//			$istransporterchecked="No";
+//
+//		if ($this->isdealer==1)
+//			$isdealerchecked="Yes";
+//		else
+//			$isdealerchecked="No";
+//
+//		if ($this->isprospect==1)
+//			$isprospectchecked="Yes";
+//		else
+//			$isprospectchecked="No";
+//
+//		if ($this->enforcesalescreditlimit==1)
+//			$enforcesalescreditlimitchecked="Yes";
+//		else
+//			$enforcesalescreditlimitchecked="No";
+//
+//		if ($this->enforcepurchasecreditlimit==1)
+//			$enforcepurchasecreditlimitchecked="Yes";
+//		else
+//			$enforcepurchasecreditlimitchecked="No";
+//
+//		$header="View Business Partner";
+//
+//		if($this->allowDelete($this->bpartner_id))
+//		$deletectrl="<FORM action='bpartner.php' method='POST' onSubmit='return confirm(".
+//		'"confirm to remove this bpartner?"'.")'><input type='submit' value='Delete' name='submit'>".
+//		"<input type='hidden' value='$this->bpartner_id' name='bpartner_id'>".
+//		"<input type='hidden' value='delete' name='action'><input name='token' value='$token' type='hidden'></form>";
+//		else
+//		$deletectrl="";
+//		$addnewctrl="<Form action='bpartner.php' method='POST'><input name='submit' value='New' type='submit'></form>";
+//
+//
+//if($havewriteperm==1){ //user with write permission can edit data, have button
+//     $editctrl=$this->getFormButton("Edit","bpartner.php",array("action"=>"bpartnerinfo","mode"=>"edit","bpartner_id"=>"$this->bpartner_id"));
+//}
+//else{ //user dun have write permission, cannot save grid
+//   $editctrl="";
+//   $noperm="<div>You No Have Write Permission</div>";
+//}
+//
+//
+//   if($showOrganization!=1)
+//        $hideOganization="style='display:none'";
+//   else
+//        $hideOganization="";
+//
+//    echo <<< EOF
+//<script type='text/javascript'>
+//
+//</script>
+//
+// <div id="statusDiv" align="center" class="ErrorstatusDiv">$noperm</div>
+//
+//<form method="post" action="bpartner.php" name="frmBPartner" id="frmBPartner" enctype="multipart/form-data" onsubmit="return false">
+//<input type="hidden" name="action" value="bpartnerinfo">
+//<input type="hidden" name="mode" value="save">
+//<input type="hidden" name="bpartner_id" value="$this->bpartner_id">
+//
+//  <table style="text-align:left; width:970px;" align="center" border="0" cellpadding="0" cellspacing="1" >
+//
+//      <tr>
+//        <td colspan="4" rowspan="1" class="searchformheader">$header</td>
+//      </tr>
+//
+//      <tr><td class="searchformblock">
+//        <table >
+//
+//      <tr $hideOganization>
+//        <td class="head">Organization $mandatorysign</td>
+//        <td class="even" >$this->orgctrl</td>
+//
+//      </tr>
+//
+//      <tr>
+//       <td class="head">Business Partner No $mandatorysign</td>
+//        <td class="even" >$this->bpartner_no</td>
+//	<td class="head">Business Partner Group $mandatorysign</td>
+//          <td class="even" >
+//               $this->bpartnergroup_name </td>
+//      </tr>
+//
+//      <tr>
+//    	<td class="head">Company No</td>
+//	    <td class="even" >$this->companyno</td>
+//        <td class="head">Business Partner Name</td>
+//          <td class="even" >$this->bpartner_name</td>
+//      </tr>
+//
+//      <tr>
+//        <td class="head">Alternate Name</td>
+//	    <td class="even" >$this->alternatename</td>
+//        <td class="head">Employee Count</td>
+//	    <td class="even" >$this->employeecount</td>
+//      </tr>
+//
+//      <tr>
+//    	<td class="head">Industry</td>
+//	    <td class="even" >$this->industry_name</td>
+//  	<td class="head">Active</td>
+//	    <td class="even" >$checked</td>
+//      </tr>
+//
+//     <tr>
+//    	<td><br></td>
+//     </tr>
+//
+//     <tr>
+//    	<td class="head">Is Debtor (Customer)</td>
+//	    <td class="even" >$isdebtorchecked</td>
+//        <td class="head">Is Creditor (Supplier)</td>
+//	    <td class="even" >$iscreditorchecked</td>
+//      </tr>
+//     <tr>
+//    	<td class="head">Is Transporter</td>
+//	    <td class="even" >$istransporterchecked</td>
+//        <td class="head">Is Dealer</td>
+//	    <td class="even" >$isdealerchecked</td>
+//      </tr>
+//     <tr>
+//    	<td class="head">Is Prospect</td>
+//	    <td class="even" >$isprospectchecked</td>
+//           <td class="head">Currency</td>
+//        <td class="even" >$this->currency_code</td>
+//      </tr>
+//
+//       <tr>
+//    	<td><br></td>
+//      </tr>
+//
+//
+//       <tr>
+//        <td class="head">Tooltips</td>
+//	    <td class="even">$this->tooltips</td>
+//        <td class="head">Website</td>
+//	    <td class="even">$this->bpartner_url</td>
+//      </tr>
+//
+//      <tr>
+//       <td class="head">In Charge Person</td>
+//	    <td class="even">$this->inchargeperson</td>
+//       <td class="head">Short Description</td>
+//            <td class="even">$this->shortremarks</td>
+//      </tr>
+//
+//      <tr>
+//        <td class="head" >Description</td>
+//	    <td class="even">$this->description</td>
+//
+//      </tr>
+//
+//      <tr>
+//    	<td><br></td>
+//      </tr>
+//
+//          <tr><td class="searchformheader" colspan="4">Accounting Parameter:</td></tr>
+//
+//           <tr>
+//            <td class="head">Debtor Account</td>
+//	        <td class="even" id="iddebtoraccountsctrl">$this->debtoraccountsname<input type="hidden" name="previousaccounts_id" value="$this->debtoraccounts_id"></td>
+//            <td class="head">Creditor Account</td>
+//	        <td class="even" id="idcreditoraccountsctrl">$this->creditoraccountsname<input type="hidden" name="previousaccounts_id" value="$this->creditoraccounts_id"></td>
+//           </tr>
+//           <tr>
+//            <td class="head">Sales Credit Limit</td>
+//	        <td class="even">$this->salescreditlimit</td>
+//            <td class="head">Purchase Credit Limit</td>
+//	        <td class="even">$this->purchasecreditlimit</td>
+//           </tr>
+//           <tr>
+//            <td class="head">Control Sales Credit Limit</td>
+//	        <td class="even">$enforcesalescreditlimitchecked</td>
+//            <td class="head">Control Purchase Credit Limit</td>
+//	        <td class="even">$enforcepurchasecreditlimitchecked</td>
+//           </tr>
+//           <tr>
+//            <td class="head">Current Sales Limit Status</td>
+//	        <td class="even">$this->currentsalescreditstatus</td>
+//            <td class="head">Current Purchase Limit Status</td>
+//	        <td class="even">$this->currentpurchasecreditstatus</td>
+//           </tr>
+//           <tr>
+//          <td class="head">Terms</td>
+//	    <td class="even" >$this->terms_name</td>
+//            <td class="head">Bank Name</td>
+//	        <td class="even">$this->bankname</td>
+//           </tr>
+//           <tr>
+//            <td class="head">Bank Account Name</td>
+//	        <td class="even">$this->bankaccountname</td>
+//            <td class="head">Bank Account No</td>
+//	        <td class="even">$this->bankaccountno</td>
+//           </tr>
+//       </tbody></table></td>
+//      </tr>
+//
+//  </table>
+//</form>
+//     <table style="text-align:left; width:970px;" align="center" border="0" cellpadding="0" cellspacing="1" >
+//             <tr><td align="left">$editctrl</td>
+//              	<td class="head"></td>
+//       </tr>
+//     </table>
+//<script>
+//window.onload = function(){
+//// this runs when the iframe has been loaded
+//
+//    var isactive = "";
+//    if($this->isactive==1)
+//            isactive="YES";
+//    else if($this->isactive==0)
+//            isactive="NO";
+//
+//parent.document.getElementById("bpartner_no").innerHTML=": $this->bpartner_no";
+//parent.document.getElementById("bpartner_name").innerHTML=": $this->bpartner_name";
+//parent.document.getElementById("bpartnergroup_name").innerHTML=": $this->bpartnergroup_name";
+//parent.document.getElementById("industry_name").innerHTML=": $this->industry_name";
+//parent.document.getElementById("industry_name").innerHTML=": $this->industry_name";
+//parent.document.getElementById("isactive").innerHTML=": "+isactive;
+//}
+//</script>
+//EOF;
+//  } // end of member function getInputForm
+//
+//  public function viewBpartnerInfo( ) {
+//		$mandatorysign="<b style='color:red'>*</b>";
+//
+//    	$header=""; // parameter to display form header
+//	$action="";
+//	$savectrl="";
+//	$deletectrl="";
+//	$itemselect="";
+//
+//	$orgctrl="";
+//	$this->created=0;
+//
+//
+//
+//		$editctrl="<input name='bpartner_id' value='$this->bpartner_id' type='hidden'>".
+//			 "<input style='height: 40px;' name='submit' value='Edit' type='submit'>";
+//
+//
+//
+//		if($this->isAdmin)
+//		$recordctrl="<form target='_blank' action='recordinfo.php' method='POST'>".
+//		"<input name='tablename' value='$this->tablebpartner' type='hidden'>".
+//		"<input name='id' value='$this->bpartner_id' type='hidden'>".
+//		"<input name='idname' value='bpartner_id' type='hidden'>".
+//		"<input name='title' value='BPartner' type='hidden'>".
+//		"<input name='submit' value='View Record Info' type='submit'>".
+//		"</form>";
+//
+//
+//		//force isactive checkbox been checked if the value in db is 'Y'
+//		if ($this->isactive==1)
+//			$checked="CHECKED";
+//		else
+//			$checked="";
+//
+//		if ($this->isdebtor==1)
+//			$isdebtorchecked="CHECKED";
+//		else
+//			$isdebtorchecked="";
+//
+//		if ($this->iscreditor==1)
+//			$iscreditorchecked="CHECKED";
+//		else
+//			$iscreditorchecked="";
+//
+//		if ($this->istransporter==1)
+//			$istransporterchecked="CHECKED";
+//		else
+//			$istransporterchecked="";
+//
+//		if ($this->isdealer==1)
+//			$isdealerchecked="CHECKED";
+//		else
+//			$isdealerchecked="";
+//
+//		if ($this->isprospect==1)
+//			$isprospectchecked="CHECKED";
+//		else
+//			$isprospectchecked="";
+//
+//		if ($this->enforcesalescreditlimit==1)
+//			$enforcesalescreditlimitchecked="CHECKED";
+//		else
+//			$enforcesalescreditlimitchecked="";
+//
+//		if ($this->enforcepurchasecreditlimit==1)
+//			$enforcepurchasecreditlimitchecked="CHECKED";
+//		else
+//			$enforcepurchasecreditlimitchecked="";
+//
+//		$header="View Business Partner Info";
+//
+//
+//    echo <<< EOF
+//
+//<form onsubmit="return validateBPartner()" method="post" action="bpartner.php" name="frmBPartner">
+//
+//  <table style="width:140px;"><tbody><td><input name="reset" value="Reset" type="reset"></td></tbody></table>
+//
+//  <table style="text-align: left; width: 100%;" border="1" cellpadding="0" cellspacing="1" >
+//
+//      <tr >
+//        <th colspan="4" rowspan="1">$header</th>
+//      </tr>
+//
+//      <tr class="searchformblock">
+//        <td class="head">Organization $mandatorysign</td>
+//        <td class="even" >$this->orgctrl</td>
+//   	<td class="head">Business Partner Group $mandatorysign</td>
+//        <td class="even" >$this->bpartnergroup_name</td>
+//      </tr>
+//      <tr>
+//       <td class="head">Business Partner No $mandatorysign</td>
+//        <td class="even" >$this->bpartner_no
+//	&nbsp;Active <input type="checkbox" $checked name="isactive" disabled='disabled'>
+//        Default Level $mandatorysign =$this->seqno
+//        <td class="head">Business Partner Name $mandatorysign</td>
+//        <td class="even" >$this->bpartner_name</td>
+//      </tr>
+//
+//      <tr>
+//    	<td class="head">Company No</td>
+//	    <td class="even" >$this->companyno</td>
+//        <td class="head">Alternate Name</td>
+//	    <td class="even" >$this->alternatename</td>
+//      </tr>
+//      <tr>
+//    	<td class="head">Industry</td>
+//	    <td class="even" >$this->industry_name</td>
+//        <td class="head">Employee Quantity</td>
+//	    <td class="even" >$this->employeecount</td>
+//      </tr>
+//     <tr>
+//    	<td class="head">Is Debtor (Customer)</td>
+//	    <td class="even" ><input type='checkbox' name='isdebtor' $isdebtorchecked disabled='disabled'></td>
+//        <td class="head">Is Creditor (Supplier)</td>
+//	    <td class="even" ><input type='checkbox' name='iscreditor' $iscreditorchecked disabled='disabled'></td>
+//      </tr>
+//     <tr>
+//    	<td class="head">Is Transporter</td>
+//	    <td class="even" ><input type='checkbox' name='istransporter' $istransporterchecked disabled='disabled'></td>
+//        <td class="head">Is Dealer</td>
+//	    <td class="even" ><input type='checkbox' name='isdealer' $isdealerchecked disabled='disabled'></td>
+//      </tr>
+//     <tr>
+//    	<td class="head">Is Prospect</td>
+//	    <td class="even" ><input type='checkbox' name='isprospect' $isprospectchecked disabled='disabled'></td>
+//        <td class="head">Terms</td>
+//	    <td class="even" >$this->terms_name</td>
+//      </tr>
+//      <tr>
+//        <td class="head">Currency</td>
+//        <td class="even" >$this->currency_code</td>
+//    	<td class="head">Price List</td>
+//    	<td class="even" >$this->pricelist_name</td>
+//       <tr>
+//        <td class="head">Tooltips</td>
+//	    <td class="even">$this->tooltips</td>
+//        <td class="head">Website</td>
+//	    <td class="even">$this->bpartner_url</td>
+//      </tr>
+//      <tr>
+//        <td class="head">Description</td>
+//	    <td class="even" colspan='3'>$this->description <br/>Short Desc: $this->shortremarks</td>
+//      </tr>
+//
+//      <tr>
+//        <td class="head">Company Representative</td>
+//        <td class="even" >$this->employee_name</td>
+//    	<td class="head"></td>
+//    	<td class="even" >
+//
+//        </td>
+//      </tr>
+//
+//
+//  </table>
+//<table style="width:150px;"><tbody><td>$editctrl
+//	<input name="action" value="edit" type="hidden">
+//</form></td>
+//   <td>$recordctrl</td>
+//	</tbody></table>
+//
+//  <br>
+//
+//EOF;
+//  }
 
   /**
    * Save new bpartner into database
@@ -1379,7 +1456,7 @@ EOF;
                      LEFT JOIN sim_simbiz_accounts ac2 on ac2.accounts_id=bp.creditoraccounts_id";
             }
 
-	echo $sql="SELECT
+	 $sql="SELECT
          bp.bpartner_id,bp.bpartnergroup_id,bp.bpartner_no,bp.bpartner_name,bp.isactive,bp.seqno,
 	 bp.organization_id,bp.employeecount,bp.alternatename,bp.companyno,bp.industry_id,
 
@@ -1944,7 +2021,7 @@ return $searchAToZ;
       <td class="head">Business Partner No</td>
       <td class="even"><input type="text" $colstyle name="searchbpartner_no" id="searchbpartner_no" value="$this->searchbpartner_no"/></td>
       <td class="head">Business Partner Name</td>
-      <td class="even"><input type="text" $colstyle name="searchbpartner_name" id="searchbpartner_name" value="$this->searchbpartner_name"/></td>
+      <td class="even"><input type="text" $colstyle name="searchbpartner_name" id="searchbpartner_name" value="$this->filterstring%"/></td>
    </tr>
 
    <tr>
@@ -2372,7 +2449,17 @@ function selectAll(val){
 
         var bpartner_id = g.getCellValue(selRow, 8);
 
-      window.open("bpartner.php?action=tablist&mode=edit&bpartner_id="+bpartner_id,"");
+      window.open("bpartner.php?action=edit&bpartner_id="+bpartner_id,"");
+    }
+
+      function view(){
+   	var g= nitobi.getGrid('DataboundGrid');
+        var selRow = g.getSelectedRow();
+        var selCol = g.getSelectedColumn();
+
+        var bpartner_id = g.getCellValue(selRow, 8);
+
+      window.open("bpartner.php?action=view&bpartner_id="+bpartner_id,"");
     }
 </script>
 
@@ -2575,7 +2662,7 @@ else
              $getHandler->DefineRecordFieldValue("shortremarks",$row['shortremarks']);
              $getHandler->DefineRecordFieldValue("inchargeperson",$row['inchargeperson']);
              $getHandler->DefineRecordFieldValue("isactive",($row['isactive'] == 1 ? "Yes" : "No"));
-             $getHandler->DefineRecordFieldValue("edit","bpartner.php?action=tablist&mode=edit&bpartner_id=".$row['bpartner_id']);
+             $getHandler->DefineRecordFieldValue("edit","bpartner.php?action=viewsummary&bpartner_id=".$row['bpartner_id']);
              $getHandler->DefineRecordFieldValue("bpartner_id",$row['bpartner_id']);
              $getHandler->DefineRecordFieldValue("rh",$rh);
              $getHandler->DefineRecordFieldValue("gridlink",$gridlink);
@@ -2624,17 +2711,18 @@ else
   public function showSummary(){
  global $havewriteperm;
 $this->fetchBpartnerData($this->bpartner_id);
+echo $this->searchAToZforDetail();
 $search_button = $this->getFormButton("Search","bpartner.php",array("action"=>"search") );
    $style="style='height:25px; vertical-align:middle;'";
 if($havewriteperm==1){ //user with write permission can edit grid, have button
-  $edit_button = $this->getFormButton("Edit","bpartner.php",array("action"=>"tablist","mode"=>"edit","bpartner_id"=>"$this->bpartner_id") );
+  $edit_button = $this->getFormButton("Edit","bpartner.php",array("action"=>"edit","bpartner_id"=>"$this->bpartner_id") );
   $new_button = $this->getFormButton("New","bpartner.php",array("action"=>"","mode"=>"edit","bpartner_id"=>"") );
 }
 
 else{ //user dun have write permission, cannot save grid
    $edit_button="";
 }
-   $view_button = $this->getFormButton("View Details","bpartner.php",array("action"=>"tablist","mode"=>"view","bpartner_id"=>"$this->bpartner_id") );
+   
 
                 if ($this->isactive==1)
 			$checked="Yes";
@@ -3202,7 +3290,7 @@ echo <<< EOF
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/popup.css">
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/nitobi/nitobi.grid/nitobi.grid.css">
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/xoops.css">
-<link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/themes/blue/style.css">
+
 <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/nitobi/nitobi.combo/nitobi.combo.css">
 EOF;
 
@@ -3242,230 +3330,21 @@ EOF;
 
     $timestamp= date("Y-m-d", time()) ;
 echo <<< EOF
-<link rel="stylesheet" type="text/css" href="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.css" />
-<script type="text/javascript" src="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.js"></script>
-  <script language="javascript" type="text/javascript">
 
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
-
-     function search(){
-        var grid = nitobi.getGrid("DataboundGrid");
-        //reload grid data
-	grid.dataBind();
-
-    }
-
-    //optional function to generate primary key value, ignore this function because we use autogen method
-    function GetNewRecordID()
-    {
-        return 0;
-    }
-
-    //after grid html render properly, set focus on it. It is important when use choose particular cell but
-    // immediately press search again. From screen we won't detect cell is selected infact from javascript
-    // detect selected
-   function dataready(){
-
-       var  g = nitobi.getGrid('DataboundGrid');
-        g.move(0,0);//need to trigger relative position 0,0 in for next code able to highlight at screen
-        var selRow = g.getSelectedRow();
-
-    }
-
-    //Call event after save complete
-    function savedone(eventArgs){
-        var grid= nitobi.getGrid('DataboundGrid');
-        var dataSource =grid.getDataSource();
-        var errorMessage = dataSource.getHandlerError();
-
-
-
-        if (!errorMessage) {//save successfully
-        	         jQuery('#msgbox').fadeTo('slow', 1, function() {
-                     	 document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Record saved successfully</a>";
-                         //document.getElementById('popupmessage').innerHTML="Please Wait.....";
-                         search();
-                         popup('popUpDiv');
-		});
-           return true;
-        }
-        else{ //save failed
-        	search();
-
-                popup('popUpDiv');
-
-        	return false;
-        	}
-    }
-
-    //if save_data have error, trigger this function
-    function showError(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var dataSource =grid.getDataSource();
-
-        var errorMessage = dataSource.getHandlerError();
-
-
-
-        if (errorMessage) {
-             document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">"+errorMessage+"</a><br/>";
-             grid.dataBind();
-         }
-         else
-           document.getElementById('msgbox').innerHTML="";
-           jQuery('#msgbox').fadeTo('slow', 1, function() {});
-    }
-
-
-    //if user click particular column, auto fall into edit mode
-    function clickrecord(eventArgs){
-                    row=eventArgs.getCell().getRow();
-                    col=eventArgs.getCell().getColumn();
-                    var  myGrid = nitobi.getGrid('DataboundGrid');
-                    var myCell = myGrid.getCellObject(row, col);
-                    myCell.edit();
-    }
-
-    //add line button will call this
-    function addline(){
-    var g= nitobi.getGrid('DataboundGrid');
-        g.insertAfterCurrentRow();
-    }
-
-    //trigger save activity from javascript
-   function save()
-     {
-    if(validateEmpty()){
-   	if(document.getElementById("afterconfirm").value==1){  //Ask for confirmation from delete activity already, process data immediately
-	   var g= nitobi.getGrid('DataboundGrid');
-	   document.getElementById("afterconfirm").value=0;
-	   g.save();
-           }
-	else{ // not yet request confirmation
-    	  if(confirm("Confirm the changes? Data will save into database immediately")){
-     	  var g= nitobi.getGrid('DataboundGrid');
-	    document.getElementById("afterconfirm").value=0;
-	    g.save();
-	    search();
-    	   }
-	}
-      }
-      else{
-      document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please enter Contact name.</b><br/>";
-
-      }
-    }
-
-    function beforesave(){
-        document.getElementById('popupmessage').innerHTML="Please Wait.....";
-        popup('popUpDiv');
-    }
-
-   function onclickdeletebutton(){ //when press delete button will triger this function and ask for confirmation
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        if(selRow==-1){// no select any row
-        alert("Please choose a row before deleting.");
-        return false;
-        }
-        else
-         g.deleteCurrentRow();
-    }
-
-    function checkAllowEdit(eventArgs){
-	var g= nitobi.getGrid('DataboundGrid');
-        col=eventArgs.getCell().getColumn();
-       if($alloweditgrid) //if user have permission to edit the cell, control primary key column read only at here too
-        return true;
-        else
-        return false;
-        }
-
-
-    //after insert a new line will automatically fill in some value here
-      function setDefaultValue(eventArgs)
-       {
-       var myGrid = eventArgs.getSource();
-       var r = eventArgs.getRow();
-       var rowNo = r.Row;
-              $deleteddefaultvalue_js
-       myGrid.selectCellByCoords(rowNo, 0);
-    }
-
-    function beforeDelete(){
-            if(confirm('Delete this record? Data will save into database immediately.')){
-                    document.getElementById("afterconfirm").value=1;
-  //popup('popUpDiv');
-                    return true;
-            }
-                    else{
-                    document.getElementById("afterconfirm").value=0;
-                    return false;
-                    }
-     }
-    function viewlog(){
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        var cellObj = g.getCellValue(selRow, 4);
-      window.open(cellObj,"");
-    }
-   function validateEmpty(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var isallow = true;
-        var total_row = grid.getRowCount();
-        var name ="";
-
-        for( var i = 0; i < total_row; i++ ) {
-
-        var celly = grid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
-
-           name = celly.getValue();
-           if(name=="")
-           {
-            isallow = false;
-           }
-        }
-
-        if(isallow)
-          return true;
-        else
-          return false;
-    }
-
-        function valiedatetelno(){
-       var grid= nitobi.getGrid('DataboundGrid');
-       var selRow = grid.getSelectedRow();
-       var selCol = grid.getSelectedColumn();
-       var celly = grid.getCellObject( selRow, selCol);
-       var no = celly.getValue();
-
-       if(no!="") {
-           if((no.replace(/[0-9]/g,'')).replace(/-/g,'') !=""){
-             celly.setValue("");alert("Contact number format error.");
-           }
-
-        }
-     }
-</script>
-<div id='blanket' style='display:none;'></div>
-<div id='popUpDiv' style='display:none;verticle-align:center'>
-
-     <div id='popupmessage' style='text-align:center'></div>
-     <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
-</div>
-
+<div class="dimBackground"></div>
 <div align="center">
-<table style="width:700px;">
-    <tr>
-      <td style='text-align: center;' colspan='8' class="searchformheader">Contact Info</td>
-    </tr>
-<tr><td align="left" style="height:27px;">$addctrl</td></tr>
 
+
+<table style="width:1000px;" align="center" class="searchformblock" >
+    <tr>
+      <td style='text-align: center;' class="searchformheader">Contact Info</td>
+      <td align="right"><img src="images/close.png" onclick="closeWindow('contacts');" style="cursor:pointer" title="Close"></td>
+        </tr>
+
+<tr><td align="left" style="height:27px;" colspan="2">$addctrl</td></tr>
 <tr><td align="center">
 
-<ntb:grid id="DataboundGrid"
+<ntb:grid id="gridcontacts"
      mode="nonpaging"
      toolbarenabled='false'
      $permctrl
@@ -3479,7 +3358,7 @@ echo <<< EOF
      onafterrowinsertevent="setDefaultValue(eventArgs)"
      rowhighlightenabled="true"
      width="943"
-     height="200"
+     height="300"
      onaftersaveevent="savedone(eventArgs)"
      onbeforerowdeleteevent="beforeDelete()"
      onafterrowdeleteevent="save()"
@@ -3857,231 +3736,24 @@ EOF;
 
     $timestamp= date("Y-m-d", time()) ;
 echo <<< EOF
-<link rel="stylesheet" type="text/css" href="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.css" />
-<script type="text/javascript" src="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.js"></script>
-  <script language="javascript" type="text/javascript">
-
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
-
-     function search(){
-        var grid = nitobi.getGrid("DataboundGrid");
-        //reload grid data
-	grid.dataBind();
-
-    }
-
-    //optional function to generate primary key value, ignore this function because we use autogen method
-    function GetNewRecordID()
-    {
-        return 0;
-    }
-
-    //after grid html render properly, set focus on it. It is important when use choose particular cell but
-    // immediately press search again. From screen we won't detect cell is selected infact from javascript
-    // detect selected
-   function dataready(){
-
-       var  g = nitobi.getGrid('DataboundGrid');
-        g.move(0,0);//need to trigger relative position 0,0 in for next code able to highlight at screen
-        var selRow = g.getSelectedRow();
-
-    }
-
-    //Call event after save complete
-    function savedone(eventArgs){
-        var grid= nitobi.getGrid('DataboundGrid');
-        var dataSource =grid.getDataSource();
-        var errorMessage = dataSource.getHandlerError();
 
 
 
-        if (!errorMessage) {//save successfully
-        	         jQuery('#msgbox').fadeTo('slow', 1, function() {
-                     	 document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Record saved successfully</a>";
-                         //document.getElementById('popupmessage').innerHTML="Please Wait.....";
-                         search();
-                         popup('popUpDiv');
-		});
-           return true;
-        }
-        else{ //save failed
-        	search();
-
-                popup('popUpDiv');
-
-        	return false;
-        	}
-    }
-
-    //if save_data have error, trigger this function
-    function showError(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var dataSource =grid.getDataSource();
-
-        var errorMessage = dataSource.getHandlerError();
-
-
-
-        if (errorMessage) {
-             document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">"+errorMessage+"</a><br/>";
-             grid.dataBind();
-         }
-         else
-           document.getElementById('msgbox').innerHTML="";
-           jQuery('#msgbox').fadeTo('slow', 1, function() {});
-    }
-
-
-    //if user click particular column, auto fall into edit mode
-    function clickrecord(eventArgs){
-                    row=eventArgs.getCell().getRow();
-                    col=eventArgs.getCell().getColumn();
-                    var  myGrid = nitobi.getGrid('DataboundGrid');
-                    var myCell = myGrid.getCellObject(row, col);
-                    myCell.edit();
-    }
-
-    //add line button will call this
-    function addline(){
-    var g= nitobi.getGrid('DataboundGrid');
-        g.insertAfterCurrentRow();
-    }
-
-    //trigger save activity from javascript
-   function save()
-     {
-    if(validateEmpty()){
-   	if(document.getElementById("afterconfirm").value==1){  //Ask for confirmation from delete activity already, process data immediately
-	   var g= nitobi.getGrid('DataboundGrid');
-	   document.getElementById("afterconfirm").value=0;
-	   g.save();
-           }
-	else{ // not yet request confirmation
-    	  if(confirm("Confirm the changes? Data will save into database immediately")){
-     	  var g= nitobi.getGrid('DataboundGrid');
-	    document.getElementById("afterconfirm").value=0;
-	    g.save();
-	    search();
-    	   }
-	}
-      }
-      else{
-      document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please enter Address name.</b><br/>";
-
-      }
-    }
-
-    function beforesave(){
-        document.getElementById('popupmessage').innerHTML="Please Wait.....";
-        popup('popUpDiv');
-    }
-
-   function onclickdeletebutton(){ //when press delete button will triger this function and ask for confirmation
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        if(selRow==-1){// no select any row
-        alert("Please choose a row before deleting.");
-        return false;
-        }
-        else
-         g.deleteCurrentRow();
-    }
-
-    function checkAllowEdit(eventArgs){
-	var g= nitobi.getGrid('DataboundGrid');
-        col=eventArgs.getCell().getColumn();
-       if($alloweditgrid) //if user have permission to edit the cell, control primary key column read only at here too
-        return true;
-        else
-        return false;
-        }
-
-
-    //after insert a new line will automatically fill in some value here
-      function setDefaultValue(eventArgs)
-       {
-       var myGrid = eventArgs.getSource();
-       var r = eventArgs.getRow();
-       var rowNo = r.Row;
-              $deleteddefaultvalue_js
-       myGrid.selectCellByCoords(rowNo, 0);
-    }
-
-    function beforeDelete(){
-            if(confirm('Delete this record? Data will save into database immediately.')){
-                    document.getElementById("afterconfirm").value=1;
-  //popup('popUpDiv');
-                    return true;
-            }
-                    else{
-                    document.getElementById("afterconfirm").value=0;
-                    return false;
-                    }
-     }
-    function viewlog(){
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        var selCol = g.getSelectedColumn();
-        var cellObj = g.getCellValue(selRow, selCol);
-      window.open(cellObj,"");
-    }
-   function validateEmpty(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var isallow = true;
-        var total_row = grid.getRowCount();
-        var name ="";
-
-        for( var i = 0; i < total_row; i++ ) {
-
-        var celly = grid.getCellObject( i, 0);//1st para : row , 2nd para : column seq
-
-           name = celly.getValue();
-           if(name=="")
-           {
-            isallow = false;
-           }
-        }
-
-        if(isallow)
-          return true;
-        else
-          return false;
-    }
-
-    function valiedatetelno(){
-       var grid= nitobi.getGrid('DataboundGrid');
-       var selRow = grid.getSelectedRow();
-       var selCol = grid.getSelectedColumn();
-       var celly = grid.getCellObject( selRow, selCol);
-       var no = celly.getValue();
-
-       if(no!="") {
-           if((no.replace(/[0-9]/g,'')).replace(/-/g,'') !=""){
-             celly.setValue("");alert("Contact number format error.");
-           }
-
-        }
-     }
-</script>
-<div id='blanket' style='display:none;'></div>
-<div id='popUpDiv' style='display:none;verticle-align:center'>
-
-     <div id='popupmessage' style='text-align:center'></div>
-     <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
-</div>
+    <div class="dimBackground"></div>
+<div align="center">
 
 <div align="center">
-<table style="width:700px;">
+<table style="width:1000px;" align="center" class="searchformblock" >
     <tr>
-      <td style='text-align: center;' colspan='8' class="searchformheader">Address Info</td>
+      <td style='text-align: center;' class="searchformheader">Address Info</td>
+      <td align="right"><img src="images/close.png" onclick="closeWindow('address');" style="cursor:pointer" title="Close"></td>
+
     </tr>
-<tr><td align="left" style="height:27px;">$addctrl</td></tr>
+<tr><td align="left" style="height:27px;" colspan="2">$addctrl</td></tr>
 
 <tr><td align="center">
 
-<ntb:grid id="DataboundGrid"
+<ntb:grid id="gridaddress"
      mode="nonpaging"
      toolbarenabled='false'
      $permctrl
@@ -4096,7 +3768,7 @@ echo <<< EOF
      rowhighlightenabled="true"
      rowheight="70"
      width="943"
-     height="200"
+     height="300"
      onaftersaveevent="savedone(eventArgs)"
      onbeforerowdeleteevent="beforeDelete()"
      onafterrowdeleteevent="save()"
@@ -4473,255 +4145,34 @@ EOF;
 
     $timestamp= date("Y-m-d", time()) ;
 echo <<< EOF
-<link rel="stylesheet" type="text/css" href="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.css" />
-<script type="text/javascript" src="../simantz/include/nitobi/nitobi.calendar/nitobi.calendar.js"></script>
-  <script language="javascript" type="text/javascript">
-
-    jQuery(document).ready((function (){nitobi.loadComponent('DataboundGrid');}));
-
-     function search(){
-        var grid = nitobi.getGrid("DataboundGrid");
-        //reload grid data
-	grid.dataBind();
-
-    }
-
-    //optional function to generate primary key value, ignore this function because we use autogen method
-    function GetNewRecordID()
-    {
-        return 0;
-    }
-
-    //after grid html render properly, set focus on it. It is important when use choose particular cell but
-    // immediately press search again. From screen we won't detect cell is selected infact from javascript
-    // detect selected
-   function dataready(){
-
-       var  g = nitobi.getGrid('DataboundGrid');
-        g.move(0,0);//need to trigger relative position 0,0 in for next code able to highlight at screen
-        var selRow = g.getSelectedRow();
-
-    }
-
-    //Call event after save complete
-    function savedone(eventArgs){
-        var grid= nitobi.getGrid('DataboundGrid');
-        var dataSource =grid.getDataSource();
-        var errorMessage = dataSource.getHandlerError();
-
-
-
-        if (!errorMessage) {//save successfully
-        	         jQuery('#msgbox').fadeTo('slow', 1, function() {
-                     	 document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Record saved successfully</a>";
-                         //document.getElementById('popupmessage').innerHTML="Please Wait.....";
-                         search();
-                         popup('popUpDiv');
-		});
-           return true;
-        }
-        else{ //save failed
-        	search();
-
-                popup('popUpDiv');
-
-        	return false;
-        	}
-    }
-
-    //if save_data have error, trigger this function
-    function showError(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var dataSource =grid.getDataSource();
-
-        var errorMessage = dataSource.getHandlerError();
-
-
-
-        if (errorMessage) {
-             document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">"+errorMessage+"</a><br/>";
-             grid.dataBind();
-         }
-         else
-           document.getElementById('msgbox').innerHTML="";
-           jQuery('#msgbox').fadeTo('slow', 1, function() {});
-    }
-
-
-    //if user click particular column, auto fall into edit mode
-    function clickrecord(eventArgs){
-                    row=eventArgs.getCell().getRow();
-                    col=eventArgs.getCell().getColumn();
-                    var  myGrid = nitobi.getGrid('DataboundGrid');
-                    var myCell = myGrid.getCellObject(row, col);
-                    myCell.edit();
-    }
-
-    //add line button will call this
-    function addline(){
-    var g= nitobi.getGrid('DataboundGrid');
-        g.insertAfterCurrentRow();
-    }
-
-    //trigger save activity from javascript
-   function save()
-     {
-    if(validateEmpty()){
-   	if(document.getElementById("afterconfirm").value==1){  //Ask for confirmation from delete activity already, process data immediately
-	   var g= nitobi.getGrid('DataboundGrid');
-	   document.getElementById("afterconfirm").value=0;
-	   g.save();
-           }
-	else{ // not yet request confirmation
-    	  if(confirm("Confirm the changes? Data will save into database immediately")){
-     	  var g= nitobi.getGrid('DataboundGrid');
-	    document.getElementById("afterconfirm").value=0;
-	    g.save();
-	    search();
-    	   }
-	}
-      }
-
-    }
-
-    function beforesave(){
-        document.getElementById('popupmessage').innerHTML="Please Wait.....";
-        popup('popUpDiv');
-    }
-
-   function onclickdeletebutton(){ //when press delete button will triger this function and ask for confirmation
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        if(selRow==-1){// no select any row
-        alert("Please choose a row before deleting.");
-        return false;
-        }
-        else
-         g.deleteCurrentRow();
-    }
-
-    function checkAllowEdit(eventArgs){
-	var g= nitobi.getGrid('DataboundGrid');
-        col=eventArgs.getCell().getColumn();
-       if($alloweditgrid) //if user have permission to edit the cell, control primary key column read only at here too
-        return true;
-        else
-        return false;
-        }
-
-
-    //after insert a new line will automatically fill in some value here
-      function setDefaultValue(eventArgs)
-       {
-       var myGrid = eventArgs.getSource();
-       var r = eventArgs.getRow();
-       var rowNo = r.Row;
-              $deleteddefaultvalue_js
-       myGrid.selectCellByCoords(rowNo, 0);
-    }
-
-    function beforeDelete(){
-            if(confirm('Delete this record? Data will save into database immediately.')){
-                    document.getElementById("afterconfirm").value=1;
-  //popup('popUpDiv');
-                    return true;
-            }
-                    else{
-                    document.getElementById("afterconfirm").value=0;
-                    return false;
-                    }
-     }
-    function viewlog(){
-   	var g= nitobi.getGrid('DataboundGrid');
-        var selRow = g.getSelectedRow();
-        var selCol = g.getSelectedColumn();
-        var cellObj = g.getCellValue(selRow, selCol);
-      window.open(cellObj,"");
-    }
-   function validateEmpty(){
-
-        var grid= nitobi.getGrid('DataboundGrid');
-        var isallow = true;
-        var total_row = grid.getRowCount();
-        var title ="";
-        var type ="";
-        var pic ="";
-        var cname ="";
-
-        for( var i = 0; i < total_row; i++ ) {
-
-        var titlecelly = grid.getCellObject( i, 1);//1st para : row , 2nd para : column seq
-        var typecelly = grid.getCellObject( i, 2);//1st para : row , 2nd para : column seq
-        var piccelly = grid.getCellObject( i, 3);//1st para : row , 2nd para : column seq
-        var cnamecelly = grid.getCellObject( i, 5);//1st para : row , 2nd para : column seq
-
-        title = titlecelly.getValue();
-        type = typecelly.getValue();
-        pic = piccelly.getValue();
-        cname = cnamecelly.getValue();
-
-           if(cname=="")
-           {
-            isallow = false;
-            document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please enter Contact name.</b><br/>";
-           }
-           if(pic=="")
-           {
-            isallow = false;
-            document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please select a P.I.C.</b><br/>";
-           }
-
-           if(type=="")
-           {
-            isallow = false;
-            document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please select a Type.</b><br/>";
-           }
-           if(title=="")
-           {
-            isallow = false;
-            document.getElementById('msgbox').innerHTML="<a class=\"statusmsg\">Please enter Title.</b><br/>";
-           }
-
-        }
-
-        if(isallow)
-          return true;
-        else
-          return false;
-    }
-</script>
-<div id='blanket' style='display:none;'></div>
-<div id='popUpDiv' style='display:none;verticle-align:center'>
-
-     <div id='popupmessage' style='text-align:center'></div>
-     <div id='progressimage' style='text-align:center'><img src='../simantz/images/ajax_indicator_01.gif'></div>
-</div>
-
+<div class="dimBackground"></div>
 <div align="center">
-<table style="width:700px;">
+
+
+<table style="width:1000px;" align="center" class="searchformblock" >
     <tr>
-      <td style='text-align: center;' colspan='8' class="searchformheader">Follow Up Info</td>
-    </tr>
-<tr><td align="left" style="height:27px;">$addctrl</td></tr>
+      <td style='text-align: center;' class="searchformheader">Follow Up Info</td>
+      <td align="right"><img src="images/close.png" onclick="closeWindow('followup');" style="cursor:pointer" title="Close"></td>
+        </tr>
+    
+<tr><td align="left" style="height:27px;" colspan="2">$addctrl</td></tr>
 
 <tr><td align="center">
 
-<ntb:grid id="DataboundGrid"
+<ntb:grid id="followupgrid"
      mode="nonpaging"
      toolbarenabled='false'
      $permctrl
      onhtmlreadyevent="dataready()"
      singleclickeditenabled="true"
-     keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
      gethandler="bpartner.php?action=searchfollowup&bpartner_id=$this->bpartner_id"
      savehandler="bpartner.php?action=savefollowup&bpartner_id=$this->bpartner_id"
      onbeforecelleditevent="checkAllowEdit(eventArgs)"
-     onafterrowinsertevent="setDefaultValue(eventArgs)"
+
      rowhighlightenabled="true"
-     width="943"
-     height="200"
+     width="1000"
+     height="400"
         rowheight="70"
      onaftersaveevent="savedone(eventArgs)"
      onbeforerowdeleteevent="beforeDelete()"
@@ -4775,7 +4226,7 @@ EOF;
 <input id='afterconfirm' value='0' type='hidden'>
 
 <br> <div id="msgbox" class="blockContent"></div>
-</td></tr></table></div>
+</td></tr></table>
 
 EOF;
   }
@@ -5560,23 +5011,22 @@ EOF;
         $issuedatecal =$dp->show('issuedate');
         $nextfollowupdatecal =$dp->show('nextfollowupdate');
     $bpctrl=new BPSelectCtrl();
-    $hrctrl=new HRSelectCtrl();
+    
 
     if($followup_id==0){
             $bpcontrol=$bpctrl->getSelectBPartner(0,"Y");
                 $followtypectrl=$bpctrl->getSelectFollowUpType(0,'N');
-                $empcontrol="<select  name='employee_id'  id='employee_id'>".$hrctrl->getSelectEmployee(0,"Y")."</select>";
+             
                 $ischecked="checked";
                      $issuedate=date("Y-m-d",time());
         $nextfollowupdate=date("Y-m-d",time());
 
     }
     else{
-   $sql="SELECT f.*,bp.bpartner_name,bp.bpartner_no,ft.followuptype_name,e.employee_name
+   $sql="SELECT f.*,bp.bpartner_name,bp.bpartner_no,ft.followuptype_name,f.employee_name
     FROM sim_followup f
     inner join sim_bpartner bp on f.bpartner_id=bp.bpartner_id
     inner join sim_followuptype ft on f.followuptype_id =ft.followuptype_id
-    left join sim_hr_employee e on e.employee_id=f.employee_id
     where followup_id=$followup_id";
 
 $query=$this->xoopsDB->query($sql);
@@ -5586,8 +5036,8 @@ while($row=$this->xoopsDB->fetchArray($query)){
     $bpartner_id=$row['bpartner_id'];
     $followup_name =htmlspecialchars($row['followup_name']);
     $followuptype_id=$row['followuptype_id'];
-    $employee_id=$row['employee_id'];
-    $employee_name=$row['employee_name'];
+   
+    $employee_name=htmlspecialchars($row['employee_name']);
     $description =htmlspecialchars($row['description']);
     $issuedate=$row['issuedate'];
     $contactperson=htmlspecialchars($row['contactperson']);
@@ -5596,7 +5046,7 @@ while($row=$this->xoopsDB->fetchArray($query)){
     $isactive=$row['isactive'];
     $followtypectrl=$bpctrl->getSelectFollowUpType($followuptype_id,'N');
     $bpcontrol="<a href='bpartner.php?action=viewsummary&bpartner_id=$bpartner_id'>$bpartner_no-$bpartner_name</a>";
-      $empcontrol="<select  name='employee_id'  id='employee_id'>".$hrctrl->getSelectEmployee($employee_id,"Y")."</select>";
+      
 //    $empcontrol="<a href='../hr/employee.php?action=viewsummary&employee_id=$employee_id'>$employee_name</a>";
 //Netgate
 
@@ -5648,7 +5098,7 @@ echo <<< EOF
         </tr>
         <tr>
           <td class="head">Employee</td>
-          <td>$empcontrol</td>
+          <td><input $colstyle   id="employee_name" name="employee_name" size="60" type="text" value="$employee_name" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /></td>
           <td class="head" >Next Follow Up Date</td>
           <td><input $colstyle   id="nextfollowupdate" name="nextfollowupdate" type="text" value="$nextfollowupdate" onfocus="this.style.backgroundColor='#efefef'" onblur="this.style.backgroundColor=''" /><input type="button" onclick="$nextfollowupdatecal" value='Date'></td>
         </tr>
@@ -5694,10 +5144,10 @@ EOF;
            if($_POST['followup_id']>0){
           $arrfield=array("issuedate", "followup_name", "followuptype_id",
                           "nextfollowupdate","contactperson","contactnumber","description",
-                          "updated","updatedby","isactive","employee_id");
+                          "updated","updatedby","isactive","employee_name");
           $arrfieldtype=array('%s','%s','%d',
                               '%s','%s','%s','%s',
-                              '%s','%d','%d','%d');
+                              '%s','%d','%s','%s');
              $controlvalue=$_POST["followup_name"];
 
              if($_POST['isactive']=="on")
@@ -5712,7 +5162,7 @@ EOF;
                     $_POST["contactnumber"],
                     $_POST["description"],
                     $timestamp,
-                    $createdby,$isactive,$_POST['employee_id']);
+                    $createdby,$isactive,$_POST['employee_name']);
 
 
              if($save->UpdateRecord($tablename, "followup_id", $_POST['followup_id'],
@@ -5728,10 +5178,10 @@ EOF;
            else{
     $arrfield=array("issuedate", "followup_name", "followuptype_id",
                           "nextfollowupdate","contactperson","contactnumber","description",
-                          "created","createdby","updated","updatedby","isactive","employee_id","bpartner_id");
+                          "created","createdby","updated","updatedby","isactive","employee_name","bpartner_id");
           $arrfieldtype=array('%s','%s','%d',
                               '%s','%s','%s','%s',
-                              '%s','%d','%s','%d','%d','%d','%d');
+                              '%s','%d','%s','%d','%d','%s','%d');
              $controlvalue=$_POST["followup_name"];
 
              if($_POST['isactive']=="on")
@@ -5746,7 +5196,7 @@ EOF;
                     $_POST["contactnumber"],
                     $_POST["description"],
                     $timestamp, $createdby,
-                        $timestamp, $createdby,$isactive,$_POST['employee_id'],$_POST['bpartner_id']);
+                        $timestamp, $createdby,$isactive,$_POST['employee_name'],$_POST['bpartner_id']);
 
  
              if($save->InsertRecord($tablename, $arrfield, $arrvalue, $arrfieldtype, $_POST["followup_name"],"followup_id")){
