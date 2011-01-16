@@ -3396,7 +3396,7 @@ echo <<< EOF
    <ntb:textcolumn classname="{\$rh}" label="Fax" width="70" xdatafld="fax" sortenabled="true"  onaftercelleditevent="javascript:valiedatetelno()"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Address" width="60" xdatafld="address_id" sortenabled="true">
-           <ntb:lookupeditor delay="1000" gethandler="bpartner.php?action=addresslist&bpartner_id=$this->bpartner_id" displayfields="address_name" valuefield="address_id" ></ntb:lookupeditor>
+           <ntb:listboxeditor gethandler="bpartner.php?action=addresslist&bpartner_id=$this->bpartner_id" displayfields="address_name" valuefield="address_id" ></ntb:lookupeditor>
         </ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Description" xdatafld="description" ><ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
@@ -4187,7 +4187,7 @@ echo <<< EOF
    <ntb:textcolumn classname="{\$rh}" label="Title" width="160" xdatafld="followup_name" sortenabled="true"></ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="Type" width="95" xdatafld="followuptype_id" sortenabled="true">
-              <ntb:lookupeditor delay="1000" gethandler="bpartner.php?action=getfollowuptype" displayfields="followuptype_name" valuefield="followuptype_id" ></ntb:lookupeditor>
+              <ntb:listboxeditor gethandler="bpartner.php?action=getfollowuptype" displayfields="followuptype_name" valuefield="followuptype_id" ></ntb:lookupeditor>
         </ntb:textcolumn>
 
    <ntb:textcolumn classname="{\$rh}" label="P.I.C" width="140" xdatafld="employee_name" sortenabled="true"></ntb:textcolumn>
