@@ -64,12 +64,12 @@ class Window
 	if($row=$this->xoopsDB->fetchArray($query)){
                 $this->window_id=$row['window_id'];
 		$this->filename=$row["filename"];
-		$this->window_name=$row["window_name"];
+		$this->window_name=htmlentities($row["window_name"], ENT_QUOTES);
 		$this->table_name=$row["table_name"];
-		$this->description= $row['description'];
+		$this->description=htmlentities($row['description'], ENT_QUOTES);
 		$this->seqno= $row['seqno'];
 		$this->isactive=$row['isactive'];
-		$this->helpurl=$row['helpurl'];
+		$this->helpurl=htmlentities($row['helpurl'], ENT_QUOTES);
                 $this->mid=$row['mid'];
                 $this->parentwindows_id=$row['parentwindows_id'];
                $this->windowsetting=$row['windowsetting'];
