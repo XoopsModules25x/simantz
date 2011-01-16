@@ -2092,9 +2092,18 @@ EOF;
 global $nitobigridthemes,$isadmin,$havewriteperm;
 $rowsperpage = 20;
 
-if($this->filterstring!="")
-        $filterstring="&searchchar=$this->filterstring";
 
+  
+
+   if($this->filterstring!=""){
+          $filterstring="&searchchar=$this->filterstring";
+      $gethd="bpartner.php?action=searchbpartner&searchisactive=1$filterstring";
+
+   }
+   else
+    $gethd="bpartner.php?action=searchbpartner&searchisactive=99";
+
+   
 if($isadmin==1){
     $grIdColumn=9; //define primary key column index, it will set as readonly afterwards (count from 0)
        // $deleteddefaultvalue_js="myGrid.getCellObject(rowNo,6).setValue(0);"; //if admin login got deleted column, during admin insert new record shall set it default =0 (not deleted)
@@ -2499,7 +2508,7 @@ function selectAll(val){
 
      keygenerator="GetNewRecordID();"
      onhandlererrorevent="showError()"
-     gethandler="bpartner.php?action=searchbpartner&isactive=1$filterstring"
+     gethandler="$gethd"
      width="970"
      height="405"
     rowheight="15"
@@ -2611,9 +2620,13 @@ else
      if($searchindustry_id !="" && $searchindustry_id !="0" )
            $wherestring.= " AND bp.industry_id=$searchindustry_id";
      if($searchisactive =="Y")
-           $wherestring.= " AND bp.isactive =1";
+           $wherestring.= " AND bp.isactive=1";
      else if($searchisactive =="N")
            $wherestring.= " AND bp.isactive=0";
+     else if($searchisactive !="0") // not show result
+           $wherestring.= " AND bp.isactive='$searchisactive'";
+     
+     
     }
            $wherestring.= " AND bp.organization_id=$defaultorganization_id";
 

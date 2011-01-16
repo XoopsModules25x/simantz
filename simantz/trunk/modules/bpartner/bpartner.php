@@ -43,6 +43,7 @@ $o->searchchar=$_GET['filter'];
 include_once "menu.php";
   //$o->getIncludeFileMenu();
   $o->filterstring=$_GET["filterstring"];
+  
 if($o->industry_id=="")
          $o->industry_id=0;
 if($o->bpartnergroup_id=="")
