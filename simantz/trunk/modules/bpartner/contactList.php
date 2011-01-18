@@ -116,7 +116,7 @@ elseif($_POST['action']=="Print Address"){
         INNER JOIN $tablecountry country on country.country_id=a.country_id
         INNER JOIN $tableregion r on r.region_id=a.region_id
         where c.contacts_id in ($addresslist) order by bp.bpartner_name ASC,a.address_city ASC";
-      $table=" <table border='1' width='100%'>";
+      $table=" <table width='100%'>";
 
 
       $query=$xoopsDB->query($sql);
