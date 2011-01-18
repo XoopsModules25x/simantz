@@ -136,12 +136,22 @@ elseif($_POST['action']=="Print Address"){
           $tel_1=$row['tel_1'];
           $tel_2=$row['tel_2'];
           $fax=$row['fax'];
+
+          if($tel_1!="")
+          $tel_1="Tel: $tel_1";
+          if($tel_2!="")
+          $tel_1="/$tel_2";
+          if($fax!="")
+          $fax="Fax: $fax";
+          
+
+
         if($col==0){
-          $table.="<tr><td><b>$greeting $contacts_name</b><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/></td><td>&nbsp;</td>";
+          $table.="<tr><td><b>$greeting $contacts_name</b><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/>$tel_1 $fax<br/></td><td>&nbsp;</td>";
           $col=1;
         }
         else{
-            $table.="<td><b>$greeting $contacts_name</b><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+            $table.="<td><b>$greeting $contacts_name</b><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/>$tel_1 $fax<br/></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
           $col=0;
         }
           
