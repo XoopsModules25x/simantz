@@ -1,8 +1,11 @@
 <?php
 include_once "system.php";
 include_once "../simantz/class/SelectCtrl.inc.php";
-$xoTheme->addStylesheet("$url/modules/system/class/gui/oxygen/css/navbar.css");
+//$xoTheme->addStylesheet("$url/modules/system/class/gui/oxygen/css/navbar.css");
+$xoTheme->addStylesheet("$url/modules/simantz/include/menu/menu.css");
+$xoTheme->addScript('browse.php?Frameworks/jquery/jquery.js');
 
+$xoTheme->addScript("$url/modules/simantz/include/menu/menu.js");
 global $menuname;
 $url=XOOPS_URL;
 $ctrl= new SelectCtrl();
@@ -43,23 +46,12 @@ if($parentwindows_id=="")
 $orgctrl=$ctrl->selectionOrg($userid,$defaultorganization_id,'N',"location.href=$newurl");
 
 echo <<< EOF
-
-<!-- Include files javascripts -->
-
-<link rel="stylesheet" href="../simantz/include/stylemenu.css" type="text/css" />
-<script type="text/javascript" src="../../modules/system/class/gui/oxygen/js/menu.js"></script>
-
-<!--
-  <div id="navbarCP" >
-
-    <ul class="menu" id="menu">
-    <li><a href='index.php' class='menulink'>Home</a></li>-->
-
+<a href="http://apycom.com/" style='display:none'>Apycom jQuery Menus</a>
 
 EOF;
-        $menulist = "<div style='height:30px'><div id='navbarCP'><ul class='menu' id='menu'>
+        $menulist = "<div id='navbarCP' style='height:30px'><div id='menu'><ul class='menu' id='menu'>
         <li>
-        <a href='index.php' class='menulink'>Home</a>
+        <a href='index.php' class='parent'><span>Home</span></a>
         </li>";
 
 $menulist .= $permission->showMenu($parentwindows_id,0,$userid,$module_id);
