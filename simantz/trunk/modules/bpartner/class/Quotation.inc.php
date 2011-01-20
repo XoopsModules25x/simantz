@@ -393,7 +393,7 @@ public function getGrid($quotation_id=0){
 <ntb:columns>    
         <ntb:numbercolumn classname="{\$rh}" xdatafld="seqno" sortenabled="false" visible="false"></ntb:numbercolumn>
         <ntb:textcolumn classname="{\$rh}" width="170px" label="Subject"  xdatafld="subject" sortenabled="false" $editable></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" width="190px" label="Description"  xdatafld="description" sortenabled="false" $editable>
+        <ntb:textcolumn classname="{\$rh}" width="190px" label="Description"  xdatafld="description" sortenabled="false" $editable maxlength="1000">
                         <ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
         <ntb:numbercolumn classname="{\$rh}" label="U.Price" mask="#0.00" width="50" $editable xdatafld="uprice" sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)">
                         </ntb:numbercolumn>
