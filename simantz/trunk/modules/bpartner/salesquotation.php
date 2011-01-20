@@ -121,7 +121,7 @@ die;
       include "../bpartner/class/Address.inc.php";
       $add = new Address();
       $add->fetchAddress($_REQUEST['address_id']);
-      echo $add->address_street;
+      echo $add->address_street."\n$add->address_postcode $add->address_city\n$add->region_name, $add->country_name";
       die;
       break;
   case "searchquotationline":

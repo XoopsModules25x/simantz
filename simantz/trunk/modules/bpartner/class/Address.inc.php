@@ -48,7 +48,10 @@ class Address
 
 	$this->log->showLog(3,"Fetching address detail into class Address.php.<br>");
 
-	$sql="SELECT * from $this->tableaddress where address_id=$address_id";
+	$sql="SELECT a.*,c.country_name,r.region_name from $this->tableaddress a
+                    inner join sim_region r on a.region_id=r.region_id
+                    inner join sim_country c on c.country_id=a.country_id
+                    where address_id=$address_id";
 
 	$this->log->showLog(4,"ProductAddress->fetchAddress, before execute:" . $sql . "<br>");
 
@@ -67,6 +70,8 @@ class Address
 		$this->address_city=$row['address_city'];
 		$this->region_id=$row['region_id'];
 		$this->country_id=$row['country_id'];
+                $this->country_name=$row['country_name'];
+                $this->region_name=$row['region_name'];
 		$this->bpartner_id=$row['bpartner_id'];
 		$this->tel_1=$row['tel_1'];
 		$this->tel_2=$row['tel_2'];
