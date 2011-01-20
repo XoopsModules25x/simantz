@@ -397,7 +397,7 @@ WHERE
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{sim_bpartner_quotationline_linedesc}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00">
 				<reportElement x="480" y="0" width="75" height="15"/>
 				<textElement textAlignment="Right">
 					<font size="9"/>
@@ -413,12 +413,16 @@ WHERE
 			</textField>
 			<textField>
 				<reportElement x="402" y="0" width="48" height="15"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sim_bpartner_quotationline_line_enterqty}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="#,##0.00;-#,##0.00">
 				<reportElement x="335" y="0" width="67" height="15"/>
-				<textElement textAlignment="Right"/>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
 				<textFieldExpression class="java.math.BigDecimal"><![CDATA[$F{sim_bpartner_quotationline_unitprice}]]></textFieldExpression>
 			</textField>
 		</band>
