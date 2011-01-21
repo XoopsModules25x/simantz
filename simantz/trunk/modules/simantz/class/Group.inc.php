@@ -564,7 +564,7 @@ var gc = new Array();
 
 <td align="left">
       <ntb:grid id="DetailGrid"
-             mode="standard"
+             mode="nonpaging"
              toolbarenabled='false'
              $permctrlgroupline
              ondatareadyevent="dataready('DetailGrid');"
