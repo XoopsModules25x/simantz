@@ -239,6 +239,9 @@ echo <<< EOF
 <table class="searchformblock sortable" >
    
     <tr>
+            <td class="searchformheader sorttable_nosort" align='center'>SMS <input type='checkbox' onclick='selectAll(this.checked)'></td>
+        <td class="searchformheader sorttable_nosort" align='center'>Print <input type='checkbox' onclick='printAll(this.checked)'></td>
+
         <td class="searchformheader" align='center'>No</td>
         <td class="searchformheader" align='center'>Name</td>
         <td class="searchformheader" align='center'>B.Partner</td>
@@ -251,8 +254,6 @@ echo <<< EOF
         <td class="searchformheader" align='center'>HP No</td>
         <td class="searchformheader" align='center'>Fax</td>
         <td class="searchformheader" align='center'>Email</td>
-        <td class="searchformheader sorttable_nosort" align='center'>SMS <input type='checkbox' onclick='selectAll(this.checked)'></td>
-        <td class="searchformheader sorttable_nosort" align='center'>Print <input type='checkbox' onclick='printAll(this.checked)'></td>
     </tr>
 EOF;
 
