@@ -245,7 +245,6 @@ echo <<< EOF
         <td class="searchformheader" align='center'>No</td>
         <td class="searchformheader" align='center'>Name</td>
         <td class="searchformheader" align='center'>B.Partner</td>
-        <td class="searchformheader" align='center'>Address</td>
         <td class="searchformheader" align='center'>City</td>
         <td class="searchformheader" align='center'>Position</td>
         <td class="searchformheader" align='center'>Races</td>
@@ -307,7 +306,6 @@ echo <<< EOF
         <td align='center'>$j</td>
         <td align='center'>$greeting $contacts_name</td>
         <td align='center'><a href='bpartner.php?action=viewsummary&bpartner_id=$bpartner_id'>$bpartner_name</a></td>
-        <td align='center'>$address_name</td>
         <td align='center'>$address_city</td>
         <td align='center'>$position</td>
         <td align='center'>$races_name</td>
