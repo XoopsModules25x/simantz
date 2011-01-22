@@ -302,6 +302,8 @@ $fax=$row['fax'];
 $email=$row['email'];
 echo <<< EOF
     <tr>
+        <td align='center'><input type='checkbox' name='chk[$i]' value='$hpno' id='chk_$i'></td>
+        <td align='center'><input type='hidden' name='address[$i]' value='$address_id' id='address_$i'><input type='checkbox' name='print[$i]' value='$contacts_id' id='print_$i'></td>
         <td align='center'>$j</td>
         <td align='center'>$greeting $contacts_name</td>
         <td align='center'><a href='bpartner.php?action=viewsummary&bpartner_id=$bpartner_id'>$bpartner_name</a></td>
@@ -314,8 +316,6 @@ echo <<< EOF
         <td align='center'>$hpno</td>
         <td align='center'>$fax</td>
         <td align='center'>$email</td>
-        <td align='center'><input type='checkbox' name='chk[$i]' value='$hpno' id='chk_$i'></td>
-        <td align='center'><input type='hidden' name='address[$i]' value='$address_id' id='address_$i'><input type='checkbox' name='print[$i]' value='$contacts_id' id='print_$i'></td>
     </tr>
 EOF;
 
