@@ -15,8 +15,8 @@ $hpno=$_GET['hpno'];
 $bpartner_id=$_GET['bpartner_id'];
 $races_id=$_GET['races_id'];
 $religion_id=$_GET['religion_id'];
-$region_id=$_GET['region_id'];
-
+$bpartnergroup_id=$_GET['bpartnergroup_id'];
+$industry_id=$_GET['industry_id'];
 if($bpartner_id=="")
 $bpartner_id=0;
 
@@ -29,6 +29,10 @@ $religion_id=0;
 if($region_id=="")
 $region_id=0;
 
+if($industry_id=="")
+$industry_id=0;
+if($bpartnergroup_id=="")
+$bpartnergroup_id=0;
 
 //$bpartnerfrom
 //$accounts_id=$_POST['accounts_id'];
@@ -39,6 +43,8 @@ $region_id=0;
 if($_POST['action']=="SMS"){
     include_once "menu.php";
 $bpartnerctrl=$bpctrl->getSelectBPartner($bpartner_id,'Y');
+$bpgroupctrl=$bpctrl->getSelectBPartnerGroup($bpartnergroup_id,'Y');
+$industryctrl=$bpctrl->getSelectIndustry($industry_id,'Y');
 $racesctrl=$ctrl->getSelectRaces($races_id,'Y');
 $religionctrl=$ctrl->getSelectReligion($religion_id,'Y');
 $regionctrl=$ctrl->getSelectRegion($region_id,'Y');
@@ -162,6 +168,8 @@ elseif($_POST['action']=="Print Address"){
 }
 include_once "menu.php";
 $bpartnerctrl=$bpctrl->getSelectBPartner($bpartner_id,'Y');
+$bpgroupctrl=$bpctrl->getSelectBPartnerGroup($bpartnergroup_id,'Y');
+$industryctrl=$bpctrl->getSelectIndustry($industry_id,'Y');
 $racesctrl=$ctrl->getSelectRaces($races_id,'Y');
 $religionctrl=$ctrl->getSelectReligion($religion_id,'Y');
 $regionctrl=$ctrl->getSelectRegion($region_id,'Y');
@@ -214,12 +222,18 @@ function checktextlength(){
 	<tr><td class='head'>Races</td><td class='odd'><select id="races_id" name="races_id">$racesctrl</select></td>
 			<td class='head'>Religion</td><td class='odd'><select id="religion_id" name="religion_id">$religionctrl</select></td>
 		</tr>
-	<tr><td class='head'>HP</td><td class='odd'><input name='hpno'  value='$hpno'></td>
+		<tr>
+		<td class='head'>HP</td><td class='odd'><input name='hpno'  value='$hpno'></td>
 		<td class='head'>Region</td><td class='odd'><select id="region_id" name="region_id">$regionctrl</select></td>
 		</tr>
-		<tr><td>
-		<tr><td>
-			<input type='submit' value='Search' name='submit'>
+		<tr>
+		<td class='head'>BP. Group</td><td class='odd'><select id="bpartnergroup_id" name="bpartnergroup_id">$bpgroupctrl</select></td>
+		<td class='head'>Industry</td><td class='odd'><select id="industry_id" name="industry_id">$industryctrl</select></td>
+		</tr>
+		<tr>
+		<td>
+
+			<input type='submit' value='Search' name='submit'></td>
 		</tr>
 		</blank>
 	</tbody>
@@ -252,7 +266,9 @@ echo <<< EOF
         <td class="searchformheader" align='center'>Tel</td>
         <td class="searchformheader" align='center'>HP No</td>
         <td class="searchformheader" align='center'>Fax</td>
-        <td class="searchformheader" align='center'>Email</td>
+        <td class="searchformheader" align='center'>BP. Group</td>
+        <td class="searchformheader" align='center'>Industry</td>
+                <td class="searchformheader" align='center'>Email</td>
     </tr>
 EOF;
 
@@ -267,15 +283,24 @@ EOF;
     $wherestring .= " c.religion_id = '$religion_id' AND";
     if($races_id >0)
     $wherestring .= " c.races_id = '$races_id' AND";
+    if($industry_id >0)
+    $wherestring .= " bp.industry_id = '$industry_id' AND";
+    if($bpartnergroup_id >0)
+    $wherestring .= " bp.bpartnergroup_id = $bpartnergroup_id AND";
+    
+    
 $wherestring =substr_replace($wherestring,"",-3 );
 
     $sql="SELECT c.greeting, c.contacts_id, c.contacts_name, c.bpartner_id,bp.bpartner_name, c.position,
-        rc.races_name,rlg.religion_name, c.tel_1,c.hpno,c.fax,c.email,a.address_city ,a.address_name,c.address_id
+        rc.races_name,rlg.religion_name, c.tel_1,c.hpno,c.fax,c.email,a.address_city ,a.address_name,c.address_id,
+        bpg.bpartnergroup_name,i.industry_name
         FROM $tablecontacts c
         INNER JOIN $tablebpartner bp on bp.bpartner_id=c.bpartner_id
         INNER JOIN $tableaddress a on c.address_id=a.address_id
         INNER JOIN $tableraces rc on rc.races_id=c.races_id
         INNER JOIN $tablereligion rlg on rlg.religion_id=c.religion_id
+        INNER JOIN $tablebpartnergroup bpg on bpg.bpartnergroup_id=bp.bpartnergroup_id
+        INNER JOIN $tableindustry i on i.industry_id=bp.industry_id
         $wherestring  order by c.contacts_name ASC";
 $i=0;
 $j=0;
@@ -292,6 +317,8 @@ $address_name=$row['address_name'];
 $address_city =$row['address_city'];
 $contacts_name=$row['contacts_name'];
 $bpartner_name=$row['bpartner_name'];
+$bpartnergroup_name =$row['bpartnergroup_name'];
+$industry_name=$row['industry_name'];
 $position=$row['position'];
 $races_name=$row['races_name'];
 $religion_name=$row['religion_name'];
@@ -313,8 +340,9 @@ echo <<< EOF
         <td align='center'>$tel_1</td>
         <td align='center'>$hpno</td>
         <td align='center'>$fax</td>
-        <td align='center'>$email</td>
-    </tr>
+        <td align='center'>$bpartnergroup_name</td>
+        <td align='center'>$industry_name</td>
+        <td align='center'>$email</td>    </tr>
 EOF;
 
 $i++;
