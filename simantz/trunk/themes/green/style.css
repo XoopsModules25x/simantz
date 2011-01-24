@@ -669,19 +669,19 @@ input[type="submit"]:hover, input[type="submit"]:focus,
 input[type="reset"]:hover, input[type="reset"]:focus,
 input[type="file"]:hover, input[type="file"]:focus{
 	border: 1px solid;
-	color: #454cdb;
+	color: #197420;
 	background: #ccc;
-	background-image: url("btnimage.gif");
+	background-image: url("btnimage2.gif");
 	cursor:pointer;
 	font-size: 8pt;
 	font-weight: normal;
 	}
 
 input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]   {
-	border: #7c95c9 1px solid;
+	border: #197420 1px solid;
 	font-size: 8pt;
 	font-weight: normal;
-	color: #41415b;
+	color: #193f20;
 	background: #ffd894;
 	background-image: url("btnimage.gif");
 	background-repeat: repeat-x;
@@ -988,8 +988,8 @@ font-weight: bold;
     margin: 5px;
     padding: 3px;
     height: 100%;
-    background-color: #fff8ec;
-    border: 1px solid #ffd894;
+    background-color: #e9ffe9;
+    border: 1px solid #DDB5FF;
     vertical-align: top;
 
 }
@@ -1044,6 +1044,7 @@ font-weight: bold;
  font-weight : bold;
  color : blue;
 }
+
 #rightBox{
  font-size : 10px;
 }
