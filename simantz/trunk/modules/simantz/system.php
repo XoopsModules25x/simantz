@@ -131,14 +131,23 @@
         $windowsetting=$arrperm[2];
         $permissionsetting=$arrperm[3];
         $helpurl=$arrperm[4];
-        $permissionsetting=explode(",", $permissionsetting);
 
+        if(strpos($permissionsetting,'$')>=0){
+
+        $permissionsetting=explode(",", $permissionsetting);
         $totalpermissionsetting=count($permissionsetting);
         $i=0;
         while($i < $totalpermissionsetting){
+<<<<<<< .mine
+	
+           eval($permissionsetting[$i].";");
+=======
 	if(strpos($permissionsetting[$i],'$'))
         eval($permissionsetting[$i].";");
+>>>>>>> .r334
         $i++;
+        }
+        
         }
 //      echo $viewappraisal;
 //      echo $viewpayroll;
