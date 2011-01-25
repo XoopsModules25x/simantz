@@ -146,7 +146,7 @@ elseif($_POST['action']=="Print Address"){
           if($tel_1!="")
           $tel_1="Tel: $tel_1";
           if($tel_2!="")
-          $tel_1="/$tel_2";
+          $tel_1.="/$tel_2";
           if($fax!="")
           $fax="Fax: $fax";
           
