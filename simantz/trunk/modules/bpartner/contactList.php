@@ -134,7 +134,7 @@ elseif($_POST['action']=="Print Address"){
           $address_name=$row['address_name'];
           $address_street=$row['address_street'];
                     $address_street=str_replace(array("\n","\r"), "<br/>", $address_street);
-
+                    $bpartner_name=$row['bpartner_name'];
           $address_city=$row['address_city'];
           $address_postcode=$row['address_postcode'];
           $country_name=$row['country_name'];
@@ -153,11 +153,11 @@ elseif($_POST['action']=="Print Address"){
 
 
         if($col==0){
-          $table.="<tr><td><b>$greeting $contacts_name</b><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/>$tel_1 $fax<br/></td><td>&nbsp;</td>";
+          $table.="<tr><td><b>$greeting $contacts_name</b><br/>$bpartner_name<br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/>$tel_1 $fax<br/></td><td>&nbsp;</td>";
           $col=1;
         }
         else{
-            $table.="<td><b>$greeting $contacts_name</b><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/>$tel_1 $fax<br/></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+            $table.="<td><b>$greeting $contacts_name</b><br/>$bpartner_name<br/><br/>$address_street<br/>$address_postcode $address_city <br/>$region_name $country_name<br/>$tel_1 $fax<br/></td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
           $col=0;
         }
           
