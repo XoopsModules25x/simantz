@@ -138,13 +138,11 @@
         $totalpermissionsetting=count($permissionsetting);
         $i=0;
         while($i < $totalpermissionsetting){
-<<<<<<< .mine
-	
+
            eval($permissionsetting[$i].";");
-=======
 	if(strpos($permissionsetting[$i],'$'))
         eval($permissionsetting[$i].";");
->>>>>>> .r334
+
         $i++;
         }
         
