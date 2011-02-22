@@ -1,5 +1,6 @@
 <?php
 //version 0.7d
+
 class PHPJasperXML {
     private $adjust=1.2;
     private $pdflib;
