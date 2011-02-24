@@ -581,7 +581,7 @@ class EBASaveHandler
 				$EBASearchField = " ".$this->FieldsSet[$index] ."=\"";
 			}
 
-			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->InsertRecords[$RecordNumber]);
+			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->InsertRecords[$RecordNumber] - $RecordNumber);
 			$EBANextPos = strpos($EBAUpdateGramTemp, $EBASearchField);
 
 			if ($EBANextPos > 0)
@@ -608,24 +608,23 @@ class EBASaveHandler
 		$EBASearchField = "";
 		$index = array_search($FieldName, $this->Fields);
 
-
 		if (($index !== FALSE) || ($FieldName == ""))
 		{
 			$EBASearchField = "xk=\"";
 			if (strlen($FieldName) > 0)
 			{
 				$EBASearchField = $this->FieldsSet[$index] ."=\"";
-
 				//"d" should be included here too
 				//but this test wasn't working for some reason, and actually appending
 				//the space to ALL EBASearchFields is fine
 				//if ($this->FieldsSet[$index] == "d" || $this->FieldsSet[$index] == "k" || $this->FieldsSet[$index] == "i")
-					$EBASearchField = " ".$this->FieldsSet[$index] ."=\"";
-
+				$EBASearchField = " ".$this->FieldsSet[$index] ."=\"";
 			}
-			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->UpdateRecords[$RecordNumber]);
+                        // add $RecordNumber to deduce, else every time loop record will have more length. when lenght increase to big size, will get wrong value.
+			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->UpdateRecords[$RecordNumber] - $RecordNumber);
 
 			$EBANextPos = strpos($EBAUpdateGramTemp, $EBASearchField);
+
 			if ($EBANextPos > 0)
 			{
 				$EBAUpdateGramTemp = EBAright($EBAUpdateGramTemp, strlen($EBAUpdateGramTemp) - $EBANextPos - strlen($EBASearchField));
@@ -634,7 +633,6 @@ class EBASaveHandler
 				$EBAResultValue = $EBAUpdateGramTemp;
 			}
 		}
-
 		return $EBAResultValue;
 	}
 
