@@ -21,6 +21,18 @@ $simbizctrl = new SimbizSelectCtrl();
 $issimbiz = true;
 }
 
+if(file_exists("../sales/pricelist.php") ){
+include_once "../warehouse/class/SimERPSelectCtrl.inc.php";
+$simerpctrl = new SimERPSelectCtrl();
+$issales = true;
+}
+
+if(file_exists("../purchase/pricelist.php") ){
+include_once "../warehouse/class/SimERPSelectCtrl.inc.php";
+$simerpctrl = new SimERPSelectCtrl();
+$ispurchase = true;
+}
+
 $action=$_REQUEST['action'];
 
 $isaddnew=$_REQUEST['isaddnew'];
@@ -155,14 +167,21 @@ case "edit":
        if($issimbiz){
                 $o->debtoraccountsctrl=$simbizctrl->getSelectAccounts($o->debtoraccounts_id,'Y',"onchange=''","debtoraccounts_id"," and a.account_type=2 ");
                 $o->creditoraccountsctrl=$simbizctrl->getSelectAccounts($o->creditoraccounts_id,'Y',"onchange=''","creditoraccounts_id"," and a.account_type=3 ");
-        }
-        else{
+        }else{
                $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
                $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
-//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
-//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
+        }
+        if($issales){
+               $o->salespricelistctrl='<select name="salespricelist_id" id="salespricelist_id">'.$simerpctrl->getSelectPriceList($o->salespricelist_id,'Y'," AND issotrx=1 ").'</select >';
+        }else{
+               $o->salespricelistctrl="Sales Module doesn't exist  <input type='hidden' name='salespricelist_id' value='0'>";
         }
 
+        if($ispurchase){
+               $o->purchasepricelistctrl='<select name="purchasepricelist_id" id="purchasepricelist_id">'.$simerpctrl->getSelectPriceList($o->purchasepricelist_id,'Y'," AND issotrx=0 ").'</select >';
+        }else{
+               $o->purchasepricelistctrl="Purchase Module doesn't exist  <input type='hidden' name='purchasepricelist_id' value='0'>";
+        }
    //  $o->includeGeneralFile();
 
     
@@ -221,9 +240,13 @@ $o->bankaccountname=$_POST['bankaccountname'];
 $o->bankname=$_POST['bankname'];
 $o->bankaccountno=$_POST['bankaccountno'];
 
-$o->pricelist_id=$_POST['pricelist_id'];
-if($o->pricelist_id=="")
-$o->pricelist_id=0;
+$o->salespricelist_id=$_POST['salespricelist_id'];
+$o->purchasepricelist_id=$_POST['purchasepricelist_id'];
+
+if($o->salespricelist_id=="")
+$o->salespricelist_id=0;
+if($o->purchasepricelist_id=="")
+$o->purchasepricelist_id=0;
 
 
 if ($o->isdebtor==1 or $o->isdebtor=="on")
@@ -295,8 +318,18 @@ if($o->creditoraccounts_id=="")
         else{
                $o->debtoraccountsctrl="<input type='text' name='debtoraccounts_id' value='$o->debtoraccounts_id'>";
                $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
-//                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
-//                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
+        }
+        
+        if($issales){
+               $o->salespricelistctrl='<select name="salespricelist_id" id="salespricelist_id">'.$simerpctrl->getSelectPriceList($o->salespricelist_id,'Y'," AND issotrx=1 ").'</select >';
+        }else{
+               $o->salespricelistctrl="Sales Module doesn't exist  <input type='hidden' name='salespricelist_id' value='0'>";
+        }
+
+        if($ispurchase){
+               $o->purchasepricelistctrl='<select name="purchasepricelist_id" id="purchasepricelist_id">'.$simerpctrl->getSelectPriceList($o->purchasepricelist_id,'Y'," AND issotrx=0 ").'</select >';
+        }else{
+               $o->purchasepricelistctrl="Purchase Module doesn't exist  <input type='hidden' name='purchasepricelist_id' value='0'>";
         }
 
       if($o->saveBPartner()){
@@ -367,6 +400,13 @@ $o->bankaccountname=$_POST['bankaccountname'];
 $o->bankname=$_POST['bankname'];
 $o->bankaccountno=$_POST['bankaccountno'];
 
+$o->salespricelist_id=$_POST['salespricelist_id'];
+$o->purchasepricelist_id=$_POST['purchasepricelist_id'];
+
+if($o->salespricelist_id=="")
+$o->salespricelist_id=0;
+if($o->purchasepricelist_id=="")
+$o->purchasepricelist_id=0;
 
 $o->isactive=$_POST["isactive"];
 if($o->isactive == "on")
@@ -597,9 +637,20 @@ if($o->creditoraccounts_id=="")
                $o->creditoraccountsctrl="<input type='text' name='creditoraccounts_id' value='$o->creditoraccounts_id'>";
 //                $o->debtoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='debtoraccounts_id' value=0>";
 //                $o->creditoraccountsctrl="Accounting Module doesn't exist <input type='hidden' name='creditoraccounts_id' value=0>";
-
         }
-
+        
+        if($issales){
+               $o->salespricelistctrl='<select name="salespricelist_id" id="salespricelist_id">'.$simerpctrl->getSelectPriceList($o->salespricelist_id,'Y'," AND issotrx=1 ").'</select >';
+        }else{
+               $o->salespricelistctrl="Sales Module doesn't exist  <input type='hidden' name='salespricelist_id' value='0'>";
+        }
+        
+        if($ispurchase){
+               $o->purchasepricelistctrl='<select name="purchasepricelist_id" id="purchasepricelist_id">'.$simerpctrl->getSelectPriceList($o->purchasepricelist_id,'Y'," AND issotrx=0 ").'</select >';
+        }else{
+               $o->purchasepricelistctrl="Purchase Module doesn't exist  <input type='hidden' name='purchasepricelist_id' value='0'>";
+        }
+        
 if($o->organization_id=="")
          $o->organization_id=0;
 if($o->industry_id=="")
