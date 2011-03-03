@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Business Partner Address" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="companyname" class="java.lang.String"/>
+	<parameter name="companyno" class="java.lang.String"/>
+	<parameter name="wherestring" class="java.lang.String"/>
+	<parameter name="j" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT bp.bpartner_id, bp.bpartner_name, bp.bpartner_url, bp.bpartnergroup_id, bpg.bpartnergroup_name, a.address_id, a.address_city, a.address_name,
+                a.tel_1, a.tel_2, a.fax, a.address_street, a.address_postcode,i.industry_name
+                FROM sim_address a
+                INNER JOIN sim_bpartner bp ON bp.bpartner_id = a.bpartner_id
+                INNER JOIN sim_bpartnergroup bpg ON bp.bpartnergroup_id = bpg.bpartnergroup_id
+                INNER JOIN sim_industry i ON i.industry_id = bp.industry_id
+$P{wherestring}]]>
+	</queryString>
+	<field name="bpartner_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bpartner_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bpartner_url" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bpartnergroup_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="bpartnergroup_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address_id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address_city" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tel_1" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="tel_2" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fax" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address_street" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="address_postcode" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="industry_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="96" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="38" width="802" height="17"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="14" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Business Partner Address]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="79" width="30" height="14"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="25" y="79" width="121" height="14"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="149" y="79" width="103" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Address Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="259" y="79" width="160" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Address Street]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="422" y="79" width="68" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[(State/City)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="497" y="78" width="70" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Contact No. 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="734" y="80" width="67" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Website]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="646" y="79" width="88" height="14"/>
+				<textElement>
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Company Fax No.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="594" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyname}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="594" y="0" width="208" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{companyno}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="79" width="802" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="92" width="802" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="570" y="79" width="70" height="14"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" isBold="true" pdfFontName="times"/>
+				</textElement>
+				<text><![CDATA[Contact No. 2]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="146" y="0" width="106" height="16"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="259" y="0" width="160" height="16"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address_street}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="422" y="0" width="68" height="18"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{address_city}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="734" y="0" width="67" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bpartner_url}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="652" y="0" width="78" height="16"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{fax}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="30" height="16"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="497" y="0" width="70" height="18"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tel_1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="570" y="0" width="70" height="18"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{tel_2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="25" y="0" width="121" height="16"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{bpartner_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="16" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="356" y="2" width="80" height="14"/>
+				<textElement textAlignment="Right">
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" evaluationTime="Report">
+				<reportElement x="436" y="2" width="40" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="h.mm a">
+				<reportElement x="0" y="2" width="100" height="14"/>
+				<textElement>
+					<font fontName="Serif" pdfFontName="times"/>
+				</textElement>
+				<textFieldExpression class="java.util.Date"><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>
