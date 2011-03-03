@@ -219,8 +219,8 @@ else{ //user dun have write permission, cannot save grid
  <div id="statusDiv" align="center" class="ErrorstatusDiv">$noperm</div>
    <table style="width: 970px;"  align="center">
     <tr>
-    <td width="60px">$search_button</td>
-    <td align="left">$new_button</td>
+       <td width="60px">$search_button</td>
+       <td align="left">$new_button</td>
     </tr>
   </table>
 <form method="post" action="bpartner.php" name="frmBPartner" id="frmBPartner" enctype="multipart/form-data" onsubmit="return false">
@@ -327,10 +327,19 @@ else{ //user dun have write permission, cannot save grid
       </tr>
 
       <tr>
-        <td class="head" >Description</td>
-	    <td class="even"><textarea cols="42" rows="6" name="description" id="description">$this->description</textarea></td>
+        <td class="head" rowspan="3">Description</td>
+	    <td class="even" rowspan="3"><textarea cols="42" rows="3" name="description" id="description">$this->description</textarea></td>
       </tr>
-
+            
+      <tr>
+        <td class="head" >AVL</td>
+	    <td class="even">$this->purchasepricelistctrl</td>
+      </tr>
+            
+      <tr>
+        <td class="head" >Sales Price List</td>
+	    <td class="even">$this->salespricelistctrl</td>
+      </tr>
 
            <tr><td><br></td></tr>
 
@@ -800,12 +809,22 @@ function loadjscssfile(filename, filetype){
             <td class="even"><input name="shortremarks" id="shortremarks" value="$this->shortremarks" size="45"></td>
       </tr>
 
-      <tr>
-        <td class="head" >Description</td>
-	    <td class="even"><textarea cols="42" rows="6" name="description" id="description">$this->description</textarea></td>
+      <tr >
+        <td class="head" rowspan="3">Description</td>
+	    <td class="even" rowspan="3"><textarea cols="42" rows="4" name="description" id="description">$this->description</textarea></td>
 
       </tr>
 
+      <tr>
+        <td class="head" >AVL</td>
+	    <td class="even">$this->purchasepricelistctrl</td>
+      </tr>
+
+      <tr>
+        <td class="head" >Sales Price List</td>
+	    <td class="even">$this->salespricelistctrl</td>
+      </tr>
+            
       <tr>
     	<td><br></td>
       </tr>
@@ -869,7 +888,7 @@ function loadjscssfile(filename, filetype){
 
 EOF;
   } // end of member function getInputForm
-//
+
 //  public function getBpartnerview($bpartner_id) {
 //	global $havewriteperm, $showOrganization, $isadmin;
 //        $mandatorysign="<b style='color:red'>*</b>";
@@ -1345,6 +1364,8 @@ EOF;
 	"currentsalescreditstatus","currentpurchasecreditstatus",
 
       	"terms_id","bankaccountname","bankname","bankaccountno",
+        "purchasepricelist_id","salespricelist_id",
+          
         "created","createdby","updated","updatedby");
 
 
@@ -1362,6 +1383,8 @@ EOF;
                                     "%f","%f",
 
                                     "%d","%s","%s","%s",
+                                    "%d","%d",
+        
                                     "%s","%d","%s","%d");
    $arrvalue=array(
         $this->bpartnergroup_id,$this->bpartner_no,$this->bpartner_name,$this->isactive,$this->seqno,
@@ -1377,6 +1400,7 @@ EOF;
 	$this->currentsalescreditstatus,$this->currentpurchasecreditstatus,
 
         $this->terms_id,$this->bankaccountname,$this->bankname,$this->bankaccountno,
+        $this->purchasepricelist_id,$this->salespricelist_id,
         $this->created,$this->createdby,$this->updated,$this->updatedby);
 
     return $save->UpdateRecord($tablename, "bpartner_id", $this->bpartner_id, $this->arrUpdateField, $arrvalue,  $this->arrUpdateFieldType,$this->bpartner_no);
@@ -1396,9 +1420,9 @@ EOF;
 	"currentsalescreditstatus","currentpurchasecreditstatus",
 
       	"terms_id","bankaccountname","bankname","bankaccountno",
+        "purchasepricelist_id","salespricelist_id",
+          
         "created","createdby","updated","updatedby");
-
-
 
       $this->arrInsertFieldType=array("%d","%s","%s","%d","%d",
                                     "%d","%d","%s","%s","%d",
@@ -1413,9 +1437,9 @@ EOF;
                                     "%f","%f",
 
                                     "%d","%s","%s","%s",
+                                    "%d","%d",
+          
                                     "%s","%d","%s","%d");
-
-
 
 
  $arrvalue=array($this->bpartnergroup_id,$this->bpartner_no,$this->bpartner_name,$this->isactive,$this->seqno,
@@ -1431,6 +1455,7 @@ EOF;
 	$this->currentsalescreditstatus,$this->currentpurchasecreditstatus,
 
         $this->terms_id,$this->bankaccountname,$this->bankname,$this->bankaccountno,
+        $this->purchasepricelist_id,$this->salespricelist_id,
         $timestamp,$this->updatedby,$timestamp,$this->updatedby);
 
   return $save->InsertRecord($tablename, $this->arrInsertField, $arrvalue, $this->arrInsertFieldType, $this->bpartner_name,"bpartner_id");
@@ -1446,7 +1471,7 @@ EOF;
    * @access public
    */
   public function fetchBpartnerData($bpartner_id) {
-        global $issimbiz;
+        global $issimbiz,$issales,$ispurchase;
 	$this->log->showLog(3,"Fetching bpartner detail into class BPartner.php.<br>");
 
         if($issimbiz==true)
@@ -1455,8 +1480,20 @@ EOF;
             $accsql="LEFT JOIN sim_simbiz_accounts ac1 on ac1.accounts_id=bp.debtoraccounts_id
                      LEFT JOIN sim_simbiz_accounts ac2 on ac2.accounts_id=bp.creditoraccounts_id";
             }
+            
+        if($issales==true)
+            {
+            $sales="sopl.pricelist_name as salespricelistname, ";
+            $salessql=" LEFT JOIN simerp_pricelist sopl on sopl.pricelist_id=bp.salespricelist_id ";
+            }
+            
+        if($ispurchase==true)
+            {
+            $purchase="popl.pricelist_name as purchasepricelistname, ";
+            $purchasesql=" LEFT JOIN simerp_pricelist popl on popl.pricelist_id=bp.purchasepricelist_id ";
+            }
 
-	 $sql="SELECT
+    $sql="SELECT
          bp.bpartner_id,bp.bpartnergroup_id,bp.bpartner_no,bp.bpartner_name,bp.isactive,bp.seqno,
 	 bp.organization_id,bp.employeecount,bp.alternatename,bp.companyno,bp.industry_id,
 
@@ -1469,19 +1506,23 @@ EOF;
 	 bp.enforcesalescreditlimit,bp.enforcepurchasecreditlimit,
 	 bp.currentsalescreditstatus,bp.currentpurchasecreditstatus,
 
-	 bp.currentbalance,
+	 bp.currentbalance,bp.salespricelist_id,bp.purchasepricelist_id,
 
          bp.terms_id,bp.bankaccountname,bp.bankname,bp.bankaccountno,
          bp.created,bp.createdby,bp.updated,bp.updatedby,
 
         cr.currency_code,
         cr.currency_name,
-          $acc
+        $acc
+        $sales
+        $purchase
         tm.terms_name,
         i.industry_name,
         bpg.bpartnergroup_name
 	from $this->tablebpartner bp
         $accsql
+        $salessql
+        $purchasesql
 	INNER JOIN $this->tablecurrency cr on bp.currency_id=cr.currency_id
 	LEFT JOIN $this->tableterms tm on tm.terms_id=bp.terms_id
 	INNER JOIN $this->tablebpartnergroup bpg on bpg.bpartnergroup_id=bp.bpartnergroup_id
@@ -1543,8 +1584,10 @@ EOF;
     $this->employee_id=$row['employee_id'];
     $this->employee_name=htmlentities($row['employee_name'], ENT_QUOTES);
     $this->employee_no=$row['employee_no'];
-    $this->pricelist_id=$row['pricelist_id'];
-    $this->pricelist_name=$row['pricelist_name'];
+    $this->purchasepricelist_id=$row['purchasepricelist_id'];
+    $this->purchasepricelistname=$row['purchasepricelistname'];
+    $this->salespricelist_id=$row['salespricelist_id'];
+    $this->salespricelistname=$row['salespricelistname'];
    	$this->log->showLog(4,"BPartner->fetchBPartner,database fetch into class successfully");
 	$this->log->showLog(4,"bpartner_name:$this->bpartner_name");
 
@@ -2847,6 +2890,13 @@ else{ //user dun have write permission, cannot save grid
       <td class="even">$this->tooltips</td>
     <td class="head">Website</td>
       <td class="even">$this->bpartner_url</td>
+   </tr>
+
+   <tr>
+    <td class="head">Sales Price List</td>
+    <td class="even">$this->salespricelistname</td>
+    <td class="head">AVL</td>
+    <td class="even">$this->purchasepricelistname</td>
    </tr>
 
    <tr>
