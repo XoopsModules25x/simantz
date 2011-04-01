@@ -14,14 +14,13 @@ class PHPJasperXML {
     private $groupno=0;
     private $footershowed=true;
     private $titleheight=0;
-    private $cndriver;
     public function PHPJasperXML($lang="en",$pdflib="FPDF") {
         $this->lang=$lang;
         $this->pdflib=$pdflib;
     }
 
     public function connect($db_host,$db_user,$db_pass,$db_or_dsn_name,$cndriver="mysql") {
-        $this->cndriver=$cndriver;
+
         if($cndriver=="mysql") {
 
             if(!$this->con) {
@@ -75,8 +74,7 @@ class PHPJasperXML {
         }
     }
 
-    public function disconnect() {
-        $cndriver=$this->cndriver;
+    public function disconnect($cndriver="mysql") {
         if($cndriver=="mysql") {
             if($this->con) {
                 if(@mysql_close()) {
@@ -116,9 +114,8 @@ class PHPJasperXML {
                     break;
                 case "group":
                     $this->group_handler($out);
-                    break;
-                case "subDataset":
-                    $this->subdataset_handler($out,$xml['name']);
+
+
                     break;
                 case "background":
                     $this->pointer=&$this->arraybackground;
@@ -162,7 +159,6 @@ class PHPJasperXML {
         $this->arrayPageSetting["bottomMargin"]=$xml_path["bottomMargin"];
     }
 
-
     public function parameter_handler($xml_path) {
         $this->arrayParameter[$xml_path["name"]];
     }
@@ -185,7 +181,6 @@ class PHPJasperXML {
         $this->arrayVariable["$xml_path[name]"]=array("calculation"=>$xml_path["calculation"],"target"=>substr($xml_path->variableExpression,3,-1),"class"=>$xml_path["class"] , "resetType"=>$xml_path["resetType"]);
 
     }
-
 
     public function group_handler($xml_path) {
 
@@ -255,16 +250,6 @@ class PHPJasperXML {
                 case "textField":
                     $this->element_textField($out);
                     break;
-                case "pieChart":
-                    $this->element_pieChart($out);
-                    break;
-                case "pie3DChart":
-                    $this->element_pie3DChart($out);
-                    break;
-                case "lineChart":
-                    $this->element_lineChart($out);
-                    break;
-                
                 case "subreport":
                     $this->element_subReport($out);
                     break;
@@ -273,497 +258,6 @@ class PHPJasperXML {
             }
         };
     }
-
-
-    
-    public function subdataset_handler($xml_path,$name){
-
-          foreach($xml_path as $tag=>$out) {
-              
-                    switch ($tag) {
-                           case "parameter":
-                            $this->arraysubdataset["$xml_path[name]"]['parameter'][]=$out['name'];
-                            break;
-                         case "field":
-                            $this->arraysubdataset["$xml_path[name]"]['field'][]=$out['name'];
-                            break;
-                         case "group":
-                            $this->arraysubdataset["$xml_path[name]"]['group'][]=$out['name'];
-                            break;
-                            case "queryString":
-                           $this->arraysubdataset["$xml_path[name]"]['sql']=$out;
-                               
-                            break;
-                            default:
-                            break;
-                    }
-          }
-
-
-    }
-
-   public function element_pieChart($data){
-
-          $height=$data->chart->reportElement["height"];
-          $width=$data->chart->reportElement["width"];
-         $x=$data->chart->reportElement["x"];
-         $y=$data->chart->reportElement["y"];
-          $charttitle['position']=$data->chart->chartTitle['position'];
-
-           $charttitle['text']=$data->chart->chartTitle->titleExpression;
-          $chartsubtitle['text']=$data->chart->chartSubTitle->subtitleExpression;
-          $chartLegendPos=$data->chart->chartLegend['position'];
-
-          $dataset=$data->pieDataset->dataset->datasetRun['subDataset'];
-
-          $seriesexp=$data->pieDataset->keyExpression;
-          $valueexp=$data->pieDataset->valueExpression;
-          $bb=$data->pieDataset->dataset->datasetRun['subDataset'];
-          $sql=$this->arraysubdataset["$bb"]['sql'];
-          
-         // $ylabel=$data->linePlot->valueAxisLabelExpression;
-
-
-          $param=array();
-          foreach($data->categoryDataset->dataset->datasetRun->datasetParameter as $tag=>$value){
-              $param[]=  array("$value[name]"=>$value->datasetParameterExpression);
-          }
-//          print_r($param);
-
-         $this->pointer[]=array('type'=>'PieChart','x'=>$x,'y'=>$y,'height'=>$height,'width'=>$width,'charttitle'=>$charttitle,
-            'chartsubtitle'=> $chartsubtitle,
-               'chartLegendPos'=> $chartLegendPos,'dataset'=>$dataset,'seriesexp'=>$seriesexp,
-            'valueexp'=>$valueexp,'param'=>$param,'sql'=>$sql,'ylabel'=>$ylabel);
-
-    }
-    public function element_pie3DChart($data){
-
-
-    }
-
-    public function element_lineChart($data){
-        
-          $height=$data->chart->reportElement["height"];
-          $width=$data->chart->reportElement["width"];
-         $x=$data->chart->reportElement["x"];
-         $y=$data->chart->reportElement["y"];
-          $charttitle['position']=$data->chart->chartTitle['position'];
-   
-           $charttitle['text']=$data->chart->chartTitle->titleExpression;
-          $chartsubtitle['text']=$data->chart->chartSubTitle->subtitleExpression;
-          $chartLegendPos=$data->chart->chartLegend['position'];
-          $dataset=$data->categoryDataset->dataset->datasetRun['subDataset'];
-          $seriesexp=$data->categoryDataset->categorySeries->seriesExpression;
-          $catexp=$data->categoryDataset->categorySeries->categoryExpression;
-          $valueexp=$data->categoryDataset->categorySeries->valueExpression;
-          $bb=$data->categoryDataset->dataset->datasetRun['subDataset'];
-          $sql=$this->arraysubdataset["$bb"]['sql'];
-          $ylabel=$data->linePlot->valueAxisLabelExpression;
-         
-         
-          $param=array();
-          foreach($data->categoryDataset->dataset->datasetRun->datasetParameter as $tag=>$value){              
-              $param[]=  array("$value[name]"=>$value->datasetParameterExpression);
-          }
-//          print_r($param);
-
-         $this->pointer[]=array('type'=>'LineChart','x'=>$x,'y'=>$y,'height'=>$height,'width'=>$width,'charttitle'=>$charttitle,
-            'chartsubtitle'=> $chartsubtitle,
-               'chartLegendPos'=> $chartLegendPos,'dataset'=>$dataset,'seriesexp'=>$seriesexp,
-             'catexp'=>$catexp,'valueexp'=>$valueexp,'param'=>$param,'sql'=>$sql,'ylabel'=>$ylabel);
-  
-    }
-
-public function setChartColor(){
- 
-    $k=0;
-$this->chart->setColorPalette($k,100,200,200);$k++;
-$this->chart->setColorPalette($k,0,0,255);$k++;
-$this->chart->setColorPalette($k,100,0,50);$k++;
-$this->chart->setColorPalette($k,255,0,0);$k++;
-$this->chart->setColorPalette($k,0,0,100);$k++;
-$this->chart->setColorPalette($k,200,0,100);$k++;
-$this->chart->setColorPalette($k,0,100,0);$k++;
-$this->chart->setColorPalette($k,100,0,0);$k++;
-$this->chart->setColorPalette($k,200,0,0);$k++;
-$this->chart->setColorPalette($k,0,0,200);$k++;
-$this->chart->setColorPalette($k,50,0,0);$k++;
-$this->chart->setColorPalette($k,100,0,50);$k++;
-$this->chart->setColorPalette($k,0,50,0);$k++;
-$this->chart->setColorPalette($k,100,50,0);$k++;
-$this->chart->setColorPalette($k,50,100,50);$k++;
-$this->chart->setColorPalette($k,0,255,0);$k++;
-$this->chart->setColorPalette($k,100,50,0);$k++;
-$this->chart->setColorPalette($k,200,100,50);$k++;
-$this->chart->setColorPalette($k,100,50,200);$k++;
-$this->chart->setColorPalette($k,0,200,0);$k++;
-$this->chart->setColorPalette($k,200,100,0);$k++;
-$this->chart->setColorPalette($k,200,50,50);$k++;
-$this->chart->setColorPalette($k,50,50,50);$k++;
-$this->chart->setColorPalette($k,200,100,100);$k++;
-$this->chart->setColorPalette($k,50,50,100);$k++;
-$this->chart->setColorPalette($k,100,0,200);$k++;
-$this->chart->setColorPalette($k,200,50,100);$k++;
-$this->chart->setColorPalette($k,100,100,200);$k++;
-$this->chart->setColorPalette($k,0,0,50);$k++;
-$this->chart->setColorPalette($k,50,250,200);$k++;
-$this->chart->setColorPalette($k,100,250,200);$k++;
-$this->chart->setColorPalette($k,10,10,10);$k++;
-$this->chart->setColorPalette($k,20,30,50);$k++;
-$this->chart->setColorPalette($k,80,150,200);$k++;
-$this->chart->setColorPalette($k,30,70,20);$k++;
-$this->chart->setColorPalette($k,33,60,0);$k++;
-$this->chart->setColorPalette($k,150,0,200);$k++;
-$this->chart->setColorPalette($k,20,60,50);$k++;
-$this->chart->setColorPalette($k,50,250,250);$k++;
-$this->chart->setColorPalette($k,33,250,70);$k++;
-
-}
-
-
-public function showPieChart($data,$y_axis){
- 
-
-    global $tmpchartfolder,$pchartfolder;
-
-    if($tmpchartfolder=="")
-        $tmpchartfolder="/tmp";
-
-    if($pchartfolder=="")
-        $pchartfolder=__dir__."/pchart/";
-    include $pchartfolder."/pChart/pData.class";
-    include $pchartfolder."/pChart/pChart.class";
-     $w=$data['width']+0;
-     $h=$data['height']+0;
-
-     $pchartfolder."/pChart/pData.class";
-    // $h=400;
-     $graphareax1=$w/10;
-     $graphareay1=20;
-     $graphareax2=$w-$w/10 -5;
-     $graphareay2=$h-30;
-
-     $Title=$data['charttitle']['text'];
-     $legendpos=$data['chartLegendPos'];
-     $legendpos="Right";
-     $seriesexp=$data['seriesexp'];
-     $catexp=$data['catexp'];
-     $valueexp=$data['valueexp'];
-     $legendx=0;
-     $legendy=0;
-     
-      switch($legendpos){
-             case "Top":
-                   $legendx=0;
-                 $legendy=0;
-                 break;
-             case "Left":
-                   $legendx=20;
-                 $legendy=20;
-                 break;
-             case "Right":
-                   $legendx=$graphareax2 +5;
-                 $legendy=20;
-                 break;
-             case "Bottom":
-                   $legendx=20;
-                 $legendy=$h-20;
-                 break;
-             default:
-                 $legendx=0;
-                 $legendy=0;
-                 break;
-
-         }
-
-   
-    $DataSet = new pData();
-
-    $sql=$data['sql'];
-//     $sql="SELECT
-//     digi_cso.`contractType` AS digi_cso_contractType,
-//    count( digi_cso.`cso_id`) AS digi
-//FROM
-//     `digi_cso` digi_cso
-//group by    digi_cso.`contractType`";
-    $param=$data['param'];
-    foreach($param as $p)
-        foreach($p as $tag =>$value)
-            $sql=str_replace('$P{'.$tag.'}',$value, $sql);
-//
-//
-    
-    $sql=$this->changeSubDataSetSql($sql);
-
-
-     $result = @mysql_query($sql); //query from db
-     $chartdata=array();
-            $i=0;
-
-            while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-                $j=0;
-                foreach($row as $key => $value){
-                    $chartdata[$j][$i]=$value;
-                    $j++;
-                }
-            $i++;
-
-            }
-
-            //loop and generate series
-            $series=$chartdata;//array();
-
-//            for($c=0;$c<$j;$c++){
-//                    for($r=0;$r<$i;$r++){
-//                        $series[$c]=$chartdata[$c][$r];
-//                    }
-//            }
-
-            $n=0;
-             $this->chart = new pChart($w,$h);
-             $this->setChartColor();
-            foreach($series as $s){
-
-
-            $DataSet->AddPoint($s,'S'.$n);
-            if($n>0){
-             $DataSet->AddSerie('S'.$n);
-             $DataSet->SetSerieName('S'.$n,"Serie".$n);
-            }
-
-            $n++;
-            }
-
-
-//            	 $DataSet->SetAbsciseLabelSerie("S0");
-//                  $DataSet->SetYAxisName("ASD");
-//                     $DataSet->SetSerieName('S0',"Serie0");
-//                     $DataSet->SetSerieName('S1',"Serie1");
-//                     $DataSet->SetSerieName('S2',"Serie2");
-            	 $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8);
- //	 $this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
-
-	// $this->chart->drawFilledRoundedRectangle(7,7,$chartwidth-7,$chartheight-7,5,240,240,240);
-	// $this->chart->drawRoundedRectangle($graphareax,$graphareay,$graphareax+$graphareaw,$graphareay+$graphareah,5,0,0,0);
-//	 $this->chart->drawGraphArea(255,255,255,TRUE);
-
-
-//	 $this->chart->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(), SCALE_NORMAL,150,150,150,TRUE,0,2,TRUE);
-
-//	 $this->chart->drawGrid(4,TRUE,230,230,230,50);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",10,"Bold");
-	  $Title =$data['charttitle']['text'];
-
-
-	 $this->chart->drawTextBox(0,0,$graphareax2-$graphareax1,20,$Title,0,0,0,0,ALIGN_CENTER,false,0,0,0,255);
-         $this->chart->drawTreshold(0,143,55,72,TRUE,TRUE);
-//  $this->chart->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),60,FALSE);
-	 $this->chart->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());
-	 $this->chart->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,254,254,254);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",7);
-
-
-	 $this->chart->drawLegend($legendx,$legendy,$DataSet->GetDataDescription(),254,254,254);
-
-// // Render the chart
-         $randomchartno=rand();
-	  $photofile="$tmpchartfolder/chart$randomchartno.png";
-	  //$photofile="/Users/kstan/Public/chart$randomchartno.png";
-
-             $this->chart->Render($photofile);
-                $this->pdf->Image($photofile,$x+$this->arrayPageSetting["leftMargin"],$y_axis,$w,$h,"PNG");
-//   $this->chart->Stroke();
-
-//    $this->chart->Stroke($photofile);
-
-
-     //$query=$xoopsDB->query($sql);
-
-
-//    system("echo $a>$chartfolder/s");
-
-
-}
-
-
-public function showLineChart($data,$y_axis){
-    global $tmpchartfolder,$pchartfolder;
-
-    if($tmpchartfolder=="")
-        $tmpchartfolder="/tmp";
-    
-    if($pchartfolder=="")
-        $pchartfolder=__dir__."/pchart/";
-    include $pchartfolder."/pChart/pData.class";
-    include $pchartfolder."/pChart/pChart.class";
-     $w=$data['width']+0;
-     $h=$data['height']+0;
-
-    // $h=400;
-     $graphareax1=$w/10;
-     $graphareay1=20;
-     $graphareax2=$w-$w/10 -5;
-     $graphareay2=$h-30;
-
-     $Title=$data['charttitle']['text'];
-     $legendpos=$data['chartLegendPos'];
-     $legendpos="Right";
-     $seriesexp=$data['seriesexp'];
-     $catexp=$data['catexp'];
-     $valueexp=$data['valueexp'];
-     $ylabel=$data['ylabel'];
-     $legendx=0;
-     $legendy=0;
-      switch($legendpos){
-             case "Top":
-                   $legendx=0;
-                 $legendy=0;
-                 break;
-             case "Left":
-                   $legendx=20;
-                 $legendy=20;
-                 break;
-             case "Right":
-                   $legendx=$graphareax2 +5;
-                 $legendy=20;
-                 break;
-             case "Bottom":
-                   $legendx=20;
-                 $legendy=$h-20;
-                 break;
-             default:
-                 $legendx=0;
-                 $legendy=0;
-                 break;
-
-         }
-   
-  
-    $DataSet = new pData();
-   
-    $sql=$data['sql'];
-//     $sql="SELECT
-//     digi_cso.`contractType` AS digi_cso_contractType,
-//    count( digi_cso.`cso_id`) AS digi
-//FROM
-//     `digi_cso` digi_cso
-//group by    digi_cso.`contractType`";
-    $param=$data['param'];
-    foreach($param as $p)
-        foreach($p as $tag =>$value)
-            $sql=str_replace('$P{'.$tag.'}',$value, $sql);
-//
-//
-    $sql=$this->changeSubDataSetSql($sql);
-
-
-     $result = @mysql_query($sql); //query from db
-     $chartdata=array();
-            $i=0;
-            
-            while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-                $j=0;
-                foreach($row as $key => $value){
-                    $chartdata[$j][$i]=$value;
-                    $j++;
-                }
-            $i++;
-
-            }
-
-            //loop and generate series
-            $series=$chartdata;//array();
-
-//            for($c=0;$c<$j;$c++){
-//                    for($r=0;$r<$i;$r++){
-//                        $series[$c]=$chartdata[$c][$r];
-//                    }
-//            }
-
-            $n=0;
-             $this->chart = new pChart($w,$h);
-             $this->setChartColor();
-            foreach($series as $s){
-
-            
-            $DataSet->AddPoint($s,'S'.$n);
-        //    if($n>0){
-             $DataSet->AddSerie('S'.$n);
-             $DataSet->SetSerieName('S'.$n,"Serie".$n);
-          //  }
-
-            $n++;
-            }
-
-            $DataSet->SetYAxisName($ylabel);
-            	 $DataSet->SetAbsciseLabelSerie("S0");
-//                  $DataSet->SetYAxisName("ASD");
-//                     $DataSet->SetSerieName('S0',"Serie0");
-//                     $DataSet->SetSerieName('S1',"Serie1");
-//                     $DataSet->SetSerieName('S2',"Serie2");
-            
-            	 $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8);
- 	 $this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
-
-	// $this->chart->drawFilledRoundedRectangle(7,7,$chartwidth-7,$chartheight-7,5,240,240,240);
-	// $this->chart->drawRoundedRectangle($graphareax,$graphareay,$graphareax+$graphareaw,$graphareay+$graphareah,5,0,0,0);
-	 $this->chart->drawGraphArea(255,255,255,TRUE);
-
-
-	 $this->chart->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(), SCALE_NORMAL,150,150,150,TRUE,0,2,TRUE);
-//print_r($DataSet->GetData());echo "<br/>";
-//print_r($DataSet->GetDataDescription());
-//         echo 1;die;
-
-	 //$this->chart->drawGrid(4,TRUE,230,230,230,50);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",10,"Bold");
-	  $Title =$data['charttitle']['text'];
-
-          
-	 $this->chart->drawTextBox(0,0,$graphareax2-$graphareax1,20,$Title,0,0,0,0,ALIGN_CENTER,false,0,0,0,255);
-         $this->chart->drawTreshold(0,143,55,72,TRUE,TRUE);
-         
-//  $this->chart->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),60,FALSE);
-	 $this->chart->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());
-	 $this->chart->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,254,254,254);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",7);
-    
-
-	 $this->chart->drawLegend($legendx,$legendy,$DataSet->GetDataDescription(),254,254,254);
-         
-// // Render the chart
-         $randomchartno=rand();
-	  $photofile="$tmpchartfolder/chart$randomchartno.png";
-	  //$photofile="/Users/kstan/Public/chart$randomchartno.png";
-         
-             $this->chart->Render($photofile);
-                $this->pdf->Image($photofile,$x+$this->arrayPageSetting["leftMargin"],$y_axis,$w,$h,"PNG");
-                unlink($photofile);
-//   $this->chart->Stroke();
-
-//    $this->chart->Stroke($photofile);
-
-
-     //$query=$xoopsDB->query($sql);
-    
-
-//    system("echo $a>$chartfolder/s");
-
-
-}
-
-private function changeSubDataSetSql($sql){
-foreach($this->currentrow as $name =>$value)
-        $sql=str_replace('$F{'.$name.'}',$value,$sql);
-foreach($this->arrayparameter as $name=>$value)
-    $sql=str_replace('$P{'.$name.'}',$value,$sql);
-//variable not yet implemented
-     return $sql;
-
-
-}
 
     public function element_staticText($data) {
         $align="L";
@@ -978,7 +472,6 @@ foreach($this->arrayparameter as $name=>$value)
                 $this->pointer[]=array("type"=>"MultiCell","width"=>$data->reportElement["width"],"height"=>$height,"txt"=>&$this->group_count,"border"=>$border,"align"=>$align,"fill"=>$fill,"hidden_type"=>"group_count","soverflow"=>$stretchoverflow,"poverflow"=>$printoverflow,"link"=>substr($data->hyperlinkReferenceExpression,1,-1),"pattern"=>$data["pattern"]);
                 break;
             default:
-                $isPrintRepeatedValues="";
                 $writeHTML=false;
                 if($data->reportElement->property["name"]=="writeHTML")
                     $writeHTML=$data->reportElement->property["value"];
@@ -1011,9 +504,7 @@ foreach($this->arrayparameter as $name=>$value)
 
     public function transferDBtoArray($host,$user,$password,$db_or_dsn_name,$cndriver="mysql") {
         $this->m=0;
-        
-        $this->cndriver=$cndriver;
-        
+
         if(!$this->connect($host,$user,$password,$db_or_dsn_name,$cndriver))	//connect database
         {
             echo "Fail to connect database";
@@ -1056,6 +547,7 @@ foreach($this->arrayparameter as $name=>$value)
             }
         }
 
+        $this->disconnect($cndriver);	//close connection to db
       
     }
 
@@ -1162,10 +654,12 @@ foreach($this->arrayparameter as $name=>$value)
 
 
       public function variable_calculation($rowno) {
+//   $this->variable_calculation($rownum, $this->arraysqltable[$this->global_pointer][$this->group_pointer]);
+     //   print_r($this->arraysqltable);
        
             
         foreach($this->arrayVariable as $k=>$out) {
-
+         //   echo $out['resetType']. "<br/><br/>";
             switch($out["calculation"]) {
                 case "Sum":
                 
@@ -1344,9 +838,6 @@ foreach($this->arrayparameter as $name=>$value)
 
         }
 
-           
-
-     $this->disconnect();	//close connection to db
         if($filename=="")
             $filename=$this->arrayPageSetting["name"].".pdf";
         return $this->pdf->Output($filename,$out_method);	//send out the complete page
@@ -1412,7 +903,7 @@ foreach($this->arrayparameter as $name=>$value)
             
             $this->titleheight=$this->arraytitle[0]["height"];
             
-            
+            //print_r($this->arraytitle);die;
         if(isset($this->arraytitle)) {
             $this->arraytitle[0]["y_axis"]=$this->arrayPageSetting["topMargin"];
         }
@@ -1438,7 +929,7 @@ foreach($this->arrayparameter as $name=>$value)
 
             $this->titlesummary=$this->arraysummary[0]["height"];
 
-            
+            //print_r($this->arraytitle);die;
      
         foreach ($this->arraysummary as $out) {
 
@@ -1477,7 +968,7 @@ foreach($this->arrayparameter as $name=>$value)
                 switch($name) {
                     case "groupHeader":
                         $this->group_count=0;
-                        foreach($out as $path) { 
+                        foreach($out as $path) { //print_r($out);
                             switch($path["hidden_type"]) {
                                 case "field":
 
@@ -1646,14 +1137,11 @@ foreach($this->arrayparameter as $name=>$value)
         $tempY=$this->arraydetail[0]["y_axis"];
         $this->showGroupHeader($this->arrayPageSetting["topMargin"]+$this->arraypageHeader[0]["height"]);
         $rownum=0;
-
         if($this->arraysqltable) {
      
 
 
             foreach($this->arraysqltable as $row) {
-                $this->currentrow=$row;
-            
 if(isset($this->arrayVariable))	//if self define variable existing, go to do the calculation
                 {
                     $this->variable_calculation($rownum, $this->arraysqltable[$this->global_pointer][$this->group_pointer]);
@@ -2028,7 +1516,8 @@ if(isset($this->arraygroup)&&($this->global_pointer>0)&&($this->arraysqltable[$t
 
 
     public function display($arraydata,$y_axis=0,$fielddata=false) {
-  
+  //print_r($arraydata);echo "<br/>";
+    //    $this->pdf->Cell(10,10,"SSSS");
     $this->Rotate($arraydata["rotation"]);
     if($arraydata["rotation"]!=""){
        
@@ -2081,18 +1570,6 @@ if(isset($this->arraygroup)&&($this->global_pointer>0)&&($this->arraysqltable[$t
                 
                 $this->checkoverflow($arraydata,$this->updatePageNo($this->analyse_expression($arraydata["txt"],$arraydata["isPrintRepeatedValues"] )));
             }
-        }
-        elseif($arraydata["type"]=="LineChart"){
-            //echo "Line chart!!";
-            $this->showLineChart($arraydata,$arraydata["y"]+$y_axis);
-//            print_r($arraydata);die;
-
-        }
-                elseif($arraydata["type"]=="PieChart"){
-            //echo "Line chart!!";
-            $this->showPieChart($arraydata,$arraydata["y"]+$y_axis);
-//            print_r($arraydata);die;
-
         }
         elseif($arraydata["type"]=="SetXY") {
             
@@ -2415,6 +1892,5 @@ private function Rotate($type, $x=-1, $y=-1)
         $this->pdf->_out(sprintf('q %.5f %.5f %.5f %.5f %.2f %.2f cm 1 0 0 1 %.2f %.2f cm', $c, $s, -$s, $c, $cx, $cy, -$cx, -$cy));
     }
 }
-
 
 }
