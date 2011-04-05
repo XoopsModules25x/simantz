@@ -581,13 +581,15 @@ class EBASaveHandler
 				$EBASearchField = " ".$this->FieldsSet[$index] ."=\"";
 			}
 
-			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->InsertRecords[$RecordNumber]);
+			 $EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->InsertRecords[$RecordNumber]);
+
 			$EBANextPos = strpos($EBAUpdateGramTemp, $EBASearchField);
 
 			if ($EBANextPos > 0)
 			{
 				$EBAUpdateGramTemp = EBAright($EBAUpdateGramTemp, strlen($EBAUpdateGramTemp) - $EBANextPos - strlen($EBASearchField));
 				$EBANextPos = strpos($EBAUpdateGramTemp, "\"");
+                                $a = $EBAUpdateGramTemp;
 				$EBAUpdateGramTemp = EBAleft($EBAUpdateGramTemp,$EBANextPos);
 				$EBAResultValue = $EBAUpdateGramTemp;
 			}
