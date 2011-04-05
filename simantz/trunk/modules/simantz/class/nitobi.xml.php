@@ -581,7 +581,7 @@ class EBASaveHandler
 				$EBASearchField = " ".$this->FieldsSet[$index] ."=\"";
 			}
 
-			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->InsertRecords[$RecordNumber] - $RecordNumber);
+			$EBAUpdateGramTemp = EBAright($postData, strlen($postData) - $this->InsertRecords[$RecordNumber]);
 			$EBANextPos = strpos($EBAUpdateGramTemp, $EBASearchField);
 
 			if ($EBANextPos > 0)
