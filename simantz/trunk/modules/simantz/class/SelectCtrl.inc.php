@@ -270,6 +270,29 @@ public function getSelectRaces($id,$showNull='N',$wherestr='') {
 
 	return $selectctl;
   }
+  
+public function getSelectDialect($id,$showNull='N',$wherestr='') {
+
+	$sql=sprintf("SELECT dialect_id,dialect_name from sim_dialect where (dialect_id= '%d' OR isactive = 1) and dialect_id > 0 $wherestr
+		order by seqno asc, dialect_name ASC",$id);
+
+	if ($showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$dialect_id=$row['dialect_id'];
+		$dialect_name=$row['dialect_name'];
+		if($id==$dialect_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$dialect_id' $selected>$dialect_name</OPTION>";
+	}
+
+	return $selectctl;
+  }
 
 public function getSelectReligion($id,$showNull='N',$wherestr='') {
 
