@@ -78,6 +78,8 @@ public function viewInputForm(){
           $startdate=date("Y-m-",time())."01";
      $enddate=date("Y-m-d",time());
  $html =<<< HTML
+<div id="idApprovalWindows" style="display:none"></div>
+<div id='blanket' style='display:none;'></div>
 
     <br/>
     
@@ -139,8 +141,10 @@ public function viewInputForm(){
         <input name='save' onclick='reactivateQuotation()' type='submit' id='submit' value='Re-activate'>
           <input type="button" value="Reload" onclick=javascript:reloadQuotation()>
             <input type="button" value="Preview" onclick=javascript:previewQuotation()>
+            <input type="button" value="Duplicate" onclick=javascript:duplicateQuotation()>
         <input name='quotation_id' id='quotation_id'  value='$this->quotation_id'  title='quotation_id' type='hidden'>
         <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
+
             </td>
 </td></tr>
 <tr><td colspan='5'>
@@ -247,7 +251,14 @@ else
  $selectquotestatus_s="";
     }
     $html =<<< HTML
-    <div id="idApprovalWindows" style="display:none"></div>
+
+<div id="idApprovalWindows" style="display:none"></div>
+<div id='blanket' style='display:none;'></div>
+
+
+
+
+    
     <br/>
     <div id='centercontainer'>
     <div align="center" >
@@ -393,7 +404,7 @@ public function getGrid($quotation_id=0){
 <ntb:columns>    
         <ntb:numbercolumn classname="{\$rh}" xdatafld="seqno" sortenabled="false" visible="false"></ntb:numbercolumn>
         <ntb:textcolumn classname="{\$rh}" width="170px" label="Subject"  xdatafld="subject" sortenabled="false" $editable></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" width="190px" label="Description"  xdatafld="description" sortenabled="false" $editable maxlength="1000">
+        <ntb:textcolumn classname="{\$rh}" width="190px" label="Description"  xdatafld="description" sortenabled="false" $editable>
                         <ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
         <ntb:numbercolumn classname="{\$rh}" label="U.Price" mask="#0.00" width="50" $editable xdatafld="uprice" sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)">
                         </ntb:numbercolumn>
@@ -1080,7 +1091,7 @@ public function fetchQuotation($quotation_id){
     if($save->InsertRecord($this->tablename,   $arrInsertField,
             $arrvalue,$arrInsertFieldType,$this->spquotation_prefix.$this->document_no,"quotation_id")){
             $this->quotation_id=$save->latestid;
-            return true;
+            return $this->quotation_id;
             }
     else
             return false;
@@ -1912,6 +1923,25 @@ global $defaultcurrency_id,$url;
                 window.open("view$this->quotationfilename?quotation_id="+document.getElementById("quotation_id").value)
 
         }
+
+          function duplicateQuotation(){
+            popup('popUpDiv');
+          var quotation_id=document.getElementById("quotation_id").value;
+            
+           var data="action=duplicate&quotation_id="+quotation_id;
+            $.ajax({
+                        url: "$this->quotationfilename",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                             if(xml != "")
+                             jsonObj = eval( '(' + xml + ')');
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+
+                            document.getElementById('idApprovalWindows').style.display = "";
+                              popup('popUpDiv');
+                }
+          });
+          }
+
         function savedone(even){
           var  grid = nitobi.getGrid('quotationgrid');
           grid.getDataSource().setGetHandlerParameter('quotation_id',document.getElementById("quotation_id").value);
@@ -1977,4 +2007,93 @@ JS;
     $this->searchctrl='<form action="'.$this->quotationfilename.'?action=search" ><input type="hidden" name="action" value="search"><input type="submit" value="Search"></form>';
   }
 
+  public function duplicateQuotation(){
+  $oldqid=$this->quotation_id;
+    $query=$this->xoopsDB->query("SELECT * FROM  sim_bpartner_quotation q where q.quotation_id=$this->quotation_id");
+    while($row=$this->xoopsDB->fetchArray($query)){
+
+    $this->document_no=$this->getNextNo();
+   $this->organization_id=$row['organization_id'];
+   $this->documenttype=$row['documenttype'];
+   $this->document_date=date("Y-m-d",time());
+   $this->currency_id=$row['currency_id'];
+   $this->exchangerate=$row['exchangerate'];
+   $this->subtotal=$row['subtotal'];
+  
+   $this->itemqty=$row['itemqty'];
+   $this->ref_no=$row['ref_no'];
+   $this->description=$row['description'];
+   $this->bpartner_id=$row['bpartner_id'];
+   $this->spquotation_prefix=$row['spquotation_prefix'];
+   $this->issotrx=$row['issotrx'];
+   $this->terms_id=$row['terms_id'];
+   $this->contacts_id=$row['contacts_id'];
+   $this->preparedbyuid=$row['preparedbyuid'];
+   $this->salesagentname=$row['salesagentname'];
+   $this->isprinted=$row['isprinted'];
+   $this->localamt=$row['localamt'];
+   $this->address_text=$row['address_text'];
+   $this->address_id=$row['address_id'];
+   $this->note=$row['note'];
+        $this->quotation_title=$row['quotation_title'];
+        $this->quotation_status=$row['quotation_status'];
+            $this->iscomplete=0;
+       $qid= $this->insertQuotation();
+       $this->log->showLog(2,"Generated quotation id: $qid");
+
+    include_once "../simantz/class/Save_Data.inc.php";
+    $save = new Save_Data();
+       if($qid>0){
+           global  $timestamp,$createdby;
+           $sqlline="SELECT * FROM  sim_bpartner_quotationline q where q.quotation_id=$oldqid";
+                  $this->log->showLog(4,"Generated quotationline SQL: $sqlline");
+
+            $queryline=$this->xoopsDB->query($sqlline);
+
+                  $arrInsertField=array(
+                "seqno","subject","description","uprice","qty","uom",
+                "amt", "quotation_id", "created","createdby","updated","updatedby");
+
+                  $arrInsertFieldType=array(
+                "%d", "%s", "%s",  "%f","%f","%s",
+
+                  "%f","%d","%s","%d","%s","%d");
+                $this->log->showLog(2,"before insert quotationline");
+            while($row=$this->xoopsDB->fetchArray($queryline)){
+  
+                 $arrvalue=array(
+                     $row["seqno"],
+                     $row["subject"],
+                     $row["description"],
+                     $row["uprice"],
+                     $row["qty"],
+                     $row["uom"],
+                     $row["amt"],
+                    $qid,
+                            $timestamp,
+                            $createdby,
+                            $timestamp,
+                            $createdby);
+         $controlvalue=$row["subject"];
+                           
+       $this->log->showLog(2,"before insert quotationline");
+
+         $save->InsertRecord("sim_bpartner_quotationline", $arrInsertField, $arrvalue, $arrInsertFieldType,$controlvalue,"quotationline_id");
+
+      // Now we execute this query
+     
+                }
+
+
+
+
+
+           
+       }
+       return array($qid,$this->spquotation_prefix.$this->document_no);
+    }
+    return array(0,"");
+    
+ //sim_bpartner_quotationline
+  }
 }

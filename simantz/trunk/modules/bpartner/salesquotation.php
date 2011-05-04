@@ -257,7 +257,33 @@ break;
 case "getsavetempwindow":
    $o->GetSaveTempWindow();
    exit;
+
 break;
+case "duplicate":
+        $o->quotation_id=$_POST['quotation_id'];
+    if(  $o->quotation_id>0){
+     $result=$o->duplicateQuotation();
+     $qid=$result[0];
+     $qno=$result[1];
+     if($result[0]>0){
+      $msg = "Record duplicated successfully, new quotation is: <a href='salesquotation.php?action=edit&quotation_id=$qid'>$qno</a>";
+       $status=1;
+     }
+     else{
+        $msg = "cannot duplicate this quotation due to sql error";
+          $status=0;
+
+     }
+    }
+    else{
+       $msg = "Cannot duplicate quotation id=0";
+       $status=0;
+    }
+       
+            $arr = array("msg"=>$msg,"status"=>$status);
+            echo json_encode($arr);
+    exit;
+       break;
 
     default:
 
