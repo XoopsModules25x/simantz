@@ -24,4 +24,4 @@ $uploadviewpath=XOOPS_URL."/modules/simantz/upload/";
 $mandatorysign="<b style='color:red;'>*</b>";
 $enforcemanager=1;
 $alertmsg="";
-$version="E";
+$version="";
