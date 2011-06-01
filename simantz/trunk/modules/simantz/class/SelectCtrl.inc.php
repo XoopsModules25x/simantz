@@ -83,9 +83,58 @@ public function selectionOrg($uid,$id,$showNull='N',$onchangefunction="",$ishide
 		$errmsg="<b style='color:red'><small><small><small>
 			Warning! No organization found! Please follow step by step to create new organization.</small></small></small></b>";
 	return $selectctl . $errmsg;
+  }
+
+  
+  public function getSelectionOrg($uid,$id,$showNull='N' , $onchangefunction="",$ishide='N'){
+        global $tablegroups_users_link,$tableorganization ;
+        //location.href='index.php?switchorg=Y&defaultorganization_id='+this.value
+        $class_name = "class ='selectfield1' ";
+
+	$this->log->showLog(3,"Retrieve available organization (select organization_id: $id) to employee_id : $uid, ishide=$ishide");
+	$sql="SELECT distinct(organization_id) as organization_id,organization_code from $tableorganization o
+		INNER JOIN  $tablegroups_users_link ug on o.groupid=ug.groupid where o.organization_id>0 and isactive=1";
+
+	$this->log->showLog(3,"Wtih SQL: $sql");
+	$selectctl="";
+	if ($showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null</OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	$i=0;
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$organization_id=$row['organization_id'];
+		$organization_code=$row['organization_code'];
+
+		if($id==$organization_id){
+			$selected='SELECTED="SELECTED"';
+
+			$selectedcode=$organization_code;
+			if($ishide=="Y")
+				return "<input readonly='readonly' name='organization_code' value='$selectedcode'>
+					<input  type='hidden' name='organization_id' value='$id'>";
+		}
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$organization_id' $selected>$organization_code</OPTION>";
+		$i++;
+	}
+
+
+	if($ishide=="Y")
+	return "<input readonly='readonly' name='organization_code' value='$selectedcode/$id'>";
+
+	$selectctl=$selectctl . "<input type='hidden' name='organization_code' value='$selectedcode'>";
+	$errmsg="";
+	if($i==0)
+		$errmsg="<b style='color:red'><small><small><small>
+			Warning! No organization found! Please follow step by step to create new organization.</small></small></small></b>";
+	return $selectctl . $errmsg;
 
 
   }
+
 
 public function selectionOrganization($uid,$id,$showNull='N',$onchangefunction="location.href='index.php?switchorg=Y&defaultorganization_id='+this.value",$ishide='N'){
         global $tablegroups_users_link,$tableorganization ;
