@@ -91,7 +91,7 @@ class Organization
    * @access public
    */
   public function getInputForm( $type,  $organization_id,$token ) {
-
+  global $version;
 	$header=""; // parameter to display form header
 	$action="";
 	$savectrl="";
@@ -115,7 +115,8 @@ class Organization
 		$this->groupid=0;
                 $this->description="";
 		}
-		$savectrl="<input name='btnsave' value='save' type='submit' onclick='save()'>";
+                  if($version=="" || $this->createdby==1)
+		     $savectrl="<input name='btnsave' value='save' type='submit' onclick='save()'>";
 		$checked="CHECKED";
 		$deletectrl="";
 		$addnewctrl="";
@@ -137,8 +138,9 @@ class Organization
 		else
 			$checked="";
 		$header="Edit Organization";
+                if($version=="" || $this->createdby==1){
 		$deletectrl="<input type='submit' value='Delete' name='btndelete' onclick='deleterecord();'>";
-		$addnewctrl="<input name='btnadd' value='New' type='submit' onclick='add()'>";
+		$addnewctrl="<input name='btnadd' value='New' type='submit' onclick='add()'>";}
 	}
 //<A href='index.php'>Back To This Module Administration Menu</A>
     echo <<< EOF
