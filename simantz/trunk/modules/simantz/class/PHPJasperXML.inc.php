@@ -695,6 +695,8 @@ class PHPJasperXML {
                     if($out['resetType']==''){
                             if(isset($this->arrayVariable[$k]['class'])&&$this->arrayVariable[$k]['class']=="java.sql.Time") {
                             //    foreach($this->arraysqltable as $table) {
+                                    $value=$this->time_to_sec($value);
+
                                     $value+=$this->time_to_sec($this->arraysqltable[$rowno]["$out[target]"]);
                                     //$sum=$sum+substr($table["$out[target]"],0,2)*3600+substr($table["$out[target]"],3,2)*60+substr($table["$out[target]"],6,2);
                                // }
@@ -735,16 +737,23 @@ class PHPJasperXML {
 
                     if(isset($this->arrayVariable[$k]['class'])&&$this->arrayVariable[$k]['class']=="java.sql.Time") {
                         $m=0;
+                        //$value=$this->arrayVariable[$k]["ans"];
+                        //$value=$this->time_to_sec($value);
+                        //$value+=$this->time_to_sec($this->arraysqltable[$rowno]["$out[target]"]);
+                        
                         foreach($this->arraysqltable as $table) {
                             $m++;
 
-                            $sum=$sum+$this->time_to_sec($table["$out[target]"]);
-
+                             $sum=$sum+$this->time_to_sec($table["$out[target]"]);
+                           // echo ",".$table["$out[target]"]."<br/>";
 
                         }
 
+                      
                         $sum=$this->sec_to_time($sum/$m);
-                        $this->arrayVariable[$k]["ans"]=$sum;
+                     // echo "Total:".$sum."<br/>";
+                         $this->arrayVariable[$k]["ans"]=$sum;
+                        
 
                     }
                     else {
@@ -1239,7 +1248,7 @@ public function showPieChart($data,$y_axis){
 
 
 public function showLineChart($data,$y_axis){
-    echo "1111";die;
+    
     global $tmpchartfolder,$pchartfolder;
     if($tmpchartfolder=="")
         $tmpchartfolder="/tmp";
@@ -1962,7 +1971,7 @@ if(isset($this->arrayVariable))	//if self define variable existing, go to do the
                     }
 
                     $ghheight=$this->showGroupHeader($this->pdf->getY()+$ghfoot);
-                    $checkpoint=$this->pdf->getY()+$ghfoot+$ghheight; //after group header add height band, so detail no crash with group header.
+                    $checkpoint=$this->pdf->getY()+$ghfoot+$ghhead; //after group header add height band, so detail no crash with group header.
 
                 }
 
