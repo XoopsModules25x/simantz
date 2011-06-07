@@ -150,7 +150,7 @@ class PHPJasperXML {
 
     public function subDataset_handler($data){
     $this->subdataset[$data['name'].'']= $data->queryString;
-        
+
     }
 //read level 0,Jasperreport page setting
     public function page_setting($xml_path) {
@@ -172,7 +172,7 @@ class PHPJasperXML {
 
     public function parameter_handler($xml_path) {
         $this->arrayParameter[$xml_path["name"]];
-        
+
     }
 
     public function queryString_handler($xml_path) {
@@ -265,7 +265,7 @@ class PHPJasperXML {
                 case "stackedBarChart":
                     $this->element_barChart($out,'StackedBarChart');
                     break;
-         
+
                 case "barChart":
                     $this->element_barChart($out,'BarChart');
                     break;
@@ -740,7 +740,7 @@ class PHPJasperXML {
                         //$value=$this->arrayVariable[$k]["ans"];
                         //$value=$this->time_to_sec($value);
                         //$value+=$this->time_to_sec($this->arraysqltable[$rowno]["$out[target]"]);
-                        
+
                         foreach($this->arraysqltable as $table) {
                             $m++;
 
@@ -749,11 +749,11 @@ class PHPJasperXML {
 
                         }
 
-                      
+
                         $sum=$this->sec_to_time($sum/$m);
                      // echo "Total:".$sum."<br/>";
                          $this->arrayVariable[$k]["ans"]=$sum;
-                        
+
 
                     }
                     else {
@@ -957,25 +957,31 @@ public function element_pieChart($data){
 
           }
 
-      
+
           $bb=$data->categoryDataset->dataset->datasetRun['subDataset'];
           $sql=$this->arraysubdataset[$bb]['sql'];
           $ylabel=$data->linePlot->valueAxisLabelExpression;
           $xlabel=$data->linePlot->categoryAxisLabelExpression;
         $showshape=$data->linePlot["isShowShapes"];
-       
+
 
           $param=array();
           foreach($data->categoryDataset->dataset->datasetRun->datasetParameter as $tag=>$value){
               $param[]=  array("$value[name]"=>$value->datasetParameterExpression);
           }
-//          print_r($param);
+          $maxy=$data->barPlot->rangeAxisMaxValueExpression;
+          $miny=$data->barPlot->rangeAxisMinValueExpression;
+          if($maxy!='' && $miny!=''){
+              $scalesetting=array(0=>array("Min"=>$miny,"Max"=>$maxy));
+          }
+          else
+              $scalesetting="";
 
          $this->pointer[]=array('type'=>'LineChart','x'=>$x,'y'=>$y,'height'=>$height,'width'=>$width,'charttitle'=>$charttitle,
             'chartsubtitle'=> $chartsubtitle,
                'chartLegendPos'=> $chartLegendPos,'dataset'=>$dataset,'seriesexp'=>$seriesexp,
              'catexp'=>$catexp,'valueexp'=>$valueexp,'labelexp'=>$labelexp,'param'=>$param,'sql'=>$sql,'xlabel'=>$xlabel,'showshape'=>$showshape,
-             'titlefontsize'=>$titlefontname,'titlefontsize'=>$titlefontsize);
+             'titlefontsize'=>$titlefontname,'titlefontsize'=>$titlefontsize,'scalesetting'=>$scalesetting);
 
     }
 
@@ -996,9 +1002,12 @@ public function element_pieChart($data){
           $titlefontsize=$data->chart->chartTitle->font['size'];
           $charttitle['text']=$data->chart->chartTitle->titleExpression;
           $chartsubtitle['text']=$data->chart->chartSubTitle->subtitleExpression;
+
+
           $chartLegendPos=$data->chart->chartLegend['position'];
           $dataset=$data->categoryDataset->dataset->datasetRun['subDataset'];
           $subcatdataset=$data->categoryDataset;
+
           //echo $subcatdataset;
           foreach($subcatdataset as $cat => $catseries){
             foreach($catseries as $a => $series){
@@ -1011,12 +1020,18 @@ public function element_pieChart($data){
             }
 
           }
-          
+
           $bb=$data->categoryDataset->dataset->datasetRun['subDataset'];
           $sql=$this->arraysubdataset[$bb]['sql'];
          $ylabel=$data->barPlot->valueAxisLabelExpression;
           $xlabel=$data->barPlot->categoryAxisLabelExpression;
-
+          $maxy=$data->barPlot->rangeAxisMaxValueExpression;
+          $miny=$data->barPlot->rangeAxisMinValueExpression;
+          if($maxy!='' && $miny!=''){
+              $scalesetting=array(0=>array("Min"=>$miny,"Max"=>$maxy));
+          }
+          else
+              $scalesetting="";
 
           $param=array();
           foreach($data->categoryDataset->dataset->datasetRun->datasetParameter as $tag=>$value){
@@ -1028,11 +1043,11 @@ public function element_pieChart($data){
             'chartsubtitle'=> $chartsubtitle,
                'chartLegendPos'=> $chartLegendPos,'dataset'=>$dataset,'seriesexp'=>$seriesexp,
              'catexp'=>$catexp,'valueexp'=>$valueexp,'labelexp'=>$labelexp,'param'=>$param,'sql'=>$sql,'ylabel'=>$ylabel,'xlabel'=>$xlabel,
-             'titlefontsize'=>$titlefontname,'titlefontsize'=>$titlefontsize);
+             'titlefontsize'=>$titlefontname,'titlefontsize'=>$titlefontsize,'scalesetting'=>$scalesetting);
 
     }
 
-    
+
 public function setChartColor(){
 
     $k=0;
@@ -1080,440 +1095,60 @@ $this->chart->setColorPalette($k,33,250,70);$k++;
 }
 
 
-public function showPieChart($data,$y_axis){
-
-
-    global $tmpchartfolder,$pchartfolder;
-
-    if($tmpchartfolder=="")
-        $tmpchartfolder="/tmp";
-
-    if($pchartfolder=="")
-        $pchartfolder=__dir__."/pchart/";
-    include $pchartfolder."/pChart/pData.class";
-    include $pchartfolder."/pChart/pChart.class";
-     $w=$data['width']+0;
-     $h=$data['height']+0;
-
-     $pchartfolder."/pChart/pData.class";
-    // $h=400;
-     $graphareax1=$w/10;
-     $graphareay1=20;
-     $graphareax2=$w-$w/10 -5;
-     $graphareay2=$h-30;
-
-     $Title=$data['charttitle']['text'];
-     $legendpos=$data['chartLegendPos'];
-     $legendpos="Right";
-     $seriesexp=$data['seriesexp'];
-     $catexp=$data['catexp'];
-     $valueexp=$data['valueexp'];
-     $legendx=0;
-     $legendy=0;
-
-      switch($legendpos){
-             case "Top":
-                   $legendx=0;
-                 $legendy=0;
-                 break;
-             case "Left":
-                   $legendx=20;
-                 $legendy=20;
-                 break;
-             case "Right":
-                   $legendx=$graphareax2 +5;
-                 $legendy=20;
-                 break;
-             case "Bottom":
-                   $legendx=20;
-                 $legendy=$h-20;
-                 break;
-             default:
-                 $legendx=0;
-                 $legendy=0;
-                 break;
-
-         }
-
-
-    $DataSet = new pData();
-
-    $sql=$data['sql'];
-//     $sql="SELECT
-//     digi_cso.`contractType` AS digi_cso_contractType,
-//    count( digi_cso.`cso_id`) AS digi
-//FROM
-//     `digi_cso` digi_cso
-//group by    digi_cso.`contractType`";
-    $param=$data['param'];
-    foreach($param as $p)
-        foreach($p as $tag =>$value)
-            $sql=str_replace('$P{'.$tag.'}',$value, $sql);
-//
-//
-
-    $sql=$this->changeSubDataSetSql($sql);
-
-
-     $result = @mysql_query($sql); //query from db
-     $chartdata=array();
-            $i=0;
-
-            while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-
-                $j=0;
-                foreach($row as $key => $value){
-                    $chartdata[$j][$i]=$value;
-                    $j++;
-                }
-            $i++;
-
-            }
-
-            //loop and generate series
-            $series=$chartdata;//array();
-
-//            for($c=0;$c<$j;$c++){
-//                    for($r=0;$r<$i;$r++){
-//                        $series[$c]=$chartdata[$c][$r];
-//                    }
-//            }
-
-            $n=0;
-             $this->chart = new pChart($w,$h);
-             $this->setChartColor();
-            foreach($series as $s){
-
-
-            $DataSet->AddPoint($s,'S'.$n);
-            if($n>0){
-             $DataSet->AddSerie('S'.$n);
-             $DataSet->SetSerieName('S'.$n,"Serie".$n);
-            }
-
-            $n++;
-            }
-
-
-//            	 $DataSet->SetAbsciseLabelSerie("S0");
-//                  $DataSet->SetYAxisName("ASD");
-//                     $DataSet->SetSerieName('S0',"Serie0");
-//                     $DataSet->SetSerieName('S1',"Serie1");
-//                     $DataSet->SetSerieName('S2',"Serie2");
-            	 $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8);
- //	 $this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
-
-	// $this->chart->drawFilledRoundedRectangle(7,7,$chartwidth-7,$chartheight-7,5,240,240,240);
-	// $this->chart->drawRoundedRectangle($graphareax,$graphareay,$graphareax+$graphareaw,$graphareay+$graphareah,5,0,0,0);
-//	 $this->chart->drawGraphArea(255,255,255,TRUE);
-
-
-//	 $this->chart->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(), SCALE_NORMAL,150,150,150,TRUE,0,2,TRUE);
-
-//	 $this->chart->drawGrid(4,TRUE,230,230,230,50);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",10,"Bold");
-	  $Title =$data['charttitle']['text'];
-
-
-	 $this->chart->drawTextBox(0,0,$graphareax2-$graphareax1,20,$Title,0,0,0,0,ALIGN_CENTER,false,0,0,0,255);
-         $this->chart->drawTreshold(0,143,55,72,TRUE,TRUE);
-//  $this->chart->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),60,FALSE);
-	 $this->chart->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());
-	 $this->chart->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,254,254,254);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",7);
-
-
-	 $this->chart->drawLegend($legendx,$legendy,$DataSet->GetDataDescription(),254,254,254);
-
-// // Render the chart
-         $randomchartno=rand();
-	  $photofile="$tmpchartfolder/chart$randomchartno.png";
-	  //$photofile="/Users/kstan/Public/chart$randomchartno.png";
-
-             $this->chart->Render($photofile);
-             if(file_exists($photofile))
-                $this->pdf->Image($photofile,$x+$this->arrayPageSetting["leftMargin"],$y_axis,$w,$h,"PNG");
-//   $this->chart->Stroke();
-
-//    $this->chart->Stroke($photofile);
-
-
-     //$query=$xoopsDB->query($sql);
-
-
-//    system("echo $a>$chartfolder/s");
-
-
-}
-
-
 public function showLineChart($data,$y_axis){
-    
     global $tmpchartfolder,$pchartfolder;
-    if($tmpchartfolder=="")
-        $tmpchartfolder="/tmp";
+
 
     if($pchartfolder=="")
-        $pchartfolder=__dir__."/pchart/";
-    include_once $pchartfolder."/pChart/pData.class";
-    include_once $pchartfolder."/pChart/pChart.class";
+        $pchartfolder="./pchart";
+//echo "$pchartfolder/class/pData.class.php";die;
 
+        include_once("$pchartfolder/class/pData.class.php");
+        include_once("$pchartfolder/class/pDraw.class.php");
+        include_once("$pchartfolder/class/pImage.class.php");
+
+    if($tmpchartfolder=="")
+         $tmpchartfolder=$pchartfolder."/cache";
 
      $w=$data['width']+0;
      $h=$data['height']+0;
-     $showshape=$data['showshape'];
-    // $h=400;
-     $graphareax1=$w/10;
-     $graphareay1=20;
-     $graphareax2=$w-$w/10 -5;
-     $graphareay2=$h-30;
 
-     $Title=$data['charttitle']['text'];
+
+
      $legendpos=$data['chartLegendPos'];
-     $legendpos="Right";
+     //$legendpos="Right";
      $seriesexp=$data['seriesexp'];
-
      $catexp=$data['catexp'];
      $valueexp=$data['valueexp'];
      $labelexp=$data['labelexp'];
-     $ylabel=$data['ylabel'];
-     $xlabel=$data['xlabel'];
+     $ylabel=$data['ylabel'].'';
+     $xlabel=$data['xlabel'].'';
+     $ylabel = str_replace(array('"',"'"),'',$ylabel);
+     $xlabel = str_replace(array('"',"'"),'',$xlabel);
+     $scalesetting=$data['scalesetting'];
+
+
      $x=$data['x'];
      $y1=$data['y'];
      $legendx=0;
      $legendy=0;
-     $titlefontname=$data['titlefontsize'];
-    $titlefontsize=$data['titlefontsize'];
-
-      switch($legendpos){
-             case "Top":
-                   $legendx=0;
-                 $legendy=0;
-                 break;
-             case "Left":
-                   $legendx=20;
-                 $legendy=20;
-                 break;
-             case "Right":
-                   $legendx=$graphareax2 +5;
-                 $legendy=20;
-                 break;
-             case "Bottom":
-                   $legendx=20;
-                 $legendy=$h-20;
-                 break;
-             default:
-                 $legendx=0;
-                 $legendy=0;
-
-                 break;
-
-         }
+    $titlefontname=$data['titlefontsize']+0;
+    $titlefontsize=$data['titlefontsize']+0;
 
 
     $DataSet = new pData();
-    $this->chart = new pChart($w,$h);
-       $c = new pChart($w,$h);
 
-    $this->setChartColor();
     foreach($catexp as $a=>$b)
        $catexp1[]=  str_replace(array('"',"'"), '',$b);
 
     $n=0;
 
-    $DataSet->AddPoint($catexp1,'S0');
-    $DataSet->SetAbsciseLabelSerie("S0");
+    $DataSet->addPoints($catexp1,'S00');
+    $DataSet->setSerieDescription('S00','asdasd');
 
-
-    $n=$n+1;
-
-    $ds=trim($data['dataset']);
-
-    if($ds!=""){
-//        echo "line chart not yet support additional dataset ($ds) in chart";
-         // echo $sql=$this->subdataset[$ds];die;
-        $sql=$this->subdataset[$ds];
-        $param=$data['param'];
-        
-        foreach($param as $p)
-            foreach($p as $tag =>$value)
-                $sql=str_replace('$P{'.$tag.'}',$value.'', $sql);
-
-              
-         echo  $sql=$this->changeSubDataSetSql($sql);
-         die;
-        }
-    else
-        $sql=$this->sql;
-
-    $result = @mysql_query($sql); //query from db
-    $chartdata=array();
-    $i=0;
-    $seriesname=array();
-    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
-        
-                $j=0;
-                foreach($row as $key => $value){
-                    //$chartdata[$j][$i]=$value;
-                    if($key==str_replace(array('$F{','}'),'',$seriesexp[0])){
-                    array_push($seriesname,$value);
-                    
-                    }
-                    else
-                    foreach($valueexp as $c => $d){
-                      
-                     if($key==str_replace(array('$F{','}'),'',$d)){
-                               if($value=='')
-                                    $value=0;
-                         $chartdata[$i][$j]=$value;
-                             $j++;
-                     }
-                    }
-
-                    
-
-                                    }
-            $i++;
-
-            
-
-            }
-          
-            if($i==0)
-                return 0;
-           
-//             $DataSet->AddPoint($seriesname,'S1');
-
-             $l=0;
-            foreach($seriesname as $s=>$v){
-                 $DataSet->AddPoint($chartdata[$s],"$v");
-                 $DataSet->AddSerie("$v");
-               $l++;
-            }
-
-                $DataSet->SetYAxisName($ylabel);
-            	
-
-
-        $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8);
- 	$this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
-
-	// $this->chart->drawFilledRoundedRectangle(7,7,$chartwidth-7,$chartheight-7,5,240,240,240);
-	// $this->chart->drawRoundedRectangle($graphareax,$graphareay,$graphareax+$graphareaw,$graphareay+$graphareah,5,0,0,0);
-	 $this->chart->drawGraphArea(255,255,255,TRUE);
-//print_r($DataSet->GetData());echo "<br/><br/>";
-//print_r($DataSet->GetDataDescription());die;
-	 $this->chart->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(), SCALE_NORMAL,150,150,150,TRUE,0,2,TRUE);
-
-
-//         echo 1;die;
-	 $this->chart->drawGrid(1,TRUE,230,230,230,0);
-         
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8,"");
-	  $Title = str_replace(array('"',"'"),'',$data['charttitle']['text']);
-
-
-	 $this->chart->drawTextBox(0,0,$graphareax2-$graphareax1,20,$Title,0,0,0,0,ALIGN_CENTER,false,0,0,0,255);
-         $this->chart->drawTreshold(0,143,55,72,TRUE,TRUE);
-//  $this->chart->drawFilledLineGraph($DataSet->GetData(),$DataSet->GetDataDescription(),60,FALSE);
-	 $this->chart->drawLineGraph($DataSet->GetData(),$DataSet->GetDataDescription());
-        // $this->chart->drawBarGraph($DataSet->GetData(),$DataSet->GetDataDescription(),TRUE);
-        
-         if($showshape=='true' || $showshape=='')
-	 $this->chart->drawPlotGraph($DataSet->GetData(),$DataSet->GetDataDescription(),3,2,254,254,254);
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",7);
-
-
-	 $this->chart->drawLegend($legendx,$legendy,$DataSet->GetDataDescription(),254,254,254);
-
-// // Render the chart
-         $randomchartno=rand();
-	  $photofile="$tmpchartfolder/chart$randomchartno.png";
-	  //$photofile="/Users/kstan/Public/chart$randomchartno.png";
-
-             $this->chart->Render($photofile);
-            if(file_exists($photofile))
-                $this->pdf->Image($photofile,$x+$this->arrayPageSetting["leftMargin"],$y_axis+$y1,$w,$h,"PNG");
-//echo $x.",".$this->arrayPageSetting["leftMargin"].",".$y_axis.",".$w."<br/>";
-
-                unlink($photofile);
-
-}
-
-
-public function showBarChart($data,$y_axis,$type='BarChart'){
-    global $tmpchartfolder,$pchartfolder;
-    if($tmpchartfolder=="")
-        $tmpchartfolder="/tmp";
-
-    if($pchartfolder=="")
-        $pchartfolder=__dir__."/pchart/";
-    include_once $pchartfolder."/pChart/pData.class";
-    include_once $pchartfolder."/pChart/pChart.class";
-
-     $w=$data['width']+0;
-     $h=$data['height']+0;
-
-    // $h=400;
-     $graphareax1=$w/10;
-     $graphareay1=20;
-     $graphareax2=$w-$w/10 -5;
-     $graphareay2=$h-30;
-
-     $Title=$data['charttitle']['text'];
-     $legendpos=$data['chartLegendPos'];
-     $legendpos="Right";
-     $seriesexp=$data['seriesexp'];
-     $catexp=$data['catexp'];
-     $valueexp=$data['valueexp'];
-     $labelexp=$data['labelexp'];
-     $ylabel=$data['ylabel'];
-     $xlabel=$data['xlabel'];
-     $x=$data['x'];
-     $y1=$data['y'];
-     $legendx=0;
-     $legendy=0;
-    $titlefontname=$data['titlefontsize'];
-    $titlefontsize=$data['titlefontsize'];
-
-      switch($legendpos){
-             case "Top":
-                   $legendx=0;
-                 $legendy=0;
-                 break;
-             case "Left":
-                   $legendx=20;
-                 $legendy=20;
-                 break;
-             case "Right":
-                   $legendx=$graphareax2 +5;
-                 $legendy=20;
-                 break;
-             case "Bottom":
-                   $legendx=20;
-                 $legendy=$h-20;
-                 break;
-             default:
-                 $legendx=0;
-                 $legendy=0;
-                 break;
-
-         }
-
-
-    $DataSet = new pData();
-    $this->chart = new pChart($w,$h);
-       $c = new pChart($w,$h);
-
-    $this->setChartColor();
-    foreach($catexp as $a=>$b)
-       $catexp1[]=  str_replace(array('"',"'"), '',$b);
-
-    $n=0;
-    $DataSet->AddPoint($catexp1,'S0');
     //$DataSet->AddSerie('S0');
     //$DataSet->SetSerieName('S0',"Cat");
-    $DataSet->SetAbsciseLabelSerie("S0");
+    $DataSet->setAbscissa('S00');
     $n=$n+1;
 
     $ds=trim($data['dataset']);
@@ -1549,7 +1184,7 @@ public function showBarChart($data,$y_axis,$type='BarChart'){
                     foreach($valueexp as $v => $y){
                      if($key==str_replace(array('$F{','}'),'',$y)){
                          $chartdata[$i][$j]=(int)$value;
-                       
+
                            $j++;
                      }
                     }
@@ -1557,7 +1192,7 @@ public function showBarChart($data,$y_axis,$type='BarChart'){
 
 
 
-                  
+
                 }
             $i++;
 
@@ -1565,58 +1200,517 @@ public function showBarChart($data,$y_axis,$type='BarChart'){
             if($i==0)
                 return 0;
             foreach($seriesname as $s=>$v){
-                
-                    $DataSet->AddPoint($chartdata[$s],"$v");
-                $DataSet->AddSerie("$v");
+
+                    $DataSet->addPoints($chartdata[$s],"$v");
+              //  $DataSet->AddSerie("$v");
             }
-            $DataSet->SetYAxisName($ylabel);
-
-            
-// 
+            $DataSet->setAxisName(0,$ylabel);
 
 
-        $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8);
- 	$this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
-
-	 $this->chart->drawGraphArea(255,255,255,TRUE);
-               //  print_r( $DataSet->GetData());echo "<br/><br/>";
-              //print_r($DataSet->GetDataDescription());die;
-          $scale=SCALE_NORMAL;
-        if($type=='StackedBarChart')
-         $scale=SCALE_ADDALLSTART0;
-//echo "$ds";die;
-                    //print_r($chartdata);die;
-        //print_r($DataSet->GetData());
-        //echo "<br/><br/>";
-        //print_r($DataSet->GetDataDescription());
-        //die;
-           $this->chart->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(),$scale,150,150,150,TRUE,0,2,TRUE);
-	// $this->chart->drawScale($DataSet->GetData(),$DataSet->GetDataDescription(), SCALE_NORMAL,150,150,150,TRUE,0,2,FALSE);
 
 
-	 $this->chart->drawGrid(1,TRUE,230,230,230,0);
+    $this->chart = new pImage($w,$h,$DataSet);
+    //$c = new pChart($w,$h);
+    //$this->setChartColor();
+    $this->chart->drawRectangle(1,1,$w-2,$h-2);
+    $legendfontsize=8;
+    $this->chart->setFontProperties(array('FontName'=>"$pchartfolder/fonts/calibri.ttf",'FontSize'=>$legendfontsize));
 
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",8,"");
-	  $Title = str_replace(array('"',"'"),'',$data['charttitle']['text']);
+
+$Title=$data['charttitle']['text'];
 
 
-	 $this->chart->drawTextBox(0,0,$graphareax2-$graphareax1,20,$Title,0,0,0,0,ALIGN_CENTER,false,0,0,0,255);
-         $this->chart->drawTreshold(0,143,55,72,TRUE,TRUE);
-         
-         if($type=='StackedBarChart')
-            $this->chart->drawStackedBarGraph($DataSet->GetData(),$DataSet->GetDataDescription(),TRUE);
-         else
-             $this->chart->drawBarGraph($DataSet->GetData(),$DataSet->GetDataDescription(),TRUE);
+      switch($legendpos){
+             case "Top":
+                 $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $diffx=$w-$lgsize['Width'];
+                 if($diffx>0)
+                 $legendx=$diffx/2;
+                 else
+                 $legendx=0;
 
-         $this->chart->setFontProperties("$pchartfolder/Fonts/tahoma.ttf",7);
-	 $this->chart->drawLegend($legendx,$legendy,$DataSet->GetDataDescription(),254,254,254);
-         $randomchartno=rand();
+                 //$legendy=$h-$lgsize['Height']+$legendfontsize;
+
+                 if($legendy<0)$legendy=0;
+
+                 if($Title==''){
+
+                     $graphareay1=5;
+                     $legendy=$graphareay1+5;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$h-$legendfontsize-15;
+                }
+                else{
+                    $graphareay1=30;
+                    $legendy=$graphareay1+5;
+                    $graphareax1=40;
+
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$h-$legendfontsize-15;
+
+                }
+                 break;
+             case "Left":
+                 $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_VERTICAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $legendx=$lgsize['Width'];
+                 if($Title==''){
+                    $legendy=10;
+                     $graphareay1=5;
+                    $graphareax1=$legendx+5;
+                     $graphareax2=$w-5;
+                     $graphareay2=$h-20;
+                }
+                else{
+                     $legendy=30;
+                     $graphareay1=40;
+                    $graphareax1=$legendx+5;
+                     $graphareax2=$w-5 ;
+                     $graphareay2=$h-20;
+                }
+                 break;
+             case "Right":
+             $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_VERTICAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $legendx=$w-$lgsize['Width'];
+                 if($Title==''){
+                    $legendy=10;
+                     $graphareay1=5;
+                    $graphareax1=40;
+                     $graphareax2=$legendx-5 ;
+                     $graphareay2=$h-20;
+                }
+                else{
+                     $legendy=30;
+                     $graphareay1=30;
+                    $graphareax1=40;
+                     $graphareax2=$legendx-5 ;
+                     $graphareay2=$h-20;
+                }
+                 break;
+             case "Bottom":
+                 $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $diffx=$w-$lgsize['Width'];
+                 if($diffx>0)
+                 $legendx=$diffx/2;
+                 else
+                 $legendx=0;
+
+                 $legendy=$h-$lgsize['Height']+$legendfontsize;
+
+                 if($legendy<0)$legendy=0;
+
+                 if($Title==''){
+
+                     $graphareay1=5;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                else{
+                    $graphareay1=30;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                 break;
+             default:
+               $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $diffx=$w-$lgsize['Width'];
+                 if($diffx>0)
+                 $legendx=$diffx/2;
+                 else
+                 $legendx=0;
+
+                 $legendy=$h-$lgsize['Height']+$legendfontsize;
+
+                 if($legendy<0)$legendy=0;
+
+                 if($Title==''){
+
+                     $graphareay1=5;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                else{
+                    $graphareay1=30;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                 break;
+
+         }
+
+
+         //echo "$graphareax1,$graphareay1,$graphareax2,$graphareay2";die;
+    //print_r($lgsize);die;
+
+    $this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
+    $this->chart->setFontProperties(array('FontName'=>"$pchartfolder/fonts/calibri.ttf",'FontSize'=>8));
+
+
+
+    //if($type=='StackedBarChart')
+      //  $scalesetting=array("Floating"=>TRUE,"GridR"=>200, "GridG"=>200,"GridB"=>200,"DrawSubTicks"=>TRUE, "CycleBackground"=>TRUE,
+        //    "DrawSubTicks"=>TRUE,"Mode"=>SCALE_MODE_ADDALL_START0,"DrawArrows"=>TRUE,"ArrowSize"=>6);
+    //else
+    $ScaleSpacing=5;
+        $scalesetting= $scaleSettings = array("XMargin"=>10,"YMargin"=>10,"Floating"=>TRUE,"GridR"=>200,"GridG"=>200,
+            "GridB"=>200,"DrawSubTicks"=>TRUE,"CycleBackground"=>TRUE,"Mode"=>SCALE_MODE_START0,'ScaleSpacing'=>$ScaleSpacing);
+
+    $this->chart->drawScale($scalesetting);
+
+    $this->chart->drawLegend($legendx,$legendy,$legendmode);
+
+
+    $Title = str_replace(array('"',"'"),'',$data['charttitle']['text']);
+
+    if($Title!=''){
+        $titlefontsize+0;
+    if($titlefontsize==0)
+        $titlefontsize=8;
+     if($titlefontname=='')
+        $titlefontname='calibri';
+
+
+    $textsetting=array('DrawBox'=>FALSE,'FontSize'=>$titlefontsize,'FontName'=>"$pchartfolder/fonts/".$titlefontname.".ttf",'align'=>TEXT_ALIGN_TOPMIDDLE);
+
+    $this->chart->drawText($w/3,($titlefontsize+10),$Title,$textsetting);
+    }
+
+      $this->chart->setFontProperties(array('FontName'=>"$pchartfolder/fonts/calibri.ttf",'FontSize'=>7));
+
+         $this->chart->drawLineChart();
+
+
+   $randomchartno=rand();
 	  $photofile="$tmpchartfolder/chart$randomchartno.png";
+
              $this->chart->Render($photofile);
-             if(file_exists($photofile))
+
+             if(file_exists($photofile)){
                 $this->pdf->Image($photofile,$x+$this->arrayPageSetting["leftMargin"],$y_axis+$y1,$w,$h,"PNG");
                 unlink($photofile);
+             }
+
 }
+
+
+
+public function showBarChart($data,$y_axis,$type='BarChart'){
+      global $tmpchartfolder,$pchartfolder;
+
+
+    if($pchartfolder=="")
+        $pchartfolder="./pchart";
+//echo "$pchartfolder/class/pData.class.php";die;
+
+        include_once("$pchartfolder/class/pData.class.php");
+        include_once("$pchartfolder/class/pDraw.class.php");
+        include_once("$pchartfolder/class/pImage.class.php");
+
+    if($tmpchartfolder=="")
+         $tmpchartfolder=$pchartfolder."/cache";
+
+     $w=$data['width']+0;
+     $h=$data['height']+0;
+
+
+
+     $legendpos=$data['chartLegendPos'];
+     //$legendpos="Right";
+     $seriesexp=$data['seriesexp'];
+     $catexp=$data['catexp'];
+     $valueexp=$data['valueexp'];
+     $labelexp=$data['labelexp'];
+     $ylabel=$data['ylabel'].'';
+     $xlabel=$data['xlabel'].'';
+     $ylabel = str_replace(array('"',"'"),'',$ylabel);
+     $xlabel = str_replace(array('"',"'"),'',$xlabel);
+     $scalesetting=$data['scalesetting'];
+
+
+     $x=$data['x'];
+     $y1=$data['y'];
+     $legendx=0;
+     $legendy=0;
+    $titlefontname=$data['titlefontsize']+0;
+    $titlefontsize=$data['titlefontsize']+0;
+
+
+    $DataSet = new pData();
+
+    foreach($catexp as $a=>$b)
+       $catexp1[]=  str_replace(array('"',"'"), '',$b);
+
+    $n=0;
+
+    $DataSet->addPoints($catexp1,'S00');
+    $DataSet->setSerieDescription('S00','asdasd');
+
+    //$DataSet->AddSerie('S0');
+    //$DataSet->SetSerieName('S0',"Cat");
+    $DataSet->setAbscissa('S00');
+    $n=$n+1;
+
+    $ds=trim($data['dataset']);
+
+
+    if($ds!=""){
+              $sql=$this->subdataset[$ds];
+        $param=$data['param'];
+        foreach($param as $p)
+            foreach($p as $tag =>$value)
+                $sql=str_replace('$P{'.$tag.'}',$value, $sql);
+            $sql=$this->changeSubDataSetSql($sql);
+
+        }
+    else
+        $sql=$this->sql;
+
+    $result = @mysql_query($sql); //query from db
+    $chartdata=array();
+    $i=0;
+//echo $sql."<br/><br/>";
+    $seriesname=array();
+    while ($row = mysql_fetch_array($result, MYSQL_ASSOC)) {
+
+                $j=0;
+                foreach($row as $key => $value){
+                    //$chartdata[$j][$i]=$value;
+                    if($value=='')
+                        $value=0;
+                    if($key==str_replace(array('$F{','}'),'',$seriesexp[0]))
+                    array_push($seriesname,$value);
+                    else
+                    foreach($valueexp as $v => $y){
+                     if($key==str_replace(array('$F{','}'),'',$y)){
+                         $chartdata[$i][$j]=(int)$value;
+
+                           $j++;
+                     }
+                    }
+
+
+
+
+
+                }
+            $i++;
+
+            }
+            if($i==0)
+                return 0;
+            foreach($seriesname as $s=>$v){
+
+                    $DataSet->addPoints($chartdata[$s],"$v");
+              //  $DataSet->AddSerie("$v");
+            }
+            $DataSet->setAxisName(0,$ylabel);
+
+
+
+
+    $this->chart = new pImage($w,$h,$DataSet);
+    //$c = new pChart($w,$h);
+    //$this->setChartColor();
+    $this->chart->drawRectangle(1,1,$w-2,$h-2);
+    $legendfontsize=8;
+    $this->chart->setFontProperties(array('FontName'=>"$pchartfolder/fonts/calibri.ttf",'FontSize'=>$legendfontsize));
+
+
+$Title=$data['charttitle']['text'];
+
+
+      switch($legendpos){
+             case "Top":
+                 $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $diffx=$w-$lgsize['Width'];
+                 if($diffx>0)
+                 $legendx=$diffx/2;
+                 else
+                 $legendx=0;
+
+                 //$legendy=$h-$lgsize['Height']+$legendfontsize;
+
+                 if($legendy<0)$legendy=0;
+
+                 if($Title==''){
+
+                     $graphareay1=15;
+                     $legendy=$graphareay1+5;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$h-$legendfontsize-15;
+                }
+                else{
+                    $graphareay1=30;
+                    $legendy=$graphareay1+5;
+                    $graphareax1=40;
+
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$h-$legendfontsize-15;
+
+                }
+                 break;
+             case "Left":
+                 $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_VERTICAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $legendx=$lgsize['Width'];
+                 if($Title==''){
+                    $legendy=10;
+                     $graphareay1=10;
+                    $graphareax1=$legendx+5;
+                     $graphareax2=$w-5;
+                     $graphareay2=$h-20;
+                }
+                else{
+                     $legendy=30;
+                     $graphareay1=40;
+                    $graphareax1=$legendx+5;
+                     $graphareax2=$w-5 ;
+                     $graphareay2=$h-20;
+                }
+                 break;
+             case "Right":
+             $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_VERTICAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $legendx=$w-$lgsize['Width'];
+                 if($Title==''){
+                    $legendy=10;
+                     $graphareay1=5;
+                    $graphareax1=40;
+                     $graphareax2=$legendx-5 ;
+                     $graphareay2=$h-20;
+                }
+                else{
+                     $legendy=30;
+                     $graphareay1=30;
+                    $graphareax1=40;
+                     $graphareax2=$legendx-5 ;
+                     $graphareay2=$h-20;
+                }
+                 break;
+             case "Bottom":
+                 $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $diffx=$w-$lgsize['Width'];
+                 if($diffx>0)
+                 $legendx=$diffx/2;
+                 else
+                 $legendx=0;
+
+                 $legendy=$h-$lgsize['Height']+$legendfontsize;
+
+                 if($legendy<0)$legendy=0;
+
+                 if($Title==''){
+
+                     $graphareay1=15;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                else{
+                    $graphareay1=30;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                 break;
+             default:
+               $legendmode=array("Style"=>LEGEND_NOBORDER,"Mode"=>LEGEND_HORIZONTAL);
+                 $lgsize=$this->chart->getLegendSize($legendmode);
+                 $diffx=$w-$lgsize['Width'];
+                 if($diffx>0)
+                 $legendx=$diffx/2;
+                 else
+                 $legendx=0;
+
+                 $legendy=$h-$lgsize['Height']+$legendfontsize;
+
+                 if($legendy<0)$legendy=0;
+
+                 if($Title==''){
+
+                     $graphareay1=15;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                else{
+                    $graphareay1=30;
+                    $graphareax1=40;
+                     $graphareax2=$w-10 ;
+                     $graphareay2=$legendy-$legendfontsize-15;
+                }
+                 break;
+
+         }
+
+
+         //echo "$graphareax1,$graphareay1,$graphareax2,$graphareay2";die;
+    //print_r($lgsize);die;
+
+    $this->chart->setGraphArea($graphareax1,$graphareay1,$graphareax2,$graphareay2);
+    $this->chart->setFontProperties(array('FontName'=>"$pchartfolder/fonts/calibri.ttf",'FontSize'=>8));
+
+
+if($type=='StackedBarChart')
+        $scalesetting=array("Floating"=>TRUE,"GridR"=>200, "GridG"=>200,"GridB"=>200,"DrawSubTicks"=>TRUE, "CycleBackground"=>TRUE,
+            "DrawSubTicks"=>TRUE,"Mode"=>SCALE_MODE_ADDALL_START0,"ArrowSize"=>6);
+    else
+            $scalesetting=array("Floating"=>TRUE,"GridR"=>200, "GridG"=>200,"GridB"=>200,"DrawSubTicks"=>TRUE, "CycleBackground"=>TRUE,
+            "DrawSubTicks"=>TRUE,"Mode"=>SCALE_MODE_START0,"ArrowSize"=>6);
+    $this->chart->drawScale($scalesetting);
+
+    $this->chart->drawLegend($legendx,$legendy,$legendmode);
+
+
+    $Title = str_replace(array('"',"'"),'',$data['charttitle']['text']);
+
+    if($Title!=''){
+        $titlefontsize+0;
+    if($titlefontsize==0)
+        $titlefontsize=8;
+     if($titlefontname=='')
+        $titlefontname='calibri';
+
+
+    $textsetting=array('DrawBox'=>FALSE,'FontSize'=>$titlefontsize,'FontName'=>"$pchartfolder/fonts/".$titlefontname.".ttf",'align'=>TEXT_ALIGN_TOPMIDDLE);
+
+    $this->chart->drawText($w/3,($titlefontsize+10),$Title,$textsetting);
+    }
+
+      $this->chart->setFontProperties(array('FontName'=>"$pchartfolder/fonts/calibri.ttf",'FontSize'=>7));
+
+
+    if($type=='StackedBarChart')
+        $this->chart->drawStackedBarChart();
+    else
+        $this->chart->drawBarChart();
+
+
+   $randomchartno=rand();
+	  $photofile="$tmpchartfolder/chart$randomchartno.png";
+
+             $this->chart->Render($photofile);
+
+             if(file_exists($photofile)){
+                $this->pdf->Image($photofile,$x+$this->arrayPageSetting["leftMargin"],$y_axis+$y1,$w,$h,"PNG");
+                unlink($photofile);
+             }
+
+
+}
+
 
 private function changeSubDataSetSql($sql){
 
@@ -1629,10 +1723,10 @@ foreach($this->arrayParameter as $name=>$value)
 foreach($this->arrayVariable as $name=>$value){
     $sql=str_replace('$V{'.$value['target'].'}',$value['ans'],$sql);
 
-    
+
 }
 
- 
+
 //print_r($this->arrayparameter);
 
 
@@ -1939,7 +2033,7 @@ foreach($this->arrayVariable as $name=>$value){
 
 
             foreach($this->arraysqltable as $row) {
-                
+
 
 if(isset($this->arrayVariable))	//if self define variable existing, go to do the calculation
                 {
@@ -2046,7 +2140,7 @@ if(isset($this->arrayVariable))	//if self define variable existing, go to do the
                 }
 
                 foreach ($this->arraydetail as $out) {
-                 
+
                     switch ($out["hidden_type"]) {
                         case "field":
 
@@ -2132,7 +2226,7 @@ if(isset($this->arrayVariable))	//if self define variable existing, go to do the
 
             foreach($this->arraysqltable as $row) {
                 $oo++;
-              
+
                 //check the group's groupExpression existed and same or not
 
                 if(isset($this->arraygroup)&&($this->global_pointer>0)&&($this->arraysqltable[$this->global_pointer][$this->group_pointer]!=$this->arraysqltable[$this->global_pointer-1][$this->group_pointer])) {
@@ -2410,7 +2504,7 @@ if(isset($this->arraygroup)&&($this->global_pointer>0)&&($this->arraysqltable[$t
             $this->pdf->SetFillColor($arraydata["r"],$arraydata["g"],$arraydata["b"]);
         }
       elseif($arraydata["type"]=="LineChart") {
-          
+
             $this->showLineChart($arraydata, $y_axis);
         }
       elseif($arraydata["type"]=="BarChart") {
