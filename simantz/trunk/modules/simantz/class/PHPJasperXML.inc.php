@@ -2065,7 +2065,7 @@ if(isset($this->arrayVariable))	//if self define variable existing, go to do the
                     }
 
                     $ghheight=$this->showGroupHeader($this->pdf->getY()+$ghfoot);
-                    $checkpoint=$this->pdf->getY()+$ghfoot+$ghhead; //after group header add height band, so detail no crash with group header.
+                    $checkpoint=$this->pdf->getY()+$ghfoot+$ghheight; //after group header add height band, so detail no crash with group header.
 
                 }
 
