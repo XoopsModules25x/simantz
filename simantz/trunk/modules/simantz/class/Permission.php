@@ -67,7 +67,7 @@ public function Permission (){
 	$selectgroup=$selectgroup."</SELECT>";
 	$this->log->showLog(4,"With SQL: $sql");
 
-        $sql="SELECT m.mid,m.name from sim_modules m
+        $sql="SELECT m.mid,m.name from sim_modules m WHERE m.weight >0
 		 order by m.name";
 	$selectmodule="<SELECT name='findmodule_id' onchange='action.click();'>";
 	$i=0;
