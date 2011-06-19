@@ -160,8 +160,11 @@
         $defcountrycode=$o->country_code;
 	$defcurrencycode=$o->currency_code;
 	$defaultcurrency_id=$o->currency_id;
-        $defaultorganization_name=$o->organization_name;
-        $defaulttelcode=$o->telcode;
+       $defaultorganization_name=$o->organization_name;
+        
+$defaultcompanyname =$o->companyname;
+$defaultcompanyno=$o->companyno; 
+$defaulttelcode=$o->telcode;
 		$log->showLog(3,"end system.php.");
 
 //	if($a->checkAccounts($defaultorganization_id))
