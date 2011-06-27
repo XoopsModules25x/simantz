@@ -116,6 +116,8 @@ while($row=$this->xoopsDB->fetchArray($query)){
         $tel_2=$row['tel_2'];
         $fax=$row['fax'];
          $name= "$address_street\n".
+        "$address_postcode $address_city\n".
+        "$region_name $country_name\n".
         "Tel:$tel_1 $tel_2 Fax:$fax";
         return $name;
  }
