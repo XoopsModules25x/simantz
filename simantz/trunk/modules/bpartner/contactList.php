@@ -1,6 +1,5 @@
 <?php
 
-
 include_once "system.php";
 
 
@@ -9,17 +8,24 @@ error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 $s = new XoopsSecurity();
 
-//$acc= new Accounts();
 $contacts_name=$_GET['contacts_name'];
 $hpno=$_GET['hpno'];
 $bpartner_id=$_GET['bpartner_id'];
+
+
 $races_id=$_GET['races_id'];
 $religion_id=$_GET['religion_id'];
 $bpartnergroup_id=$_GET['bpartnergroup_id'];
 $industry_id=$_GET['industry_id'];
-if($bpartner_id=="")
+$wherestr="where bp.bpartner_id>0 AND";
+
+if($bpartner_id==""){
 $bpartner_id=0;
 
+}
+else{
+$wherestr.="bp.bpartner_id=$bpartner_id AND";
+}
 if($races_id=="")
 $races_id=0;
 
@@ -41,16 +47,16 @@ $bpartnergroup_id=0;
 //	$balanceamt=$acc->accBalanceBFAmount($period_id,$accounts_id);
 
 if($_POST['action']=="SMS"){
-    include_once "menu.php";
+include_once "menu.php";
 $bpartnerctrl=$bpctrl->getSelectBPartner($bpartner_id,'Y');
 $bpgroupctrl=$bpctrl->getSelectBPartnerGroup($bpartnergroup_id,'Y');
 $industryctrl=$bpctrl->getSelectIndustry($industry_id,'Y');
 $racesctrl=$ctrl->getSelectRaces($races_id,'Y');
 $religionctrl=$ctrl->getSelectReligion($religion_id,'Y');
 $regionctrl=$ctrl->getSelectRegion($region_id,'Y');
-
-        $removestring=array("(", ")", "-", " ","\n","\0","\t","\r");
+$removestring=array("(", ")", "-", " ","\n","\0","\t","\r");
 $subscriber_number="";
+
 foreach($_POST['chk'] as $hp){
     $hp=str_replace($removestring,"",$hp);
         if(strlen($hp)==10 && substr($hp,0,1 )=="0")
@@ -67,6 +73,7 @@ foreach($_POST['chk'] as $hp){
                    $j++;
                 }
 }
+
 global $smsurl,$smsid,$smspassword,$smssender_name,$urlchecksmsbalance;
     $url=$smsurl;
  $owner_id=$smsid;
@@ -75,7 +82,7 @@ global $smsurl,$smsid,$smspassword,$smssender_name,$urlchecksmsbalance;
     $lang_type = $_POST['selectLang'];
     $msg=htmlspecialchars($_POST['smstext']);
     $subscriber_number=substr_replace($subscriber_number,"",-1);
-    //echo "owner_id=$owner_id&password=$password&sender_name=$sender_name&lang_type=$lang_type&subscriber_num=$subscriber_number&msg=$msg";
+    echo "owner_id=$owner_id&password=$password&sender_name=$sender_name&lang_type=$lang_type&subscriber_num=$subscriber_number&msg=$msg";
 $curl_connection = curl_init($url);
 	curl_setopt($curl_connection, CURLOPT_CONNECTTIMEOUT, 30);
 	curl_setopt($curl_connection, CURLOPT_USERAGENT,
@@ -287,6 +294,8 @@ EOF;
     $wherestring .= " bp.industry_id = '$industry_id' AND";
     if($bpartnergroup_id >0)
     $wherestring .= " bp.bpartnergroup_id = $bpartnergroup_id AND";
+    if($bpartner_id >0)
+    $wherestring .= " bp.bpartner_id = $bpartner_id AND";
     
     
 $wherestring =substr_replace($wherestring,"",-3 );
@@ -369,6 +378,3 @@ EOF;
 }
 echo '</td>';
 require(XOOPS_ROOT_PATH.'/footer.php');
-
-?>
-
