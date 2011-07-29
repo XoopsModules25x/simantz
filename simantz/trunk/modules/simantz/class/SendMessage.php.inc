@@ -74,7 +74,7 @@ public function sendsms(){
 	curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($curl_connection, CURLOPT_POST ,1);
 	curl_setopt ($curl_connection, CURLOPT_POSTFIELDS, 
-	"owner_id=$this->smsowner_id&password=$this->smspassword&sender_name=$this->smssender_name&lang_type=$this->lang_type&subscriber_num=$this->subscriber_number&msg=$this->message");
+	"plain?user=$this->smsowner_id&password=$this->smspassword&sender=$this->smssender_name&SMSText=$this->message&GSM=$this->subscriber_number&datacoding=0");
 	 curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
 	 $result= curl_exec ($curl_connection);
  	curl_close ($curl_connection);
