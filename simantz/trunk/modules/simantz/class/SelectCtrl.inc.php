@@ -44,8 +44,8 @@ public function selectionOrg($uid,$id,$showNull='N',$onchangefunction="",$ishide
         global $tablegroups_users_link,$tableorganization ;
         //location.href='index.php?switchorg=Y&defaultorganization_id='+this.value
 	$this->log->showLog(3,"Retrieve available organization (select organization_id: $id) to employee_id : $uid, ishide=$ishide");
-	$sql="SELECT distinct(organization_id) as organization_id,organization_code from $tableorganization o
-		INNER JOIN  $tablegroups_users_link ug on o.groupid=ug.groupid where o.organization_id>0 and isactive=1";
+	echo $sql="SELECT distinct(organization_id) as organization_id,organization_code from $tableorganization o
+		INNER JOIN  $tablegroups_users_link ug on o.groupid=ug.groupid where o.organization_id>0 and isactive=1 and ug.uid=$uid";
 
 	$this->log->showLog(3,"Wtih SQL: $sql");
 	$selectctl="<SELECT id='organization_id' name='organization_id' onchange=\"$onchangefunction\">";
