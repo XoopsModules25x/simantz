@@ -99,6 +99,13 @@ menu.init("menu","menuhover");
 }catch (error) {
 }
 
+
+$(window).keydown(function(event){
+   if(event.keyCode == 27){
+      $("#idApprovalWindows").fadeOut("fast").html("");
+}});
+
+
 function setSessionDate(value,url){
 if(url.indexOf("?") > -1)
 location.href=url+'&setSessionDate=Y&defaultDateSession='+value;
