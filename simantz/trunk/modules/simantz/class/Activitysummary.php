@@ -327,7 +327,7 @@ EOF;
 	
 	$query=$this->xoopsDB->query($sql);
 	echo <<< EOF
-	<table border='1' cellspacing='3'>
+	<table border='1' style="width:900px;" cellspacing='3'>
   		<tbody>
     			<tr>
 				<th style="text-align:center;">No</th>
@@ -484,8 +484,8 @@ EOF;
 echo <<< EOF
 	<form action="activitysummary.php" method="POST" name="frmShowSearch">
 	<table border=1>
-	<tr>
-	<th colspan="4">Search Criterial</th>
+	<tr class="tdListRightTitle">
+	<td colspan="4">Search Criterial</td>
 	</tr>
 	<!--<tr>
 	<td class="head">Organization</td>
@@ -525,7 +525,7 @@ echo <<< EOF
 	</tr>
 
 	<tr>
-	<th colspan="4"><input type="submit" value="Search"></th>
+	<td colspan="4"><input type="submit" value="Search"></td>
 	</tr>
 	<input type="hidden" name="issearch" value="Y">
 	</table>
@@ -590,12 +590,12 @@ echo <<< EOF
 	<table border=1>
 	<input type="hidden" name="action" value="">
 	<tr>
-		<th style="text-align:center;" >No</th>
-		<th style="text-align:center;">Date/Time</th>
-		<th style="text-align:center;">User</th>
-		<th style="text-align:center;">Category</th>
-		<th style="text-align:center;">Event Type</th>
-		<th  style="text-align:center;">Activity</th>
+		<td class="tdListRightTitle" style="text-align:center;" >No</td>
+		<td class="tdListRightTitle" style="text-align:center;">Date/Time</td>
+		<td class="tdListRightTitle" style="text-align:center;">User</td>
+		<td class="tdListRightTitle" style="text-align:center;">Category</td>
+		<td class="tdListRightTitle" style="text-align:center;">Event Type</td>
+		<td class="tdListRightTitle"  style="text-align:center;">Activity</td>
 	</tr>
 	<tr align="left" colspan="6"><input type="button" value="Delete All Log" onclick="deleteLog();"></td>
 	</tr>
@@ -674,7 +674,7 @@ EOF;
 
 public function getSelectModule($id,$showNull='Y'){
 
-	$sql="SELECT mid,name from sim_modules where (isactive=1 or mid='$id') and mid>0 order by name";
+	$sql="SELECT mid,name from sim_modules where (isactive=1 or mid='$id') and mid>0 and weight > 0 order by name";
 
 	$mselectctl="<SELECT name='mid' onchange='getWindow();' >";
 	if ($showNull=='Y')
