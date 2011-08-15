@@ -619,8 +619,24 @@ case "savefollowuplayer";
     die;
     break;
 
+case "getbpartnerwindow":
+    $bpid=$_POST['bpid'];
+ 
+    $o->GetBpartnerWindow($bpid);
+    exit;
+    break;
 
+case "getsearchbpartnerresult": //return xml table to grid
 
+    $o->searchbpartner_no=$_POST['searchbpartner_no'];
+    $o->searchbpartner_name=$_POST['searchbpartner_name'];
+    $o->searchbpartnergroup_id=$_POST['searchbpartnergroup_id'];
+    $o->searchindustry_id=$_POST['searchindustry_id'];
+    $o->searchpic=$_POST['searchpic'];
+    $o->searchisactive=$_POST['searchisactive'];
+    $o->GetSearchBpartnerResult($wherestring);
+    exit; //after return xml shall not run more code.
+break;
 
 default :
     include_once "menu.php";

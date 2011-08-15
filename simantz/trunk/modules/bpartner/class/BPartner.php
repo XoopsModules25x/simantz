@@ -5275,4 +5275,177 @@ EOF;
 
 
   }
+
+
+
+  public function GetBpartnerWindow(){
+    include_once "class/BPSelectCtrl.inc.php";
+    $bpctrl = new BPSelectCtrl();
+
+    $this->bpartnergroupctrl=$bpctrl->getSelectBPartnerGroup($this->bpartnergroup_id,'Y');
+    $this->industryctrl=$bpctrl->getSelectIndustry($this->industry_id,'Y');
+    
+echo <<< EOF
+<div class="dimBackground"></div>
+<div align="center" >
+<form id="frmsearchbpartner" name="frmsearchbpartner">
+
+<table>
+ <tr>
+  <td astyle="vertical-align:middle;" align="center">
+
+    <table class="floatWindow" style="width:900px">
+       <tr class="tdListRightTitle" >
+          <td colspan="4">
+                <table><tr>
+                <td id="idHeaderText" align="center">Business Partner Search Form</td>
+                <td align="right" width="30px"><img src="../sales/images/close.png" onclick="closeWindow();" style="cursor:pointer" title="Close"></td>
+                </tr></table>
+          </td>
+       </tr>
+
+   <tr>
+      <td class="head">Business Partner No</td>
+      <td class="even"><input type="text" $colstyle name="searchbpartner_no" id="searchbpartner_no" value="$this->searchbpartner_no"/></td>
+      <td class="head">Business Partner Name</td>
+      <td class="even"><input type="text" $colstyle name="searchbpartner_name" id="searchbpartner_name" value="$this->filterstring%"/></td>
+   </tr>
+
+   <tr>
+      <td class="head">Business Partner Group</td>
+      <td class="even">
+         <select name="searchbpartnergroup_id" id="searchbpartnergroup_id" $colstyle>
+           $this->bpartnergroupctrl
+         </select>
+      </td>
+      <td class="head">Industry</td>
+      <td class="even">
+         <select name="searchindustry_id" id="searchindustry_id" $colstyle>
+           $this->industryctrl
+         </select>
+      </td>
+
+   </tr>
+
+   <tr>
+      <td class="head">In Charge Person</td>
+      <td class="even"><input type="text" $colstyle name="searchpic" id="searchpic" value="$this->searchpic"/></td>
+      <td class="head">Is Active</td>
+      <td class="even">
+           <select $colstyle name="searchisactive" id="searchisactive">
+             <option value="0" >Null</option>
+             <option value="Y" >Yes</option>
+             <option value="N" >No</option>
+          </select>
+      </td>
+   </tr>
+
+   <tr>
+      <td $style colspan="4">
+      <input type="hidden" name="issearch" id="issearch" value="Y"/>
+      <input type="hidden" name="action" value="getsearchbpartnerresult"/>
+      <input type="button" value="Search" onclick="searchbpartner()"/>
+      <input type="button" value="Reset" onclick="reset();"/></td>
+   </tr>
+
+   <tr>
+      <td align="left" colspan="4">
+        <div id="searchbpartnerresult"></div>
+      </td>
+   </tr>
+   
+ </table>
+
+    </td>
+  </tr>
+</table>
+</form>
+</div>
+EOF;
+
+  }
+
+
+  public function GetSearchBpartnerResult($payment_id){
+  global $defaultorganization_id;
+
+
+        if($this->searchbpartner_no!="")
+                $wherestring.=" AND product_no LIKE '%$this->searchbpartner_no%'";
+
+        if($this->searchbpartner_name!="")
+                $wherestring.=" AND product_name LIKE '%$this->searchitemname%'";
+
+        if($this->searchbpartnergroup_id!="-")
+                $wherestring.=" AND allowdiscount = '$this->searchallowdiscount'";
+
+        if($this->searchindustry_id!="-")
+                $wherestring.=" AND alloweditableprice = '$this->searchalloweditableprice'";
+
+        if($this->searchpic!="0")
+                $wherestring.=" AND category_id = '$this->searchcategory'";
+
+        if(isset($this->searchisactive) && strlen($this->product_barcode) > 0)
+           $wherestring.= " AND product_barcode = '$this->product_barcode' ";
+        
+
+	 $sql="SELECT bpartner_id,bpartner_name,bpartner_no	
+	      FROM sim_bpartner
+	      WHERE isactive = 1 AND bpartner_id >0  AND organization_id = $defaultorganization_id
+              ORDER BY seqno, bpartner_name ASC";
+
+	$this->log->showLog(3,"Showing GetSearchBpartnerResult Table");
+	$this->log->showLog(4," $this->searchmember_no With SQL:$sql");
+        $this->j=1;
+	$operationctrl="";
+	echo <<< EOF
+
+<div style="height:450px;overflow:auto;">
+
+<form name="frmsearchitem" onsubmit="reutrn=false">
+
+<table id="searchitemtable" style="text-align: left;" border="0" cellpadding="0" >
+ <tbody>
+ 
+   <tr>
+     <td class="tdListRightTitle" >B.Partner No.</td>
+     <td class="tdListRightTitle" >Business Partner Name</td>
+     <td class="tdListRightTitle" >Business Partner Group</td>
+     <td class="tdListRightTitle" >In Charge Person</td>
+   </tr>
+
+EOF;
+$rowtype="";
+	$i=0;
+	$query=$this->xoopsDB->query($sql);
+	while ($row=$this->xoopsDB->fetchArray($query)){
+		$i++;
+		$bpartner_id=$row['bpartner_id'];
+		$bpartner_no=$row['bpartner_no'];
+		$bpartner_name=$row['bpartner_name'];
+
+		if($rowtype=="odd")
+			$rowtype="even";
+		else
+			$rowtype="odd";
+
+		echo <<< EOF
+
+		<tr>
+			<td class="$rowtype" style="text-align:left;">$bpartner_no</td>
+			<td class="$rowtype" style="text-align:left;">$bpartner_name</td>
+			<td class="$rowtype" style="text-align:center;">$category_description</td>
+			<td class="$rowtype" style="text-align:center;">$isitem</td>
+		</tr>
+EOF;
+        }
+echo "
+    </tbody>
+  </table>
+
+</form>
+</div>";
+
+  }
+
 } // end of ClassBPartner
