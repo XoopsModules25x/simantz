@@ -74,9 +74,9 @@ function IsNumeric(sText)
 
            var data="action="+"ajaxgetWindow"+
                     "&mid="+mid;
-            $.ajax({url: "ajax.php",type: "POST",data: data,cache: false,
+            $.ajax({url: "admin/ajax.php",type: "POST",data: data,cache: false,
                     success: function (xml) 
-                    {    
+                    {  
                      document.getElementById("window_name").innerHTML=xml
                     }
                    }); 
