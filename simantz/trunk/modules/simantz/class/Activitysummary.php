@@ -335,7 +335,7 @@ EOF;
 				<th style="text-align:center;">Activitysummary Name</th>
 				<th style="text-align:center;">File Name</th>
 				<th style="text-align:center;">Type</th>
-				<th style="text-align:center;">Active</th>
+				<th style="text-align:center;width:700px;">Active</th>
 				<th style="text-align:center;">Seq No</th>
 				<th style="text-align:center;">Operation</th>
    	</tr>
@@ -514,7 +514,7 @@ echo <<< EOF
 	<option value="" $selectedN>Null</option>
 	<option value="I" $selectedI>Insert</option>
 	<option value="U" $selectedU>Update</option>
-	<option value="D" $selectedD>Delete</option>
+	<option value="E" $selectedD>Delete</option>
 	</select>
 	</td>
         <td class="head">Date To</td>
