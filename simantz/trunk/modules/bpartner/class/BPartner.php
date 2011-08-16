@@ -5280,6 +5280,9 @@ EOF;
 
   public function GetBpartnerWindow(){
     include_once "class/BPSelectCtrl.inc.php";
+    
+
+    $cur_ctrl = $this->currencyctrl;
     $bpctrl = new BPSelectCtrl();
 
     $this->bpartnergroupctrl=$bpctrl->getSelectBPartnerGroup($this->bpartnergroup_id,'Y');
@@ -5308,7 +5311,7 @@ echo <<< EOF
       <td class="head">Business Partner No</td>
       <td class="even"><input type="text" $colstyle name="searchbpartner_no" id="searchbpartner_no" value="$this->searchbpartner_no"/></td>
       <td class="head">Business Partner Name</td>
-      <td class="even"><input type="text" $colstyle name="searchbpartner_name" id="searchbpartner_name" value="$this->filterstring%"/></td>
+      <td class="even"><input type="text" $colstyle name="searchbpartner_name" id="searchbpartner_name" value="$this->filterstring"/></td>
    </tr>
 
    <tr>
@@ -5341,6 +5344,11 @@ echo <<< EOF
    </tr>
 
    <tr>
+        <td class="head">Currency</td>
+        <td class="even" colspan="2"><select $colstyle name="currency_id">$cur_ctrl</select></td>
+   </tr>
+
+   <tr>
       <td $style colspan="4">
       <input type="hidden" name="issearch" id="issearch" value="Y"/>
       <input type="hidden" name="action" value="getsearchbpartnerresult"/>
@@ -5369,37 +5377,53 @@ EOF;
   public function GetSearchBpartnerResult($payment_id){
   global $defaultorganization_id;
 
+        $warr = array();
+       
 
         if($this->searchbpartner_no!="")
-                $wherestring.=" AND product_no LIKE '%$this->searchbpartner_no%'";
+               array_push($warr, "bp.bpartner_no LIKE '%$this->searchbpartner_no%'");
 
         if($this->searchbpartner_name!="")
-                $wherestring.=" AND product_name LIKE '%$this->searchitemname%'";
+               array_push($warr, "bp.bpartner_name LIKE '%$this->searchbpartner_name%'");
 
-        if($this->searchbpartnergroup_id!="-")
-                $wherestring.=" AND allowdiscount = '$this->searchallowdiscount'";
+        if($this->searchbpartnergroup_id!="0" and $this->searchbpartnergroup_id != "")
+                 array_push($warr, "bp.groupid = '$this->searchbpartnergroup_id'");
 
-        if($this->searchindustry_id!="-")
-                $wherestring.=" AND alloweditableprice = '$this->searchalloweditableprice'";
+        if($this->searchindustry_id!="0" and $this->searchindustry_id!="")
+                 array_push($warr, "bp.industry_id = '$this->searchindustry_id'");
 
-        if($this->searchpic!="0")
-                $wherestring.=" AND category_id = '$this->searchcategory'";
+        if($this->searchpic != "")
+                array_push($warr, "bp.inchargeperson LIKE '%$this->searchpic%'");
 
-        if(isset($this->searchisactive) && strlen($this->product_barcode) > 0)
-           $wherestring.= " AND product_barcode = '$this->product_barcode' ";
+        if(isset($this->searchisactive) && $this->searchisactive != "0" && $this->searchisactive != "")
+           {
+                 $this->searchisactive = $this->searchisactive== 'Y' ? 1 : 0;
+                array_push($warr, "bp.isactive = '$this->searchisactive'");
+           }
+ 
+        if($this->currency_id != "0" && $this->currency_id != "null")
+           array_push($warr,  "bp.currency_id = $this->currency_id");
+
+           array_push($warr, "bp.organization_id = $defaultorganization_id");
+         $whrstr = implode(" AND ",$warr);
+         
+	 $sql="SELECT bp.bpartner_id,
+                      bp.bpartner_name,
+                      bp.bpartner_no,
+                      bg.bpartnergroup_name,
+                      cur.currency_code,
+                      bp.inchargeperson
+	      FROM sim_bpartner as bp
+              INNER JOIN sim_bpartnergroup as bg ON bp.groupid = bg.bpartnergroup_id
+              INNER JOIN sim_currency as cur ON cur.currency_id = bp.currency_id
+	      WHERE $whrstr
+              ORDER BY bp.seqno, bp.bpartner_name ASC";
         
-
-	 $sql="SELECT bpartner_id,bpartner_name,bpartner_no	
-	      FROM sim_bpartner
-	      WHERE isactive = 1 AND bpartner_id >0  AND organization_id = $defaultorganization_id
-              ORDER BY seqno, bpartner_name ASC";
-
 	$this->log->showLog(3,"Showing GetSearchBpartnerResult Table");
 	$this->log->showLog(4," $this->searchmember_no With SQL:$sql");
         $this->j=1;
 	$operationctrl="";
 	echo <<< EOF
-
 <div style="height:450px;overflow:auto;">
 
 <form name="frmsearchitem" onsubmit="reutrn=false">
@@ -5412,17 +5436,22 @@ EOF;
      <td class="tdListRightTitle" >Business Partner Name</td>
      <td class="tdListRightTitle" >Business Partner Group</td>
      <td class="tdListRightTitle" >In Charge Person</td>
+     <td class="tdListRightTitle" >Currency</td>
    </tr>
 
 EOF;
 $rowtype="";
 	$i=0;
 	$query=$this->xoopsDB->query($sql);
+        //echo $sql;
 	while ($row=$this->xoopsDB->fetchArray($query)){
 		$i++;
 		$bpartner_id=$row['bpartner_id'];
 		$bpartner_no=$row['bpartner_no'];
 		$bpartner_name=$row['bpartner_name'];
+                $cur = $row["currency_code"];
+                $group = $row["bpartnergroup_name"];
+                $incharge = $row["inchargeperson"];
 
 		if($rowtype=="odd")
 			$rowtype="even";
@@ -5434,8 +5463,9 @@ $rowtype="";
 		<tr class="bpartner_row">
 			<td class="$rowtype" style="text-align:left;">$bpartner_no</td>
 			<td class="$rowtype bpartner_name" style="text-align:left;">$bpartner_name</td>
-			<td class="$rowtype" style="text-align:center;">$category_description</td>
-			<td class="$rowtype" style="text-align:center;">$isitem</td>
+			<td class="$rowtype" style="text-align:center;">$group</td>
+			<td class="$rowtype" style="text-align:center;">$incharge</td>
+                        <td class="$rowtype" style="text-align:center;">$cur</td>
 		</tr>
 EOF;
         }
