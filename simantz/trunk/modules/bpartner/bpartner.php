@@ -39,6 +39,8 @@ $isaddnew=$_REQUEST['isaddnew'];
 // get POST/GET data
 $o->bpartner_id = $_REQUEST['bpartner_id'];
 $o->bpartner_name = $_REQUEST['bpartner_name'];
+$o->currency_id = $_REQUEST["currency_id"];
+$o->currencyctrl = $ctrl->getSelectCurrency($o->currency_id, 'Y');
 
 // end
 
@@ -634,6 +636,7 @@ case "getsearchbpartnerresult": //return xml table to grid
     $o->searchindustry_id=$_POST['searchindustry_id'];
     $o->searchpic=$_POST['searchpic'];
     $o->searchisactive=$_POST['searchisactive'];
+    
     $o->GetSearchBpartnerResult($wherestring);
     exit; //after return xml shall not run more code.
 break;
