@@ -65,48 +65,100 @@ foreach($_POST['chk'] as $hp){
                 $hp="60".$hp;
                 elseif(strlen($hp)!=11)
                 $hp="";
-
-
-
                 if($hp!=""){
                 $subscriber_number.=$hp."@";
                    $j++;
                 }
 }
 
+$subscriber_numberarry=explode("@",$subscriber_number);
+
+$messageId=1000;
+$newsubscriber_number="";
+foreach ($subscriber_numberarry as $hpno){
+  if($hpno!=""){
+  $messageId+=1;
+  $newsubscriber_number=$newsubscriber_number."<gsm messageId=\"$messageId\">".$hpno."</gsm>";
+  }
+}
+
 global $smsurl,$smsid,$smspassword,$smssender_name,$urlchecksmsbalance;
     $url=$smsurl;
- $owner_id=$smsid;
+    $owner_id=$smsid;
     $password=$smspassword;
     $sender_name=$smssender_name;
     $lang_type = $_POST['selectLang'];
     $msg=htmlspecialchars($_POST['smstext']);
     $subscriber_number=substr_replace($subscriber_number,"",-1);
-    echo "owner_id=$owner_id&password=$password&sender_name=$sender_name&lang_type=$lang_type&subscriber_num=$subscriber_number&msg=$msg";
-$curl_connection = curl_init($url);
-	curl_setopt($curl_connection, CURLOPT_CONNECTTIMEOUT, 30);
-	curl_setopt($curl_connection, CURLOPT_USERAGENT,
-		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
-	curl_setopt($curl_connection, CURLOPT_RETURNTRANSFER, false);
-	curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($curl_connection, CURLOPT_POST ,1);
-	curl_setopt ($curl_connection, CURLOPT_POSTFIELDS,
-		"owner_id=$owner_id&password=$password&sender_name=$sender_name&lang_type=$lang_type&subscriber_num=$subscriber_number&msg=$msg");
-	curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
-	$result= curl_exec ($curl_connection);
- 	curl_close ($curl_connection);
-        sleep(4);
-        echo "<br>SMS Balance ";
-        $curl_connection = curl_init($urlchecksmsbalance);
-	curl_setopt($curl_connection, CURLOPT_CONNECTTIMEOUT, 30);
-	curl_setopt($curl_connection, CURLOPT_USERAGENT,
-		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
-	curl_setopt($curl_connection, CURLOPT_RETURNTRANSFER, false);
-	curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
-	$result= curl_exec ($curl_connection);
- 	curl_close ($curl_connection);
-        echo "SMS";
+
+    $msg_strl = strlen($msg);
+
+    if($lang_type=="E"){
+       $de="0";
+       if($msg_strl>160)
+          $type="<Type>longsms</Type>";
+    }else if($lang_type=="C"){
+       $de=8;
+       if($msg_strl>70)
+       $type="<Type>longsms</Type>";
+    }
+
+    
+// SirieSMS's POST URL
+$postUrl = "http://api1.siriesms.com/api/sendsms/xml";
+
+// XML-formatted data
+$xmlString =
+"<SMS>
+<authentification>
+<username>".$owner_id."</username>
+<password>".$password."</password>
+</authentification>
+<message>
+<sender>".$sender_name."</sender>
+<Text>".$msg."</Text>
+<DataCoding>".$de."</DataCoding>".$type."
+</message>
+<recipients>".$newsubscriber_number."</recipients>
+</SMS>";
+
+
+// previously formatted XML data becomes value of "XML" POST variable
+$fields = "XML=" . urlencode($xmlString);
+// in this example, POST request was made using PHP's CURL
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $postUrl);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+// response of the POST request
+$response = curl_exec($ch);
+
+//
+//    //echo "owner_id=$owner_id&password=$password&sender_name=$sender_name&lang_type=$lang_type&subscriber_num=$subscriber_number&msg=$msg";
+//$curl_connection = curl_init($url);
+//	curl_setopt($curl_connection, CURLOPT_CONNECTTIMEOUT, 30);
+//	curl_setopt($curl_connection, CURLOPT_USERAGENT,
+//		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
+//	curl_setopt($curl_connection, CURLOPT_RETURNTRANSFER, false);
+//	curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
+//	curl_setopt($curl_connection, CURLOPT_POST ,1);
+//	curl_setopt ($curl_connection, CURLOPT_POSTFIELDS,
+//		"owner_id=$owner_id&password=$password&sender_name=$sender_name&lang_type=$lang_type&subscriber_num=$subscriber_number&msg=$msg");
+//	curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
+//	$result= curl_exec ($curl_connection);
+// 	curl_close ($curl_connection);
+//        sleep(4);
+//        echo "<br>SMS Balance ";
+//        $curl_connection = curl_init($urlchecksmsbalance);
+//	curl_setopt($curl_connection, CURLOPT_CONNECTTIMEOUT, 30);
+//	curl_setopt($curl_connection, CURLOPT_USERAGENT,
+//		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
+//	curl_setopt($curl_connection, CURLOPT_RETURNTRANSFER, false);
+//	curl_setopt($curl_connection, CURLOPT_SSL_VERIFYPEER, false);
+//        curl_setopt ($curl_connection, CURLOPT_FOLLOWLOCATION, 1);
+//	$result= curl_exec ($curl_connection);
+// 	curl_close ($curl_connection);
+//        echo "SMS";
 
     echo '</td>';
 require(XOOPS_ROOT_PATH.'/footer.php');
