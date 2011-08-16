@@ -5431,9 +5431,9 @@ $rowtype="";
 
 		echo <<< EOF
 
-		<tr>
+		<tr class="bpartner_row">
 			<td class="$rowtype" style="text-align:left;">$bpartner_no</td>
-			<td class="$rowtype" style="text-align:left;">$bpartner_name</td>
+			<td class="$rowtype bpartner_name" style="text-align:left;">$bpartner_name</td>
 			<td class="$rowtype" style="text-align:center;">$category_description</td>
 			<td class="$rowtype" style="text-align:center;">$isitem</td>
 		</tr>
