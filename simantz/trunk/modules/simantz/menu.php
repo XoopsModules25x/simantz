@@ -103,6 +103,7 @@ menu.init("menu","menuhover");
 $(window).keydown(function(event){
    if(event.keyCode == 27){
       $("#idApprovalWindows").fadeOut("fast").html("");
+
 }});
 
 

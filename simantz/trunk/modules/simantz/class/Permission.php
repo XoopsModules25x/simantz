@@ -403,5 +403,54 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 
 	return $selectctl;
    }
+   
+   
+function showReportList($parentwindows_id,$level,$uid,$module_id){
+            $currentdate=date("Y-m-d",time());
+
+    $output = "";
+  $sql="SELECT distinct(w.window_id),w.window_name, w.filename, m.name as modulename,m.dirname
+                from sim_groups g
+		inner join sim_groups_users_link gul on g.groupid=gul.groupid
+		inner join sim_users u on gul.uid=u.uid
+		inner join sim_group_permission gp on gp.gperm_groupid=g.groupid
+		inner join sim_modules m on gp.gperm_itemid=m.mid
+		inner join sim_permission gsp on gsp.groupid=g.groupid
+		inner join sim_window w on gsp.window_id=w.window_id
+		where m.mid=$module_id and gp.gperm_name='module_read'
+                    and w.mid=$module_id
+                    and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
+                    w.isactive=1 and w.window_id>0
+                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.seqno";
+
+  $level++;
+ $query=$this->xoopsDB->query($sql);
+    while($row=$this->xoopsDB->fetchArray($query)){
+        $prefix="";
+        $wid=$row['window_id'];
+        $wname=$row['window_name'];
+        $filename=$row['filename'];
+        for($i=0;$i<$level;$i++)
+        $prefix.="&nbsp;";
+        if($row['filename']!=""){
+           $linkname=" onclick='getParam($wid,\"$filename\",\"$wname\")'";
+           $cssclass="";
+        }
+        else{
+            $cssclass="class='parent'";
+            $linkname="";
+        }
+
+
+        $output .= "<li id='li$wid' name='rr[]'><a $linkname $cssclass><span>".$row['window_name']."</span></a><ul>";
+
+
+        $output .= $this->showReportList($row['window_id'],$level,$uid,$module_id);
+        $output .= "</ul></li>";
+    }
+
+    return $output;
+    //echo "";
+}
 }
 

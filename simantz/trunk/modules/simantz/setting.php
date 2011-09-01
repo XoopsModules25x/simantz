@@ -25,3 +25,4 @@ $mandatorysign="<b style='color:red;'>*</b>";
 $enforcemanager=1;
 $alertmsg="";
 $version="";
+$reportsettingcss='display:none1';
