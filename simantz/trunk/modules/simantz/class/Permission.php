@@ -316,13 +316,12 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
     return $output;
     //echo "";
 }
-
   public function checkPermission($uid,$module_id,$usefilename){
         $currentdate=date("Y-m-d",time());
 	$this->log->showLog(3, "checkPermission(uid=$uid,module_id=$module_id,usefilename=$usefilename)");
         $sql="select distinct(w.window_id) as window_id,w.helpurl,
 		w.window_name, gsp.iswriteperm, gsp.permissionsetting ,w.seqno,w.filename,
-            w.windowsetting,w.mid
+            w.windowsetting,w.mid,w.jrxml
 		from sim_groups g
 		inner join sim_groups_users_link gul on g.groupid=gul.groupid
 		inner join sim_users u on gul.uid=u.uid
@@ -340,7 +339,7 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 	if($usefilename=='index.php')
 		return array("Home",0,"","");
 	elseif ($row=$this->xoopsDB->fetchArray($query))
-		return array($row['window_name'],$row['iswriteperm'],$row['windowsetting'],$row['permissionsetting'],$row['helpurl']);
+		return array($row['window_name'],$row['iswriteperm'],$row['windowsetting'],$row['permissionsetting'],$row['helpurl'],$row['jrxml']);
 	else
  		return array("",0,0,"","");
 
@@ -348,109 +347,8 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 
 
 
-
  public function orgWhereStr($uid){
 	$this->log->showLog(3,"Generate sqlstring for user to see available organization data for uid : $uid");
 	$sql="SELECT organization_id from sim_organization o
 		INNER JOIN sim_groups_users_link ug on o.groupid=ug.groupid
-		where ug.uid=$uid and o.isactive=1";
-
-
-	$this->log->showLog(3,"Wtih SQL: $sql");
-	$wherestr="organization_id in(";
-
-	$query=$this->xoopsDB->query($sql);
-	$i=0;
-	while($row=$this->xoopsDB->fetchArray($query)){
-
-		$organization_id=$row['organization_id'];
-		if ($i==0)
-			$wherestr=$wherestr . $organization_id;
-		else
-			$wherestr=$wherestr  . ",$organization_id";
-		$i++;
-	}
-
-	$wherestr=$wherestr . ")";
-	$this->log->showLog(4,"Return orgWhereStr='$wherestr'");
-	return $wherestr;
- }
- public function selectAvailableSysUser($id,$includenull='Y'){
-	$this->log->showLog(3,"Retrieve available system users from database, with id: $id");
-	$tableusers="sim_users";
-	$sql="SELECT uid,uname from $tableusers ";
-	$this->log->showLog(4,"SQL: $sql");
-	$selectctl="<SELECT name='uid' >";
-
-	if($includenull=='Y')
-		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null</OPTION>';
-
-	$query=$this->xoopsDB->query($sql);
-	$selected="";
-	while($row=$this->xoopsDB->fetchArray($query)){
-		$uid=$row['uid'];
-		$uname=$row['uname'];
-
-		if($id==$uid)
-			$selected='SELECTED="SELECTED"';
-		else
-			$selected="";
-		$selectctl=$selectctl  . "<OPTION value='$uid' $selected>$uname</OPTION>";
-
-	}
-
-	$selectctl=$selectctl . "</SELECT>";
-
-	return $selectctl;
-   }
-   
-   
-function showReportList($parentwindows_id,$level,$uid,$module_id){
-            $currentdate=date("Y-m-d",time());
-
-    $output = "";
-  $sql="SELECT distinct(w.window_id),w.window_name, w.filename, m.name as modulename,m.dirname
-                from sim_groups g
-		inner join sim_groups_users_link gul on g.groupid=gul.groupid
-		inner join sim_users u on gul.uid=u.uid
-		inner join sim_group_permission gp on gp.gperm_groupid=g.groupid
-		inner join sim_modules m on gp.gperm_itemid=m.mid
-		inner join sim_permission gsp on gsp.groupid=g.groupid
-		inner join sim_window w on gsp.window_id=w.window_id
-		where m.mid=$module_id and gp.gperm_name='module_read'
-                    and w.mid=$module_id
-                    and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
-                    w.isactive=1 and w.window_id>0
-                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.seqno";
-
-  $level++;
- $query=$this->xoopsDB->query($sql);
-    while($row=$this->xoopsDB->fetchArray($query)){
-        $prefix="";
-        $wid=$row['window_id'];
-        $wname=$row['window_name'];
-        $filename=$row['filename'];
-        for($i=0;$i<$level;$i++)
-        $prefix.="&nbsp;";
-        if($row['filename']!=""){
-           $linkname=" onclick='getParam($wid,\"$filename\",\"$wname\")'";
-           $cssclass="";
-        }
-        else{
-            $cssclass="class='parent'";
-            $linkname="";
-        }
-
-
-        $output .= "<li id='li$wid' name='rr[]'><a $linkname $cssclass><span>".$row['window_name']."</span></a><ul>";
-
-
-        $output .= $this->showReportList($row['window_id'],$level,$uid,$module_id);
-        $output .= "</ul></li>";
-    }
-
-    return $output;
-    //echo "";
-}
-}
-
+		where ug.uid=$uid and o.isa

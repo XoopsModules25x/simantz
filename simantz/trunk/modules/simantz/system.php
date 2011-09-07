@@ -131,6 +131,7 @@
         $windowsetting=$arrperm[2];
         $permissionsetting=$arrperm[3];
         $helpurl=$arrperm[4];
+        $jrxml=$arrperm[5];
 
         if(strpos($permissionsetting,'$')>=0){
 
@@ -166,6 +167,8 @@ $defaultcompanyname =$o->companyname;
 $defaultcompanyno=$o->companyno; 
 $defaulttelcode=$o->telcode;
 		$log->showLog(3,"end system.php.");
+$defaultcompanyno=$o->companyno;
+$defaultcompanyname     =$o->companyname;
 
 //	if($a->checkAccounts($defaultorganization_id))
 //    $a->insertDefaultAcc($defaultorganization_id,$userid);
@@ -234,61 +237,4 @@ $defaulttelcode=$o->telcode;
 	
 	$query=$xoopsDB->query($sql);
 	
-	if($row=$xoopsDB->fetchArray($query)){
-	$retval = $row['period_name'];
-	}
-	
-	return $retval;
-	
-	}
-
-
-function getDateSession(){
-global $defaultDateSession;
-$curr_date = $timestamp= date("Y-m-d", time()) ;
-
-if($defaultDateSession != "")
-$curr_date = $defaultDateSession;
-
-
-return $curr_date;
-}
-
- function curPageURL() {
- $pageURL = 'http';
- if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
- $pageURL .= "://";
- if ($_SERVER["SERVER_PORT"] != "80") {
-  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
- } else {
-  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
- }
- return $pageURL;
-}
-
-
-function isGroup($group_name, $user_id){
-
-    global $xoopsDB;
-      $sql = "select u.name, g.name as g_name from sim_users u, sim_groups g, sim_groups_users_link ug
-                    where u.uid=ug.uid and g.groupid=ug.groupid and u.uid=$user_id and g.name='$group_name'";
-     $rs = $xoopsDB->query($sql);
-     $allow = false;
-     while ($row=$xoopsDB->fetchArray($rs)){
-         //echo $row['g_name']." ".$group_name." ".$allow."|";
-
-         if($row['g_name']==$group_name){
-             $allow = true;
-         }
-     }
-     return $allow;
- }
-
-function right($value, $count){
-    return substr($value, ($count*-1));
-}
-
-function left($string, $count){
-    return substr($string, 0, $count);
-}
-?>
+	if($row=$xoopsDB->fetchArray($q
