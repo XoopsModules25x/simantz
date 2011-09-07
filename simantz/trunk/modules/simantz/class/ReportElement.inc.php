@@ -8,11 +8,11 @@ class ReportElement{
 		}
 	
 	public function rptctrl_date($caption='Date',$name='date',$value='',$onchange){
-		return "<tr><td>$caption</td><td><input id='$name' name='$name' class='datepicker'  value='$value' size='10' $onchange></td></tr>";
+		return "<tr><td>$caption</td><td><input id='$name' name='$name' class='datepick'  value='$value' size='10' $onchange></td></tr>";
 		}
 		
 		public function rptctrl_daterage($caption='Date',$name1='datefrom',$name2='dateto',$value1='',$value2,$onchange1,$onchange2){
-		return "<tr><td>$caption</td><td><input name='$name1' id='$name1' value='$value1' size='10' class='datepicker' $onchange1> To <input id='$name2' name='$name2' class='datepicker' value='$value2' size='10' $onchange2></td></tr>";
+		return "<tr><td>$caption</td><td><input name='$name1' id='$name1' value='$value1' size='10' class='datepick' $onchange1> To <input id='$name2' name='$name2' class='datepick' value='$value2' size='10' $onchange2></td></tr>";
 		}
 		
 		public function rptctrl_checkbox($caption='Active',$name,$value,$checked,$onchange){

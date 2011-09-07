@@ -162,7 +162,7 @@ echo <<< EOF
 					 
 					document.getElementById('filtersetting').innerHTML=xml;
 			
-			$(".datepicker").datepicker({
+			$(".datepick").datepicker({
 				dateFormat: 'yy-mm-dd',
                   numberOfMonths: 2
 				});
