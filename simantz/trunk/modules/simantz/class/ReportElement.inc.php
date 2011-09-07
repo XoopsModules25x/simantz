@@ -8,11 +8,11 @@ class ReportElement{
 		}
 	
 	public function rptctrl_date($caption='Date',$name='date',$value='',$onchange){
-		return "<tr><td>$caption</td><td><input id='$name' name='$name' value='$value' size='10' $onchange></td></tr>";
+		return "<tr><td>$caption</td><td><input id='$name' name='$name' class='datepicker'  value='$value' size='10' $onchange></td></tr>";
 		}
 		
 		public function rptctrl_daterage($caption='Date',$name1='datefrom',$name2='dateto',$value1='',$value2,$onchange1,$onchange2){
-		return "<tr><td>$caption</td><td><input name='$name1' id='$name1' value='$value1' size='10' $onchange1> To <input id='$name2' name='$name2' value='$value2' size='10' $onchange2></td></tr>";
+		return "<tr><td>$caption</td><td><input name='$name1' id='$name1' value='$value1' size='10' class='datepicker' $onchange1> To <input id='$name2' name='$name2' class='datepicker' value='$value2' size='10' $onchange2></td></tr>";
 		}
 		
 		public function rptctrl_checkbox($caption='Active',$name,$value,$checked,$onchange){
@@ -61,7 +61,47 @@ class ReportElement{
 
 			}
  
-		
-		
+		public function rptctrl_period($caption,$name,$period_id,$onchange,$showNull,$wherestr){
+			global $ctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$ctrl->getSelectPeriod($period_id,$showNull,$wherestr)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			
+			}
+
+
+			
+		public function rptctrl_periodrange($caption,$name1,$name2,$period_id1,$period_id2,$onchange1,$onchange2,$showNull1,$showNull2,$wherestr1,$wherestr2){
+			global $ctrl;
+			$result1 = 
+			"<select name='$name1' id='$name1' onchange='$onchange1'>".$ctrl->getSelectPeriod($period_id1,$showNull1,$wherestr1)."</select>";
+			$result2 = 
+			"<select name='$name2' id='$name2' onchange='$onchange2'>".$ctrl->getSelectPeriod($period_id2,$showNull2,$wherestr2)."</select>";
+			return "<tr><td>$caption</td><td>$result1 To $result2</td></tr>";
+			
+			}
+					
+		public function rptctrl_organization($caption,$name,$organization_id,$onchange,$showNull,$wherestr){
+			global $ctrl,$xoopsUser;
+			$result = $ctrl->selectionOrg($xoopsUser->getVar('uid') ,$organization_id,$showNull);
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			
+			}
+
+		public function rptctrl_country($caption,$name,$country_id,$onchange,$showNull){
+			global $ctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$ctrl->getSelectCountry($country_id ,$showNull)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			}		
+			
+		public function rptctrl_currency($caption,$name,$currency_id,$onchange,$showNull){
+			global $ctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$ctrl->getSelectCurrency($currency_id ,$showNull)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			}
+			
+				
 	}
 

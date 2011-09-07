@@ -97,6 +97,7 @@ elseif($_REQUEST['customcode']==1){
 	}
 	
 include_once "menu.php";
+
 $xoTheme->addStylesheet("$url/modules/simantz/include/jqueryui/themes/base/jquery.ui.all.css"); 
 $xoTheme->addScript("$url/modules/simantz/include/jqueryui/jquery.min.js"); 
 $xoTheme->addScript("$url/modules/simantz/include/jqueryui/ui/jquery.ui.core.js"); 
@@ -118,7 +119,7 @@ $date=date("Y-m-d",time());
 
 $pm=new Permission();
 //get report root
-$sql="SELECT window_id FROM sim_window where window_name LIKE 'Report%' and mid='$module_id'";
+ $sql="SELECT window_id FROM sim_window where window_name LIKE 'Report%' and mid='$module_id'";
 $query=$xoopsDB->query($sql);
 $row=$xoopsDB->fetchArray($query);
 $reportroot_id = $row['window_id'];
@@ -126,7 +127,6 @@ $showhiden=$_REQUEST['showhiden'];
 
 if($showhiden=='') 
 $showhiden='N';
-
 $list=$pm->showReportList($reportroot_id,0,$userid,$module_id,$showhiden);
 
 /*
@@ -159,9 +159,10 @@ echo <<< EOF
          $.ajax({
              url: "report.php",type: "POST",data: data1,cache: false,
                  success: function (xml) {
+					 
 					document.getElementById('filtersetting').innerHTML=xml;
 			
-			$("#datefrom").datepicker({
+			$(".datepicker").datepicker({
 				dateFormat: 'yy-mm-dd',
                   numberOfMonths: 2
 				});
@@ -285,5 +286,4 @@ echo \$simbizre->rptctrl_submit();
 </div>
 EOF;
 require(XOOPS_ROOT_PATH.'/footer.php');
-
 //Skudai

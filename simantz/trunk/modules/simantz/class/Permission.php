@@ -322,7 +322,7 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 	$this->log->showLog(3, "checkPermission(uid=$uid,module_id=$module_id,usefilename=$usefilename)");
         $sql="select distinct(w.window_id) as window_id,w.helpurl,
 		w.window_name, gsp.iswriteperm, gsp.permissionsetting ,w.seqno,w.filename,
-            w.windowsetting,w.mid
+            w.windowsetting,w.mid,w.jrxml
 		from sim_groups g
 		inner join sim_groups_users_link gul on g.groupid=gul.groupid
 		inner join sim_users u on gul.uid=u.uid
@@ -340,12 +340,11 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 	if($usefilename=='index.php')
 		return array("Home",0,"","");
 	elseif ($row=$this->xoopsDB->fetchArray($query))
-		return array($row['window_name'],$row['iswriteperm'],$row['windowsetting'],$row['permissionsetting'],$row['helpurl']);
+		return array($row['window_name'],$row['iswriteperm'],$row['windowsetting'],$row['permissionsetting'],$row['helpurl'],$row['jrxml']);
 	else
  		return array("",0,0,"","");
 
  }
-
 
 
  public function orgWhereStr($uid){
@@ -403,12 +402,15 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
 	return $selectctl;
    }
    
-   
-function showReportList($parentwindows_id,$level,$uid,$module_id){
+      
+function showReportList($parentwindows_id,$level,$uid,$module_id,$showhiden='N'){
             $currentdate=date("Y-m-d",time());
-
+if($showhiden=='N')
+$wherestr='and w.isactive=1';
+else
+$wherestr='';
     $output = "";
-  $sql="SELECT distinct(w.window_id),w.window_name, w.filename, m.name as modulename,m.dirname
+  $sql="SELECT distinct(w.window_id),w.window_name, w.filename, m.name as modulename,m.dirname,w.isactive
                 from sim_groups g
 		inner join sim_groups_users_link gul on g.groupid=gul.groupid
 		inner join sim_users u on gul.uid=u.uid
@@ -418,9 +420,8 @@ function showReportList($parentwindows_id,$level,$uid,$module_id){
 		inner join sim_window w on gsp.window_id=w.window_id
 		where m.mid=$module_id and gp.gperm_name='module_read'
                     and w.mid=$module_id
-                    and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
-                    w.isactive=1 and w.window_id>0
-                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.seqno";
+                    and w.parentwindows_id=$parentwindows_id and u.uid=$uid $wherestr and w.window_id>0
+                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.isactive DESC,w.window_name";
 
   $level++;
  $query=$this->xoopsDB->query($sql);
@@ -429,19 +430,24 @@ function showReportList($parentwindows_id,$level,$uid,$module_id){
         $wid=$row['window_id'];
         $wname=$row['window_name'];
         $filename=$row['filename'];
+        $isactive=$row['isactive'];
         for($i=0;$i<$level;$i++)
         $prefix.="&nbsp;";
         if($row['filename']!=""){
-           $linkname=" onclick='getParam($wid,\"$filename\",\"$wname\")'";
+           $linkname=" onclick='getParam($wid,\"$filename\",\"$wname\",\"$isactive\")'";
            $cssclass="";
         }
         else{
             $cssclass="class='parent'";
             $linkname="";
         }
+		if($isactive==0)
+		$notactivestyle='<small style="color:black">[hide]</small>';
+		else
+		$notactivestyle='';
+		
 
-
-        $output .= "<li id='li$wid' name='rr[]'><a $linkname $cssclass><span>".$row['window_name']."</span></a><ul>";
+        $output .= "<li id='li$wid' name='rr[]'><a $linkname $cssclass><span>".$row['window_name']."$notactivestyle</span></a><ul>";
 
 
         $output .= $this->showReportList($row['window_id'],$level,$uid,$module_id);
@@ -451,5 +457,6 @@ function showReportList($parentwindows_id,$level,$uid,$module_id){
     return $output;
     //echo "";
 }
+
 }
 

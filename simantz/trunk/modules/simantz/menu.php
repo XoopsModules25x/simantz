@@ -57,6 +57,7 @@ EOF;
 $menulist .= $permission->showMenu($parentwindows_id,0,$userid,$module_id);
 $menulist .= "</ul></div></div>";
 $menulist = str_replace( array("\r\n", "\n","\r"), "", $menulist );
+
 /*
 echo <<< EOF
 
