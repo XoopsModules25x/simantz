@@ -55,7 +55,9 @@ EOF;
         </li>";
 
 $menulist .= $permission->showMenu($parentwindows_id,0,$userid,$module_id);
-$menulist .= "</ul></div></div>";
+$menulist .= "        <li>
+        <a href='report.php' class='parent'><span>Reports</span></a>
+        </li></ul></div></div>";
 $menulist = str_replace( array("\r\n", "\n","\r"), "", $menulist );
 
 /*

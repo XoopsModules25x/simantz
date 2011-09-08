@@ -119,7 +119,7 @@ $date=date("Y-m-d",time());
 
 $pm=new Permission();
 //get report root
- $sql="SELECT window_id FROM sim_window where window_name LIKE 'Report%' and mid='$module_id'";
+ $sql="SELECT window_id FROM sim_window where window_name = 'Reports' and mid='$module_id'";
 $query=$xoopsDB->query($sql);
 $row=$xoopsDB->fetchArray($query);
 $reportroot_id = $row['window_id'];
@@ -145,6 +145,31 @@ $showhidelink="<a href='report.php'>Hide Hidden Report</a>";
 else
 $showhidelink="<a href='report.php?showhiden=Y'>Show Hidden Report</a>";
 echo <<< EOF
+<STYLE TYPE="text/css">
+    .level1 {
+		margin: 0em;
+		list-style: none;
+			font-weight: bold;
+
+	}
+	
+    .level2 {
+			margin: 0em;
+			font-weight: normal;}
+    .level3 {
+		margin: 5px;
+			font-weight: normal;
+			
+			}
+	  .level3 a {color:black;}
+	  
+	 .level4 {
+		margin: 5px;
+			font-weight: normal;			
+			}
+			  .level4 a {color:red;}
+
+  </STYLE>
 <script>
 
 

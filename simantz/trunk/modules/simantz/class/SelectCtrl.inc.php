@@ -728,4 +728,32 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
 
 	return $selectctl;
   } // end
+
+ public function getSelectUser($id,$showNull='N') {
+
+	$sql="SELECT uid,uname from sim_users where (user_isactive=1 or uid=$id)
+            or uid>0 order by uname";
+	$this->log->showLog(3,"Generate User list with id=:$id and shownull=$showNull SQL: $sql");
+	//$selectctl="<SELECT name='region_id' >";
+	if ($id==-1 || $showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$uid=$row['uid'];
+		$uname=$row['uname'];
+
+		if($id==$uid)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$uid' $selected>$uname</OPTION>";
+
+	}
+
+	//$selectctl=$selectctl . "</SELECT>";
+
+	return $selectctl;
+  }
 }

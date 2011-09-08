@@ -288,7 +288,7 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
                     and w.mid=$module_id
                     and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
                     w.isactive=1 and w.window_id>0
-                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') order by w.seqno";
+                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') and window_name <> 'Reports' order by w.seqno";
 
   $level++;
  $query=$this->xoopsDB->query($sql);
@@ -434,7 +434,7 @@ $wherestr='';
         for($i=0;$i<$level;$i++)
         $prefix.="&nbsp;";
         if($row['filename']!=""){
-           $linkname=" onclick='getParam($wid,\"$filename\",\"$wname\",\"$isactive\")'";
+           $linkname=" onclick='javascript:getParam($wid,\"$filename\",\"$wname\",\"$isactive\")'";
            $cssclass="";
         }
         else{
@@ -447,7 +447,8 @@ $wherestr='';
 		$notactivestyle='';
 		
 
-        $output .= "<li id='li$wid' name='rr[]'><a $linkname $cssclass><span>".$row['window_name']."$notactivestyle</span></a><ul>";
+
+        $output .= "<li class='level$level' id='li$wid' name='rr[]'><a href='#' $linkname $cssclass><span>".$row['window_name']."$notactivestyle</span></a><ul>";
 
 
         $output .= $this->showReportList($row['window_id'],$level,$uid,$module_id);
