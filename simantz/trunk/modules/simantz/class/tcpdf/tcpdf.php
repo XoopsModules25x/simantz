@@ -403,19 +403,19 @@ if (!class_exists('TCPDF', false)) {
 		* @var current font info
 		* @access protected
 		*/
-		protected $CurrentFont;
+		public $CurrentFont;
 
 		/**
 		* @var current font size in points
 		* @access protected
 		*/
-		protected $FontSizePt;
+		public $FontSizePt;
 
 		/**
 		* @var current font size in user unit
 		* @access protected
 		*/
-		protected $FontSize;
+		public $FontSize;
 
 		/**
 		* @var commands for drawing color
