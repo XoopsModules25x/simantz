@@ -2,13 +2,18 @@
 
 
 class ReportElement{
-	
+
 	public function ReportElement(){
 		
 		}
 	
+
 	public function rptctrl_date($caption='Date',$name='date',$value='',$onchange){
 		return "<tr><td>$caption</td><td><input id='$name' name='$name' class='datepick'  value='$value' size='11' $onchange></td></tr>";
+		}
+		
+  	public function rptctrl_text($caption='Text',$name='txt',$value='',$onchange){
+		return "<tr><td>$caption</td><td><input id='$name' name='$name'   value='$value' size='20' $onchange></td></tr>";
 		}
 		
 		public function rptctrl_daterage($caption='Date',$name1='datefrom',$name2='dateto',$value1='',$value2,$onchange1,$onchange2){

@@ -103,9 +103,14 @@ $xoTheme->addScript("$url/modules/simantz/include/jqueryui/jquery.min.js");
 $xoTheme->addScript("$url/modules/simantz/include/jqueryui/ui/jquery.ui.core.js"); 
 $xoTheme->addScript("$url/modules/simantz/include/jqueryui/ui/jquery.ui.widget.js"); 
 $xoTheme->addScript("$url/modules/simantz/include/jqueryui/ui/jquery.ui.datepicker.js");
+$xoTheme->addScript("$url/modules/simantz/include/jqueryui/ui/jquery.ui.autocomplete.js"); 
+$xoTheme->addScript("$url/modules/simantz/include/jqueryui/ui/jquery.ui.position.js"); 
 $xoTheme->addStylesheet("$url/modules/simantz/include/jqueryui/demos.css"); 
-			
-
+$xoTheme->addStylesheet("$url/modules/simantz/include/jqueryui/themes/ui-lightness/jquery.ui.autocomplete.css"); 
+include "../simantz/class/FormElement.php";
+$fe=new FormElement();
+$fe->activateAutoComplete();
+//$re->AutoCompleteJS();
 /*
  * <script src="../../jquery-1.6.2.js"></script> 
 	<script src="../../ui/jquery.ui.core.js"></script> 
@@ -186,12 +191,15 @@ echo <<< EOF
                  success: function (xml) {
 					 
 					document.getElementById('filtersetting').innerHTML=xml;
+					activateAutoComplete();
 			
 			$(".datepick").datepicker({
 				dateFormat: 'yy-mm-dd',
                   numberOfMonths: 2
 				});
                      }});
+
+
                       
                $.ajax({
 				url: "report.php",type: "POST",data: data2,cache: false,
@@ -212,7 +220,6 @@ echo <<< EOF
                    
 
                      }});
-
     }
 
 
@@ -261,6 +268,8 @@ function changeCode(value){
 	}
 </script>
 <div id="idApprovalWindows" style="display:none"></div>
+<input id='pickValue' value='' name='pickValue'><br/>
+<input id='pickID' value='' name='pickID'>
 
 <div align=center>
 <table  style='width: 1000px;'><tr><td width='300px'>
