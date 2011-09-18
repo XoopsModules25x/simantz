@@ -75,8 +75,8 @@ class SearchLayer{
 					break;
 				}
 				return "<input id='$field1_id' name='$field1_name'  value='$value1' $field1readonly>
-			<input id='$field2_id' name='$field2_name'  value='$value2' size='8' $field2readonly>
-			<input id='$field3_id' name='$field3_name'  value='$value3' size='25' $field3readonly>
+			<input id='$field2_id'  class='autocomplete' name='$field2_name'  value='$value2' autocompleteurl='../bpartner/searchlayer.php?action=autocomp' size='8' $field2readonly>
+			<input id='$field3_id' class='autocomplete' name='$field3_name'  value='$value3'  autocompleteurl='../bpartner/searchlayer.php?action=autocomp' size='25' $field3readonly>
 			<img onclick=$function src='../simantz/images/zoom.png' style='cursor:pointer'>";
 			}
 			
@@ -392,7 +392,18 @@ echo "
 	  }
 	
 	
-		
-		
+	public function showBPartnerAutoComplete(){
+		global $log;
+		$str=$_REQUEST['term'];
+		$sql="SELECT bpartner_id,concat(bpartner_no,' - ',bpartner_name) as label, bpartner_no as value FROM sim_bpartner where 
+		concat(bpartner_no,' - ',bpartner_name) LIKE '%$str%'";
+		$log->showLog(3,"run showBPartnerAutoComplete with sql: $sql");
+		$query=$this->xoopsDB->query($sql);
+		$data=array();
+		while($row=$this->xoopsDB->fetchArray($query)){
+			$data[]=array('id'=> $row['bpartner_id'],'label'=>$row['label'],'value'=>$row['value']);
+			}
+			return json_encode($data);
+		}	
 	
 }

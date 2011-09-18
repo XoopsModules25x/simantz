@@ -93,7 +93,10 @@ switch($action){
 	break;
 	case "showBPartnerSearchResult":
 		$o->showBPartnerResult();
-	break;	
+	break;
+	case "autocomp":
+		echo $o->showBPartnerAutoComplete();
+	break;
 	default:
 		echo "Invalid action!";
 		

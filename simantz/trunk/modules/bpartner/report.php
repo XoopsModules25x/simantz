@@ -20,7 +20,6 @@ $bpctrl=new BPSelectCtrl();
  * Call report centralize report function
  */
 include "../simantz/report.php";
-
 /*
  * section 3
  * call required javascript for search layer
