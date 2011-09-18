@@ -1,7 +1,6 @@
 <?php
 
 class BPartnerReportElement extends ReportElement{
-	
 	public function BPartnerReportElement(){
 		
 		}

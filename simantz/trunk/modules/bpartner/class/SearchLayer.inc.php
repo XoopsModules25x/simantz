@@ -3,6 +3,7 @@
 class SearchLayer{
 	private $xoopsDB;
 	private $log;
+	public $autocompletelen=25;
 
   
 	public function SearchLayer(){
@@ -394,9 +395,10 @@ echo "
 	
 	public function showBPartnerAutoComplete(){
 		global $log;
+
 		$str=$_REQUEST['term'];
 		$sql="SELECT bpartner_id,concat(bpartner_no,' - ',bpartner_name) as label, bpartner_no as value FROM sim_bpartner where 
-		concat(bpartner_no,' - ',bpartner_name) LIKE '%$str%'";
+		concat(bpartner_no,' - ',bpartner_name) LIKE '%$str%' ORDER BY bpartner_no ASC LIMIT 0,$this->autocompletelen";
 		$log->showLog(3,"run showBPartnerAutoComplete with sql: $sql");
 		$query=$this->xoopsDB->query($sql);
 		$data=array();
