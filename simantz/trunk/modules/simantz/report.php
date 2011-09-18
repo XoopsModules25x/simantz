@@ -268,8 +268,6 @@ function changeCode(value){
 	}
 </script>
 <div id="idApprovalWindows" style="display:none"></div>
-<input id='pickValue' value='' name='pickValue'><br/>
-<input id='pickID' value='' name='pickID'>
 
 <div align=center>
 <table  style='width: 1000px;'><tr><td width='300px'>
