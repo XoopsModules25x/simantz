@@ -756,4 +756,32 @@ public function getSelectTracking($id,$showNull='N',$wherestr="") {
 
 	return $selectctl;
   }
+  
+  
+  public function getSelectWorkPlace($id,$showNull='N') {
+  	$sql="SELECT workplace_id,workplace_name from sim_hr_workplace where (isactive=1 or workplace_id=$id)
+            and workplace_id>0 order by workplace_name ";
+	$this->log->showLog(3,"Generate WorkPlce list with id=:$id and shownull=$showNull SQL: $sql");
+	//$selectctl="<SELECT name='region_id' >";
+	if ($id==-1 || $showNull=='Y')
+		$selectctl=$selectctl . '<OPTION value="0" SELECTED="SELECTED">Null </OPTION>';
+
+	$query=$this->xoopsDB->query($sql);
+	$selected="";
+	while($row=$this->xoopsDB->fetchArray($query)){
+		$workplace_id=$row['workplace_id'];
+		$workplace_name=$row['workplace_name'];
+
+		if($id==$workplace_id)
+			$selected='SELECTED="SELECTED"';
+		else
+			$selected="";
+		$selectctl=$selectctl  . "<OPTION value='$workplace_id' $selected>$workplace_name</OPTION>";
+
+	}
+
+	//$selectctl=$selectctl . "</SELECT>";
+
+	return $selectctl;
+  } // end
 }

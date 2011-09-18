@@ -110,6 +110,27 @@ class ReportElement{
 			return "<tr><td>$caption</td><td>$result</td></tr>";
 			}
 			
+		public function rptctrl_religion($caption,$name,$id,$onchange,$showNull){
+			global $ctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$ctrl->getSelectReligion($id ,$showNull)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			}
+		public function rptctrl_region($caption,$name,$id,$onchange,$showNull){
+			global $ctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$ctrl->getSelectRegion($id ,$showNull)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			}
+
+
+		public function rptctrl_races($caption,$name,$id,$onchange,$showNull){
+			global $ctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$ctrl->getSelectRaces($id ,$showNull)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			}
+
 		public function rptctrl_user($caption,$name,$uid,$onchange,$showNull){
 			global $ctrl;
 			$result = 

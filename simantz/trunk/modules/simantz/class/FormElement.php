@@ -17,6 +17,7 @@ class FormElement{
 	
 		$(".autocomplete").each(function(index){
 			link=$(this).attr('autocompleteurl');
+			
 			$(this).autocomplete({
 			source:link,
 			minLength: 0,
@@ -26,7 +27,10 @@ class FormElement{
 			}
 			});
 			
-//		alert(index+":"+$(this).text());	
+			$(this).click(function(){
+				$(this).autocomplete("search","");
+				$(this).select();
+				});
 
 
 		});
