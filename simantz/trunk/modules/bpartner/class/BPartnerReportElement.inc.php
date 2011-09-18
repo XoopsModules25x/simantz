@@ -30,4 +30,11 @@ class BPartnerReportElement extends ReportElement{
 			return "<tr><td>$caption</td><td>$result</td></tr>";
 			}	
 		
+			public function rptctrl_bpartnergroup($caption,$name,$id,$onchange,$showNull){
+			global $bpctrl;
+			$result = 
+			"<select name='$name' id='$name' onchange='$onchange()'>".$bpctrl->getSelectBPartnerGroup($id ,$showNull)."</select>";
+			return "<tr><td>$caption</td><td>$result</td></tr>";
+			}
+
 }

@@ -75,8 +75,8 @@ class SearchLayer{
 					break;
 				}
 				return "<input id='$field1_id' name='$field1_name'  value='$value1' $field1readonly>
-			<input id='$field2_id'  class='autocomplete' name='$field2_name'  value='$value2' autocompleteurl='../bpartner/searchlayer.php?action=autocomp' size='8' $field2readonly>
-			<input id='$field3_id' class='autocomplete' name='$field3_name'  value='$value3'  autocompleteurl='../bpartner/searchlayer.php?action=autocomp' size='25' $field3readonly>
+			<input id='$field2_id'  class='autocomplete' name='$field2_name'  value='$value2' autocompleteurl='../bpartner/searchlayer.php?action=bpautocomp' size='8' $field2readonly>
+			<input id='$field3_id' class='autocomplete' name='$field3_name'  value='$value3'  autocompleteurl='../bpartner/searchlayer.php?action=bpautocomp' size='25' $field3readonly>
 			<img onclick=$function src='../simantz/images/zoom.png' style='cursor:pointer'>";
 			}
 			

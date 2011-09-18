@@ -94,7 +94,7 @@ switch($action){
 	case "showBPartnerSearchResult":
 		$o->showBPartnerResult();
 	break;
-	case "autocomp":
+	case "bpautocomp":
 		echo $o->showBPartnerAutoComplete();
 	break;
 	default:

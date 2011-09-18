@@ -10,7 +10,8 @@ $s = new XoopsSecurity();
 
 $contacts_name=$_GET['contacts_name'];
 $hpno=$_GET['hpno'];
-$bpartner_id=$_GET['bpartner_id'];
+$bpartnerfrom_no=$_GET['bpartnerfrom_no'];
+$bpartnerto_no=$_GET['bpartnerto_no'];
 
 
 $races_id=$_GET['races_id'];
@@ -274,9 +275,10 @@ function checktextlength(){
 	<tbody>
 		<tr><td class="searchformheader" style="text-align:center;" colspan='4'>Search Contact List</td></tr>
 		<form name='frmContactList' method='GET' action='contactList.php' >
-		
-		<tr><td class='head'>Name</td><td class='odd'><input name='contacts_name' value='$contacts_name'></td>
-			<td class='head'>Business Partner</td><td class='odd'>$bpartnerctrl</td>
+		<tr><td class='head'>Name</td><td class='odd' colspan='3'><input name='contacts_name' value='$contacts_name'></td>
+		</tr>		
+		<tr><td class='head'>Business Partner From</td><td class='odd'><input name='bpartnerfrom_no' value='$bpartnerfrom_no'></td>
+			<td class='head'>Business Partner To</td><td class='odd'><input name='bpartnerto_no' value='$bpartnerto_no'></td>
 		</tr>
 	<tr><td class='head'>Races</td><td class='odd'><select id="races_id" name="races_id">$racesctrl</select></td>
 			<td class='head'>Religion</td><td class='odd'><select id="religion_id" name="religion_id">$religionctrl</select></td>
@@ -346,8 +348,10 @@ EOF;
     $wherestring .= " bp.industry_id = '$industry_id' AND";
     if($bpartnergroup_id >0)
     $wherestring .= " bp.bpartnergroup_id = $bpartnergroup_id AND";
-    if($bpartner_id >0)
-    $wherestring .= " bp.bpartner_id = $bpartner_id AND";
+    if($bpartnerfrom_no !='')
+    $wherestring .= " bp.bpartner_no >= '$bpartnerfrom_no' AND";
+    if($bpartnerto_no !='')
+    $wherestring .= " bp.bpartner_no >= '$bpartnerto_no' AND";
     
     
 $wherestring =substr_replace($wherestring,"",-3 );
