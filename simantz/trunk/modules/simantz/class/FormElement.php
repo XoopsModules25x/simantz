@@ -1,3 +1,4 @@
+
 <?php
 
 class FormElement{
@@ -28,7 +29,7 @@ class FormElement{
 			});
 			
 			$(this).click(function(){
-				$(this).autocomplete("search","");
+				$(this).autocomplete("search",$(this).val());
 				$(this).select();
 				});
 
