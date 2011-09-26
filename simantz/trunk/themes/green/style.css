@@ -442,7 +442,7 @@ td#usermenu a.highlight {
 }
 
 .odd {
-	background-color: #ddeae3;
+	background-color: #fff;
 	padding: 2px;
 	font-size: 9pt;
         vertical-align:middle;
@@ -461,8 +461,8 @@ td#usermenu a.highlight {
 }
 
 .foot {
-	background-color: #6ebc6e;
-	padding: 5px;
+	background-color: #d9e9ea;
+	padding: 2px;
 	font-weight: bold;
 }
 
@@ -474,12 +474,12 @@ td#usermenu a.highlight {
 		}
 
 tr.even td {
-	background-color: #eff1c6;
+	background-color: #f3f3f3;
 	padding: 5px;
 }
 
 tr.odd td {
-	background-color: #e9ebae;
+	background-color: #ceeae9;
 	padding: 5px;
 }
 
