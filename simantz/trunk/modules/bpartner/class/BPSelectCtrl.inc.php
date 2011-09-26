@@ -2,7 +2,6 @@
 class BPSelectCtrl extends SelectCtrl{
 
     public function BPSelectCtrl(){
-
     global $xoopsDB,$log;
     $this->xoopsDB=$xoopsDB;
     $this->log=$log;

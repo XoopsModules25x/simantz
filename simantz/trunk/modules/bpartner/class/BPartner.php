@@ -5477,5 +5477,30 @@ echo "
 </div>";
 
   }
+  
+  public function getDefaultContacts(){
+	  
+	  }
+	  
+  public function getDefaultAddress($bpartner_id,$type='isinvoice'){
+
+	
+	  $sql="SELECT * from sim_address a
+		inner join sim_region r on a.region_id=a.region_id
+		inner join sim_country c on c.country_id=a.country_id
+		where a.isactive=1 AND a.bpartner_id=$bpartner_id  order by $type DESC,a.seqno ASC limit 0,1";
+	 $query= $this->xoopsDB->query($sql);
+	 $row=$this->xoopsDB->fetchArray($query);
+	 if($row['address_id']=='')
+	 return null;
+	 else
+	 return array("address_id"=>$row['address_id'],
+					"address_street"=>$row['address_street'],
+					"address_postal"=>$row['address_postal'],
+					"address_city"=>$row['address_city'],
+					"region_name"=>$row['region_name'],
+					"country_name"=>$row['country_name']);
+					
+	  }
 
 } // end of ClassBPartner
