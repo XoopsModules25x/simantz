@@ -155,7 +155,7 @@ public function completeAuditHistory($category,$status,$tablename,$primarykey,$r
 
  }
 
-public function InsertRecord($tablename,$arrfield,$arrvalue,$arrfieldtype,$controlvalue,$primarykey){
+public function InsertRecord($tablename,$arrfield,$arrvalue,$arrfieldtype,$controlvalue,$primarykey,$created){
     global $xoopsUser;
     $uid= $xoopsUser->getVar('uid');
     $this->log->showLog(2,"Access InsertRecord($tablename,$arrfield,$arrvalue,$arrfieldtype,$controlvalue)");
@@ -203,7 +203,9 @@ public function InsertRecord($tablename,$arrfield,$arrvalue,$arrfieldtype,$contr
     }
     else{
         $status="S";
-        $sqllatest="SELECT max($primarykey) as record_id FROM $tablename WHERE createdby=$uid";
+        if($created!='')
+        $subsql=" AND created='$created'";
+        $sqllatest="SELECT max($primarykey) as record_id FROM $tablename WHERE createdby=$uid $subsql";
         $rslatest=$this->xoopsDB->query($sqllatest);
         while($rowlatest=$this->xoopsDB->fetchArray($rslatest))
             $record_id=$rowlatest['record_id'];
