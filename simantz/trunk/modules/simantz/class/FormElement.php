@@ -1,4 +1,3 @@
-
 <?php
 
 class FormElement{
@@ -9,9 +8,6 @@ class FormElement{
 		
 	public function activateAutoComplete(){
 		echo <<< EOF
-  <script type="text/javascript" src="../include/jqueryui/ui/jquery.ui.position.js"></script>
-  <link rel="stylesheet" type="text/css" href="../include/jqueryui/themes/ui-lightness/jquery.ui.autocomplete.css">
-  <script type="text/javascript" src="../include/jqueryui/ui/jquery.ui.autocomplete.js"></script>
 
 	<script>
 	function activateAutoComplete(){
@@ -24,7 +20,9 @@ class FormElement{
 			minLength: 0,
 			autoFocus:true,		
 			select: function( event, ui ) {
-//			alert(ui.item.id+','+ui.item.value+','+ui.item.label);
+				var linkcol=$(this).attr('linkcolumn');
+				if(document.getElementById(linkcol))
+					document.getElementById(linkcol).value=ui.item.id;
 			}
 			});
 			
@@ -36,6 +34,9 @@ class FormElement{
 
 		});
 	}
+	$(document).ready(function(){
+		activateAutoComplete();
+		});
 	</script>
 EOF;
 		}
