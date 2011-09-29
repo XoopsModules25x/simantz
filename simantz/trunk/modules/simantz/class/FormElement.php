@@ -21,8 +21,13 @@ class FormElement{
 			autoFocus:true,		
 			select: function( event, ui ) {
 				var linkcol=$(this).attr('linkcolumn');
+				var linktext=$(this).attr('linktext');
+				
 				if(document.getElementById(linkcol))
 					document.getElementById(linkcol).value=ui.item.id;
+				if(document.getElementById(linktext))
+					document.getElementById(linktext).value=ui.item.label;
+				$(this).change();
 			}
 			});
 			
