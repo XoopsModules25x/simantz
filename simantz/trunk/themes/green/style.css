@@ -1347,4 +1347,6 @@ tr.journalChild td {
     color:red;
     font-weight:bold;
 }
+input[readonly] { background: #ccc; color: #666; }
+
 /* end */
