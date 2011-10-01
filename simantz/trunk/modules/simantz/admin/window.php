@@ -1,7 +1,7 @@
 <?php
 
 include_once "system.php";
-include_once '../class/Window.inc.php';
+include_once XOOPS_ROOT_PATH.'/modules/simantz/class/Window.inc.php';
 $window = new Window();
 $action=$_REQUEST['action'];
 $window->updated=date("Y-m-d H:i:s",time());
@@ -33,7 +33,6 @@ case "ajaxsave":
     $window->isactive=1;
     else
         $window->isactive=0;
-    
     $window->filename=$_POST['filename'];
     $window->table_name=$_POST['table_name'];
     $window->windowsetting=$_POST['windowsetting'];
@@ -42,8 +41,15 @@ case "ajaxsave":
     $window->parentwindows_id=$_POST['parentwindows_id'];
     $window->description=$_POST['description'];
     $window->helpurl=str_replace("%26", "&", $_POST['helpurl']);
+		$window->windowsetting=$_POST['windowsetting'];
+		$window->jrxml=$_POST['jrxml'];
 
-
+ 	if (get_magic_quotes_gpc()) {
+		$window->windowsetting=stripslashes($window->windowsetting);
+		$window->jrxml=stripslashes($window->jrxml);
+   	}
+   
+   
     if( $window->window_id>0)
             $window->updateWindow();
     else
@@ -57,8 +63,16 @@ case "ajaxselectwindows":
         echo $window->getSelectWindows($window->window_id,$window->mid,"Y");
     break;
 default:
+
+if(file_exists("../simantz/")){
+	include "menu.php";
+	$window->modulectrl=$ctrl->getSelectModule($findmodule_id, "Y");
+ 	}
+else{
     include "../class/SelectCtrl.inc.php";
     $ctrl  = new SelectCtrl();
+	$window->modulectrl=$ctrl->getSelectModule($findmodule_id, "Y");
+ }
     $xoTheme->addStylesheet("$url/modules/simantz/include/window.css");
         $xoTheme->addStylesheet("$url/modules/simantz/include/popup.css");
         $xoTheme->addScript("$url/modules/simantz/include/popup.js");
@@ -71,7 +85,6 @@ default:
     else
         $findmodule_id=0;
 
-    $window->modulectrl=$ctrl->getSelectModule($findmodule_id, "Y");
     $window->showSearchForm();
      $windowlist=$window->showParentWindowsTree($findmodule_id);
      
@@ -172,6 +185,7 @@ default:
                                     var fname=$(this).find("filename").text();
                                     var tbname=$(this).find("table_name").text();
                                     var helpurl=$(this).find("helpurl").text();
+                                    var jrxml=$(this).find("jrxml").text();
                                     var isactive=$(this).find("isactive").text();
                                     document.getElementById("window_id").value=wid;
                                     document.getElementById("window_name").value=wname;
@@ -180,6 +194,7 @@ default:
                                     document.getElementById("parentwindows_id").value=pwid;
                                     document.getElementById("windowsetting").value=wsetting;
                                     document.getElementById("helpurl").value=helpurl;
+                                    document.getElementById("jrxml").value=jrxml;
                                     document.getElementById("description").value=desc;
                                     document.getElementById("filename").value=fname;
                                     document.getElementById("table_name").value=tbname;
@@ -235,8 +250,11 @@ default:
 
 EOF;
 
-    xoops_cp_footer();
-break;
+if(file_exists("../simantz/"))
+require(XOOPS_ROOT_PATH.'/footer.php');
+else
+xoops_cp_footer();
+
 }
 
 ?>

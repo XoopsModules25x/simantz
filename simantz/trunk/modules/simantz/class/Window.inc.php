@@ -39,13 +39,13 @@ class Window
    public function Window(){
 	global $path,$tableprefix,$tablewindow,$tablemodules,$log,$xoopsDB;
         $this->arrUpdateField=array("mid","windowsetting","seqno","description","parentwindows_id","filename","isactive",
-                    "window_name","updated","updatedby","table_name","helpurl");
+                    "window_name","updated","updatedby","table_name","helpurl","jrxml");
         $this->arrInsertField=array("mid","windowsetting","seqno","description","parentwindows_id","filename","isactive",
-                    "window_name","created","createdby","updated","updatedby","table_name","helpurl");
+                    "window_name","created","createdby","updated","updatedby","table_name","helpurl","jrxml");
         $this->arrInsertFieldType=array("%d","%s","%d","%s","%d","%s","%d",
-                    "%s","%s","%d","%s","%d","%s","%s");
+                    "%s","%s","%d","%s","%d","%s","%s","%s");
         $this->arrUpdateFieldType=array("%d","%s","%d","%s","%d","%s","%d",
-                    "%s","%s","%d","%s","%s");
+                    "%s","%s","%d","%s","%s","%s");
         $this->tablename="sim_window";
 	$this->xoopsDB=$xoopsDB;
 	$this->log=$log;
@@ -71,6 +71,7 @@ class Window
 		$this->isactive=$row['isactive'];
 		$this->helpurl=htmlentities($row['helpurl'], ENT_QUOTES);
                 $this->mid=$row['mid'];
+                $this->jrxml=$row['jrxml'];
                 $this->parentwindows_id=$row['parentwindows_id'];
                $this->windowsetting=$row['windowsetting'];
    	$this->log->showLog(4,"Window->fetchWindow,database fetch into class successfully");
@@ -167,15 +168,17 @@ public function getInputForm($module_id){
         <table>
 
             <tr><td class='head'>Windows Name</td>
-                    <td class='even'><input id='window_name' name='window_name'></td></tr>
+                    <td class='even'><input size='40' id='window_name' name='window_name'></td></tr>
             <tr><td class='head'>File Name</td>
-                    <td class='even'><input id='filename'  name='filename'></td></tr>
+                    <td class='even'><input size='40' id='filename'  name='filename'></td></tr>
             <tr><td class='head'>Table Name</td>
-                    <td class='even'><input id='table_name' name='table_name'></td></tr>
+                    <td class='even'><input size='40' id='table_name' name='table_name'></td></tr>
             <tr><td class='head'>Seq No</td>
-                    <td class='even'><input id='seqno' name='seqno' value='10'></td></tr>
+                    <td class='even'><input size='40' id='seqno' name='seqno' value='10'></td></tr>
             <tr><td class='head'>Setting</td>
                     <td class='even'><textarea id='windowsetting'  name='windowsetting' rows='5' cols='50'></textarea></td></tr>
+            <tr><td class='head'>JRXML</td>
+                    <td class='even'><textarea id='jrxml'  name='jrxml' rows='5' cols='50'></textarea></td></tr>
             <tr><td class='head'>Description</td>
                             <td class='even'><textarea name='description' id='description' rows='5' cols='50'></textarea></td></tr>
             <tr><td class='head'>Parent Window</td>
@@ -216,9 +219,10 @@ $this->helpurl=str_replace("&", "&#38;",$this->helpurl);
     <window_name>$this->window_name</window_name>
     <parentwindow_id>$this->parentwindows_id</parentwindow_id>
     <seqno>$this->seqno</seqno>
-    <description>$this->description</description>
-    <windowsetting>$this->windowsetting</windowsetting>
-    <helpurl>$this->helpurl</helpurl>
+    <description><![CDATA[$this->description]]></description>
+    <windowsetting><![CDATA[$this->windowsetting]]></windowsetting>
+    <helpurl><![CDATA[$this->helpurl]]></helpurl>
+    <jrxml><![CDATA[$this->jrxml]]></jrxml>
     <mid>$this->mid</mid>
 </Window>
 </Result>
@@ -231,18 +235,22 @@ public function insertWindow(){
     $arrvalue=array($this->mid,$this->windowsetting,$this->seqno,$this->description,
                     $this->parentwindows_id,$this->filename,$this->isactive,
                     $this->window_name,$this->updated,$this->updatedby,
-                    $this->updated,$this->updatedby,$this->table_name,$this->helpurl);
+                    $this->updated,$this->updatedby,$this->table_name,$this->helpurl,$this->jrxml);
     $save->InsertRecord($this->tablename,   $this->arrInsertField,
             $arrvalue,$this->arrInsertFieldType,$this->window_name,"window_id");
 
   }
 
   public function updateWindow(){
+	if(file_exists("../simantz/"))
+    include "../simantz/class/Save_Data.inc.php";
+   else
     include "../class/Save_Data.inc.php";
+	
     $save = new Save_Data();
     $arrvalue=array($this->mid,$this->windowsetting,$this->seqno,$this->description,
                     $this->parentwindows_id,$this->filename,$this->isactive,
-                    $this->window_name,$this->updated,$this->updatedby,$this->table_name,$this->helpurl);
+                    $this->window_name,$this->updated,$this->updatedby,$this->table_name,$this->helpurl,$this->jrxml);
     return $save->UpdateRecord($this->tablename, "window_id",
                 $this->window_id,
                     $this->arrUpdateField, $arrvalue,  $this->arrUpdateFieldType,$this->window_name);
