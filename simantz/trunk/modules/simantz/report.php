@@ -67,6 +67,10 @@ elseif($_REQUEST['customcode']==1){
 	 $window_name=$_REQUEST['window_name'];
 	 $txt=$_REQUEST['txtsetting'];
 	 $jrxml=$_REQUEST['jrxml'];
+		if (get_magic_quotes_gpc()) {
+			 $txt = stripslashes( $txt);
+			 $jrxml= stripslashes($jrxml);
+		}
 
 	 if($_REQUEST['isactive']=='on')
 	 $isactive=1;
@@ -80,6 +84,12 @@ elseif($_REQUEST['customcode']==1){
 		$arrUpdateField = array('windowsetting', 'isactive','updated', 'updatedby','jrxml');
 
         $arrUpdateFieldType = array("%s", "%d","%s", "%d",'%s');
+
+
+		if (get_magic_quotes_gpc()) {
+			 $txt = stripslashes( $txt);
+			 $jrxml= stripslashes($jrxml);
+		}
 
         $arrvalue = array($txt, $isactive,date("Y-m-d H:i:s",time()), $xoopsUser->getVar('uid'),$jrxml);
 
