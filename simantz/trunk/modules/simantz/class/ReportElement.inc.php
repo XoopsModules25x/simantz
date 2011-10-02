@@ -26,6 +26,21 @@ class ReportElement{
 		public function rptctrl_checkbox($caption='Active',$name,$value,$checked,$onchange){
 			return "<tr><td>$caption</td><td><input type='checkbox' name='$name' id='$name' value='$value' $checked  $onchange></td></tr>";
 		}
+		public function rptctrl_radio($caption='Type',$name,$arrvalue,$arrtext,$arrchecked,$onchange){
+			$i=0;
+			$c="";
+			foreach($arrvalue as $value){
+				$value=$arrvalue[$i];
+				$text=$arrtext[$i];
+				$checked=$arrchecked[$i];
+				$c.="<label name='lbl$name'><input type='radio' id='$name' value='$value' name='$name' $checked $onchange/>$text</label>";
+        
+				
+			$i++;
+			}
+			
+			return "<tr><td>$caption</td><td>$c</td></tr>";
+		}
 	
 		public function rptctrl_blankline($caption='',$value){
 			return "<tr><td>$caption</td><td>$value&nbsp;</td></tr>";
