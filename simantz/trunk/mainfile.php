@@ -13,20 +13,20 @@
  * @license     http://www.fsf.org/copyleft/gpl.html GNU public license
  * @version     $Id: mainfile.dist.php 3562 2009-09-03 14:55:02Z trabis $
  */
-
+ 
 if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define("XOOPS_MAINFILE_INCLUDED", 1);
 
     // XOOPS Physical Paths
 
     // Physical path to the XOOPS documents (served) directory WITHOUT trailing slash
-    define('XOOPS_ROOT_PATH', '/var/www/simantz/simantz/trunk');
+    define('XOOPS_ROOT_PATH', dirname(__FILE__));
 
     // For forward compatibility
     // Physical path to the XOOPS library directory WITHOUT trailing slash
-    define('XOOPS_PATH', '/var/www/simantz/simantz/trunk/xoops_lib');
+    define('XOOPS_PATH', XOOPS_ROOT_PATH.'/xoops_lib');
     // Physical path to the XOOPS datafiles (writable) directory WITHOUT trailing slash
-    define('XOOPS_VAR_PATH', '/var/www/simantz/simantz/trunk/xoops_data');
+    define('XOOPS_VAR_PATH', XOOPS_ROOT_PATH.'/xoops_data');
     // Alias of XOOPS_PATH, for compatibility, temporary solution
     define("XOOPS_TRUST_PATH", XOOPS_PATH);
 
@@ -42,7 +42,7 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     // Example: define('XOOPS_URL', 'http://localhost/simedu');
 
     $serveradd=$_SERVER['HTTP_HOST'];
-    define('XOOPS_URL', "http://$serveradd/simantz/simantz/trunk");
+    define('XOOPS_URL', "http://$serveradd/simit");
 
     // Shall be handled later, don't forget!
     define("XOOPS_CHECK_PATH", 0);
@@ -88,12 +88,20 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
 
     // Database Password
     // Password for your database user account
-    define('XOOPS_DB_PASS', 'mahan777');
-
+    define('XOOPS_DB_PASS', 'user1');
     // Database Name
+    session_start();
+    //echo $_SESSION['DBNAME'];
     // The name of database on the host. The installer will attempt to create the database if not exist
-    define('XOOPS_DB_NAME', 'simantz');
-
+    
+    define('XOOPS_PRODUCTIONDB_NAME', 'betatest_simbiz');
+	define('XOOPS_TRAININGDB_NAME', 'simit2');
+	
+	if($_SESSION['DBNAME']=='')
+    define('XOOPS_DB_NAME', XOOPS_PRODUCTIONDB_NAME);
+	else
+	define('XOOPS_DB_NAME', XOOPS_TRAININGDB_NAME);
+	
     // Use persistent connection? (Yes=1 No=0)
     // Default is "Yes". Choose "Yes" if you are unsure.
     define('XOOPS_DB_PCONNECT', 0);
@@ -101,11 +109,8 @@ if (!defined("XOOPS_MAINFILE_INCLUDED")) {
     define('XOOPS_GROUP_ADMIN', '1');
     define('XOOPS_GROUP_USERS', '2');
     define('XOOPS_GROUP_ANONYMOUS', '3');
-
     if (!isset($xoopsOption["nocommon"]) && XOOPS_ROOT_PATH != "") {
         include XOOPS_ROOT_PATH."/include/common.php";
     }
-
 }
 
-?>
