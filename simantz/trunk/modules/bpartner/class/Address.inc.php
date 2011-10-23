@@ -58,7 +58,7 @@ class Address
 	$query=$this->xoopsDB->query($sql);
 
 	if($row=$this->xoopsDB->fetchArray($query)){
-		$this->jobposition_name=$row["address_name"];
+		$this->address_name=$row["address_name"];
 		$this->organization_id=$row['organization_id'];
 		$this->seqno= $row['seqno'];
 		$this->isactive=$row['isactive'];
