@@ -1,6 +1,7 @@
 <?php
 
-class Quotation{
+class Quotation {
+
     public $quotation_id;
     public $document_no;
     public $organization_id;
@@ -20,7 +21,7 @@ class Quotation{
     public $description;
     public $bpartner_id;
     public $iscomplete;
-    
+    public $bpartneraccounts_id;
     public $spquotation_prefix;
     public $issotrx;
     public $terms_id;
@@ -49,224 +50,869 @@ class Quotation{
     private $tablename;
     private $tablecurrency;
     private $log;
+    public $saleagent_name;
+    public $saleagent_id;
+    public $usedBpartnerType;
 
-  
-   public function Quotation(){
+    public function Quotation() {
+        global $xoopsDB, $log, $tablequotation, $tablequotationline, $defaultorganization_id;
+        $tablequotation="sim_bpartner_quotation";
+        $this->xoopsDB = $xoopsDB;
+        $this->organization_id = $defaultorganization_id;
+        $this->log = $log;
+        $this->tableorganization = $tableorganization;
+        $this->tablecurrency = $tablecurrency;
+        $this->tablequotation = $tablequotation;
+        $this->tablequotationline = $tablequotationline;
+        $this->tablename = $tablequotation;
+        $this->usedBpartnerType = "creditor"; // option {creditor, debtor} effect in autocomplete
 
-	global $xoopsDB,$log,$tablequotation,$tablequotationline,$defaultorganization_id;
-  	$this->xoopsDB=$xoopsDB;
-        $this->organization_id=$defaultorganization_id;
-	$this->log=$log;
-        $this->tableorganization=$tableorganization;
-	$this->tablecurrency=$tablecurrency;
-	$this->tablequotation=$tablequotation;
-        $this->tablequotationline=$tablequotationline;
-        $this->tablename="sim_bpartner_quotation";
-        $this->log->showLog(3,"Access Quotation()");
+        $this->log->showLog(3, "Access Quotation()");
+    }
+
+    public function showCreateForm() {
+         $nextno = $this->getNextNo();
+        
+        global $bpctrl, $userid, $havewriteperm,$spquotation_prefix;
+
+
+        $currencyoption = $bpctrl->getSelectCurrency(0, "N");
+        $date = date("Y-m-d", time());
+
+        
+            $title = 'Sales Quotation';
+			
+        $this->defineHeaderButton();
+        include "../simantz/class/FormElement.php";
+        include "../bpartner/class/BPartnerFormElement.inc.php";
+        $fe = new FormElement();
+        $sbfe = new BPartnerFormElement();
+        $sbfe->activateAutoComplete();
+        $bpbox = $sbfe->getBPartnerBox(0, '', 'bpartner_id', 'bpartner_id', '350px', 'onchange="chooseBPartner()"');
+//        $agentbox = $sbfe->getAgentBox(0, '', 'saleagent_id', 'saleagent_id', '150px');
+        $uidoption = $bpctrl->getSelectUsers($userid);
+        if ($havewriteperm == 1)
+            $savebutton = "<input  id='nextbutton' name='submit' onclick='return saveform()' type='submit' value='Create'/>
+<input type='hidden' name='action' value='create'>";
+        else
+            $savebutton = "";
+        echo <<< EOF
+<script>
+
+
+
+$(function() {
+	});
+
+	    function zoomBPartner(){
+			var bpartner_id=document.getElementById("bpartner_id").value;
+          if(bpartner_id>0)
+           window.open("../bpartner/bpartner.php?action=viewsummary&bpartner_id="+bpartner_id,"_blank");
+          else
+          alert("You need to choose business partner!");
+          }
+       function chooseBPartner(){
+              var bpid=document.getElementById("bpartner_id").value;
+                   var data="action="+"getbpartnerinfo"+
+                            "&bpartner_id="+bpid;
+
+                    $.ajax({
+                         url:"$this->quotationfilename",type: "POST",data: data,cache: false,
+                             success: function (xml)
+                             {
+                               var address=$(xml).find("address").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                                var terms=$(xml).find("terms").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                                 var contact=$(xml).find("contact").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                                 var currency=$(xml).find("currency").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                               var bpartneraccounts_id=$(xml).find("bpartneraccounts_id").text();
+								
+                              
+                                $("#address_id").html(address);
+                                $("#contacts_id").html(contact);
+                                $("#terms_id").html(terms);
+                                $("#currency_id").html(currency);
+                                //document.getElementById("salesagentname").value=salesagent;
+ //                               document.getElementById("bpartneraccounts_id").value=bpartneraccounts_id;
+//                                comparecurrency();
+                                
+									if(document.getElementById('address_text'))
+										updateAddressText();
+								
+								
+								var limitamt=parseFloat($(xml).find("limitamt").text());
+                                var usage=parseFloat($(xml).find("usage").text());
+                                var control=$(xml).find("control").text();
+
+								var iscontrol="";
+								if(control=='1')
+											iscontrol="Y";
+									else
+										iscontrol="N";
+								$("#divlimit").html("Credit Limit:"+limitamt+",Current Usage:"+usage+":Control Limit:"+iscontrol);
+								
+								if(iscontrol=='Y' && usage>limitamt){
+									alert("Warning! Current usage is bigger than credit limit!");
+									}
+								}
+                           });
+
+
+
+        }
+                 
+     function saveform(){
+		 if(confirm("Confirm create $title?")){
+			 
+			if($("#bpartner_id").val()==0){
+					$("#bpartner_id_text").addClass("red");
+				alert("Please choose appropriate business partner!");
+				return false;
+				}
+			else
+				$("#bpartner_id_text").removeClass("red");
+					
+				
+			$("#frmQuotation").submit();
+			return true;
+			
+		}
+		 else
+			return false;
+		 }
+		 
+     
+</script>
+<div align=center>
+  <table style="width:990px;text-align: left; " >
+        <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr>
+  </table>
+<form method='post' name='frmQuotation' id='frmQuotation'  action='$this->quotationfilename'  enctype="multipart/form-data">
+   <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
+    <tbody>
+
+      <tr>
+        <td colspan="4" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >New $title</td>
+      </tr>
+
+      <tr>
+        <td class="head">Date (YYYY-MM-DD)</td>
+        <td class="even">
+            <input id='document_date' name='document_date'  size='12'  value='$date' class='datepick'>
+            </td>
+        <td class="head">Document No</td>
+        <td class="even">
+					<input name='spquotation_prefix' id='spquotation_prefix' value='$spquotation_prefix'size='4'>
+                         <input name='document_no' id='document_no'  value='<<NEW>>' size='12'> Next No: $nextno
+                         </td>
+      </tr>
+      <tr> 
+        <td class="head">Business Partner</td>
+			<td class="even">$bpbox<img style="cursor:pointer" onclick=zoomBPartner() src="../simantz/images/zoom.png">
+			<input name='bpartneraccounts_id' id='bpartneraccounts_id' type='hidden' value=0><div id='divlimit'></div></td>
+        <td class="head">Ref. No</td>
+        <td class="even"><input id='ref_no' size='20' name='ref_no' value='$this->ref_no'></td>
+      </tr>
+      <tr>
+        <td class="head">Billing Address</td>
+			<td class="even"><Select id='address_id' name='address_id'><option value=0>Null</option></Select></td>
+        <td class="head">Terms</td>
+        <td class="even"> <select id='terms_id' name='terms_id'><option value=0>Null</option></select></td>
+      </tr>
+      <tr>
+        <td class="head">Currency</td>
+        <td class="even"> <select id='currency_id' name='currency_id'><option value=0>Null</option></select></td>
+        <td class="head">Attn To</td>
+        <td class="even"> <select id='contacts_id' name='contacts_id'><option value=0>Null</option></select></td>
+      </tr>
+      <tr>
+         <td class="head">Prepared By</td>
+         <td class="even"><select id='preparedbyuid' name='preparedbyuid'>$uidoption</select></td>
+        <td class="head">Sales Agent</td>
+        <td class="even"><input name='salesagentname' id='salesagentname' value=''></td>
+      </tr>
+      
+</table>
+$savebutton
+</form>
+</div>
+EOF;
+    }
+
+    public function getNextNo() {
+
+        $sql = "SELECT MAX(document_no)  as newno from $this->tablequotation where issotrx=$this->issotrx ";
+        $this->log->showLog(3, "Checking next no: $sql");
+
+        $query = $this->xoopsDB->query($sql);
+
+        if ($row = $this->xoopsDB->fetchArray($query)) {
+            $newno = $row['newno'];
+            $this->log->showLog(3, "Found next newno:$newno");
+
+            if ($newno == "")
+                return 1;
+            else {
+                //0040001
+                
+                $newno++;
+                return $newno;
+            }
+        }
+        else
+            return 1;
+    }
+
+    public function editJS() {
+        global $defaultcurrency_id, $bpctrl,$defaultorganization_id;
+        //$taxctrl = $bpctrl->getSelectTax(0, "N");
+        //$taxctrl = str_replace("'", '"', $taxctrl);
+        global $menuname;
+        $link = $this->quotationfilename;
+
+        echo <<<EOF
+<script>
+        function chooseBPartner(){
+              var bpid=document.getElementById("bpartner_id").value;
+                   var data="action="+"getbpartnerinfo"+
+                            "&bpartner_id="+bpid;
+
+                    $.ajax({
+                         url:"$this->quotationfilename",type: "POST",data: data,cache: false,
+                             success: function (xml)
+                             {
+                               var address=$(xml).find("address").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                                var terms=$(xml).find("terms").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                                 var contact=$(xml).find("contact").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                                 var currency=$(xml).find("currency").text().replace(/{{{/g,"<").replace(/}}}/g,">");
+                               var bpartneraccounts_id=$(xml).find("bpartneraccounts_id").text();
+
+                                $("#address_id").html(address);
+                                $("#contacts_id").html(contact);
+                                $("#terms_id").html(terms);
+                                $("#currency_id").html(currency);
+                                //document.getElementById("salesagentname").value=salesagent;
+                                document.getElementById("bpartneraccounts_id").value=bpartneraccounts_id;
+//                                comparecurrency();
+                                
+									if(document.getElementById('address_text'))
+										updateAddressText();
+                
+						var limitamt=parseFloat($(xml).find("limitamt").text());
+                                var usage=parseFloat($(xml).find("usage").text());
+                                var control=$(xml).find("control").text();
+
+								var iscontrol="";
+								if(control=='1')
+											iscontrol="Y";
+									else
+										iscontrol="N";
+									$("#divlimit").html("Credit Limit:"+limitamt+",Current Usage:"+usage+":Control Limit:"+iscontrol);
+
+								
+								if(iscontrol=='Y' && usage>limitamt){
+									alert("Warning! Current usage is bigger than credit limit!");
+									}
+                             }
+                           });
+
+
 
         }
 
-public function viewInputForm(){
-
-    $grid=$this->getGrid($this->quotation_id);
-    $this->address_text= str_replace("\n", "<br/>", $this->address_text);
-    $this->address_text= str_replace("  ", " &nbsp;", $this->address_text);
-    $this->description= str_replace("\n", "<br/>", $this->description);
-    $this->description= str_replace("  ", " &nbsp;", $this->description);
 
 
-          $startdate=date("Y-m-",time())."01";
-     $enddate=date("Y-m-d",time());
- $html =<<< HTML
-<div id="idApprovalWindows" style="display:none"></div>
-<div id='blanket' style='display:none;'></div>
+        function comparecurrency(){
+            var currency_id=document.getElementById("currency_id").value;
 
-    <br/>
-    
-    <div id='centercontainer'>
-    <div align="center" >
-    <table style="width:990px;text-align: left; " >
-        <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
+            if(currency_id==$defaultcurrency_id){
+               document.getElementById("exchangerate").value=1;
+               updateamount();
+            }else{
+               var data="action=getcurrency&currency_id="+currency_id;
+               $.ajax({url:"$this->quotationfilename",type: "POST",data: data,cache: false,
+                success: function (xml){
+                     jsonObj = eval( '(' + xml + ')');
+                     var currency_rate = jsonObj.currency_rate;
+                     document.getElementById("exchangerate").value=currency_rate;
+                     updateamount();
+                }}); 
+  
+            }
+        
+          }
 
-         $noperm
+        function updateAddressText(){
+            var checkaddresstext="action=checkaddresstext&address_id="+document.getElementById("address_id").value;
+                                 $.ajax({url:"$this->quotationfilename",type: "POST",data: checkaddresstext,cache: false,
+                                    success: function (ad){
 
+                                        document.getElementById("address_text").value=ad;
+                                        }
+                                });
+          }
 
-    <br/>
-    <div id='errormsg' class='red' style='display:none'></div>
+		
+		function showDesc(line){
+			$('#description_'+line).toggle("fast");
+			}
+			
 
-<form onsubmit='return false' method='post' name='frmQuotation' id='frmQuotation'  action='$this->quotationfilename'  enctype="multipart/form-data">
-   <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
-    <tbody>
-        <tr>
-        <td colspan="5" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >Quotation</td>
-        </tr>
-        <tr>
-          <td class="head">Quotation No</td>
-          <td class="even">$this->spquotation_prefix $this->document_no   Branch: $this->organization_code</td>
-          <td class="head">Business Partner</td>
-          <td class="even">
-                <a href="../bpartner/bpartner.php?action=viewsummary&bpartner_id=$this->bpartner_id" target="_blank">$this->bpartner_name</a>
-          </td>
-         
-     </tr>
-     <tr>
-        <td class="head">Date (YYYY-MM-DD)</td>
-          <td class="even">$this->document_date
-          <td class="head">Attn To </td>
-          <td class="even">$this->contacts_name</td>
-     </tr>
-     <tr>
-      <td class="head">Terms</td>
-      <td class="even">$this->terms_name</td>
-      <td class="head">Ref. No</td>
-      <td class="even">$this->ref_no</td>
-     </tr>
-     <tr>
-         <td class="head">Prepared By</td>
-         <td class="even">$this->preparedbyname</td>
-        <td class="head">Sales Agent</td>
-         <td class="even">$this->salesagentname</td>
-</tr>
-<tr>
-       <td class="head">Address</td>
-       <td class="even">$this->address_text
-        </td>
-         <td class="head">Currency</td>
-          <td class="even">Exchange rate: $this->currency_code Exchange Rate: $this->exchangerate</td>
-  <tr>
-    <td class="head">
-              </td>
+		function deleteline(il_id,lineno){
 
-                 <td class="head">
-        <input name='save' onclick='reactivateQuotation()' type='submit' id='submit' value='Re-activate'>
-          <input type="button" value="Reload" onclick=javascript:reloadQuotation()>
-            <input type="button" value="Preview" onclick=javascript:previewQuotation()>
-            <input type="button" value="Duplicate" onclick=javascript:duplicateQuotation()>
-        <input name='quotation_id' id='quotation_id'  value='$this->quotation_id'  title='quotation_id' type='hidden'>
-        <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
+			    //
+		if(confirm("Delete this line?")){
+			if(il_id>0){
+				  var data ="action=deleteline&quotationline_id="+il_id;
+                 $.ajax({url: "$this->quotationfilename",type: "POST",data: data,cache: false,
+                     success: function (xml) {
+						 
+                     jsonObj = eval( '(' + xml + ')');
+				$("#trline_"+lineno).remove();
+				
+						saverecord(0,false);
+				 }});
+			}
+			else{
+				$("#trline_"+lineno).remove();
+				updateamount(0);
+				}
+		}
+			else
+			return false;
+		}
+		
+		function viewlinehistory(il_id){
+			//tablename=sim_country&idname=country_id&title=Country
+			window.open("../simantz/recordinfo.php?tablename=sim_bpartner_quotationline&idname=quotationline_id&title=$menuname&id="+il_id);
+			}
 
-            </td>
-</td></tr>
-<tr><td colspan='5'>
-    <div id='detaildiv'>
-    $grid
-           <div style="width:895px;text-align:right" >
-            Total: $this->subtotal<br/>
-            
-            </div>
-</div>
-</td></tr>
- <td class="head">Description</td>
-<td class="even" colspan='4' style="width:70%">$this->description</td>
-         
-</tr><tr>
-   <td class="head">Note</td>
-<td class="even" colspan='3'>$this->note</td>
-</tr></table>
-</form>
+		function viewhistory(){
+			
+			window.open("../simantz/recordinfo.php?tablename=sim_bpartner_quotation&idname=quotation_id&title=$menuname&id=$this->quotation_id");
+
+			}
+
+        function addLine(){
+			
+                totalline=$("#totalline").val();
+				$("#totalline").val(parseInt($("#totalline").val())+1);
+	
+
+				
+            $('#trlinetotal')
+                .before('<tr id="trline_'+totalline+'">'+
+                        '<td class="" style="vertical-align:top;"><input type="text" size="3" value="'+(totalline*10)+'" name="lineseqno['+totalline+']" id="lineseqno_'+totalline+'"></td>'+
+                        '<td class=""><input type="hidden" value="0" name="linequotationline_id['+totalline+']" id="quotationline_id_'+totalline+'">'+
+                                     '<input type="text" style="width:350px" size="60" value="$subject" name="linesubject['+totalline+']" id="subject_'+totalline+'">'+
+                                     '<small style="color:red; cursor: pointer" onclick=showDesc('+totalline+')>[+]Remark</small>'+
+                                     '<textarea name="linedescription['+totalline+']"  rows="8" style=" width:450px; display:none" id="description_'+totalline+'" ></textarea></td>'+
 
 
+                       '<td class=""><input style="width:70px;text-align:right"  value="0.00" id="unitprice_'+totalline+'" name="lineunitprice['+totalline+']" onfocus="this.select()"  onchange="updateamount()"></td>'+
+                        '<td class=""><input style="width:50px;text-align:right" value="1" id="qty_'+totalline+'" name="lineqty['+totalline+']" onfocus="this.select()" onchange="updateamount()"></td>'+
+                        '<td class=""><input type="text" style="width:50px;text-align:right" value="Unit" id="uom_'+totalline+'" name="lineuom['+totalline+']" onfocus="this.select()"></td>'+
+                        '<td class="">'+
+							'<input value="0.00"  readonly="readonly" id="amt_'+totalline+'" name="lineamt['+totalline+']"  style="width:70px;text-align:right"></td>'+
+					'<td class="" style="text-align:center;"><img src="../simantz/images/del.gif" style="cursor: pointer" onclick=deleteline(0,'+totalline+')></td>'+
+                    '<td class="" style="text-align:center;"></td>'+
+                    '</tr>'
+                      );
+        
+        activateAutoComplete();
+        }
 
 
-HTML;
-    return $html;
+
+    function viewlog(){
     }
 
-public function getInputForm($action="new"){
 
-    global $userid,$simbizctrl,$ctrl,$defaultorganization_id;
-    $this->log->showLog(3,"Access Quotation getInputForm()");
-       if($o->track1_id=="")
-                $o->track1_id=0;
-       if($o->track2_id=="")
-               $o->track2_id=0;
-       if($o->track3_id=="")
-               $o->track3_id=0;
+  function previewQuotation(){
+	  
+                window.open("$this->quotationfilename?action=pdf&quotation_id="+document.getElementById("quotation_id").value)
+        }
+
+          
+        
+        function deleterecord(){
+
+          if(confirm('Delete this record?')){
+           var quotation_id=document.getElementById("quotation_id").value;
+            var data="action=ajaxdelete&quotation_id="+quotation_id;
+            $.ajax({
+                 url: "$this->quotationfilename",type: "POST",data: data,cache: false,
+                     success: function (xml) {
+                       window.location="$this->quotationfilename";
+                    }});
+          }
+        }
+    function zoomBPartner(){
+			var bpartner_id=document.getElementById("bpartner_id").value;
+          if(bpartner_id>0)
+           window.open ("../bpartner/bpartner.php?action=viewsummary&bpartner_id="+bpartner_id,"_blank");
+          else
+          alert("You need to choose business partner!");
+          }
+
+
+	function updateamount(){
+
+             var totalline=parseInt( $("#totalline").val());
+             var exchangerate=parseFloat( $("#exchangerate").val());
+		
+              var total=0;
+				var amt=0;
+				var total=0;
+				var localamt=0;
+				var subtotal=0;
+
+				var granttotalamt=0;
+              for( var i = 0; i < totalline; i++ ) {
+				  
+					if(document.getElementById('qty_'+i)){
+                    var qty = parseFloat($("#qty_"+i).val());
+					}
+					if(document.getElementById('unitprice_'+i))
+                    var unitprice = parseFloat($("#unitprice_"+i).val());
+
+
+ 					amt=qty*unitprice;
+    				localamt=amt* exchangerate;
+
+					total=(qty*unitprice);
+                   
+					if(document.getElementById('amt_'+i))
+                    $("#amt_"+i).val(amt.toFixed(2));
+					
+					if(document.getElementById('localamt_'+i))
+                    $("#localamt_"+i).val(localamt.toFixed(2));
+					
+                    
+					if(document.getElementById('granttotalamt_'+i))
+                    $("#granttotalamt_"+i).val(total.toFixed(2));
+					
+					if(document.getElementById('localgranttotalamt_'+i))
+                    $("#localgranttotalamt_"+i).val((total*exchangerate).toFixed(2));
+					if(document.getElementById('amt_'+i)){
+					subtotal+=amt;
+					granttotalamt+=total;
+					
+					}
+              }
+              //subtotal
+              document.getElementById("subtotal").value=subtotal.toFixed(2);
+              
+              
+              }
+        
+     function comparecurrency(){
+            var currency_id=document.getElementById("currency_id").value;
+
+            if(currency_id==$defaultcurrency_id){
+               document.getElementById("exchangerate").value=1;
+               updateCurrency();
+            }else{
+               var data="action=getcurrency&currency_id="+currency_id;
+               $.ajax({url:"$this->quotationfilename",type: "POST",data: data,cache: false,
+                success: function (xml){
+                     jsonObj = eval( '(' + xml + ')');
+                     var currency_rate = jsonObj.currency_rate;
+                     document.getElementById("exchangerate").value=currency_rate;
+                     updateCurrency();
+                }}); 
+  
+            }
+        
+          }
+
+
+$(document).ready(function(){
+	
+	if($("#totalline").val()=='0')
+	addLine();
+	});
+
+  function saverecord(iscomplete,askconfirmation){
+          var bpartner_id=document.getElementById("bpartner_id").value;
+          var quotation_id=document.getElementById("quotation_id").value;
+                
+          if(!validation())
+          return false;
+
+          var iscompletectrl=document.getElementById("iscomplete");
+              iscompletectrl.value=iscomplete;
+		var msg='';
+
+          if(iscompletectrl.value==1){
+             var msg="Confirm Complete the record?";
+          }else{
+              var msg="Confirm Save the record?";
+
+		}
+
+		
+		if(askconfirmation==false) 
+		var confirmsave=true;
+		else
+		var confirmsave=confirm(msg);
+          if(confirmsave){
+
+                var exchangerate=document.getElementById("exchangerate").value;
+                var quotation_id=document.getElementById("quotation_id").value;
+                var errordiv=document.getElementById("errormsg");
+                errordiv.style.display="none";
+
+                 var data =$("#frmQuotation").serialize();
+                 $.ajax({url: "$this->quotationfilename",type: "POST",data: data,cache: false,
+                     success: function (xml) {
+                     jsonObj = eval( '(' + xml + ')');
+                     var status = jsonObj.status;
+					
+                     if(status==1){
+						 
+						var datast="action=refreshsubtable&quotation_id=$this->quotation_id";
+						
+                 $.ajax({url: "$this->quotationfilename",type: "POST",data: datast,cache: false,
+                     success: function (stxml) {
+						 
+						 $("#subtable").html("no data");
+						 $("#subtable").html(stxml);
+								activateAutoComplete();
+
+						 }});
+						 
+			
+                
+					if(iscomplete==1)
+						window.location="$this->quotationfilename?action=view&quotation_id=$this->quotation_id";
+
+                     }else if(status==0){
+                            errordiv.style.display="";
+                            errordiv.innerHTML="Cannot save record due to internal error"+xml; 
+                     }else
+                         alert("unknown status");
+
+                   }});
+                }
+             
+        }
+        
+         function validation(){
+           var bpartner_id=document.getElementById("bpartner_id").value;          
+           var currency_id=document.getElementById("currency_id").value;
+           var docdate=document.getElementById("document_date").value;
+        
+           if(docdate=="" || !isDate(docdate)){
+              alert("Please insert appropriate date");
+              return false;
+           }
+
+           if(currency_id==0 || currency_id ==""){
+              alert("Please insert appropriate currency!");
+              return false;
+           }
+
+        
+           return true;
+        }
+    function openWindowTemp(){
+
+        var data="action=gettempwindow";
+            $.ajax({
+                url: "$link",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            self.parent.scrollTo(0,0);
+                }});
+    }
+
+
+
+     function posting(){
+
+          var data="action=posting&quotation_id="+document.getElementById("quotation_id").value;
+          $.ajax({url:"$this->quotationfilename",type: "POST",data: data,cache: false,
+                  success: function(xml){
+                  if(xml!= ""){
+                     jsonObj = eval( '(' + xml + ')');
+                     var status = jsonObj.status;
+                     if(status==1){
+                        window.location="$this->quotationfilename?action=view&quotation_id="+document.getElementById("quotation_id").value;
+                     }else
+                         alert("cannot post record, please check you financial year, businss partner setting, and make sure exchange rate and local total >0");
+                 }
+                  }});
+     }
+
+    function returndescription(descriptiontemp_id){
+
+      document.getElementById('description').value = document.getElementById(descriptiontemp_id).value;
+      closeWindow();
+    }
+
+    function deletedescription(descriptiontemp_id){
+      if(confirm('Confirm Delete this Template?')){
+        var data = "action=deletetemp&descriptiontemp_id="+descriptiontemp_id;
+               document.getElementById('popupmessage').innerHTML="Please Wait...";
+               popup('popUpDiv');
+        $.ajax({
+           url: "$link",type: "POST",data: data,cache: false,
+             success: function (xml) { 
+                jsonObj = eval( '(' + xml + ')');
+                var status = jsonObj.status;
+                   if(status == 1){
+                    closeWindow();
+                   }
+                popup('popUpDiv');
+            }});
+       }
+    }
+
+    function openWindowsaveTemp(){
+
+        var data="action=getsavetempwindow";
+            $.ajax({
+                url: "$link",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
+                            document.getElementById('idApprovalWindows').style.display = "";
+                            document.getElementById('descriptiontemp_content').value = document.getElementById('description').value;
+                            self.parent.scrollTo(0,0);
+                }});
+    }
+
+    function savetemp(){
+        var data = $("#frmTempid").serialize();
+               document.getElementById('popupmessage').innerHTML="Please Wait...";
+               popup('popUpDiv');
+        $.ajax({
+           url: "$link",type: "POST",data: data,cache: false,
+             success: function (xml) {
+                jsonObj = eval( '(' + xml + ')');
+                var status = jsonObj.status;
+                   if(status == 1){
+                    closeWindow();
+                   }
+                popup('popUpDiv');
+            }});
+    }
     
-    if($action=="new"){
-        $tableheader="New Quotation";
-         $attnoption="<option value='0'>Null</option>";
-        $uidoption= $ctrl->getSelectUsers($userid);
-        $termsoption="<option value='0'>Null</option>";
-        $addressoption="<option value='0'>Null</option>";
-        $currencyoption="<option value='0'>Null</option>";
-        $branchctrl=$ctrl->selectionOrganization($userid, $defaultorganization_id);
-        $this->quotation_id=0;
+    function closeWindow(){
+      document.getElementById('idApprovalWindows').style.display = "none";
+      document.getElementById('idApprovalWindows').innerHTML = "";
+    }
+
+</script>
+EOF;
+    }
+
+    public function insertQuotation() {
+		global $defaultorganization_id;
+     include include "../simantz/class/Save_Data.inc.php";;
+    $save = new Save_Data();
+
+    $arrInsertField=array(
+    "document_no",
+    "organization_id",
+    "documenttype",
+    "document_date",
+    "currency_id",
+    "exchangerate",
+    "subtotal",
+    "created",
+    "createdby",
+    "updated",
+    "updatedby",
+    "itemqty",
+    "ref_no",
+    "description",
+    "bpartner_id",
+    "spquotation_prefix",
+    "issotrx",
+    "terms_id",
+    "contacts_id",
+    "preparedbyuid",
+    "salesagentname",
+    "isprinted",
+    "localamt",
+    "address_text",
+        "address_id","note","quotation_title","quotation_status","iscomplete"
+);
+    $arrInsertFieldType=array(
+    "%d",
+    "%d",
+    "%d",
+    "%s",
+    "%d",
+    "%f",
+    "%f",
+    "%s",
+    "%d",
+    "%s",
+    "%d",
+    "%d",
+    "%s",
+    "%s",
+    "%d",
+    "%s",
+    "%d",
+    "%d",
+    "%d",
+    "%d",
+    "%s",
+    "%d",
+    "%f",
+    "%s",
+    "%d",
+    "%s",
+         "%s",
+        "%s","%d");
+        if($this->document_no=='<<NEW>>')	
         $this->document_no=$this->getNextNo();
-        $this->document_date=date("Y-m-d",time());
-        $this->exchangerate=1;
-        $this->subtotal=0;
-        $this->localamt=0;
+    $arrvalue=array($this->document_no,
+   $defaultorganization_id,
+   $this->documenttype,
+   $this->document_date,
+   $this->currency_id,
+   $this->exchangerate,
+   $this->subtotal,
+   $this->updated,
+   $this->updatedby,
+   $this->updated,
+   $this->updatedby,
+   $this->itemqty,
+   $this->ref_no,
+   $this->description,
+   $this->bpartner_id,
+   $this->spquotation_prefix,
+   $this->issotrx,
+   $this->terms_id,
+   $this->contacts_id,
+   $this->preparedbyuid,
+   $this->salesagentname,
+   $this->isprinted,
+   $this->localamt,
+   $this->address_text,
+   $this->address_id,
+   $this->note,
+        $this->quotation_title,
+        $this->quotation_status,$this->iscomplete);
+    if($save->InsertRecord($this->tablename,   $arrInsertField,
+            $arrvalue,$arrInsertFieldType,$this->spquotation_prefix.$this->document_no,"quotation_id")){
+            $this->quotation_id=$save->latestid;
+            return $this->quotation_id;
+            }
+    else
+            return false;
     }
-    else{
-        $tableheader="Edit Quotation";
-         include_once "../simantz/class/SelectCtrl.inc.php";
 
-    $ctrl= new SelectCtrl();
-    include_once "../bpartner/class/BPSelectCtrl.inc.php";
-    $bpctrl = new BPSelectCtrl();
-    include "../bpartner/class/BPartner.php";
-    $bp = new BPartner();
-    $bpartner_id=$_REQUEST['bpartner_id'];
-    $bp->fetchBpartnerData($bpartner_id);
+    public function getMultiplyValue() {
 
-    $addressxml= $bpctrl->getSelectAddress($this->address_id,"N",$o->bpartner_id);
-    $termsxml=  $bpctrl->getSelectTerms($this->terms_id,"N");
-    $contactxml= $bpctrl->getSelectContacts($this->contacts_id,'N',"",""," and bpartner_id=$this->bpartner_id");
-    $currencyxml=  $ctrl->getSelectCurrency($this->currency_id);
-
-    $branchctrl=$ctrl->selectionOrganization($userid, $this->organization_id);
+        if ($this->issotrx == 1 && $this->documenttype == "I")
+            $multiply = 1;
+        elseif ($this->issotrx == 0 && $this->documenttype == "I")
+            $multiply = -1;
+        elseif ($this->issotrx == 1 && $this->documenttype == "D")
+            $multiply = 1;
+        elseif ($this->issotrx == 1 && $this->documenttype == "C")
+            $multiply = -1;
+        elseif ($this->issotrx == 0 && $this->documenttype == "D")
+            $multiply = 1;
+        elseif ($this->issotrx == 0 && $this->documenttype == "C")
+            $multiply = -1;
 
 
-
-         $attnoption=$contactxml;
-    $uidoption=$ctrl->getSelectUsers($this->preparedbyuid);
-    $termsoption=$termsxml;
-    $addressoption=$addressxml;
-    $currencyoption=$currencyxml;
-   // $branchoption="<option value='1'>HQ</option>";
-
-    
+        return $multiply;
     }
 
-$grid=$this->getGrid($this->quotation_id);
-if($this->issotrx==1)
-        $bpartnertype="isdebtor";
-else
-        $bpartnertype="iscreditor";
-if($this->quotation_status=="S"){
-    $selectquotestatus_u="";
- $selectquotestatus_f="";
- $selectquotestatus_s="selected='selected'";
-}
-elseif($this->quotation_status=="F"){
-    $selectquotestatus_u="";
- $selectquotestatus_f="selected='selected'";
- $selectquotestatus_s="";
-}
-else
-    {
-    $selectquotestatus_u="selected='selected'";
- $selectquotestatus_f="";
- $selectquotestatus_s="";
-    }
-    $html =<<< HTML
+    public function GetCurrency() {
+        global $defaultcurrency_id;
+        $end = "9999-12-30";
+        $currentday = date("Y-m-d", time());
 
+        $sql = sprintf("SELECT amountrate from sim_currencyline WHERE fromcurrency_id = '%d'
+                      AND tocurrency_id = '%d' AND datefrom=(SELECT MAX(datefrom) FROM sim_currencyline WHERE fromcurrency_id = '%d'
+                      AND tocurrency_id = '%d');", $this->currency_id, $defaultcurrency_id, $this->currency_id, $defaultcurrency_id);
+        $this->log->showLog(3, 'Get AmountRate');
+        $this->log->showLog(4, "SQL: $sql");
+        $query = $this->xoopsDB->query($sql);
+        if ($this->convertto_id == $defaultcurrency_id) {
+            $this->currency_rate = 1;
+        } else {
+            if ($row = $this->xoopsDB->fetchArray($query)) {
+                $this->currency_rate = $row['amountrate'];
+            } else {
+                $this->currency_rate = 0;
+            }
+        }
+    }
+
+    public function getInputForm($type="") {
+
+        global $userid, $bpctrl, $ctrl, $defaultorganization_id, $havewriteperm, $sbfe;
+        $this->log->showLog(3, "Access Quotation getInputForm()");
+
+        $bpbox = $sbfe->getBPartnerBox($this->bpartner_id, "$this->bpartner_no - $this->bpartner_name", 'bpartner_id', 'bpartner_id', '350px', 'onchange="chooseBPartner()"', $this->usedBpartnerType);
+      //  $agentbox = $sbfe->getAgentBox($this->saleagent_id, "$this->saleagent_no - $this->saleagent_name", 'saleagent_id', 'saleagent_id', '150px');
+        $uidoption = $bpctrl->getSelectUsers($userid);
+
+
+
+      
+        $tableheader = "Edit Quotation";
+        //include_once "../simantz/class/SelectCtrl.inc.php";
+        //$ctrl = new SelectCtrl();
+        include_once "../bpartner/class/BPSelectCtrl.inc.php";
+        $bpctrl = new BPSelectCtrl();
+        include_once "../bpartner/class/BPartner.php";
+        $bp = new BPartner();
+
+        $bpartner_id = $_REQUEST['bpartner_id'];
+        $bp->fetchBpartnerData($bpartner_id);
+//           $voidctrl = "<input type='button' value='Void' id='btnvoid' onclick=javascript:voidQuotation()>";
+        $addressxml = $bpctrl->getSelectAddress($this->address_id, "N", $this->bpartner_id);
+        $termsxml = $bpctrl->getSelectTerms($this->terms_id, "N");
+        $contactxml = $bpctrl->getSelectContacts($this->contacts_id, 'N', "", "", " and bpartner_id=$this->bpartner_id");
+        $currencyxml = $ctrl->getSelectCurrency($this->currency_id);
+        $branchctrl = $ctrl->selectionOrganization($userid, $this->organization_id);
+
+        $attnoption = $contactxml;
+        $uidoption = $ctrl->getSelectUsers($this->preparedbyuid);
+        $termsoption = $termsxml;
+        $addressoption = $addressxml;
+        $currencyoption = $currencyxml;
+        // $branchoption="<option value='1'>HQ</option>";
+        //   $grid = $this->getGrid($this->quotation_id);
+        if ($this->issotrx == 1)
+            $bpartnertype = "isdebtor";
+        else
+            $bpartnertype = "iscreditor";
+
+   if($havewriteperm==1)  
+		$savebutton="<input type='button' name='save' onclick='saverecord(0,true)'id='submit' value='Save'/>
+        <input type='button' name='complete' onclick='saverecord(1,true);' id='submit' value='Complete'/>
+        <input type='button' name='save' onclick='deleterecord()' type='submit' id='delete' value='Delete'/>
+        <input name='action' id='action' value='update'  type='hidden'/>
+        <input type='button' id='preview' value='Preview' onclick='javascript:previewQuotation()'/>
+	<input type='button' id='btnviewhistory' name='btnviewhistory' onclick='viewhistory()' value='View Record Info'/>";
+        else
+            $savebutton = "
+        <input type='button' value='Preview' onclick='javascript:previewQuotation()'>
+        <input type='button'  id='btnviewhistory' value='View Record Info' name='btnviewhistory' onclick='viewhistory()'/>	
+";
+        $this->defineHeaderButton();
+        $subtable = $this->subtable();
+        $html = <<< HTML
 <div id="idApprovalWindows" style="display:none"></div>
-<div id='blanket' style='display:none;'></div>
-
-
-
-
-    
-    <br/>
-    <div id='centercontainer'>
-    <div align="center" >
-    <table style="width:990px;text-align: left; " >
-        <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
-$noperm
-
-    <div id='errormsg' class='red' style='display:none'></div>
+  
+<div id='centercontainer'>
+ <div align="center" >
+  <table style="width:990px;text-align: left; " >
+        <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr>
+  </table>
+                $noperm
+ <div id='errormsg' class='red' style='display:none'></div>
 <form onsubmit='return false' method='post' name='frmQuotation' id='frmQuotation'  action='$this->quotationfilename'  enctype="multipart/form-data">
    <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
     <tbody>
@@ -274,166 +920,738 @@ $noperm
         <td colspan="4" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >$tableheader</td>
         </tr>
         <tr>
-          <td class="head">Quotation No</td>
-          <td class="even"><input name='spquotation_prefix' id='spquotation_prefix' value='$this->spquotation_prefix' size='3'>
+          <td class="head">$document</td>
+          <td class="even"><input name='spquotation_prefix' id='spquotation_prefix' value='$this->spquotation_prefix'size='3'>
                             <input name='document_no' id='document_no'  value='$this->document_no' size='10'>
-                    Branch <select id='organization_id' name='organization_id'>&nbsp; $branchctrl</select></td>
-          <td class="head">Business Partner</td>
-          <td class="even"><div style="float: left">
-              <ntb:Combo id="cmbbpartner_id" Mode="classic" theme="$nitobicombothemes" InitialSearch="$this->bpartner_name" onselectevent="chooseBPartner();">
-             <ntb:ComboTextBox Width="250px" DataFieldIndex=1 ></ntb:ComboTextBox>
-             <ntb:ComboList Width="300px" Height="200px" DatasourceUrl="../bpartner/bpartnerlookup.php?action=searchbpartnercombo&showNull=Y&bpartner_id=$this->bpartner_id" PageSize="25" >
-             <ntb:ComboColumnDefinition Width="130px" DataFieldIndex=1 ></ntb:ComboColumnDefinition>
-             <ntb:ComboMenu icon="images/add.gif" OnClickEvent="window.open('../bpartner/bpartner.php')" text=" &nbsp;Add product...">
-             </ntb:ComboList>
-            </ntb:Combo></div><div style="float: left"><a onclick="zoomBPartner()"><img src="../simantz/images/zoom.png"></a></div>
+                    </td>
+
+
+            <td class="head">Business Partner</td>
+          <td class="even">$bpbox<img src="../simantz/images/zoom.png" style="cursor:pointer" onclick=zoomBPartner()></a>
+          <div id='divlimit' style='float:left'></div>
           </td>
      </tr>
      <tr>
         <td class="head">Date (YYYY-MM-DD)</td>
           <td class="even">
-            <input id='document_date' name='document_date'  size='10'  value='$this->document_date'>
-            <input id='btnquotationdate' type='button' class='btndate' onclick="$this->showCalendar" value="Date"></td>
+            <input id='document_date' name='document_date' class='datepick'  size='12'  value='$this->document_date'>
           <td class="head">Attn To </td>
           <td class="even"><select id='contacts_id' name='contacts_id' >$attnoption</select></td>
      </tr>
      <tr>
       <td class="head">Terms</td>
       <td class="even"><select id='terms_id' name='terms_id'>$termsoption</select></td>
-      <td class="head">Ref. No</td>
-      <td class="even"><input id='ref_no' size='10' name='ref_no' value='$this->ref_no'></td>
+      <td class="head">$refno</td>
+      <td class="even"><input id='ref_no' size='20' name='ref_no' value='$this->ref_no'></td>
      </tr>
      <tr>
          <td class="head">Prepared By</td>
          <td class="even"><select id='preparedbyuid' name='preparedbyuid'>$uidoption</select></td>
         <td class="head">Sales Agent</td>
-         <td class="even"><input id='salesagentname'  name='salesagentname' value='$this->salesagentname'></td>
+         <td class="even">
+
+          
+          
+                <input id='salesagentname'  name='salesagentname' value='$this->salesagentname'>
+                
+         </td>
 </tr>
+            
 <tr>
-       <td class="head" rowspan="2">Address</td>
-       <td class="even" rowspan="2"><select id='address_id' name='address_id' onchange=updateAddressText()>$addressoption</select><br/>
-        <textarea id='address_text' name='address_text' cols='30' rows='3'>$this->address_text</textarea>
+       <td class="head">Address</td>
+       <td class="even"><select id='address_id' name='address_id' onchange=updateAddressText()>$addressoption</select><br/>
+        <textarea id='address_text' name='address_text' cols='50' rows='3'>$this->address_text</textarea>
         </td>
          <td class="head">Currency</td>
           <td class="even">
-                    <select id='currency_id' name='currency_id' onchange=comparecurrency()>$currencyoption</select> Exchange rate: MYR<input size='8' id='exchangerate' onchange=updateCurrency() value="$this->exchangerate" name="exchangerate"><br/>
+                    <select id='currency_id' name='currency_id' onchange=comparecurrency()>$currencyoption</select> Exchange rate: MYR<input size='8' id='exchangerate' onchange=updateamount() value="$this->exchangerate" name="exchangerate"><br/>
      </td>
-  </tr>
-<tr>
-         <td class="head">Short Title</td>
-          <td class="even">
-                    <input id='quotation_title' name='quotation_title' value="$this->quotation_title"></td>
-            </tr>
-  <tr>
-    <td class="head" colspan='2'>
-            <a onclick='javascript:addLine(1)'>Add Line [+]</a>     
-        <input name='save' onclick='saverecord(0)' type='submit' id='submit' value='Save'>
-        <input name='save' onclick='saverecord(1);' type='submit' id='submit' value='Complete'>
-        <input name='save' onclick='deleterecord()' type='submit' id='delete' value='Delete'>
-            <input name='action' id='action' value='ajaxsave'  type="hidden">
-          <input type="button" value="Reload" onclick=javascript:reloadQuotation()>
-            <input type="button" value="Preview" onclick=javascript:previewQuotation()>
+<tr><td colspan='4'>
+                
+    <div id='subtable'>
+$subtable           </div>
+<br>
+           <div style="width:960px;align:right;text-align:right;">
         <input name='quotation_id' id='quotation_id'  value='$this->quotation_id'  title='quotation_id' type='hidden'>
         <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
-            </td>
-              <td class="head">Success or Failed</td>
-            <td class="even"><select name="quotation_status" id="quotation_status">
-                            <option value="" $selectquotestatus_u>Unknown</option>
-                            <option value="S" $selectquotestatus_s>Success</option>
-                            <option value="F" $selectquotestatus_f>Failed</option>
-                        </select></td>
-</tr>
-<tr><td colspan='4'>
-    <div id='detaildiv'>
-    $grid
-           <div style="width:895px;text-align:right" >
-            Total: <label id='lblsubtotal'><input id='subtotal' size="10" name='subtotal' readonly="readonly" value='$this->subtotal'></label><br/>
-          <input id='localamt' size="5" type='hidden' name='localamt' readonly="readonly"  value='$this->localamt'>
+                $savebutton
+
             </div>
 </div>
 </td></tr>
  <td class="head">Description</td>
 <td class="even" colspan='2'><textarea cols='70' rows='3' id='description'  name='description'>$this->description</textarea>
-          <div id="temp" $display><a onclick="openWindowTemp()" style='cursor:pointer'><u>Browse Template<u></a>
+             <div id="temp" $display><a onclick="openWindowTemp()" style='cursor:pointer'><u>Browse Template<u></a>
           <a onclick="openWindowsaveTemp()" style='cursor:pointer'><u>Save Template<u></a></div>
             </td>
-            <td rowspan="3">
 </tr><tr>
    <td class="head">Note</td>
 <td class="even" colspan='2'><textarea cols='70' rows='3' id='note'  name='note'>$this->note</textarea></td>
 </tr></table>
 </form>
-
-
 HTML;
-    return $html;
-   }
-
-public function getGrid($quotation_id=0){
-    global $permctrl, $readonlypermctrl,$windowsetting,$nitobigridthemes;
-    $data="";
-    $editable="";
-    if($this->iscomplete==1){
-            $permctrl=$readonlypermctrl ;
-             $editable="editable=\"false\" ";
-             $showdelete="visible=\"false\"";
+        return $html;
     }
+
+    public function isNumberExist() {
+
+        if ($this->document_no == "")
+            $this->document_no = 0;
+
+        $sql = "SELECT count(*)  as qty FROM $this->tablename where document_no ='$this->document_no' and spquotation_prefix='$this->spquotation_prefix'";
+        $query = $this->xoopsDB->query($sql);
+
+        while ($row = $this->xoopsDB->fetchArray($query)) {
+            $this->log->showLog(3, "document no: $this->spquotation_prefix $this->document_no exist, check with sql: $sql");
+            if ($row['qty'] > 0)
+                return true;
+            else
+                return false;
+        }
+        $this->log->showLog(3, "document no: $this->spquotation_prefix $this->document_no not exist, check with sql: $sql");
+
+        return false;
+    }
+
+    public function fetchQuotation($quotation_id) {
      
-/*     onaftercelleditevent="getTotalAmountCell(eventArgs)"
-     onbeforerowdeleteevent="setDefaultValue(eventArgs,'delete')"
-     onafterrowinsertevent="setDefaultValue(eventArgs,'add')"
+     $this->log->showLog(3,"Access fetchQuotation($quotation_id)");
+      $sql="SELECT i.*,bp.bpartner_name, bp.bpartner_no,o.organization_code,
+            t.terms_name,c.contacts_name, u.uname
+                FROM sim_bpartner_quotation i
+                left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id
+                left join sim_organization o on o.organization_id=i.organization_id
+                left join sim_terms t on t.terms_id=i.terms_id
+                left join sim_users u on u.uid=i.preparedbyuid
+                left join sim_contacts c on c.contacts_id=i.contacts_id
+                where quotation_id=$quotation_id";
+     $query=$this->xoopsDB->query($sql);
+     while($row=$this->xoopsDB->fetchArray($query)){
+         $this->quotation_id=$quotation_id;
+         $this->document_no=htmlspecialchars($row['document_no']);
+         $this->bpartner_no=htmlspecialchars($row['bpartner_no']);
+         $this->bpartner_name=htmlspecialchars($row['bpartner_name']);
+         $this->organization_code=$row['organization_code'];
+         
+         $this->organization_id=$row['organization_id'];
+         $this->documenttype=$row['documenttype'];
+         $this->document_date=$row['document_date'];
+         $this->batch_id=$row['batch_id'];
+         $this->amt=$row['amt'];
+         $this->currency_id=$row['currency_id'];
+         $this->exchangerate=$row['exchangerate'];
+         $this->subtotal=$row['subtotal'];
+         $this->created=$row['created'];
+         $this->createdby=$row['createdby'];
+         $this->updated=$row['updated'];
+         $this->updatedby=$row['updatedby'];
+         $this->itemqty=$row['itemqty'];
+         $this->preparedbyname=htmlspecialchars($row['uname']);
+         $this->contacts_name=htmlspecialchars($row['contacts_name']);
+         $this->quotation_title=htmlspecialchars($row['quotation_title']);
+         $this->terms_name=$row['terms_name'];
+         $this->ref_no=htmlspecialchars($row['ref_no']);
+         $this->description=htmlspecialchars($row['description']);
+         $this->bpartner_id=$row['bpartner_id'];
+         $this->iscomplete=$row['iscomplete'];
+         $this->spquotation_prefix=$row['spquotation_prefix'];
+         $this->issotrx=$row['issotrx'];
+         $this->terms_id=$row['terms_id'];
+         $this->contacts_id=$row['contacts_id'];
+         $this->preparedbyuid=$row['preparedbyuid'];
+         $this->salesagentname=htmlspecialchars($row['salesagentname']);
+         $this->isprinted=$row['isprinted'];
+         $this->localamt=$row['localamt'];
+         $this->address_id=$row['address_id'];
+         $this->address_text=htmlspecialchars($row['address_text']);
+         $this->exchangerate=$row['exchangerate'];
+         $this->note=$row['note'];
+         $this->quotation_status=$row['quotation_status'];
+         $this->log->showLog(4,"Fetch data successfully");
 
- * onbeforecelleditevent="checkAllowEdit(eventArgs)"
- */
-   return $xml=<<< _XML_
-   <ntb:grid id="quotationgrid"
-     mode="livescrolling"
-     toolbarenabled="false"
-     $permctrl
-     singleclickeditenabled="true"
-     gethandler="$this->quotationfilename?action=searchquotationline&quotation_id=$this->quotation_id"
-     savehandler="$this->quotationfilename?action=saveQuotationline"
-     rowheight="70"
-     width="1060px"
-     height="300"
-     onhtmlreadyevent="optimizegridview()"
-     onaftersaveevent="savedone(eventArgs)"
-     autosaveenabled="false"
-     theme="$nitobigridthemes">
+         return true;
+     }
+     $this->log->showLog(4,"Cannot fetch quotation with SQL: $sql");
+     return false;
+    }
 
-<ntb:columns>    
-        <ntb:numbercolumn classname="{\$rh}" xdatafld="seqno" sortenabled="false" visible="false"></ntb:numbercolumn>
-        <ntb:textcolumn classname="{\$rh}" width="170px" label="Subject"  xdatafld="subject" sortenabled="false" $editable></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" width="190px" label="Description"  xdatafld="description" maxlength='10000' sortenabled="false" $editable>
-                        <ntb:textareaeditor></ntb:textareaeditor></ntb:textcolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="U.Price" mask="#0.00" width="50" $editable xdatafld="uprice" sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)">
-                        </ntb:numbercolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="Qty" width="50" mask="#0.00" xdatafld="qty" $editable sortenabled="false" onaftercelleditevent="updateCurrentRow(eventArgs)">
-                    </ntb:numbercolumn>
-        <ntb:textcolumn classname="{\$rh}" label="UOM"  width="50" xdatafld="uom" sortenabled="false" $editable></ntb:textcolumn>
-        <ntb:numbercolumn classname="{\$rh}" label="Amount" mask="#0.00" width="50"  xdatafld="amt" sortenabled="false"  editable="false"></ntb:numbercolumn>
-        <ntb:textcolumn label="Del"   xdatafld="imgdel" $showdelete  width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:deleteLine()" align="right">
-              <ntb:imageeditor imageurl="images/del.gif"></ntb:imageeditor></ntb:textcolumn>
-        <ntb:textcolumn  label="Log" classname="{\$rh}"  xdatafld="info"   width="25"  sortenabled="false" classname="{\$rh}" oncellclickevent="javascript:viewlog()">
-            <ntb:imageeditor imageurl="images/history.gif"></ntb:imageeditor> </ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" label="IV"  visible="false"   xdatafld="quotation_id" sortenabled="false"></ntb:textcolumn>
-        <ntb:textcolumn classname="{\$rh}" label="ID" visible="false" xdatafld="quotationline_id" editable="false"></ntb:textcolumn>
-  </ntb:columns>
-</ntb:grid>
+    public function subtable() {
+        global $havewriteperm, $defcurrencycode, $userid, $sbfe;
+        include_once "../simantz/class/SelectCtrl.inc.php";
+        include_once "../bparnter/class/BPartnerSelectCtrl.inc.php";
+     //   $ctrl = new SelectCtrl();
+       // $bpctrl = new BPartnerSelectCtrl();
+
+        $form = "";
+        $i = 0;
+//second table
+        $sql = "SELECT ql.*
+                FROM sim_bpartner_quotationline ql
+                INNER JOIN sim_bpartner_quotation q ON q.quotation_id=ql.quotation_id
+                 WHERE ql.quotation_id=$this->quotation_id order by ql.seqno ASC";
+
+        $this->log->showLog(4, "getsubtalbe :" . $sql . "<br>");
+        $query = $this->xoopsDB->query($sql);
+
+        $form .=<<< EOF
 
 
-_XML_;
 
-}
+<div align="center">
 
-public function GetTempWindow(){
-   global $nitobigridthemes,$havewriteperm,$defcurrencycode;
+
+<table id="quotationline" class="" style="width:100%">
+
+   <tr class="searchformheader" >
+     <td colspan="8">
+       <table><tr><td>
+              <div style="float:left;cursor:pointer"><a onclick="addLine()">[Add Line]</a></div>
+              <div style="float:center">Item(s)</div>
+       </td></tr></table>
+     </td>
+   </tr>
+
+   <tr class="searchformheader" >
+          <td style="width:30px;vertical-align:top;">Seq</td>
+          <td style="width:450px">Subject</td>
+          <td style="width:50px">Unit Price</td>
+          <td style="width:50px">Qty</td>
+          <td style="width:70px">UOM</td>
+
+          <td style="width:50px">Amount</td>
+          <td>Del</td>
+          <td>Log</td>
+    </tr>
+
+EOF;
+        $g = 0;
+        $totalgeneralamt = 0;
+        global $sbfe;
+
+        while ($row = $this->xoopsDB->fetchArray($query)) {
+            if ($rowtype == "odd")
+                $rowtype = "even";
+            else
+                $rowtype = "odd";
+            $subject = htmlspecialchars($row['subject']);
+            $description = htmlspecialchars($row['description']);
+            if ($description == '')
+                $hidedesc = " style='display:none;width:450px' ";
+            else
+                $hidedesc = " style='width:450px' ";
+
+            $amt = $row['amt'];
+            $localamt = $row['localamt'];
+            $totalgeneralamt+=$amt;
+            $quotationline_id = $row['quotationline_id'];
+            $accounts_id = $row['accounts_id'];
+            $terms_id = $row['terms_id'];
+            $terms_name = $row['terms_name'];
+            $quotation_amt = $row['quotation_amt'];
+            $unitprice = $row['unitprice'];
+
+            $qty = $row['qty'];
+            $uom = $row['uom'];
+            $gstamt = $row['gstamt'];
+            $granttotalamt = $row['granttotalamt'];
+            $localgranttotalamt = $row['localgranttotalamt'];
+            $localamt = $row['localamt'];
+            $accounts_name = $row['accountcode_full'] . " - " . $row['accounts_name'];
+            
+          //  $tax = $row['total_tax'] * 0.01;
+//name="lineaccount_id[$i]" id="account_id_$i"
+//<select name="lineaccount_id[$i]" id="account_id_$i" onfocus=getList(this.id,this.value) style='width:300px'>$acclist</select><img onclick='clearlist()' src='../simantz/images/reload.gif' title='reload'/>
+//			$acclist=$bpctrl->getSimpleSelectAccounts($accounts_id,'Y',"and accounts_id=$accounts_id");
+            $seqno = $row['seqno'];
+            $form .=<<< EOF
+         <tr class="$rowtype" id='trline_$i'>
+            <td class="$rowtype" style='vertical-align:top;'><input name='lineseqno[$i]' size='3' value='$seqno' id='lineseqno_$i'></td>
+            <td >
+                                 <input type="hidden" value="$quotationline_id" name="linequotationline_id[$i]" id="quotationline_id_$i">
+                                 <input type="text" style="width:350px"  value="$subject" name="linesubject[$i]" id="subject_$i"><small style='color:red; cursor: pointer'  onclick='showDesc($i)'>[+]Remark</small>
+                                 <textarea id='description_$i' rows='8' name='linedescription[$i]' $hidedesc>$description</textarea>
+            </td>
+            <td style='vertical-align:top;'><input style="width:70px;text-align:right" name='lineunitprice[$i]' id='unitprice_$i' value='$unitprice' onchange='updateamount()'></td>
+            <td style='vertical-align:top;'><input name='lineqty[$i]' style="width:50px;text-align:right" id='qty_$i' value='$qty' onchange='updateamount()'></td>
+            <td style='vertical-align:top;'><input style="width:50px;text-align:right" name='lineuom[$i]' id='uom_$i' value='$uom' ></td>
+			<td  style='vertical-align:top;'>
+						<input style="width:70px;text-align:right" readonly="readonly" type="text" value="$amt" id="amt_$i" name="lineamt[$i]" >
+				</td>
+            <td  style="text-align:center;vertical-align:top;"><img src="../simantz/images/del.gif" style="cursor: pointer" onclick=deleteline($quotationline_id,$i)></td>
+            <td  style="text-align:center;vertical-align:top;"><img src="../simantz/images/history.gif" style="cursor: pointer" onclick=viewlinehistory($quotationline_id)></td>
+         </tr>
+
+EOF;
+            $i++;
+            $g++;
+        }
+
+        $totalgeneralamt = number_format($totalgeneralamt, "2", ".", "");
+        $form .=<<< EOF
+<tfooter>
+         <tr class="foot" id="trlinetotal">
+            <td  ></td>
+         
+            <td  ></td>
+            <td >
+                                 <input type="hidden" value="$i" name="totalline" id="totalline">
+            </td>
+            <td  colspan='2'>Sub Total $this->currency_code:</td>
+            <td  style="width:60px;text-align:right" ><input style="width:60px;text-align:right" readonly="readonly" value="$this->subtotal" id="subtotal" name="subtotal"></td>
+            <td  style="text-align:center;"></td>
+            <td  style="text-align:center;"></td>
+         </tr>
+</tfooter>
+                	
+				         
+
+EOF;
+
+        $form.=<<< EOF
+ </table>
+</div>
+EOF;
+
+        return $form;
+    }
+
+    public function viewsubtable() {
+        global $havewriteperm, $defcurrencycode, $userid, $sbfe;
+        include_once "../simantz/class/SelectCtrl.inc.php";
+        include_once "../simbiz/class/SimbizSelectCtrl.inc.php";
+        $ctrl = new SelectCtrl();
+        $bpctrl = new SimbizSelectCtrl();
+
+        $form = "";
+        $i = 0;
+//second table
+        $sql = "SELECT il.*,o.organization_code
+                FROM sim_bpartner_quotationline il
+                LEFT JOIN sim_simbiz_accounts a ON a.accounts_id=il.accounts_id
+                left join sim_organization o on o.organization_id=il.branch_id
+                 WHERE il.quotation_id=$this->quotation_id order by il.seqno ASC";
+
+        $this->log->showLog(4, "getsubtalbe :" . $sql . "<br>");
+        $query = $this->xoopsDB->query($sql);
+
+        $form .=<<< EOF
+
+
+
+<div align="center">
+
+
+<table id="quotationline" class="" style="width:100%">
+
+   <tr class="searchformheader" >
+     <td colspan="8">
+       <table><tr><td>
+              <div style="float:left;cursor:pointer"><a onclick="addLine()">[Add Line]</a></div>
+              <div style="float:center">Item(s)</div>
+       </td></tr></table>
+     </td>
+   </tr>
+
+   <tr class="searchformheader" >
+          <td style="width:30px;vertical-align:top;">Seq</td>
+          <td style="width:250px">Subject</td>
+          <td style="width:50px">Unit Price</td>
+          <td style="width:50px">Qty</td>
+          <td style="width:70px">UOM</td>
+          <td style="width:50px">Amount</td>
+    </tr>
+
+EOF;
+        $g = 0;
+        $totalgeneralamt = 0;
+        global $sbfe;
+
+        while ($row = $this->xoopsDB->fetchArray($query)) {
+            if ($rowtype == "odd")
+                $rowtype = "even";
+            else
+                $rowtype = "odd";
+            $subject = htmlspecialchars($row['subject']);
+            $description = htmlspecialchars($row['description']);
+            if ($description == '')
+                $hidedesc = " style='display:none;width:350px' ";
+            else
+                $hidedesc = " style='width:350px' ";
+
+            $amt = $row['amt'];
+            $localamt = $row['localamt'];
+            $totalgeneralamt+=$amt;
+            $quotationline_id = $row['quotationline_id'];
+            $accounts_id = $row['accounts_id'];
+            $terms_id = $row['terms_id'];
+            $terms_name = $row['terms_name'];
+            $quotation_amt = $row['quotation_amt'];
+            $unitprice = $row['unitprice'];
+
+            $qty = $row['qty'];
+            $uom = $row['uom'];
+            $gstamt = $row['gstamt'];
+           // $tax_name = $row['tax_name'];
+            $organization_code = $row['organization_code'];
+            $granttotalamt = $row['granttotalamt'];
+            $localgranttotalamt = $row['localgranttotalamt'];
+            $localamt = $row['localamt'];
+            $accounts_name = $row['accountcode_full'] . " - " . $row['accounts_name'];
+
+//            $tax = $row['total_tax'] * 0.01;
+//name="lineaccount_id[$i]" id="account_id_$i"
+//<select name="lineaccount_id[$i]" id="account_id_$i" onfocus=getList(this.id,this.value) style='width:300px'>$acclist</select><img onclick='clearlist()' src='../simantz/images/reload.gif' title='reload'/>
+//			$acclist=$bpctrl->getSimpleSelectAccounts($accounts_id,'Y',"and accounts_id=$accounts_id");
+            $orgctrl = $ctrl->selectionOrg($userid, $row['branch_id'], 'N');
+            $seqno = $row['seqno'];
+            $description = str_replace("\n", "<br/>", $description);
+            $description = str_replace("  ", " &nbsp;", $description);
+
+            $form .=<<< EOF
+         <tr class="$rowtype" id='trline_$i'>
+            <td class="$rowtype" style='vertical-align:top;'>$seqno</td>
+            <td style="text-align:left;vertical-align:top;">
+             $subject<br/>
+            $description
+            </td>
+
+            <td style='text-align:right;vertical-align:top;'>$unitprice</td>
+            <td style='text-align:right;vertical-align:top;'>$qty</td>
+            <td style='text-align:center;vertical-align:top;'>$uom</td>
+			<td  style='vertical-align:top;text-align:right;'>
+						$amt
+				</td>
+
+         </tr>
+
+EOF;
+            $i++;
+            $g++;
+        }
+
+        $totalgeneralamt = number_format($totalgeneralamt, "2", ".", "");
+        $form .=<<< EOF
+<tfooter>
+         <tr class="foot" id="trlinetotal">
+			<td ></td>
+         
+            <td >
+                                 <input type="hidden" value="$i" name="totalline" id="totalline">
+            </td>
+            <td   colspan='3' style="width:60px;text-align:right">Sub Total $this->currency_code:</td>
+            <td  style="width:60px;text-align:right" >$this->subtotal</td>
+         </tr>
+        
+</tfooter>
+                	
+				         
+
+EOF;
+
+        $form.=<<< EOF
+ </table>
+</div>
+EOF;
+
+        return $form;
+    }
+
+    public function updateQuotation() {
+        $this->log->showLog(2,"begin updateQuotation");
+     include_once "../simantz/class/Save_Data.inc.php";
+     
+     $sql="SELECT sum(amt) as amt from sim_bpartner_quotationline where quotation_id=$this->quotation_id";
+     $q=$this->xoopsDB->query($sql);
+     $row=$this->xoopsDB->fetchArray($q);
+     $amt=$row['amt'];
+    $save = new Save_Data();
+    $arrUpdateField=array(
+        "document_no",
+    "document_date",
+    "currency_id",
+    "exchangerate",
+    "subtotal",
+    "updated",
+    "updatedby",
+    "itemqty",
+    "ref_no",
+    "description",
+    "bpartner_id",
+    "spquotation_prefix",
+    "terms_id",
+    "contacts_id",
+    "preparedbyuid",
+    "salesagentname",
+    "isprinted",
+    "localamt",
+    "address_text",
+        "address_id",
+        "note",
+        "quotation_title",
+        "quotation_status",
+        "iscomplete"
+);
+    $arrUpdateFieldType=array(
+        "%d",
+    "%s",
+    "%d",
+    "%f",
+    "%f",
+    "%s",
+    "%d",
+    "%d",
+    "%s",
+    "%s",
+    "%d",
+    "%s",
+    "%d",
+    "%d",
+    "%d",
+    "%s",
+    "%d",
+    "%f",
+    "%s",
+        "%d",
+        "%s",
+        "%s",
+        "%s",
+        "%d"
+);
+    $arrvalue=array($this->document_no,
+   $this->document_date,
+   $this->currency_id,
+   $this->exchangerate,
+   $amt,
+   $this->updated,
+   $this->updatedby,
+   $this->itemqty,
+   $this->ref_no,
+   $this->description,
+   $this->bpartner_id,
+   $this->spquotation_prefix,
+   $this->terms_id,
+   $this->contacts_id,
+   $this->preparedbyuid,
+   $this->salesagentname,
+   $this->isprinted,
+   $amt,
+   $this->address_text,
+   $this->address_id,
+        $this->note,
+        $this->quotation_title,
+        $this->quotation_status,
+        $this->iscomplete
+        );
+
+    if( $save->UpdateRecord($this->tablename, "quotation_id",
+                $this->quotation_id,
+                    $arrUpdateField, $arrvalue,  $arrUpdateFieldType,$this->spquotation_prefix.$this->document_no))
+            return true;
+    else
+            return false;
+    }
+
+    public function updateIsComplete($quotation_id, $iscomplete) {
+
+        include include "../simantz/class/Save_Data.inc.php";
+        $save = new Save_Data();
+
+        $arrUpdateField = array('updated', 'updatedby', 'iscomplete');
+        $arrUpdateFieldType = array('%s', '%d', '%d');
+        $arrvalue = array($this->updated, $this->updatedby, $iscomplete);
+
+        if ($save->UpdateRecord($this->tablename, "quotation_id", $this->quotation_id, $arrUpdateField, $arrvalue, $arrUpdateFieldType, $this->spquotation_prefix . $this->document_no))
+            return true;
+        else
+            return false;
+    }
+
+    public function deleteQuotation($quotation_id) {
+     include "../simantz/class/Save_Data.inc.php";
+    $save = new Save_Data();
+    $this->log->showLog(3,"Access deleteQuotation($quotation_id)");
+    
+   if($this->fetchQuotation($quotation_id)){
+   
+    return $save->DeleteRecord("sim_bpartner_quotation","quotation_id",$quotation_id,$this->spquotation_prefix.$this->document_no,1);
+   }
+   else
+       return false;
+    }
+
+    public function saveQuotationLine() {
+        global $xoopsDB, $userid, $defaultorganization_id, $xoopsUser;
+        include_once "../simantz/class/Save_Data.inc.php";
+
+        $timestamp = date("Y-m-d H:i:s", time());
+        $createdby = $userid;
+
+        $this->log->showLog("2", "Access saveLine with totalline:" . $_POST['totalline'] . ",quotationline_id:" . print_r($_POST['linequotationline_id'], true));
+
+
+        $timestamp = date("Y-m-d H:i:s", time());
+        $createdby = $xoopsUser->getVar('uid');
+        $uname = $xoopsUser->getVar('uname');
+        $uid = $userid;
+
+        $exchangerate = $_REQUEST['exchangerate'];
+        if (!$exchangerate > 0)
+            $exchangerate = 1;
+        $tablename = "sim_bpartner_quotationline";
+
+        $save = new Save_Data();
+
+        $arrInsertField = array(
+            "seqno", "subject", "description", "unitprice",
+            "qty", "uom",  "amt", "quotation_id", "created", "createdby", "updated", "updatedby",
+            );
+
+        $arrInsertFieldType = array(
+            "%d", "%s", "%s",  "%f",
+            "%f", "%s",  "%f", "%d",  "%s", "%d", "%s", "%d",
+            );
+
+        $arrUpdateField = array(
+            "seqno", "subject", "description", "unitprice", "qty", "uom",
+             "amt", "updated", "updatedby");
+
+        $arrUpdateFieldType = array("%d", "%s", "%s", "%f", "%f", "%s", "%f","%s", "%d"
+        );
+
+
+        $linequotationline_id = $_POST['linequotationline_id'];
+        $lineaccount_id = $_POST['lineaccount_id'];
+        $linedescription = $_POST['linedescription'];
+        $linesubject = $_POST['linesubject'];
+        $linebranch_id = $_POST['linebranch_id'];
+        $lineamt = $_POST['lineamt'];
+        $lineuom = $_POST['lineuom'];
+        $lineqty = $_POST['lineqty'];
+        $lineunitprice = $_POST['lineunitprice'];
+        $linelocalamt = $_POST['linelocalamt'];
+        $linetax_id = $_POST['linetax_id'];
+        $linegstamt = $_POST['linegstamt'];
+
+        $linegranttotalamt = $_POST['linegranttotalamt'];
+        $linelocalgranttotalamt = $_POST['linelocalgranttotalamt'];
+        $linetrack1_id = $_POST['linetrack1_id'];
+        $linetrack2_id = $_POST['linetrack2_id'];
+        $linetrack3_id = $_POST['linetrack3_id'];
+        $lineseqno = $_POST['lineseqno'];
+        $totalline = $_POST['totalline'];
+        $this->log->showLog(4, "submited data=" . print_r($_POST, true));
+        // Yes there are INSERTs to perform...
+        for ($i = 0; $i < $totalline; $i++) {
+
+            $quotationline_id = $linequotationline_id[$i];
+            $accounts_id = $lineaccount_id[$i];
+            $quotation_no = $linequotation_no[$i];
+            $description = $linedescription[$i];
+            $subject = $linesubject[$i];
+            $branch_id = $defaultorganization_id; //$linebranch_id[$i];
+            $tax_id = $linetax_id[$i];
+            $unitprice = $lineunitprice[$i];
+            $qty = $lineqty[$i];
+            $uom = $lineuom[$i];
+            $amt = $lineamt[$i];
+            $localamt = $linelocalamt[$i];
+            $gstamt = $linegstamt[$i];
+            $granttotalamt = $linegranttotalamt[$i];
+            $localgranttotalamt = $linelocalgranttotalamt[$i];
+            $track1_id = $linetrack1_id[$i];
+            $track2_id = $linetrack2_id[$i];
+            $track3_id = $linetrack3_id[$i];
+            $seqno = $lineseqno[$i];
+
+
+            if ($quotationline_id > 0) {
+                $arrvalue = array(
+                    $seqno,
+                    $subject,
+                    $description,
+                    $unitprice,
+                    $qty,
+                    $uom,
+                    
+                    $amt,
+                 
+                    $timestamp,
+                    $createdby,
+                   
+                );
+                $this->log->showLog(3, "***updating record($currentRecord), quotationline:subject" .
+                        $subject);
+
+                $controlvalue = $subject;
+
+                if ($save->UpdateRecord($tablename, "quotationline_id", $quotationline_id, $arrUpdateField, $arrvalue, $arrUpdateFieldType, $controlvalue)) {
+                    if ($save->failfeedback != "") {
+                        $save->failfeedback = str_replace($this->failfeedback, "", $save->failfeedback);
+                        $this->failfeedback.=$save->failfeedback;
+                    }
+                } else {
+                    $this->log->showLog("Cannot update quotation line for $subject");
+                    return false;
+                }
+            } elseif ($quotationline_id == '') {
+                
+            } elseif ($quotationline_id == 0) {
+                $arrvalue = array(
+                    $seqno,
+                    $subject,
+                    $description,
+                    $unitprice,
+                    $qty,
+                    $uom,
+                  
+                    $amt,
+                    $this->quotation_id,
+                 
+                    $timestamp,
+                    $createdby,
+                    $timestamp,
+                    $createdby,
+                   
+                );
+
+                $controlvalue = $subject;
+                if ($save->InsertRecord($tablename, $arrInsertField, $arrvalue, $arrInsertFieldType, $controlvalue, "quotationline_id")) {
+                    if ($save->failfeedback != "") {
+                        $save->failfeedback = str_replace($this->failfeedback, "", $save->failfeedback);
+                        $this->failfeedback.=$save->failfeedback;
+                    }
+                } else {
+                    $this->log->showLog(2, "Cannot insert record for $subject");
+                    return false;
+                }
+                // Now we execute this query
+            }
+        }
+        $this->log->showLog(2, "Complete run savequotationline successfully");
+        return true;
+    }
+
+    public function getQuotationLineSubject($quotationline_id) {
+
+        $sql = "select concat(subject,'(',i.spquotation_prefix,i.document_no,')')  as subject from sim_bpartner_quotationline il
+            inner join sim_bpartner_quotation i on il.quotation_id=i.quotation_id
+        where il.quotationline_id=$quotationline_id";
+        $this->log->showLog(3, "access getQuotationLineSubject($quotationline_id)");
+        $this->log->showLog(4, "with sql: $sql");
+
+        $query = $this->xoopsDB->query($sql);
+        $row = $this->xoopsDB->fetchArray($query);
+        return $row['subject'];
+    }
+
+    public function GetTempWindow() {
+        global $nitobigridthemes, $havewriteperm, $defcurrencycode;
 
         $sql = "SELECT * FROM simerp_descriptiontemp order by descriptiontemp_name ASC";
-        $this->log->showLog(4,"GetTempWindow :" . $sql . "<br>");
-        $query=$this->xoopsDB->query($sql);
+        $this->log->showLog(4, "GetTempWindow :" . $sql . "<br>");
+        $query = $this->xoopsDB->query($sql);
 
-echo <<< EOF
+        echo <<< EOF
 <div class="dimBackground"></div>
 <div align="center" >
  <form action="course.php" method="POST" name="frmDoc" id="frmDocid" enctype="multipart/form-data">
@@ -467,17 +1685,17 @@ echo <<< EOF
                </tr>
 
 EOF;
-     $i=0;
-     while($row=$this->xoopsDB->fetchArray($query)){
-        $i++;
-        if($rowtype=="odd")
-        $rowtype="even";
-        else
-        $rowtype="odd";
-        $descriptiontemp_id = $row['descriptiontemp_id'];
-        $descriptiontemp_name = $row['descriptiontemp_name'];
-        $descriptiontemp_content = $row['descriptiontemp_content'];
-echo <<< EOF
+        $i = 0;
+        while ($row = $this->xoopsDB->fetchArray($query)) {
+            $i++;
+            if ($rowtype == "odd")
+                $rowtype = "even";
+            else
+                $rowtype = "odd";
+            $descriptiontemp_id = $row['descriptiontemp_id'];
+            $descriptiontemp_name = $row['descriptiontemp_name'];
+            $descriptiontemp_content = $row['descriptiontemp_content'];
+            echo <<< EOF
              <tr>
                 <td class="$rowtype">$descriptiontemp_name</td>
                 <td class="$rowtype"><textarea cols="80" rows="6" name="desc" id="desc$descriptiontemp_id">$descriptiontemp_content</textarea></td>
@@ -485,8 +1703,8 @@ echo <<< EOF
                                                     <img src="../simbiz/images/del.gif" onclick="deletedescription('$descriptiontemp_id');" style="cursor:pointer"></td>
              </tr>
 EOF;
-      }
-echo <<< EOF
+        }
+        echo <<< EOF
            </table>
          </td>
       </tr>
@@ -499,14 +1717,15 @@ echo <<< EOF
    </form>
 </div>
 EOF;
+    }
 
-  }
+    public function includeTempFormJavescript($window) {
+        if ($window == "sales")
+            $link = "receipt.php";
+        else if ($window == "purchase")
+            $link = "paymentvoucher.php";
 
-public function includeTempFormJavescript(){
-
-     $link="salesquotation.php";
-
- echo <<< EOF
+        echo <<< EOF
 
   <script language="javascript" type="text/javascript">
 
@@ -575,13 +1794,10 @@ public function includeTempFormJavescript(){
                    if(status == 1){
                     closeWindow();
                    }
-                popup('popUpDiv');
+                 popup('popUpDiv');
             }});
     }
-    function closeWindow(){
-      document.getElementById('idApprovalWindows').style.display = "none";
-      document.getElementById('idApprovalWindows').innerHTML = "";
-    }
+
 
 // end of open temp window
 
@@ -589,17 +1805,16 @@ public function includeTempFormJavescript(){
   </script>
 
 EOF;
+    }
 
-  }
-
-public function GetSaveTempWindow(){
-   global $nitobigridthemes,$havewriteperm,$defcurrencycode;
+    public function GetSaveTempWindow() {
+        global $nitobigridthemes, $havewriteperm, $defcurrencycode;
 
         $sql = "SELECT * FROM simerp_descriptiontemp order by descriptiontemp_name ASC";
-        $this->log->showLog(4,"GetTempWindow :" . $sql . "<br>");
-        $query=$this->xoopsDB->query($sql);
+        $this->log->showLog(4, "GetTempWindow :" . $sql . "<br>");
+        $query = $this->xoopsDB->query($sql);
 
-echo <<< EOF
+        echo <<< EOF
 <div class="dimBackground"></div>
 <div align="center" >
 
@@ -659,1353 +1874,635 @@ echo <<< EOF
    </form>
 </div>
 EOF;
+    }
 
-  }
+    public function saveTemp() {
+        global $defaultcurrency_id;
+        include_once "../simantz/class/Save_Data.inc.php";
+        global $defaultpicture, $uploadpath, $selectspliter, $xoopsDB, $xoopsUser, $defaultorganization_id;
+        $save = new Save_Data();
+        $timestamp = date("Y-m-d H:i:s", time());
+        $createdby = $xoopsUser->getVar('uid');
+        $uname = $xoopsUser->getVar('uname');
 
-public function saveTemp(){
-    global $defaultcurrency_id;
-    include_once "../simantz/class/Save_Data.inc.php";
-    global $defaultpicture,$uploadpath,$selectspliter,$xoopsDB,$xoopsUser,$defaultorganization_id;
-    $save = new Save_Data();
-    $timestamp=date("Y-m-d H:i:s",time());
-    $createdby=$xoopsUser->getVar('uid');
-    $uname=$xoopsUser->getVar('uname');
+        $arrInsertField = array("descriptiontemp_name", "descriptiontemp_content",
+            "created", "createdby", "updated", "updatedby");
 
-    $arrInsertField=array("descriptiontemp_name","descriptiontemp_content",
-                                "created","createdby","updated","updatedby");
+        $arrInsertFieldType = array("%s", "%s", "%s", "%d", "%s", "%d");
 
-    $arrInsertFieldType=array("%s","%s","%s","%d","%s","%d");
+        $arrvalue = array($this->descriptiontemp_name,
+            $this->descriptiontemp_content,
+            $timestamp,
+            $createdby . $selectspliter . $uname,
+            $timestamp,
+            $createdby . $selectspliter . $uname);
 
-    $arrvalue=array($this->descriptiontemp_name,
-                    $this->descriptiontemp_content,
-                    $timestamp,
-                    $createdby.$selectspliter.$uname,
-                    $timestamp,
-                    $createdby.$selectspliter.$uname);
+        return $save->InsertRecord("simerp_descriptiontemp", $arrInsertField, $arrvalue, $arrInsertFieldType, $this->descriptiontemp_name, "descriptiontemp_id", $timestamp);
+    }
 
-    return $save->InsertRecord("simerp_descriptiontemp", $arrInsertField, $arrvalue, $arrInsertFieldType, $this->descriptiontemp_name,"descriptiontemp_id");
- }
+    public function deleteTemp($descriptiontemp_id) {
+        include_once "../simantz/class/Save_Data.inc.php";
+        $save = new Save_Data();
+        return $save->DeleteRecord("simerp_descriptiontemp", "descriptiontemp_id ", $descriptiontemp_id, $descriptiontemp_id, 1);
+    }
 
-public function deleteTemp($descriptiontemp_id) {
-    include_once "../simantz/class/Save_Data.inc.php";
-    $save = new Save_Data();
-    return $save->DeleteRecord("simerp_descriptiontemp","descriptiontemp_id ",$descriptiontemp_id ,$descriptiontemp_id,1);
-  }
+    public function deleteLine($quotationline_id) {
+        global $xoopsDB, $xoopsUser, $timestamp, $createdby, $uname, $uid;
+        include_once "../simantz/class/Save_Data.inc.php";
+        $save = new Save_Data();
 
-public function showQuotationline($wherestring){
-      include "../simantz/class/nitobi.xml.php";
-    $getHandler = new EBAGetHandler();
-
-   $this->log->showLog(3,"Load Grid with Query String=".$_SERVER['QUERY_STRING']);
-        $pagesize=$_GET["PageSize"];
-        $ordinalStart=$_GET["StartRecordIndex"];
-        $sortcolumn=$_GET["SortColumn"];
-        $sortdirection=$_GET["SortDirection"];
-    global $xoopsDB,$wherestring,$xoopsUser,$isadmin,$url;
-
-   $tablename="sim_bpartner_quotationline";
-   $this->log->showLog(2,"Access showQuotationline($wherestring)");
-    if(empty($pagesize)){
-          $pagesize=$this->defaultpagesize;
-        }
-        if(empty($ordinalStart)){
-          $ordinalStart=0;
-        }
-        $orderbystring="seqno,quotationline_id";
-
-       
-
-      ////$sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-        $sql = "SELECT quotationline_id,seqno,subject,description,uprice,qty,uom".
-            ",amt,quotation_id FROM ".
-            " $tablename i $wherestring ORDER BY $orderbystring ";
-
-      $this->log->showLog(4,"With SQL: $sql $sortdirection");
-        $query = $xoopsDB->query($sql);
-
-        $getHandler->ProcessRecords();
-        $getHandler->DefineField("quotationline_id");
-        $getHandler->DefineField("seqno");
-        $getHandler->DefineField("subject");
-     	$getHandler->DefineField("description");
-     	$getHandler->DefineField("uprice");
-     	$getHandler->DefineField("qty");
-     	$getHandler->DefineField("uom");
-        $getHandler->DefineField("rh");
-        $getHandler->DefineField("quotation_id");
-        $getHandler->DefineField("imgadd");
-        $getHandler->DefineField("amt");
-        
-
-
-	$currentRecord = 0; // This will assist us finding the ordinalStart position
-        $rh="odd";
-        $temp_parent_id = 0;
-      while ($row=$xoopsDB->fetchArray($query))
-     {
-
-            $url_addimg = "images/add_line.gif";
-
-             if($rh=="odd")
-                    $rh="even";
-             else
-                    $rh="odd";
-             
-          
-     	    $currentRecord = $currentRecord +1;
-            if($currentRecord > $ordinalStart){
-
-             $getHandler->CreateNewRecord($row['quotationline_id']);
-             $getHandler->DefineRecordFieldValue("quotationline_id", $row['quotationline_id']);
-             $getHandler->DefineRecordFieldValue("seqno",$row['seqno']);
-             $getHandler->DefineRecordFieldValue("description", $row['description']);
-             $getHandler->DefineRecordFieldValue("subject", $row['subject']);
-             $getHandler->DefineRecordFieldValue("amt", $row['amt']);
-             $getHandler->DefineRecordFieldValue("uprice",$row['uprice']);
-             $getHandler->DefineRecordFieldValue("qty", $row['qty']);
-             $getHandler->DefineRecordFieldValue("uom", $row['uom']);
-             $getHandler->DefineRecordFieldValue("rh",$rh);
-             $getHandler->DefineRecordFieldValue("amt",$row['amt']);             
-             $getHandler->DefineRecordFieldValue("quotation_id",$row['quotation_id']);
-             $getHandler->DefineRecordFieldValue("imgadd",$url_addimg);
-             $getHandler->DefineRecordFieldValue("info","../simantz/recordinfo.php?tablename=sim_bpartner_quotationline&idname=quotationline_id&title=Quotation&id=".$row['quotationline_id']);
-
-             $getHandler->SaveRecord();
-             }
-      }
-    $getHandler->CompleteGet();
-          $this->log->showLog(2,"complete function showQuotationline()");
-}
-
-public function showSearchGrid($wherestring){
-      include "../simantz/class/nitobi.xml.php";
-    $getHandler = new EBAGetHandler();
-
-   $this->log->showLog(3,"Load Grid with Query String=".$_SERVER['QUERY_STRING']);
-        $pagesize=$_GET["PageSize"];
-
-        $ordinalStart=$_GET["StartRecord"];
-        $sortcolumn=$_GET["SortColumn"];
-        $sortdirection=$_GET["SortDirection"];
-    global $xoopsDB,$wherestring,$xoopsUser,$isadmin;
-
-   $tablename="sim_bpartner_quotation";
-   $this->log->showLog(2,"Access showSearchGrid($wherestring)");
-    if(empty($pagesize)){
-          $pagesize=$this->defaultpagesize;
-        }
-        if(empty($ordinalStart)){
-          $ordinalStart=0;
-        }
-
-        $sortcolumn=$_GET["SortColumn"];
-        $sortdirection=$_GET["SortDirection"];
-        if(empty($sortcolumn)){
-           $sortcolumn="concat(i.payment_prefix,i.document_no)";
-
-        }
-        if(empty($sortdirection)){
-           $sortdirection="DESC";
-        }
-
-
-
-                $sortcolumn=$_GET["SortColumn"];
-        $sortdirection=$_GET["SortDirection"];
-        if(empty($sortcolumn)){
-           $sortcolumn="concat(i.spquotation_prefix,i.document_no)";
-
-        }
-        if(empty($sortdirection)){
-           $sortdirection="DESC";
-        }
-        
-    $searchiscomplete=$_GET['searchiscomplete'];
-       if($searchiscomplete!=""){
-           if($searchiscomplete=="Y")
-                $searchiscomplete=1;
-           else
-                $searchiscomplete=0;
-           
-           $wherestring.=" and i.iscomplete=$searchiscomplete";
-       }
-       $searchquotation_no=$_GET['searchquotation_no'];
-       if($searchquotation_no!="")
-           $wherestring.=" and concat(i.spquotation_prefix,i.document_no) LIKE '%$searchquotation_no%'";
-
-        $searchbpartner_id=$_GET['searchbpartner_id'];
-       if($searchbpartner_id!=0)
-           $wherestring.=" and i.bpartner_id = $searchbpartner_id";
-
-       $searchcurrency_id=$_GET['searchcurrency_id'];
-       if($searchcurrency_id>0)
-           $wherestring .= " and i.currency_id=$searchcurrency_id";
-
-       $datefrom=$_GET['datefrom'];
-       $dateto=$_GET['dateto'];
-
-       if($datefrom=="")
-            $datefrom="0000-00-00";
-       if($dateto=="")
-            $dateto="9999-12-31";
-
-       $wherestring.=" and i.document_date  BETWEEN '$datefrom' AND '$dateto'" ;
-
-        
-
-
-    
-      ////$sql = "SELECT * FROM $tablename $wherestring ORDER BY " . $sortcolumn . " " . $sortdirection .";";
-       $sql = "SELECT i.quotation_id,  concat(i.spquotation_prefix,i.document_no) as quotation_no, i.document_date, i.subtotal, i.iscomplete,  ".
-                " bp.bpartner_id, bp.bpartner_no,bp.bpartner_name, t.terms_name, c.currency_code, u.uname,o.organization_code,i.quotation_status,i.quotation_title  ".
-            "  FROM sim_bpartner_quotation i ".
-              " left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id ".
-            " left join sim_terms t on t.terms_id=i.terms_id ".
-            " left join sim_currency c on c.currency_id=i.currency_id ".
-            " left join sim_users u on u.uid=i.preparedbyuid ".
-              " left join sim_organization o on o.organization_id=i.organization_id where i.issotrx=$this->issotrx".
-
-        " $wherestring ORDER BY $sortcolumn $sortdirection";
-
-      $this->log->showLog(4,"With SQL: $sql $sortdirection");
-        $query = $xoopsDB->query($sql);
-
-        $getHandler->ProcessRecords();
-        $getHandler->DefineField("quotation_id");
-        $getHandler->DefineField("bpartner_id");
-        $getHandler->DefineField("quotation_no");
-        $getHandler->DefineField("document_date");
-     	$getHandler->DefineField("subtotal");
-        $getHandler->DefineField("iscomplete");
-     	$getHandler->DefineField("bpartner_no");
-     	$getHandler->DefineField("bpartner_name");
-     	$getHandler->DefineField("terms_name");
-        $getHandler->DefineField("currency_code");
-        $getHandler->DefineField("uname");
-        $getHandler->DefineField("rh");
-        $getHandler->DefineField("gridlink");
-        $getHandler->DefineField("quotation_title");
-        $getHandler->DefineField("quotation_status");
-	$currentRecord = 0; // This will assist us finding the ordinalStart position
-        $rh="odd";
-      while ($row=$xoopsDB->fetchArray($query))
-     {
-
-
-             if($rh=="odd")
-                    $rh="even";
-             else
-                    $rh="odd";
-             $gridlink="gridlink $rh";
-       if($row['iscomplete']==1){
-          $iscomplete="Y";
-          $edit="view";
-         }
-         else{
-             $edit="edit";
-             $iscomplete="N";
-         }
-
-
-
-     	    $currentRecord = $currentRecord +1;
-            if($currentRecord > $ordinalStart){
-
-             $getHandler->CreateNewRecord($row['quotation_id']);
-             $getHandler->DefineRecordFieldValue("quotation_id", $row['quotation_id']);
-             $getHandler->DefineRecordFieldValue("bpartner_id",$row['bpartner_id']);
-             $getHandler->DefineRecordFieldValue("quotation_no", $row['quotation_no']);
-             $getHandler->DefineRecordFieldValue("document_date", $row['document_date']);
-             $getHandler->DefineRecordFieldValue("subtotal", $row['subtotal']);
-
-             $getHandler->DefineRecordFieldValue("iscomplete",$iscomplete);
-             $getHandler->DefineRecordFieldValue("bpartner_no",$row['bpartner_no']);
-             $getHandler->DefineRecordFieldValue("bpartner_name", $row['bpartner_name']);
-             $getHandler->DefineRecordFieldValue("terms_name", $row['terms_name']);
-             $getHandler->DefineRecordFieldValue("currency_code", $row['currency_code']);
-             $getHandler->DefineRecordFieldValue("organization_code",$row['organization_code']);
-             $getHandler->DefineRecordFieldValue("quotation_title",$row['quotation_title']);
-             $getHandler->DefineRecordFieldValue("quotation_status",$row['quotation_status']);
-            
-             $getHandler->DefineRecordFieldValue("rh",$rh);
-             $getHandler->DefineRecordFieldValue("gridlink",$gridlink);
-             $getHandler->DefineRecordFieldValue("edit","$this->quotationfilename?action=$edit&quotation_id=".$row['quotation_id']);
-
-             $getHandler->SaveRecord();
-             }
-      }
-      $getHandler->setErrorMessage($currentRecord);
-    $getHandler->CompleteGet();
-          $this->log->showLog(2,"complete function showQuotationline()");
-}
-
-public function fetchQuotation($quotation_id){
-    
-     $this->log->showLog(3,"Access fetchQuotation($quotation_id)");
-      $sql="SELECT i.*,concat(bp.bpartner_name,'(', bp.bpartner_no,')' ) as bpartner_name,o.organization_code,
-            t.terms_name,c.contacts_name, u.uname
-                FROM sim_bpartner_quotation i
-                left join sim_bpartner bp on i.bpartner_id=bp.bpartner_id
-                left join sim_organization o on o.organization_id=i.organization_id
-                left join sim_terms t on t.terms_id=i.terms_id
-                left join sim_users u on u.uid=i.preparedbyuid
-                left join sim_contacts c on c.contacts_id=i.contacts_id
-                where quotation_id=$quotation_id";
-     $query=$this->xoopsDB->query($sql);
-     while($row=$this->xoopsDB->fetchArray($query)){
-         $this->quotation_id=$quotation_id;
-         $this->document_no=htmlspecialchars($row['document_no']);
-         $this->bpartner_name=htmlspecialchars($row['bpartner_name']);
-         $this->organization_code=$row['organization_code'];
-         $this->organization_id=$row['organization_id'];
-         $this->documenttype=$row['documenttype'];
-         $this->document_date=$row['document_date'];
-         $this->batch_id=$row['batch_id'];
-         $this->amt=$row['amt'];
-         $this->currency_id=$row['currency_id'];
-         $this->exchangerate=$row['exchangerate'];
-         $this->subtotal=$row['subtotal'];
-         $this->created=$row['created'];
-         $this->createdby=$row['createdby'];
-         $this->updated=$row['updated'];
-         $this->updatedby=$row['updatedby'];
-         $this->itemqty=$row['itemqty'];
-         $this->preparedbyname=htmlspecialchars($row['uname']);
-         $this->contacts_name=htmlspecialchars($row['contacts_name']);
-         $this->quotation_title=htmlspecialchars($row['quotation_title']);
-         $this->terms_name=$row['terms_name'];
-         $this->ref_no=htmlspecialchars($row['ref_no']);
-         $this->description=htmlspecialchars($row['description']);
-         $this->bpartner_id=$row['bpartner_id'];
-         $this->iscomplete=$row['iscomplete'];
-         $this->spquotation_prefix=$row['spquotation_prefix'];
-         $this->issotrx=$row['issotrx'];
-         $this->terms_id=$row['terms_id'];
-         $this->contacts_id=$row['contacts_id'];
-         $this->preparedbyuid=$row['preparedbyuid'];
-         $this->salesagentname=htmlspecialchars($row['salesagentname']);
-         $this->isprinted=$row['isprinted'];
-         $this->localamt=$row['localamt'];
-         $this->address_id=$row['address_id'];
-         $this->address_text=htmlspecialchars($row['address_text']);
-         $this->exchangerate=$row['exchangerate'];
-         $this->note=$row['note'];
-         $this->quotation_status=$row['quotation_status'];
-         $this->log->showLog(4,"Fetch data successfully");
-
-         return true;
-     }
-     $this->log->showLog(4,"Cannot fetch quotation with SQL: $sql");
-     return false;
-
- }
- public function insertQuotation( ) {
-
-     include include "../simantz/class/Save_Data.inc.php";;
-    $save = new Save_Data();
-
-    $arrInsertField=array(
-    "document_no",
-    "organization_id",
-    "documenttype",
-    "document_date",
-    "currency_id",
-    "exchangerate",
-    "subtotal",
-    "created",
-    "createdby",
-    "updated",
-    "updatedby",
-    "itemqty",
-    "ref_no",
-    "description",
-    "bpartner_id",
-    "spquotation_prefix",
-    "issotrx",
-    "terms_id",
-    "contacts_id",
-    "preparedbyuid",
-    "salesagentname",
-    "isprinted",
-    "localamt",
-    "address_text",
-        "address_id","note","quotation_title","quotation_status","iscomplete"
-);
-    $arrInsertFieldType=array(
-    "%d",
-    "%d",
-    "%d",
-    "%s",
-    "%d",
-    "%f",
-    "%f",
-    "%s",
-    "%d",
-    "%s",
-    "%d",
-    "%d",
-    "%s",
-    "%s",
-    "%d",
-    "%s",
-    "%d",
-    "%d",
-    "%d",
-    "%d",
-    "%s",
-    "%d",
-    "%f",
-    "%s",
-    "%d",
-    "%s",
-         "%s",
-        "%s","%d");
-    $arrvalue=array($this->document_no,
-   $this->organization_id,
-   $this->documenttype,
-   $this->document_date,
-   $this->currency_id,
-   $this->exchangerate,
-   $this->subtotal,
-   $this->updated,
-   $this->updatedby,
-   $this->updated,
-   $this->updatedby,
-   $this->itemqty,
-   $this->ref_no,
-   $this->description,
-   $this->bpartner_id,
-   $this->spquotation_prefix,
-   $this->issotrx,
-   $this->terms_id,
-   $this->contacts_id,
-   $this->preparedbyuid,
-   $this->salesagentname,
-   $this->isprinted,
-   $this->localamt,
-   $this->address_text,
-   $this->address_id,
-   $this->note,
-        $this->quotation_title,
-        $this->quotation_status,$this->iscomplete);
-    if($save->InsertRecord($this->tablename,   $arrInsertField,
-            $arrvalue,$arrInsertFieldType,$this->spquotation_prefix.$this->document_no,"quotation_id")){
-            $this->quotation_id=$save->latestid;
-            return $this->quotation_id;
-            }
-    else
+        $tablename = "sim_bpartner_quotationline";
+        $record_id = $quotationline_id;
+        $controlvalue = '';
+        $this->log->showLog(3, "delete: $currentRecord,$record_id");
+        $rs = $save->DeleteRecord("sim_bpartner_quotationline", "quotationline_id", $record_id, $controlvalue, 1);
+        if (!$rs) {
+            $this->log->showLog(1, "Cannot delete line $quotationline_id");
             return false;
-
-  }
-
-
- public function updateQuotation( ) {
-
-     include include "../simantz/class/Save_Data.inc.php";;
-    $save = new Save_Data();
-    $arrUpdateField=array(
-        "document_no",
-    "document_date",
-    "currency_id",
-    "exchangerate",
-    "subtotal",
-    "updated",
-    "updatedby",
-    "itemqty",
-    "ref_no",
-    "description",
-    "bpartner_id",
-    "spquotation_prefix",
-    "terms_id",
-    "contacts_id",
-    "preparedbyuid",
-    "salesagentname",
-    "isprinted",
-    "localamt",
-    "address_text",
-        "address_id",
-        "organization_id",
-        "note",
-        "quotation_title",
-        "quotation_status",
-        "iscomplete"
-);
-    $arrUpdateFieldType=array(
-        "%d",
-    "%s",
-    "%d",
-    "%f",
-    "%f",
-    "%s",
-    "%d",
-    "%d",
-    "%s",
-    "%s",
-    "%d",
-    "%s",
-    "%d",
-    "%d",
-    "%d",
-    "%s",
-    "%d",
-    "%f",
-    "%s",
-        "%d",
-        "%d",
-        "%s",
-        "%s",
-        "%s",
-        "%d"
-);
-    $arrvalue=array($this->document_no,
-   $this->document_date,
-   $this->currency_id,
-   $this->exchangerate,
-   $this->subtotal,
-   $this->updated,
-   $this->updatedby,
-   $this->itemqty,
-   $this->ref_no,
-   $this->description,
-   $this->bpartner_id,
-   $this->spquotation_prefix,
-   $this->terms_id,
-   $this->contacts_id,
-   $this->preparedbyuid,
-   $this->salesagentname,
-   $this->isprinted,
-   $this->localamt,
-   $this->address_text,
-   $this->address_id,
-        $this->organization_id,
-        $this->note,
-        $this->quotation_title,
-        $this->quotation_status,
-        $this->iscomplete
-        );
-
-    if( $save->UpdateRecord($this->tablename, "quotation_id",
-                $this->quotation_id,
-                    $arrUpdateField, $arrvalue,  $arrUpdateFieldType,$this->spquotation_prefix.$this->document_no))
+        } else {
+            $this->log->showLog(2, "Delete paymentline successfully: $quotationline_id");
             return true;
-    else
-            return false;
-
-  }
-
-  public function deleteQuotation($quotation_id){
-include "../simantz/class/Save_Data.inc.php";
-    $save = new Save_Data();
-    $this->log->showLog(3,"Access deleteQuotation($quotation_id)");
-    
-   if($this->fetchQuotation($quotation_id)){
-   
-    return $save->DeleteRecord("sim_bpartner_quotation","quotation_id",$quotation_id,$this->spquotation_prefix.$this->document_no,1);
-   }
-   else
-       return false;
-
-}
-public function saveQuotationLine(){
-        $this->log->showLog(3,"Access saveQuotationLine");
-            include "../simantz/class/nitobi.xml.php";
-            include_once "../simantz/class/Save_Data.inc.php";
-
-            global $xoopsDB,$xoopsUser;
-            $saveHandler = new EBASaveHandler();
-            $saveHandler->ProcessRecords();
-            $timestamp=date("Y-m-d H:i:s",time());
-            $createdby=$xoopsUser->getVar('uid');
-            $uname=$xoopsUser->getVar('uname');
-            $uid=$xoopsUser->getVar('uid');
-
-
-        $tablename="sim_bpartner_quotationline";
-
-            $save = new Save_Data();
-            $insertCount = $saveHandler->ReturnInsertCount();
-            $this->log->showLog(3,"Start Insert($insertCount records)");
-
-    if ($insertCount > 0)
-    {
-           $arrInsertField=array(
-                "seqno","subject","description","uprice","qty","uom",
-                "amt", "quotation_id", "created","createdby","updated","updatedby");
-              $arrInsertFieldType=array(
-                "%d", "%s", "%s",  "%f","%f","%s",
-
-                  "%f","%d","%s","%d","%s","%d");
-    // Yes there are INSERTs to perform...
-     for ($currentRecord = 0; $currentRecord < $insertCount; $currentRecord++)
-     {
-
-         $arrvalue=array(
-             $saveHandler->ReturnInsertField($currentRecord, "seqno"),
-             $saveHandler->ReturnInsertField($currentRecord, "subject"),
-             $saveHandler->ReturnInsertField($currentRecord, "description"),
-             $saveHandler->ReturnInsertField($currentRecord, "uprice"),
-             $saveHandler->ReturnInsertField($currentRecord, "qty"),
-             $saveHandler->ReturnInsertField($currentRecord, "uom"),
-             $saveHandler->ReturnInsertField($currentRecord, "amt"),
-             $saveHandler->ReturnInsertField($currentRecord, "quotation_id"),
-                    $timestamp,
-                    $createdby,
-                    $timestamp,
-                    $createdby);
-         $controlvalue=$saveHandler->ReturnInsertField($currentRecord, "subject");
-         $save->InsertRecord($tablename, $arrInsertField, $arrvalue, $arrInsertFieldType,$controlvalue,"quotationline_id");
-  if($save->failfeedback!=""){
-      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
-      $this->failfeedback.=$save->failfeedback;
-  }
-      // Now we execute this query
-     }
+        }
     }
 
-    $updateCount = $saveHandler->ReturnUpdateCount();
-    $this->log->showLog(3,"Start update($updateCount records)");
+    public function viewInputForm() {
 
-    if ($updateCount > 0)
-    {
+//        $grid = $this->getGrid($this->quotation_id);
+        $this->address_text = str_replace("\n", "<br/>", $this->address_text);
+        $this->address_text = str_replace("  ", " &nbsp;", $this->address_text);
+        $this->description = str_replace("\n", "<br/>", $this->description);
+        $this->description = str_replace("  ", " &nbsp;", $this->description);
+//        $balanceamt = $this->getOutstandingAmt($this->quotation_id);
+  //      $paymenthistory = $this->getPaymentHistory($this->quotation_id);
+        if ($this->batch_id > 0)
+            $viewjournalctrl = "  <a href='batch.php?action=view&batch_id=$this->batch_id' target='_blank'>View Journal</a><br/>";
 
-        $arrUpdateField=array(
-                "seqno", "subject", "description",  "uprice", "qty","uom",
-                 "amt", "updated","updatedby");
-              $arrUpdateFieldType=array( "%d", "%s","%s","%f","%f","%s",
-                  "%f","%s","%d");
+            $tableheader = "Quotation";
 
-
-     for ($currentRecord = 0; $currentRecord < $updateCount; $currentRecord++)
-     {
-
-            $arrvalue=array(
-                     $saveHandler->ReturnUpdateField($currentRecord, "seqno"),
-             $saveHandler->ReturnUpdateField($currentRecord, "subject"),
-             $saveHandler->ReturnUpdateField($currentRecord, "description"),
-                $saveHandler->ReturnUpdateField($currentRecord, "uprice"),
-             $saveHandler->ReturnUpdateField($currentRecord, "qty"),
-             $saveHandler->ReturnUpdateField($currentRecord, "uom"),
-             $saveHandler->ReturnUpdateField($currentRecord, "amt"),
-                    $timestamp,
-                    $createdby);
-            $this->log->showLog(3,"***updating record($currentRecord), quotationline:subject".
-                    $saveHandler->ReturnUpdateField($currentRecord, "subject"));
-
-             $controlvalue=$saveHandler->ReturnUpdateField($currentRecord, "subject");
-
-             $save->UpdateRecord($tablename, "quotationline_id", $saveHandler->ReturnUpdateField($currentRecord,"quotationline_id"),
-                        $arrUpdateField, $arrvalue, $arrUpdateFieldType,$controlvalue);
-  if($save->failfeedback!=""){
-      $save->failfeedback = str_replace($this->failfeedback,"",$save->failfeedback);
-      $this->failfeedback.=$save->failfeedback;
-  }
-
-     }
-    }
-
-    $ispurge=0;
-    $deleteCount = $saveHandler->ReturnDeleteCount();
-    $this->log->showLog(3,"Start delete/purge($deleteCount records)");
-    
-
-    if ($deleteCount > 0){
-      for($currentRecord = 0; $currentRecord < $deleteCount; $currentRecord++){
-       
-          $record_id=$saveHandler->ReturnDeleteField($currentRecord);
-          $this->log->showLog(3,"delete: $currentRecord,$record_id");
-     
-        $controlvalue=$this->getQuotationLineSubject($record_id);
-     
-
-        $save->DeleteRecord("sim_bpartner_quotationline","quotationline_id",$record_id,$controlvalue,1);
-
-      }
-
-      }
-
-    if($this->failfeedback!="")
-    $this->failfeedback="Warning!<br/>\n".$this->failfeedback;
-    $saveHandler->setErrorMessage($this->failfeedback);
-    $saveHandler->CompleteSave();
-
-    }
-
-
-public function getQuotationLineSubject($quotationline_id){
-
-    $sql="select concat(subject,'(',i.spquotation_prefix,i.document_no,')')  as subject from sim_bpartner_quotationline il
-            inner join sim_bpartner_quotation i on il.quotation_id=i.quotation_id
-        where il.quotationline_id=$quotationline_id";
-    $this->log->showLog(3,"access getQuotationLineSubject($quotationline_id)");
-    $this->log->showLog(4,"with sql: $sql");
-
-    $query=$this->xoopsDB->query($sql);
-    $row=$this->xoopsDB->fetchArray($query);
-    return $row['subject'];
-}
-
-public function validateForm(){
-    return true;
-}
-
-
-  public function getFormButton($btnname,$actionname,$para_val=array(),$method="POST"){
-  //array("action"=>"personal","mode"=>"search");
-
-      $btnhtml = "";
-
-      $btnhtml .= "<form action='$actionname' method='$method'>";
-
-      foreach($para_val as $leftvalue=>$rightvalue){
-      $btnhtml .= "<input type='hidden' name = '$leftvalue' value= '$rightvalue' >";
-      }
-
-      $btnhtml .= "<input type='submit' value='$btnname'>";
-
-      $btnhtml .= "</form>";
-
-      return $btnhtml;
-  }
-
-  
-public function showSearchForm(){
-
-
-
-global $nitobigridthemes,$url,$ctrl,$bpctrl;
-
-$rowsperpage = 20;
-  $new_button = $this->getFormButton("Add New","$this->quotationfilename");
-  $this->currencyctrl=$ctrl->getSelectCurrency(0,"Y");
-  include XOOPS_ROOT_PATH."/simantz/class/datepicker/class.datepicker.php";
-  $bpartnerctrl=$bpctrl->getSelectBPartner(0,"Y","","searchbpartner_id","","N","searchbpartner_id");
-  $dp = new datePicker();
-  $dp->datePicker($url);
-$dp->dateFormat="Y-m-d";
-$showdatefrom=$dp->show("datefrom");
-$showdateto=$dp->show("dateto");
-  echo <<< EOF
-
-  <script src="$url/modules/simantz/include/nitobi/nitobi.grid/paginator.js" type="text/javascript"></script>
-  <link rel="stylesheet" type="text/css" media="all" title="Style sheet" href="$url/modules/simantz/include/nitobi/nitobi.grid/paginator.css">
-  
-      <script language="javascript" type="text/javascript">
-        jQuery(document).ready((function (){nitobi.loadComponent('searchgrid');}));
-        function viewquotation(){
-
-   	var g= nitobi.getGrid('searchgrid');
-        var selRow = g.getSelectedRow();
-        var selCol = g.getSelectedColumn();
-        var cellObj = g.getCellValue(selRow, selCol);
-        window.open(cellObj,"");
-
-    }
-
-    function doubleclickbpartner(){
-	var g= nitobi.getGrid('searchgrid');
-        var selRow = g.getSelectedRow();
-        var selCol = g.getSelectedColumn();
-        var cellObj = g.getCellValue(selRow, 8);
-        window.open("../bpartner/bpartner.php?action=viewsummary&bpartner_id="+cellObj,"");
-
-    }
-
-
-     function search(){
+	
+		include "../bpartner/class/BPartner.php";
+		$bp = new BPartner();
+        $creditstatusarr = $bp->checkCreditLimit($this->bpartner_id, $this->organization_id, $this->issotrx);
+        $consumecredit = $creditstatusarr["usage"]; 
+        $creditlimit = $creditstatusarr["limitamt"];
         
-        var grid = nitobi.getGrid("searchgrid");
+            $credittext = "$creditlimit/$consumecredit";
 
-        var searchquotation_no=document.getElementById("searchquotation_no").value;
-        var searchbpartner_id=document.getElementById("searchbpartner_id");
-        
-        var datefrom =document.getElementById('datefrom').value;
-        var dateto =document.getElementById('dateto').value;
-
-        var searchcurrency_id =document.getElementById("searchcurrency_id").value;
-        var searchiscomplete =document.getElementById("searchiscomplete").value;
-        var searchTxt = "";
-
-        if(datefrom != "")
-        searchTxt += "Date From : "+datefrom+"<br/>";
-        if(dateto != "")
-        searchTxt += "Date To : "+dateto+"<br/>";
-
-        if(searchquotation_no != "")
-        searchTxt += "Quotation no : "+searchquotation_no+"<br/>";
-        if(searchbpartner_id.value > 0){
-        searchTxt += "BPartner : "+searchbpartner_id.options[searchbpartner_id.selectedIndex].text+"<br/>";
-        }
-        if(searchcurrency_id > 0){
-           
-            searchTxt += "Currency : "+searchcurrency_id+"<br/>";
-        }
-        if(searchiscomplete != ""){
-        
-            searchTxt += "Is Complete : "+searchiscomplete+"<br/>";
+        if ($this->iscomplete == 1) {
+            $documentstatus = "This transaction is completed!";
+            $iscompletectrl = "<input type='button' name='save' onclick='reactivateQuotation()' value='Re-activate'/>";
+        } else {
+            $documentstatus = "This transaction is voided, it doesn't effect account";
+            $iscompletectrl = "";
         }
 
+        $startdate = date("Y-m-", time()) . "01";
+        $enddate = date("Y-m-d", time());
 
-	grid.getDataSource().setGetHandlerParameter('searchquotation_no',searchquotation_no);
-	grid.getDataSource().setGetHandlerParameter('searchbpartner_id',searchbpartner_id.value);
-  	grid.getDataSource().setGetHandlerParameter('datefrom',datefrom);
-	grid.getDataSource().setGetHandlerParameter('dateto',dateto);
 
-	grid.getDataSource().setGetHandlerParameter('searchcurrency_id',searchcurrency_id);
-	grid.getDataSource().setGetHandlerParameter('searchiscomplete',searchiscomplete);
+        $this->note = str_replace("\n", "<br/>", $this->note);
+        $this->address_text = str_replace("\n", "<br/>", $this->address_text);
+        $this->description = str_replace("\n", "<br/>", $this->description);
+        $viewsubtable = $this->viewsubtable();
+        $this->defineHeaderButton();
 
-        document.getElementById('rightBox').innerHTML = searchTxt;
-        //reload grid data
 
-	grid.dataBind();   
-     Pager.First('searchgrid');
-return false;
-   
 
-    }
+        $html = <<< HTML
 
-  
-    </script>
-<table style="width:990px;" align="center">
-
- <tr><td>$search</td></tr>
-
- <tr>
-  <td align="center" >
-<div align="left">$new_button</div>
-<div id='centercontainer' >
-
-<form name="frmSearch" id="frmSearch" onsubmit="return search()">
-<table>
- <tr><td></td></tr>
-   <tr> <td colspan="7" class="searchformheader">Search Quotation</td> </tr>
-
-   <tr>
-    <td class="searchformblock">
-
-   <table >
-    <tr>
-      <td class="head">Quotation No</td>
-      <td class="even"><input type="text" $colstyle name="searchquotation_no" id="searchquotation_no" value="$this->searchquotation_no"/></td>
-      <td class="head">Business Partner</td>
-      <td class="even">$bpartnerctrl</td>
-   </tr>
-    <tr>
-      <td class="head">Date From</td>
-      <td class="even"><input type="text" $colstyle name="datefrom" id="datefrom" value="$this->datefrom" size="10"/>
-                        <input name="" type="button" onclick="$showdatefrom" value="Date"></td>
-      <td class="head">Date To</td>
-      <td class="even"><input type="text" $colstyle name="dateto" id="dateto" value="$this->dateto" size="10"/>
-                        <input name="" type="button" onclick="$showdateto"  value="Date"></td>
-   </tr>
-   <tr>
-      <td class="head">Currency</td>
-      <td class="even">
-         <select name="searchcurrency_id" id="searchcurrency_id" $colstyle>
-           $this->currencyctrl
-         </select>
-      </td>
-      <td class="head">Is Complete</td>
-      <td class="even">
-           <select $colstyle name="searchiscomplete" id="searchiscomplete">
-             <option value="" >Null</option>
-             <option value="Y" >Yes</option>
-             <option value="N" >No</option>
-          </select>
-      </td>
-   </tr>
-
-   <tr>
-      <td $style colspan="2">
-      <input type="hidden" name="issearch" id="issearch" value="Y"/>
-      <input type="hidden" name="action" value="search"/>
-      <input type="submit" value="Search"/>
-      <input type="button" value="Reset" onclick="reset();"/></td>
-   </tr>
-
- </table>
- </td>
-
- <td class="searchformblock2">
-
-   <table ><tr style="vertical-align: top;">
-       <td rowspan="4" style="width:240px;" class="even">
-           <div id="totalRecord"></div>
-           <div id="rightBox">$bpartnerchar</div>
-      </td>
-    </tr>
-    </table>
-
-  </td>
-  </tr>
-</table>
-</form>
-    </div>
-
-</td></tr></table>
-
-<div align="center">
-
-     <form name="frmQuotationListTable" action="$this->quotationfilename" method="POST" target="_blank" onsubmit='return validate()'>
-     <input type="hidden"  name="action" id="action" value="">
-     <input type="hidden" id="totalRowGrid" value="$rowsperpage">
-<table style="width:700px;" class="searchformblock" >
-
- <tr >
-    <td class="head tdPager" colspan="2" >
-    
-    <div id="pager_control" class="inline">
-    <div id="pager_first" class="inline FirstPage" onclick="Pager.First('searchgrid');" onmouseover="this.className+=' FirstPageHover';" onmouseout="this.className='inline FirstPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
-    <div id="pager_prev" class="inline PreviousPage" onclick="Pager.Previous('searchgrid');" onmouseover="this.className+=' PreviousPageHover';" onmouseout="this.className='inline PreviousPage';" style="margin:0;"></div>
-    <div class="inline" style="height:22px;top:3px;">
-        <span class="inline">Page</span>
-        <span class="inline" id="pager_current">0</span>
-        <span class="inline">of</span>
-        <span class="inline" id="pager_total">0</span>
-    </div>
-    <div id="pager_next" class="inline NextPage" onclick="Pager.Next('searchgrid');" onmouseover="this.className+=' NextPageHover';" onmouseout="this.className='inline NextPage';" style="margin:0;border-right:1px solid #B1BAC2;"></div>
-    <div id="pager_last" class="inline LastPage" onclick="Pager.Last('searchgrid');" onmouseover="this.className+=' LastPageHover';" onmouseout="this.className='inline LastPage';" style="margin:0;"></div>
-    </div>
-    </td>
- </tr>
-
-<tr ><td align="center" colspan="2">
-<div>
-
-
-
-    <ntb:grid id="searchgrid"
-     mode="standard"
-     gethandler="$this->quotationfilename?action=ajaxsearch"
-     theme="$nitobigridthemes"
-     rowhighlightenabled="true"
-     toolbarenabled="false"
-         ondatareadyevent="HandleReady(eventArgs);"
-     editmode="false"
-     width="970"
-     height="420"
-          rowheight="15"
-        rowsperpage="$rowsperpage"
-    >
-   <ntb:columns>
-       <ntb:textcolumn  classname="{\$rh}" width="40" label="Org"  xdatafld="organization_code"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="80" label="Quotation No"  xdatafld="quotation_no"  editable="false" ></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="70" label="Date"  xdatafld="document_date"  editable="false" ></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$gridlink}" width="220" label="BPartner" editable="false" xdatafld="bpartner_name"  oncelldblclickevent=javascript:doubleclickbpartner()></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="80" label="Terms"  xdatafld="terms_name"   editable="false" ></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="60" label="Currency"  xdatafld="currency_code"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="80" label="Amount"  xdatafld="subtotal"   editable="false" ></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="70" label="Complete"  xdatafld="iscomplete"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="70" label="Status"  xdatafld="quotation_status"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="70" label="Short Title"  xdatafld="quotation_title"   editable="false"></ntb:textcolumn>
-       <ntb:textcolumn  classname="{\$rh}" width="40" label="Edit"  xdatafld="edit"  oncellclickevent="javascript:viewquotation()">
-        <ntb:imageeditor imageurl="images/edit.gif"></ntb:imageeditor></ntb:textcolumn>
-        <ntb:textcolumn  classname="{\$rh}" width="70" label="bpartner_id" visible="false" xdatafld="bpartner_id" ></ntb:textcolumn>
- </ntb:grid>
-
-    </div>
-</td></tr>
-
-    <tr colspan="2">
-    <td><div id="msgbox" style='display:none'></div></td>
-    </tr>
-</table>
-    </form></div>
-
-EOF;
-
-}
-
-
-public function gridjs(){
-global $defaultcurrency_id,$url;
-  return  $js= <<< JS
-<script src="$url/modules/simantz/include/validatetext.js" type="text/javascript"></script>
-
-      <script language="javascript" type="text/javascript">
-        $(document).ready((function (){
-        nitobi.loadComponent('quotationgrid');
-        nitobi.loadComponent('cmbbpartner_id');
-       
-        }));
-
-
-
-        function chooseBPartner(){
-              var bpid=document.getElementById("cmbbpartner_idSelectedValue0").value;
-                   var data="action="+"getbpartnerinfo"+
-                            "&bpartner_id="+bpid;
-
-                    $.ajax({
-                         url:"$this->quotationfilename",type: "POST",data: data,cache: false,
-                             success: function (xml)
-                             {
-                           
-                               var address=$(xml).find("address").text().replace(/{{{/g,"<").replace(/}}}/g,">");
-                                var terms=$(xml).find("terms").text().replace(/{{{/g,"<").replace(/}}}/g,">");
-                                 var contact=$(xml).find("contact").text().replace(/{{{/g,"<").replace(/}}}/g,">");
-                                 var currency=$(xml).find("currency").text().replace(/{{{/g,"<").replace(/}}}/g,">");
-                               var salesagent=$(xml).find("salesagent").text();
-                               
-                               
-                                $("#address_id").html(address);
-                                $("#contacts_id").html(contact);
-                                $("#terms_id").html(terms);
-                                $("#currency_id").html(currency);
-                                document.getElementById("salesagentname").value=salesagent;
-                                
-
-                                comparecurrency();
-                                
-                               updateAddressText();
-                               
-                             }
-                           });
-
-           
-
-                }
-        function comparecurrency(){
-            if(document.getElementById("currency_id").value==$defaultcurrency_id)
-               document.getElementById("exchangerate").value=1;
-                else
-                document.getElementById("exchangerate").value=0;
-
-          updateCurrency();
-          }
-          
-        function updateAddressText(){
-            var checkaddresstext="action=checkaddresstext&address_id="+document.getElementById("address_id").value;
-                                 $.ajax({url:"$this->quotationfilename",type: "POST",data: checkaddresstext,cache: false,
-                                    success: function (ad){
-                                        document.getElementById("address_text").value=ad;
-                                        }
-                                });
-          }
-
-        function addLine(promptmsg){
-        
-          var myGrid = nitobi.getGrid('quotationgrid');
-          var quotation_id=document.getElementById('quotation_id').value;
-
-          myGrid.insertAfterCurrentRow();
-          
-          if(quotation_id>0){
-
-               total_row = myGrid.getRowCount();
-
-                                    for( var i = 0; i < total_row; i++ ) {
-                                        var celly = myGrid.getCellObject( i, 9);
-                                        celly.setValue(quotation_id);
-                                    }
-            }
-        }
-
-    function zoomBPartner(){
-          var bpartner_id=document.getElementById("cmbbpartner_idSelectedValue0").value;
-          if(bpartner_id>0)
-           window.open ("../bpartner/bpartner.php?action=viewsummary&bpartner_id="+bpartner_id,"bpartner");
-          else
-          alert("You need to choose business partner!");
-          }
-          
-    function viewlog(){
-   	var g= nitobi.getGrid('quotationgrid');
-        var selRow = g.getSelectedRow();
-              var selCol = g.getSelectedColumn();
-        var cellObj = g.getCellValue(selRow, selCol);
-      window.open(cellObj,"");
-    }
-
-        function deleteLine(){
-        if(confirm('Delete this line? It will force save current record and delete current line.')){
-        var myGrid = nitobi.getGrid('quotationgrid');
-            myGrid.deleteCurrentRow();
-            saverecord(0);
-        }
-        }
-
-        function validation(){
-          var bpartner_id=document.getElementById("cmbbpartner_idSelectedValue0").value;
-          var docdate=document.getElementById("document_date").value;
-          if(bpartner_id=="" || bpartner_id==0){
-          alert("Please choose bpartner");
-          return false;
-          }
-          if(docdate=="" || !isDate(docdate)){
-          alert("Please insert appropriate date");
-          return false;
-          }
-          else
-          return true;
-          }
-
-
-
-
-        function saverecord(iscomplete){
-            if(!validation())
-                return false;
-            updateCurrentRow();
-            if(iscomplete==1){
-              if(!confirm("Confirm Complete?"))
-                 return false
-            }else{
-              if(!confirm("Confirm Save?"))
-                 return false
-            }
-            var iscompletectrl=document.getElementById("iscomplete");
-             iscompletectrl.value=iscomplete;
-              
-                document.getElementById("popupmessage").innerHTML="Saving data...";
-                popup('popUpDiv');
-        
-              var quotation_id=document.getElementById("quotation_id").value;
-                var errordiv=document.getElementById("errormsg");
-                errordiv.style.display="none";
-
-
-                var data =$("#frmQuotation").serialize();
-              
-
-            $.ajax({
-                 url: "$this->quotationfilename",type: "POST",data: data,cache: false,
-                     success: function (xml) {
-         
-                     var status=$(xml).find("status").text();
-                     
-                     if(status==1){
-                    var grid= nitobi.getGrid('quotationgrid');
-
-                       errordiv.style.display="none";
-                         total_row = grid.getRowCount();
-              
-                              if(quotation_id==0){
-                                     var id=$(xml).find("quotation_id").text() ;
-
-                                    document.getElementById("quotation_id").value=id;
-
-                                          quotation_id=document.getElementById("quotation_id").value;
-
-                           
-                 
-                                }
-          
-                             for( var i = 0; i < total_row; i++ ) {
-                                        var celly = grid.getCellObject( i, 9);
-                                        celly.setValue(quotation_id);
-                                    }
-
-                                        if( grid.getDataSource().getChangeLogXmlDoc().selectNodes("//ntb:data/*").length != 0 )
-                                            {
-                                               grid.save();
-                                            }
-                                            else
-                                            {if(iscompletectrl.value==1)
-                                                window.location="$this->quotationfilename?action=view&quotation_id="+quotation_id;
-                                            }
-                                           
-                                        
-
-                        }
-                    else if(status==0){
-
-                                errordiv.style.display="";
-                            errordiv.innerHTML="Cannot save record due to internal error"+xml;
-                                      
-                                           
-                          
-                     }
-                     else if(status=-1){
-                            errordiv.style.display="";
-                            var fieldname="";
-                            var msg="";
-                             $(xml).find("field").each(function()
-                                {
-                                var id=$(this).attr("id");
-                                 fieldname=$(this).find("fieldname").text();
-                                  $("#"+fieldname).addClass('validatefail');
-                                   msg=msg+$(this).find("msg").text()+"<br/>";
-
-                                 });
-                                 document.getElementById("errormsg").innerHTML=msg;
-                    }
-                     else
-                     alert("unknown status");
-                     document.getElementById("popupmessage").innerHTML=xml;
-
-                    document.getElementById("popupmessage").innerHTML="Completed!";
-                    popup('popUpDiv');
-                }});
-
-         
-                
-        }
-
-
-        function reloadgrid(){
-          var  grid = nitobi.getGrid('quotationgrid');
-          grid.getDataSource().setGetHandlerParameter('quotation_id',document.getElementById("quotation_id").value);
-          grid.dataBind();
-
-          }
-         function deleterecord(){
-
-          if(confirm('Delete this record?')){
-           var quotation_id=document.getElementById("quotation_id").value;
-            var data="action=ajaxdelete&quotation_id="+quotation_id;
-            $.ajax({
-                 url: "$this->quotationfilename",type: "POST",data: data,cache: false,
-                     success: function (xml) {
-                       window.location="$this->quotationfilename";
-                    }});
-          }
-        }
-
-        function onclickcell(eventArgs){
-          var  myGrid = nitobi.getGrid('quotationgrid');
-          var  row = eventArgs.cell.getRow();
-          var col = eventArgs.cell.getColumn();
-          var myCell = myGrid.getCellObject(row, col);
-          myCell.edit();
-        }
-
-        function updateCurrentRow(eventArgs){
-            var  grid = nitobi.getGrid('quotationgrid');
-          
-              total_row = grid.getRowCount();
-          
-              var total=0;
-              for( var i = 0; i < total_row; i++ ) {
-                
-                    var qty = grid.getCellObject( i, 3);
-                    var uprice = grid.getCellObject( i, 4);
-                    var amt = grid.getCellObject( i, 6);
-                    
-                    amt.setValue(qty.getValue() * uprice.getValue());
-                    total=total+amt.getValue();
-                    
-              }
-              document.getElementById("subtotal").value=total.toFixed(2);
-          updateCurrency();
-         
-          }
-          
-
-        function optimizegridview(){
-            var  grid = nitobi.getGrid('quotationgrid');
-            total_row = grid.getRowCount();
-            if(total_row==0)
-                addLine();
-            total_row = grid.getRowCount();
-          grid.resize(960,total_row*70+40);
-
-          }
-       
-
-              function updateCurrency(){
-            document.getElementById("localamt").value=document.getElementById("subtotal").value*document.getElementById("exchangerate").value;
-          }
-        function reloadQuotation(){
-          var action="edit";
-          if(document.getElementById("iscomplete").value==1)
-            action="view";
-          
-        if(document.getElementById("quotation_id").value>0)
-        window.location="$this->quotationfilename?action="+action+"&quotation_id="+document.getElementById("quotation_id").value;
-        else
-        window.location="$this->quotationfilename";
-        }
-          
-        function addNew(){
-        window.location="$this->quotationfilename";
-        }
-        function previewQuotation(){
-                window.open("view$this->quotationfilename?quotation_id="+document.getElementById("quotation_id").value)
-
-        }
-
-          function duplicateQuotation(){
-            popup('popUpDiv');
-          var quotation_id=document.getElementById("quotation_id").value;
-            
-           var data="action=duplicate&quotation_id="+quotation_id;
-            $.ajax({
-                        url: "$this->quotationfilename",type: "POST",data: data,cache: false,
-                success: function (xml) {
-                             if(xml != "")
-                             jsonObj = eval( '(' + xml + ')');
-                            document.getElementById('idApprovalWindows').innerHTML = xml;
-
-                            document.getElementById('idApprovalWindows').style.display = "";
-                              popup('popUpDiv');
-                }
-          });
-          }
-
-        function savedone(even){
-          var  grid = nitobi.getGrid('quotationgrid');
-          grid.getDataSource().setGetHandlerParameter('quotation_id',document.getElementById("quotation_id").value);
-            grid.dataBind();
-         
-        }
-
+<script>
     function reactivateQuotation(){
+		if(confirm("Reactivate this record? The transaction from journal will reverse automatically.")){
           var quotation_id=document.getElementById("quotation_id").value;
            var data="action=reactivate&quotation_id="+quotation_id;
             $.ajax({
                         url: "$this->quotationfilename",type: "POST",data: data,cache: false,
-                success: function (xml) {
+							success: function (xml) {
                              if(xml != ""){
                              jsonObj = eval( '(' + xml + ')');
 
                                 if(jsonObj.status==1){
-                                document.getElementById("iscomplete").value=0;
-                                reloadQuotation();
+                                window.location="$this->quotationfilename?action=edit&quotation_id=$this->quotation_id";
                                 }
                                 else
                                 alert("Cannot reactivate quotation! Msg: "+jsonObj.msg);
                                 }
                                 }
                    });
-          
+
+		}
           }
-    
-        </script>
-    
-JS;
-}
+  function previewQuotation(){
+	  
+                window.open("$this->quotationfilename?action=pdf&quotation_id="+document.getElementById("quotation_id").value)
+        }
+		function viewlinehistory(il_id){
+			//tablename=sim_country&idname=country_id&title=Country
+			window.open("../simantz/recordinfo.php?tablename=sim_bpartner_quotationline&idname=quotationline_id&title=$menuname&id="+il_id);
+			}
 
+		function viewhistory(){
+			
+			window.open("../simantz/recordinfo.php?tablename=sim_bpartner_quotation&idname=quotation_id&title=$menuname&id=$this->quotation_id");
 
-  public function getNextNo() {
+			}
 
-   $sql="SELECT MAX(document_no ) + 1 as newno from sim_bpartner_quotation where issotrx=$this->issotrx";
-	$this->log->showLog(3,"Checking next no: $sql");
+	function duplicateQuotation(){
+	      var quotation_id=document.getElementById("quotation_id").value;
+         //   popup('popUpDiv');
+           var data="action=duplicate&quotation_id="+quotation_id;
+            $.ajax({
+                        url: "$this->quotationfilename",type: "POST",data: data,cache: false,
+                success: function (xml) {
+                             if(xml != "")
+//                             jsonObj = eval( '(' + xml + ')');
+                            document.getElementById('idApprovalWindows').innerHTML = xml;
 
-	$query=$this->xoopsDB->query($sql);
-	if($row=$this->xoopsDB->fetchArray($query)){
-		$newno=$row['newno'];
-		$this->log->showLog(3,"Found next newno:$newno");
-		if($newno=="")
-		return 1;
-		else
-		return  $newno;
-	}
-	else
-	return 1;
+                            document.getElementById('idApprovalWindows').style.display = "";
+           //                             popup('popUpDiv');
 
-  } // end
+                }
+          });
 
-
-  public function defineHeaderButton(){
-           global $action;
-
-    $this->addnewctrl='<form action="'.$this->quotationfilename.'" ><input type="submit" value="Add New"></form>';
-        if($action=="search"){
-    $this->searchctrl='';
+		}
+		    function closeWindow(){
+      document.getElementById('idApprovalWindows').style.display = "none";
+      document.getElementById('idApprovalWindows').innerHTML = "";
     }
-    else
-    $this->searchctrl='<form action="'.$this->quotationfilename.'?action=search" ><input type="hidden" name="action" value="search"><input type="submit" value="Search"></form>';
-  }
+
+    </script>
+    <br/>
+    <div id="idApprovalWindows" style="display:none"></div>
+<div id='blanket' style='display:none;'></div>
+
+    <div class="searchformblock" style="float:right;">	
+       </div>
+		
+    <div id='centercontainer'>
+    <div align="center" >
+    <table style="width:990px;text-align: left; " >
+        <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
+
+                $noperm
+<b style='color:red;'>$documentstatus</b>
+
+    <br/>
+
+    <div id='errormsg' class='red' style='display:none'></div>
+<div>
+<form onsubmit='return false' method='post' name='frmQuotation' id='frmQuotation'  action='$this->quotationfilename'  enctype="multipart/form-data">
+
+   <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
+    <tbody>
+        <tr>
+        <td colspan="5" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >$tableheader</td>
+        </tr>
+        <tr>
+          <td class="head">Quotation No</td>
+          <td class="even">$this->spquotation_prefix $this->document_no   Branch: $this->organization_code</td>
+          <td class="head">Business Partner</td>
+          <td class="even">
+                <a href="../bpartner/bpartner.php?action=viewsummary&bpartner_id=$this->bpartner_id" target="_blank">$this->bpartner_name</a>
+          </td>
+         <td rowspan='6'></td>
+     </tr>
+     <tr>
+        <td class="head">Date (YYYY-MM-DD)</td>
+          <td class="even">$this->document_date
+          <td class="head">Attn To </td>
+          <td class="even">$this->contacts_name</td>
+     </tr>
+     <tr>
+      <td class="head">Terms</td>
+      <td class="even">$this->terms_name</td>
+      <td class="head">$refno</td>
+      <td class="even">$this->ref_no</td>
+     </tr>
+     <tr>
+         <td class="head">Prepared By</td>
+         <td class="even">$this->preparedbyname</td>
+        <td class="head">Sales Agent</td>
+         <td class="even">$this->saleagent_name</td>
+</tr>
+<tr>
+       <td class="head">Address</td>
+       <td class="even">$this->address_text
+        </td>
+         <td class="head">Currency</td>
+          <td class="even">$this->currency_code (Exchange Rate: $this->exchangerate)</td>
+<tr><td colspan='5'>
+    <div id='detaildiv'>
+                $viewsubtable
+</div>
+</td></tr>
+
+<tr><td colspan='5' style='text-align:right'>        
+                <input type='button' value='Preview' onclick='javascript:previewQuotation()'/>
+        <input name='quotation_id' id='quotation_id'  value='$this->quotation_id'  title='quotation_id' type='hidden'>
+        <input name='iscomplete'  id='iscomplete' value='$this->iscomplete'  title='iscomplete' type='hidden'>
+                $iscompletectrl
+            <input type="button" value="Duplicate" onclick=duplicateQuotation()>
+	  <input type='button' id='btnviewhistory' name='btnviewhistory' onclick='viewhistory()' value='View Record Info'/>
+	</td>
+
+<tr> <td class="head">Description</td>
+<td class="even" colspan='5' style="width:70%">$this->description</td>
+       
+</tr>
+</tr>
+   <td class="head">Note</td>
+<td class="even" colspan='3'>$this->note</td>
+</tr></table>
+</form>
+
+</div>
+</div>
+
+HTML;
+        return $html;
+    }
+
+
+
+    public function showSearchForm() {
+        if ($this->documenttype == 'D') {
+            $acctitle = 'Effected Account';
+            $title = 'Debit Note';
+            $paidto_from_name = '';
+            $hideotherselection = "style='display:none'";
+        } elseif ($this->documenttype == 'C') {
+            $acctitle = 'Effected Account';
+            $title = 'Credit Note';
+            $paidto_from_name = '';
+            $hideotherselection = "style='display:none'";
+        } elseif ($this->issotrx == 1 && $this->documenttype == 'I') {
+            $title = 'Sales Quotation';
+        } elseif ($this->issotrx == 0 && $this->documenttype == 'I') {
+            $title = 'Purchase Quotation';
+        }
+
+        include "../simantz/class/FormElement.php";
+        include "../simbiz/class/SimBizFormElement.inc.php";
+        $fe = new FormElement();
+        $sbfe = new SimBizFormElement();
+        $sbfe->activateAutoComplete();
+        $bpbox = $sbfe->getBPartnerBox(0, '', 'bpartner_id', 'bpartner_id', '350px', "debtor");
+        $datefrom = date("Y-m-" . "01", time());
+        $dateto = date("Y-m-d", time());
+        $this->defineHeaderButton();
+        echo <<<EOF
+	<script>
+	
+	$(function(){
+
+            $(".tblresult_checkall").live("click", function(){
+                   // var check = false;
+                  var check = $(this).attr("checked");
+                              $(".tblresult_checkall").attr("checked", check)
+                    $(".inv_selector").attr("checked" , check);
+            })
+            
+            $(".inv_selector").live("click", function(){
+                    if(!$(this).attr("checked")){
+                         $(".tblresult_checkall").attr("checked", false);
+                    }
+            });
+
+
+        });
+
+function search(){
+			var data=$("#frmQuotation").serialize();
+			$.ajax({url:"$this->quotationfilename",type: "POST",data: data,cache: false,
+                            success: function (xml){
+                                
+                                $('#searchresult')
+                                 .html("<div align='center'><div style='width:990px'>"+xml+"</div></div>");
+                                 
+                                 
+        			$('#resulttable').dataTable({
+                                            "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100 , "All"]],
+                                             "aoColumnDefs": [
+                                                { 'bSortable': false, 'aTargets': [ 0,7,8 ] }
+                                            ]
+                            });
+                
+                                            $(".btnPrint").button();
+                                            //$(".btnPrint").click(function(){
+                                                    //var data = $("#frmResult").serialize();
+                                                
+                                                    //data += "&action=showHtmlListing";
+                
+                                             //       window.open("$this->quotationfilename"+data);
+                
+                                             //       return false;
+                                                    
+                                            //})
+                
+				}
+                
+                
+                                
+                
+			});
+
+	return false;
+	}
+
+	</script>
+
+<div align=center>
+    <table style="width:990px;text-align: left; " >
+        <tr><td align="left">$this->addnewctrl</td><td align="right">$this->searchctrl</td></tr></table>
+<form method='post' name='frmQuotation' id='frmQuotation'  onsubmit="return search()" action='$this->quotationfilename'  enctype="multipart/form-data">
+
+
+   <table style="text-align: left; width: 990px;" border="0" cellpadding="0" cellspacing="1"  class="searchformblock">
+    <tbody>
+
+      <tr>
+        <td colspan="4" rowspan="1" align="center" id="idHeaderText" class="searchformheader" >Search</td>
+      </tr>
+
+      <tr>
+        <td class="head">Date From(YYYY-MM-DD)</td>
+        <td class="even">
+            <input id='searchfromdocument_date' name='searchfromdocument_date'  value='$datefrom' size='12' class='datepick'>
+            </td>
+        <td class="head">Date To(YYYY-MM-DD)</td>
+        <td class="even">
+            <input id='searchtodocument_date' name='searchtodocument_date'  size='12' value='$dateto' class='datepick'>
+            </td>
+		</tr>
+		      <tr> 
+        <td class="head">Document No</td>
+        <td class="even">
+                         <input name='searchdocument_no' id='searchdocument_no'  value='' size='10'>
+                         </td>
+        <td class="head">Ref. No</td>
+        <td class="even"><input id='searchref_no' size='20' name='searchref_no' value='$this->ref_no'></td>
+      </tr>
+      <tr>
+			</td>
+       <td class="head">Business Partner</td>
+         <td class="even">$bpbox</td>
+       <td class="head">Status</td>
+         <td class="even">
+			<div id="radioactive">
+				<input type="radio" id="iscomplete_a" value='-' name="searchiscomplete" checked/><label for="iscomplete_a">All</label>
+				<input type="radio" id="iscomplete_1" value='1' name="searchiscomplete" /><label for="iscomplete_1">Completed</label>
+				<input type="radio" id="iscomplete_0" value='0' name="searchiscomplete" /><label for="iscomplete_0">Draft</label>
+			</div>
+
+      </tr>
+      
+</table>
+<input type='button' value='Search' id='nextbutton' name='submit' onclick='return search()'/>
+<input type='hidden' name='action' value='searchresult'>
+</form>
+</div>
+<form id="frmResult" action="$this->quotationfilename?action=html" method="post" target="_blank">
+    <div id='searchresult' align='center'>
+    </div>
+</form>
+
+EOF;
+    }
+    
+    
+    public function showHtmlTable($quotation_id){
+        
+        $whstr = 'WHERE i.quotation_id IN('.implode(",", $quotation_id). ')';
+              //  if ($searchdocument_no != '')
+        //$whstr.=" concat(i.spquotation_prefix ,i.document_no) like '%$searchdocument_no%' AND";
+                
+         $sql = "SELECT i.document_date, i.quotation_id, concat(i.spquotation_prefix	,i.document_no) as docno,i.ref_no,
+	i.currency_id,cur.currency_code,,i.iscomplete,
+	concat(b.bpartner_no,'-',b.bpartner_name) as bpartner_name,i.bpartner_id, i.quotation_id
+	FROM sim_bpartner_quotation i 
+	 inner join  sim_bpartner b on b.bpartner_id=i.bpartner_id
+	 inner join sim_currency cur on i.currency_id=cur.currency_id
+	$whstr
+	order by concat(i.spquotation_prefix,i.document_no),i.document_date";
+       //echo
+        echo <<<EOF
+       <table border='1' style='width:100%'>
+            <thead>
+                <th>Document Date</th>
+                <th>Document No.</th>
+                <th>BPartner Name</th>
+                <th>Currency Code</th>
+                <th>Amount</th>
+                <th>Is Completed</th>
+            </thead>
+            <tbody>
+
+EOF;
+       //echo $sql;
+               $query = $this->xoopsDB->query($sql);
+        while ($row = $this->xoopsDB->fetchArray($query)) {
+            $document_date = $row['document_date'];
+            $quotation_id = $row['quotation_id'];
+            $ref_no = $row['ref_no'];
+            if ($ref_no != '')
+                $ref_no = " ($ref_no)";
+            $docno = $row['docno'] . $ref_no;
+            $paidto = $row['paidto'];
+            $paidfrom = $row['paidfrom'];
+            $currency_code = $row['currency_code'];
+            $originalamt = $row['localamt'];
+            $bpartner_id = $row['bpartner_id'];
+            $bpartner_name = $row['bpartner_name'];
+            $accounts_name = $row['accounts_name'];
+            $iscomplete = $row['iscomplete'];
+
+            $bpartner_name = "<a href='../bpartner/bpartner.php?action=viewsummary&bpartner_id=$bpartner_id' target='_blank'>$bpartner_name</a>";
+
+            if ($iscomplete == 1) {
+                $linkname = "<a href='$this->quotationfilename?action=view&quotation_id=$quotation_id' target='_blank'>$docno</a>";
+                $iscomplete = "Y";
+            } else {
+                $linkname = "<a href='$this->quotationfilename?action=edit&quotation_id=$quotation_id' target='_blank'>$docno</a>";
+                $iscomplete = '<b style="color:red">N</b>';
+            }
+
+            echo <<< EOF
+<tr>    
+	<td>$document_date</td>
+	<td>$linkname</td>
+	<td>$bpartner_name</td>
+	<td>$currency_code</td>
+	<td>$originalamt</td>
+	<td>$iscomplete</td>
+	</tr>
+EOF;
+        }
+       
+       
+       echo "</tbody></table>";
+        
+        
+        
+    }
+    
+
+    public function showResult() {
+        $datefrom = $_REQUEST['searchfromdocument_date'];
+        $dateto = $_REQUEST['searchtodocument_date'];
+        $searchdocument_no = $_REQUEST['searchdocument_no'];
+        $searchref_no = $_REQUEST['searchref_no'];
+        $bpartner_id = $_REQUEST['bpartner_id'];
+        $searchiscomplete = $_REQUEST['searchiscomplete'];
+        //$keyword_ctrl = ""
+        if ($datefrom == '')
+            $datefrom = '0000-00-00';
+        if ($dateto == '')
+            $dateto = '9999-12-31';
+
+        $wherestr = "WHERE i.document_date BETWEEN '$datefrom' and '$dateto' AND i.issotrx=$this->issotrx AND";
+
+        if ($searchdocument_no != ''){
+            $wherestr.=" concat(i.spquotation_prefix	,i.document_no) like '%$searchdocument_no%' AND";
+        }
+        if ($searchref_no != ''){
+            $wherestr.=" i.ref_no like '%$searchref_no%' AND";
+        }
+        if ($bpartner_id > 0){
+            $wherestr.=" i.bpartner_id = $bpartner_id AND";
+        }
+        if ($searchiscomplete != '-'){
+            $wherestr.=" p.iscomplete = $searchiscomplete AND";
+        }
+        
+        $wherestr = left($wherestr, strlen($wherestr) - 3);
+        //$wherestr;
+
+
+        echo <<< EOF
+
+<table id='resulttable'>
+<thead> 
+<tr>    
+        <th width="20px">
+            <input type='checkbox' class='tblresult_checkall'/>
+        </th>
+	<th>Date</th>
+	<th>Document No</th>
+	<th>Business Partner</th>
+	<th>Currency</th>
+	<th>Amount</th>
+	<th>Is Complete</th>
+	<th width="50px">
+          
+        </th>
+                <th width="50px">
+                     <!--button class="btnPrint">Print</button-->
+                </th>
+        
+	</tr>
+</thead>
+<tbody>
+EOF;
+   $sql = "SELECT i.document_date, i.quotation_id, concat(i.spquotation_prefix	,i.document_no) as docno,i.ref_no,
+	i.currency_id,cur.currency_code,i.iscomplete,i.subtotal,
+	concat(b.bpartner_no,'-',b.bpartner_name) as bpartner_name,i.bpartner_id
+	FROM sim_bpartner_quotation i 
+	 inner join  sim_bpartner b on b.bpartner_id=i.bpartner_id
+	 inner join sim_currency cur on i.currency_id=cur.currency_id
+	$wherestr
+	order by concat(i.spquotation_prefix,i.document_no),i.document_date";
+        $query = $this->xoopsDB->query($sql);
+        while ($row = $this->xoopsDB->fetchArray($query)) {
+            $document_date = $row['document_date'];
+            $quotation_id = $row['quotation_id'];
+            $subtotal=$row['subtotal'];
+            $ref_no = $row['ref_no'];
+            if ($ref_no != '')
+                $ref_no = " ($ref_no)";
+            $docno = $row['docno'] . $ref_no;
+            $paidto = $row['paidto'];
+            $paidfrom = $row['paidfrom'];
+            $currency_code = $row['currency_code'];
+            $originalamt = $row['localamt'];
+            $bpartner_id = $row['bpartner_id'];
+            $bpartner_name = $row['bpartner_name'];
+            $accounts_name = $row['accounts_name'];
+            $iscomplete = $row['iscomplete'];
+
+            $bpartner_name = "<a href='../bpartner/bpartner.php?action=viewsummary&bpartner_id=$bpartner_id' target='_blank'>$bpartner_name</a>";
+
+            if ($iscomplete == 1) {
+                $linkname = "<a href='$this->quotationfilename?action=view&quotation_id=$quotation_id' target='_blank'>$docno</a>";
+                $linkname1 = "<a href='$this->quotationfilename?action=view&quotation_id=$quotation_id' target='_blank'><img src='../simantz/images/edit.gif'/></a>";
+                $iscomplete = "Y";
+            } else {
+                $linkname = "<a href='$this->quotationfilename?action=edit&quotation_id=$quotation_id' target='_blank'> $docno</a>";
+                $linkname1 = "<a href='$this->quotationfilename?action=view&quotation_id=$quotation_id' target='_blank'><img src='../simantz/images/edit.gif'/></a>";
+                $iscomplete = '<b style="color:red">N</b>';
+            }
+
+            echo <<< EOF
+<tr>    
+        <td>
+            <input type="checkbox" name="quotation_id[]" value='$quotation_id' class='inv_selector'/>
+        </td>
+	<td>$document_date</td>
+	<td>$linkname</td>
+	<td>$bpartner_name</td>
+	<td>$currency_code</td>
+	<td>$subtotal</td>
+	<td>$iscomplete</td>
+        <td align="center" valign="middle">
+        $linkname1
+        </td>
+            
+        <td align="center" valign="middle">
+            <a target="_blank" href="$this->quotationfilename?action=pdf&quotation_id=$quotation_id">
+                <img src='../simantz/images/zoom.png'/>
+            </a>
+        </td>
+	</tr>
+EOF;
+        }
+        echo <<< EOF
+</tbody>
+<tfoot> 
+	<tr> 
+        <th width="20px">
+            <input type='checkbox' class='tblresult_checkall'/>
+        </th>
+	<th>Date</th>
+	<th>Document No</th>
+	<th>Business Partner</th>
+	<th>Currency</th>
+	<th>Amount</th>
+	<th>Is Complete</th>
+        <th width="50px">
+            
+        </th>
+        <th width="50px">
+              <!--button class='btnPrint'>Print</button-->
+        </th>
+	</tr> 
+	</tfoot> 
+	
+</table>
+EOF;
+
+    }
+
+    public function defineHeaderButton() {
+        global $action;
+
+        $this->addnewctrl = '<form action="' . $this->quotationfilename . '" ><input type="submit" value="Add New"></form>';
+
+        if ($action == "search") {
+            $this->searchctrl = '';
+        }
+        else
+            $this->searchctrl = '<form action="' . $this->quotationfilename . '?action=search" ><input type="hidden" name="action" value="search"><input type="submit" value="Search"></form>';
+    }
+
 
   public function duplicateQuotation(){
   $oldqid=$this->quotation_id;
@@ -2090,8 +2587,58 @@ JS;
 
            
        }
+       
+       echo <<< EOF
+<div class="dimBackground"></div>
+<div align="center" >
+<div style="height:45px"  class="floatWindow" id="tblSub">
+<table>
+ <tr>
+  <td astyle="vertical-align:middle;" align="center">
+
+    <table class="" style="width:850px">
+
+       <tr class="tdListRightTitle" >
+          <td colspan="4">
+                <table><tr>
+                <td id="idHeaderText" align="center">Duplicate</td>
+                <td align="right" width="30px"><img src="../simbiz/images/close.png" onclick="closeWindow();" style="cursor:pointer" title="Close"></td>
+                </tr></table>
+          </td>
+       </tr>
+			<td>Record duplicated successfully, new quotation is: <a href="salesquotation.php?action=edit&quotation_id=$qid"> $this->spquotation_prefix $this->document_no</a></td>
+       <tr>
+      </table>
+</div></div>
+EOF;
+
        return array($qid,$this->spquotation_prefix.$this->document_no);
     }
+    
+    echo <<< EOF
+<div class="dimBackground"></div>
+<div align="center" >
+<div style="height:480px;overflow:auto;"  class="floatWindow" id="tblSub">
+<table>
+ <tr>
+  <td astyle="vertical-align:middle;" align="center">
+
+    <table class="" style="width:800px">
+
+       <tr class="tdListRightTitle" >
+          <td colspan="4">
+                <table><tr>
+                <td id="idHeaderText" align="center">Duplicate</td>
+                <td align="right" width="30px"><img src="../simbiz/images/close.png" onclick="closeWindow();" style="cursor:pointer" title="Close"></td>
+                </tr></table>
+          </td>
+       </tr>
+			<td>cannot duplicate this quotation due to sql error</td>
+       <tr>
+      </table>
+</div></div>
+EOF;
+EOF;
     return array(0,"");
     
  //sim_bpartner_quotationline
