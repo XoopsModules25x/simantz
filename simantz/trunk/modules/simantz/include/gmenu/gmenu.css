@@ -1,0 +1,153 @@
+/* 
+    Document   : gmenu
+    Created on : Oct 5, 2011, 11:46:28 PM
+    Author     : song
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+            li .modtxt{
+                height:14px;
+                color:#ffffff;
+                font-size:13px;
+                font-weight: 900;
+                font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+            }
+            
+            .gmenu{
+                
+                background-color:#52b32e;
+                border-color: #7b7b7b;
+                border-width: 1px;
+                border-style:solid;
+                height:31px;
+                position:relative;
+                z-index:999;
+            }
+            .gmenu div{
+                float:left;
+                width:35px;
+                position:relative;
+                padding:0px;
+                margin:0px;
+                height:30px;
+                vertical-align: middle;
+                padding-top:5px;
+                cursor:pointer;
+                
+            }
+            
+            .gmenu_content{
+                opacity:0px;
+                height:0px;
+                width:100%;
+                z-index:999;
+                background-image:url(img/gmenu_bg.png);
+            }
+            
+            .gmenu_drop_content{
+                margin-top: 2px;
+                position:absolute;
+                background:#FFFFFF;
+                border-style: solid;
+                border-width: 1px;
+                border-color:#7b7b7b;
+                padding: 0px;
+                display:none;
+                border-radius:0 5px 5px 5px;
+                -moz-border-radius: 0 5px 5px 5px;
+            }
+            
+            .gmenu_drop_content ul{
+                padding:0px;
+                margin:0px;
+                padding-bottom:15px;
+            }
+            .gmenu_drop_content ul li{
+                list-style: none;
+                vertical-align: middle;
+                position:relative;
+            }
+            
+  
+            
+            .gmenu_drop_content ul li a{
+                font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+                font-weight: 900;
+                font-size:10px;
+                text-decoration: none;
+                display: block;
+                min-width:190px;
+                min-height:15px;
+                padding:5px;
+                background: #FFFFFF;
+                color:#333333;
+                
+            }
+            
+            .gmenu_drop_content ul li a:hover{
+                background: #ececec;
+                color:#828282;
+            }
+            
+            .gmenu_container{
+                z-index:999;
+            }
+            
+            .gmenu_content_caption{
+                color:#333333;
+                font-weight: 900;
+                font-size:12px;
+                border-width: 1px;
+                border-color: #AAAAAA;
+                border-style:solid;
+                border-top: none;
+                border-left:none;
+                border-right: none;
+                margin-bottom: 5px;
+                font-family: "lucida grande",tahoma,verdana,arial,sans-serif;
+               
+                padding:10px;
+            }
+            
+            .gmenu_content ul{
+                margin:0px;
+                
+            }
+            
+            .gmenu_content ul li{
+                list-style: none;
+                margin:10px;
+                padding:0px;
+                float:left;
+            }
+
+            .gmenu_content ul li div{
+                width:70px;
+                height:70px;
+            }
+            
+            .btn_module{
+                opacity:0.5;
+                cursor: pointer;
+            }
+            
+            .gmenu_content_child{
+                display:none;
+                position:absolute;
+                border-color: #7B7B7B;
+                border-width: 1px;
+                border-style: solid;
+                background-color:#ffffff;
+                
+            }    
+               
+            .gmenu_content_child li{
+                position:relative;
+                
+            }    
+       
