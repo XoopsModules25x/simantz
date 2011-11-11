@@ -160,6 +160,7 @@
         
 	$o->fetchOrganization($defaultorganization_id);
         $defcountrycode=$o->country_code;
+        $defcountry_id=$o->country_id;
 	$defcurrencycode=$o->currency_code;
 	$defaultcurrency_id=$o->currency_id;
        $defaultorganization_name=$o->organization_name;
