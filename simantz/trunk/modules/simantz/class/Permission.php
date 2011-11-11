@@ -27,6 +27,7 @@ class Permission {
   private $tablepermission;
   private $tablewindow;
   private $log;
+  public $window_dialog;
 
 public function Permission (){
 	global $xoopsDB,$log,$module_id,$tablepermission,$tablegroups,$tablegroups_users_link,$tablewindow,$tablegrouppermission,
@@ -34,6 +35,8 @@ public function Permission (){
 	$this->xoopsDB=$xoopsDB;
 	$this->module_id=$module_id;
 	$this->log=$log;
+        $this->window_dialog = array();
+                
 }
 
   public function showControlHeader($groupid,$mid){
@@ -270,9 +273,8 @@ EOF;
 	return false;
 	}
   }
-
-
-function showMenu($parentwindows_id,$level,$uid,$module_id){
+  
+  function showMenu($parentwindows_id,$level,$uid,$module_id){
             $currentdate=date("Y-m-d",time());
 
     $output = "";
@@ -316,6 +318,125 @@ function showMenu($parentwindows_id,$level,$uid,$module_id){
     return $output;
     //echo "";
 }
+  
+  
+
+
+function showGMenu($parentwindows_id,$level,$uid,$module_id){
+            $currentdate=date("Y-m-d",time());
+
+    $output = "";
+  $sql="SELECT distinct(w.window_id),w.window_name, w.parentwindows_id, w.filename, m.name as modulename,m.dirname
+                from sim_groups g
+		inner join sim_groups_users_link gul on g.groupid=gul.groupid
+		inner join sim_users u on gul.uid=u.uid
+		inner join sim_group_permission gp on gp.gperm_groupid=g.groupid
+		inner join sim_modules m on gp.gperm_itemid=m.mid
+		inner join sim_permission gsp on gsp.groupid=g.groupid
+		inner join sim_window w on gsp.window_id=w.window_id
+		where m.mid=$module_id and gp.gperm_name='module_read'
+                    and w.mid=$module_id
+                    and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
+                    w.isactive=1 and w.window_id>0
+                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') and window_name <> 'Reports' order by w.seqno";
+$level++;
+$temp= "";
+ $query=$this->xoopsDB->query($sql);
+    while($row=$this->xoopsDB->fetchArray($query)){
+        $prefix="";
+        for($i=0;$i<$level;$i++)
+        $prefix.="&nbsp;";
+        if($row['filename']!=""){
+           $linkname=" href='".$row['filename']."'";
+           $cssclass="";
+        }
+        else{
+            $cssclass="class='parent'";
+            $linkname="";
+        }
+
+
+        //$output .= "<li ><a $linkname $cssclass><span>".$row['window_name']."</span></a><ul>";
+
+        
+        
+        $output .= $this->showGMenuChild($row['window_id'],$level,$uid,$module_id);
+        
+        $output .= "</ul></li>";
+        switch($row["window_name"]){
+            case "Master Data":
+                $output = "<div style='display:none' id='gmenu_content_master' class='gmenu_drop_content'><ul><li class='gmenu_content_caption'>$row[window_name]</li>$output</ul></div>";
+                break;
+            case "Transaction":
+                  $output = "<div style='display:none' id='gmenu_content_transaction' class='gmenu_drop_content'><ul><li class='gmenu_content_caption'>$row[window_name]</li>$output<ul></div>";
+                break;
+            case "Report":
+                  $output = "<div style='display:none' id='gmenu_content_reports' class='gmenu_drop_content'><ul><li class='gmenu_content_caption'>$row[window_name]</li>$output</ul></div>";
+                break;
+            default:
+                    $output = "";
+                break;
+        }
+       // $this->window_dialog[$row['window_name']][] = $output;
+        $temp.= "$output";
+        $output= "";
+    }
+
+    return $temp;
+}
+
+function showGMenuChild($parentwindows_id,$level,$uid,$module_id){
+            $currentdate=date("Y-m-d",time());
+
+    $output = "";
+  $sql="SELECT distinct(w.window_id),w.window_name, w.parentwindows_id, w.filename, m.name as modulename,m.dirname
+                from sim_groups g
+		inner join sim_groups_users_link gul on g.groupid=gul.groupid
+		inner join sim_users u on gul.uid=u.uid
+		inner join sim_group_permission gp on gp.gperm_groupid=g.groupid
+		inner join sim_modules m on gp.gperm_itemid=m.mid
+		inner join sim_permission gsp on gsp.groupid=g.groupid
+		inner join sim_window w on gsp.window_id=w.window_id
+		where m.mid=$module_id and gp.gperm_name='module_read'
+                    and w.mid=$module_id
+                    and w.parentwindows_id=$parentwindows_id and u.uid=$uid and
+                    w.isactive=1 and w.window_id>0
+                  and ( gsp.validuntil = '0000-00-00' OR gsp.validuntil >= '$currentdate') and window_name <> 'Reports' order by w.seqno";
+$level++;
+ $query=$this->xoopsDB->query($sql);
+    while($row=$this->xoopsDB->fetchArray($query)){
+        $prefix="";
+       // $output = "";
+        for($i=0;$i<$level;$i++)
+        $prefix.="&nbsp;";
+        if($row['filename']!=""){
+           $linkname=" href='".$row['filename']."'";
+           $cssclass="";
+        }
+        else{
+            $cssclass="class='parent'";
+            $linkname="";
+        }
+
+
+        $output .= "<li ><a $linkname $cssclass><span>".$row['window_name']."</span></a>";
+
+        
+        
+        $result .= $this->showGMenuChild($row['window_id'],$level,$uid,$module_id);
+        if($result != ""){
+            $result = "<ul class='gmenu_content_child'>$result</ul>";
+        }
+        $output .= "$result</li>";
+        $result="";
+    }
+    
+
+    return $output;
+    //echo "";
+}
+
+
 
   public function checkPermission($uid,$module_id,$usefilename){
         $currentdate=date("Y-m-d",time());
