@@ -1,7 +1,6 @@
 <?php
 	include_once ('../../mainfile.php');
         include_once (XOOPS_ROOT_PATH.'/header.php');
-
 	include_once '../simantz/class/Permission.php';
 	include_once '../simantz/class/Organization.inc.php';
 //	include_once 'class/Accounts.php';
@@ -160,7 +159,6 @@
         
 	$o->fetchOrganization($defaultorganization_id);
         $defcountrycode=$o->country_code;
-        $defcountry_id=$o->country_id;
 	$defcurrencycode=$o->currency_code;
 	$defaultcurrency_id=$o->currency_id;
        $defaultorganization_name=$o->organization_name;
