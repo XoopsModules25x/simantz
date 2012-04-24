@@ -262,12 +262,15 @@ td#leftcolumn div.blockContent {
 }
 
 #centerCcolumn, #bottomCcolumn {
+    background-color:#fff;
 	padding: 0px 3px 1px 3px;
 }
 
 #centerCcolumn .blockTitle, #bottomCcolumn .blockTitle {
+    background-color:#fff;
+
 	padding: 3px;
-	color: #639ACE;
+	color: #000;
 	font-weight: bold;
 	margin-top: 0px;
 	margin-right: 0px;
@@ -275,9 +278,7 @@ td#leftcolumn div.blockContent {
 }
 
 #centerCcolumn .blockContent, #bottomCcolumn .blockContent {
-	border-left: 1px solid #cccccc;
-	border-right: 1px solid #cccccc;
-	border-bottom: 1px solid #dddddd;
+	
 	padding: 3px;
 	margin-right: 0px;
 	margin-left: 0px;
@@ -292,28 +293,27 @@ td#leftcolumn div.blockContent {
 
 #centerLcolumn .blockTitle, #bottomLcolumn .blockTitle, #centerRcolumn .blockTitle, #bottomRcolumn .blockTitle {
 	padding: 3px;
-	color: #555;
+	color: #000;
 	font-weight: bold;
 	margin-top: 0px;
+        background-color: #fff;
 }
 
 #centerLcolumn .blockContent, #centerRcolumn .blockContent, #bottomLcolumn .blockContent, #bottomRcolumn .blockContent {
-	border-left: 1px solid #cccccc;
-	border-right: 1px solid #cccccc;
-	border-bottom: 1px solid #dddddd;
+	
 	padding: 0px;
 	margin-left: 2px;
 	margin-right: 3px;
 	margin-bottom: 2px;
 	line-height: 120%;
-	background: #e7edf9;
+	
 }
 /*End of Center Column*/
 
 /*Right Column*/
 td#rightcolumn {
 	width: 170px;
-	border-left: 1px solid #488248;
+	
 	font-size:12px;
 }
 
@@ -463,6 +463,13 @@ td#usermenu a.highlight {
 	font-weight: bold;
 		font-size: 10px;
 		}
+                
+.red td {
+    background-color: #FFaaaa;
+    border-color: #DDBFFF -moz-use-text-color;
+    border-style: solid none;
+    border-width: 2px medium;
+}
 
 tr.even td {
 	background-color: #eff1c6;
@@ -711,14 +718,16 @@ input[type="button"],input[type="submit"],input[type="reset"],input[type="file"]
 
 fieldset
 {
-border: 1px solid #781351;
-width: 20em
+border: 1px solid #DDB5FF;
+        background-color:       #F4E7FF;
+
+
 }
 
 legend
 {
 color: #fff;
-background: #ffa20c;
+
 border: 1px solid #781351;
 padding: 2px 6px
 }
@@ -1171,6 +1180,10 @@ font-size : 12px;
 
 .tdListRightTitle a{
 	color:#f8fb21;
+}
+
+.thead{
+    background-color:red;
 }
 
 .tdListRightHeader{
