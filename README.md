@@ -15,7 +15,7 @@ This programming framework included:
 8. Build in SMS/Email function 
 9. and many more power features
 
-It is built on top of XOOPS 2.4.4
+It was built on top of XOOPS 2.4.4 and needs to be updated for the current XOOPS 2.5.8, and potentially XOOPS 2.6.0
 
 [![XOOPS CMS](http://img.youtube.com/vi/4U3Z8CX82Uw/0.jpg)](http://www.youtube.com/watch?v=4U3Z8CX82Uw)
 
