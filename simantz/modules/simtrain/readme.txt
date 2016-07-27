@@ -1,0 +1,1 @@
+This is an web based tuition center management system with features like manage student info, employee/tutor info, tuition class and registration, product & services, payment, generate official receipt, cash onhand, stock.
