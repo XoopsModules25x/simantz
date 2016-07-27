@@ -1,0 +1,540 @@
+<html>
+<head>
+<title>Docs For Class datePicker</title>
+<link rel="stylesheet" type="text/css" href="../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">datePicker</td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+  		  [ <a href="../classtrees_datePicker.html" class="menu">class tree: datePicker</a> ]
+		  [ <a href="../elementindex_datePicker.html" class="menu">index: datePicker</a> ]
+		  [ <a href="../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+	<div id="ric">
+					<p><a href="../ric_ChangeLog.html">ChangeLog</a></p>
+					<p><a href="../ric_License.html">License</a></p>
+					<p><a href="../ric_ReadMe.html">ReadMe</a></p>
+			</div>
+      <b>Packages:</b><br />
+              <a href="../li_datePicker.html">datePicker</a><br />
+            <br /><br />
+                        <b>Files:</b><br />
+      	  <div class="package">
+			<a href="../datePicker/_class.datepicker.php.html">		class.datepicker.php
+		</a><br>
+	  </div><br />
+      
+      
+            <b>Classes:</b><br />
+        <div class="package">
+		    		<a href="../datePicker/datePicker.html">datePicker</a><br />
+	  </div>
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1>Class: datePicker</h1>
+Source Location: /class.datepicker.php<br /><br />
+
+
+<table width="100%" border="0">
+<tr><td valign="top">
+
+<h3><a href="#class_details">Class Overview</a></h3>
+<pre></pre><br />
+<div class="description">A PHP class providing access to a date/time picker</div><br /><br />
+<h4>Author(s):</h4>
+<ul>
+                                                          <li>Stefan Gabos &lt;<a href="mailto:ix@nivelzero.ro">ix@nivelzero.ro</a>&gt;</li>
+      </ul>
+
+
+
+
+                        
+          
+          
+<h4>Version:</h4>
+<ul>
+  <li>1.0.7 (last revision: November 15, 2007)</li>
+</ul>
+
+<h4>Copyright:</h4>
+<ul>
+  <li>(c) 2006-2007 Stefan Gabos</li>
+</ul>
+        
+</td>
+
+<td valign="top">
+<h3><a href="#class_vars">Variables</a></h3>
+<ul>
+    <li><a href="../datePicker/datePicker.html#var$dateFormat">$dateFormat</a></li>
+    <li><a href="../datePicker/datePicker.html#var$enableTimePicker">$enableTimePicker</a></li>
+    <li><a href="../datePicker/datePicker.html#var$firstDayOfWeek">$firstDayOfWeek</a></li>
+    <li><a href="../datePicker/datePicker.html#var$language">$language</a></li>
+    <li><a href="../datePicker/datePicker.html#var$preselectedDate">$preselectedDate</a></li>
+    <li><a href="../datePicker/datePicker.html#var$selectableDatesRange">$selectableDatesRange</a></li>
+    <li><a href="../datePicker/datePicker.html#var$selectableTimesRange">$selectableTimesRange</a></li>
+    <li><a href="../datePicker/datePicker.html#var$selectableYearsRange">$selectableYearsRange</a></li>
+    <li><a href="../datePicker/datePicker.html#var$showGoToCurrentMonthYear">$showGoToCurrentMonthYear</a></li>
+    <li><a href="../datePicker/datePicker.html#var$template">$template</a></li>
+    <li><a href="../datePicker/datePicker.html#var$windowHeight">$windowHeight</a></li>
+    <li><a href="../datePicker/datePicker.html#var$windowWidth">$windowWidth</a></li>
+  </ul>
+</td>
+
+
+<td valign="top">
+<h3><a href="#class_methods">Methods</a></h3>
+<ul>
+    <li><a href="../datePicker/datePicker.html#methoddatePicker">datePicker</a></li>
+    <li><a href="../datePicker/datePicker.html#methodshow">show</a></li>
+  </ul>
+</td>
+
+</tr></table>
+<hr />
+
+<table width="100%" border="0"><tr>
+
+
+
+
+
+
+</tr></table>
+<hr />
+
+<a name="class_details"></a>
+<h3>Class Details</h3>
+<div class="tags">
+[line 38]<br />
+A PHP class providing access to a date/time picker<br /><br /><p><ul><li>provides a nice and intuitive date picker and optionally, a time picker</li><li>complex formulas for selectable dates and times ranges can be set</li><li>dates can be preselected and the datepicker can be instructed to show specific month/year as default</li><li>the returned format of the date can be set to any formats supported by PHP's date() function</li><li>customizable starting day of the week</li><li>supports localisation (currently english, dutch, finnish, french, german, italian, romanian and slovenian translations are available)</li><li>template driven and highly customizable</li><li>the included template produces valid HTML 4.01 Transitional and XHTML 1.0</li><li>code is heavily documented so you can easily understand every aspect of it</li></ul>   See the documentation for more info.</p><p>Read the LICENSE file, provided with the package, to find out how you can use this PHP script.</p><p>If you don't find this file, please write an email to noname at nivelzero dot ro and you will be sent a copy of the license file</p><p>For more resources visit <a href="http://stefangabos.blogspot.com">http://stefangabos.blogspot.com</a></p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>example:</b>&nbsp;&nbsp;</td><td><a href="../__examplesource/exsource_bra_zebra_classes_datepicker_examples_example4.php_b8c5c359eaa9046fd40fe6ba2218c27b.html">example</a></td>
+  </tr>
+  <tr>
+    <td><b>example:</b>&nbsp;&nbsp;</td><td><a href="../__examplesource/exsource_bra_zebra_classes_datepicker_examples_example5.php_11de07f8d1f87de92e181e0987af058b.html">example</a></td>
+  </tr>
+  <tr>
+    <td><b>example:</b>&nbsp;&nbsp;</td><td><a href="../__examplesource/exsource_bra_zebra_classes_datepicker_examples_example6.php_01546d0c1ac97445f4fce18b9dca9c4a.html">example</a></td>
+  </tr>
+  <tr>
+    <td><b>example:</b>&nbsp;&nbsp;</td><td><a href="../__examplesource/exsource_bra_zebra_classes_datepicker_examples_example3.php_f346ef6c4efed6d9052be0ab572e2ffd.html">example</a></td>
+  </tr>
+  <tr>
+    <td><b>example:</b>&nbsp;&nbsp;</td><td><a href="../__examplesource/exsource_bra_zebra_classes_datepicker_examples_example2.php_708e7293c05ce68f9a71bc2ce070631d.html">example</a></td>
+  </tr>
+  <tr>
+    <td><b>version:</b>&nbsp;&nbsp;</td><td>1.0.7 (last revision: November 15, 2007)</td>
+  </tr>
+  <tr>
+    <td><b>copyright:</b>&nbsp;&nbsp;</td><td>(c) 2006-2007 Stefan Gabos</td>
+  </tr>
+  <tr>
+    <td><b>example:</b>&nbsp;&nbsp;</td><td><a href="../__examplesource/exsource_bra_zebra_classes_datepicker_examples_example1.php_782a292690b646b4265ca9f86db77208.html">example</a></td>
+  </tr>
+  <tr>
+    <td><b>author:</b>&nbsp;&nbsp;</td><td>Stefan Gabos &lt;<a href="mailto:ix@nivelzero.ro">ix@nivelzero.ro</a>&gt;</td>
+  </tr>
+</table>
+</div>
+</div><br /><br />
+<div class="top">[ <a href="#top">Top</a> ]</div><br />
+
+<hr />
+<a name="class_vars"></a>
+<h3>Class Variables</h3>
+<div class="tags">
+	<a name="var$dateFormat"></a>
+	<p></p>
+	<h4>$dateFormat = <span class="value"></span></h4>
+	<p>[line 191]</p>
+  Format of the returned day<br /><br /><p>Any combination allowed by PHP's date() function can be used</p><p><strong>Note</strong></p><p><em>You should never use hours, minutes and seconds in your format because you will always have &quot;00:00&quot; appended to your returned
+  date. If <a href="../datePicker/datePicker.html#var$enableTimePicker">enableTimePicker</a> is set to TRUE, selected hour and minute will be automatically appended</em></p><p>default is &quot;m d Y&quot;</p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>string</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$enableTimePicker"></a>
+	<p></p>
+	<h4>$enableTimePicker = <span class="value"></span></h4>
+	<p>[line 166]</p>
+  If set to TRUE, a time picker will also be shown<br /><br /><p>Default is FALSE</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>since:</b>&nbsp;&nbsp;</td><td>1.0.4</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>boolean</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$firstDayOfWeek"></a>
+	<p></p>
+	<h4>$firstDayOfWeek = <span class="value"></span></h4>
+	<p>[line 202]</p>
+  What day should be taken as the first day of week<br /><br /><p>Possible values range from 0 (Sunday) to 6 (Saturday)</p><p>default is 0 (Sunday)</p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>integer</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$language"></a>
+	<p></p>
+	<h4>$language = <span class="value"></span></h4>
+	<p>[line 233]</p>
+  Language file to use<br /><br /><p>The name of the php language file you wish to use from the /languages folder.</p><p>Without the extension! (i.e. &quot;german&quot; for the german language not &quot;german.php&quot;)</p><p>default is &quot;english&quot;</p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>string</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$preselectedDate"></a>
+	<p></p>
+	<h4>$preselectedDate = <span class="value"></span></h4>
+	<p>[line 175]</p>
+  Preselects a date in the calendar<br /><br /><p><strong>The date must be specified as a UNIX timestamp!</strong></p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>timestamp</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$selectableDatesRange"></a>
+	<p></p>
+	<h4>$selectableDatesRange = <span class="value"></span></h4>
+	<p>[line 72]</p>
+  An array of an unlimited number of arrays with three elements.<br /><br /><p>In these arrays of three elements the first one is the date representing the start of the range (inclusive), the second   one is the date representing the end of the range (inclusive) and the third one represents how days should be skipped   (i.e. &quot;1&quot; means every day in the range should be available for selection, &quot;2&quot; means every second day should be available   for selection and so on)</p><p><em>Note that dates must be represented as UNIX timestamps!</em></p><p><em>Also note that the range of dates can be anywhere in between 1/1/1970 and 31/12/2038</em></p><p><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;Allow&nbsp;every&nbsp;second&nbsp;day&nbsp;starting&nbsp;from&nbsp;next&nbsp;Monday&nbsp;and&nbsp;up&nbsp;to&nbsp;next&nbsp;Friday</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dp</span><span class="src-sym">-&gt;</span><span class="src-id"><a href="../datePicker/datePicker.html#var$selectableDatesRange">selectableDatesRange</a>&nbsp;</span>=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><a href="http://www.php.net/strtotime">strtotime</a><span class="src-sym">(</span><span class="src-str">&quot;next&nbsp;Monday&quot;</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/strtotime">strtotime</a><span class="src-sym">(</span><span class="src-str">&quot;next&nbsp;Friday&quot;</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><span class="src-num">1</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span></div></li>
+</ol></p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>since:</b>&nbsp;&nbsp;</td><td>1.0.4</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>array</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$selectableTimesRange"></a>
+	<p></p>
+	<h4>$selectableTimesRange = <span class="value"></span></h4>
+	<p>[line 142]</p>
+  An array of an unlimited number of arrays with six elements.<br /><br /><p>In these arrays of six elements the first one is the hour representing the start of the range (inclusive), the second   one is the hour representing the end of the range (exclusive), the third one represents how hours should be skipped   (i.e. &quot;1&quot; means every hour in the range should be available for selection, &quot;2&quot; means every second hour should be available   for selection and so on), the fourth one is the minute representing the start of the range (inclusive), the fifth   one is the minute representing the end of the range (exclusive) and the sixth one represents how minutes should be skipped   (i.e. &quot;15&quot; means every 15th minute in the range should be available for selection, &quot;30&quot; means every 30th minute should be   available for selection and so on),</p><p>An unlimited number of ranges can be specified.</p><p>Setting this property has sense only if <a href="../datePicker/datePicker.html#var$enableTimePicker">enableTimePicker</a> property is set to TRUE</p><p><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dp</span><span class="src-sym">-&gt;</span><span class="src-id"><a href="../datePicker/datePicker.html#var$selectableTimesRange">selectableTimesRange</a>&nbsp;</span>=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from&nbsp;hours&nbsp;10&nbsp;to&nbsp;12&nbsp;and&nbsp;minute&nbsp;0&nbsp;to&nbsp;60&nbsp;allow&nbsp;every&nbsp;hour&nbsp;and&nbsp;minute</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-num">10</span><span class="src-sym">,&nbsp;</span><span class="src-num">12</span><span class="src-sym">,&nbsp;</span><span class="src-num">1</span><span class="src-sym">,&nbsp;</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-num">60</span><span class="src-sym">,&nbsp;</span><span class="src-num">1</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;also,&nbsp;from&nbsp;hours&nbsp;12&nbsp;to&nbsp;18&nbsp;and&nbsp;minutes&nbsp;0&nbsp;to&nbsp;60&nbsp;allow&nbsp;only&nbsp;12,&nbsp;14&nbsp;and</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16&nbsp;hours&nbsp;to&nbsp;be&nbsp;selected&nbsp;(through&nbsp;a&nbsp;stepping&nbsp;of&nbsp;2)&nbsp;and&nbsp;0,&nbsp;15,&nbsp;30,&nbsp;45</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;minutes&nbsp;(through&nbsp;a&nbsp;stepping&nbsp;of&nbsp;15)</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-num">12</span><span class="src-sym">,&nbsp;</span><span class="src-num">18</span><span class="src-sym">,&nbsp;</span><span class="src-num">2</span><span class="src-sym">,&nbsp;</span><span class="src-num">0</span><span class="src-sym">,&nbsp;</span><span class="src-num">60</span><span class="src-sym">,&nbsp;</span><span class="src-num">15</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span></div></li>
+</ol></p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>since:</b>&nbsp;&nbsp;</td><td>1.0.4</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>array</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$selectableYearsRange"></a>
+	<p></p>
+	<h4>$selectableYearsRange = <span class="value"></span></h4>
+	<p>[line 106]</p>
+  An array of an unlimited number of arrays with three elements.<br /><br /><p>In these arrays of three elements the first one is the year representing the start of the range (inclusive), the second   one is the year representing the end of the range (inclusive) and the third one represents how years should be skipped   (i.e. &quot;1&quot; means every year in the range should be available for selection, &quot;2&quot; means every second year should be available   for selection and so on)</p><p><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-doc">/**</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;Allow&nbsp;every&nbsp;second&nbsp;year&nbsp;starting&nbsp;with&nbsp;2000&nbsp;and&nbsp;up&nbsp;to&nbsp;the&nbsp;current&nbsp;year</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;&nbsp;and&nbsp;also,&nbsp;every&nbsp;year&nbsp;from&nbsp;1990&nbsp;to&nbsp;1996</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*</span></div></li>
+<li><div class="src-line"><span class="src-doc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dp</span><span class="src-sym">-&gt;</span><span class="src-id"><a href="../datePicker/datePicker.html#var$selectableYearsRange">selectableYearsRange</a>&nbsp;</span>=&nbsp;<span class="src-key">array</span><span class="src-sym">(</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-num">2000</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">&quot;Y&quot;</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><span class="src-num">2</span><span class="src-sym">)</span><span class="src-sym">,</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-key">array</span><span class="src-sym">(</span><span class="src-num">1990</span><span class="src-sym">,&nbsp;</span><span class="src-num">1996</span><span class="src-sym">,&nbsp;</span><span class="src-num">1</span><span class="src-sym">)</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-sym">)</span></div></li>
+</ol></p><p>Setting values to this property will make the years show in a select box (rather than static text) enabling the user   to quickly select a year from the given range</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>since:</b>&nbsp;&nbsp;</td><td>1.0.4</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>array</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$showGoToCurrentMonthYear"></a>
+	<p></p>
+	<h4>$showGoToCurrentMonthYear = <span class="value"></span></h4>
+	<p>[line 155]</p>
+  If set to TRUE, a button for going to the current month/year will be shown.<br /><br /><p>Useful when the user can wonder through the years and months and might want to get back.</p><p>Default is FALSE</p><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>since:</b>&nbsp;&nbsp;</td><td>1.0.7</td>
+  </tr>
+</table>
+</div>
+
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>boolean</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$template"></a>
+	<p></p>
+	<h4>$template = <span class="value"></span></h4>
+	<p>[line 245]</p>
+  Template folder to use<br /><br /><p>Note that only the folder of the template you wish to use needs to be specified. Inside the folder   you <strong>must</strong> have the <strong>template.xtpl</strong> file which will be automatically loaded</p><p>default is &quot;default&quot;</p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>string</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$windowHeight"></a>
+	<p></p>
+	<h4>$windowHeight = <span class="value"></span></h4>
+	<p>[line 211]</p>
+  Height of the calendar window<br /><br /><p>default is 250</p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>integer</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+	<a name="var$windowWidth"></a>
+	<p></p>
+	<h4>$windowWidth = <span class="value"></span></h4>
+	<p>[line 220]</p>
+  Width of the calendar window<br /><br /><p>default is 300</p><br />
+  <br />
+	<div class="tags">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td><b>Type:</b>&nbsp;&nbsp;</td>
+      <td>integer</td>
+    </tr>
+      </table>
+	</div><br /><br />
+	<div class="top">[ <a href="#top">Top</a> ]</div><br />
+</div><br />
+
+<hr />
+<a name="class_methods"></a>
+<h3>Class Methods</h3>
+<div class="tags">
+
+  <hr />
+	<a name="methoddatePicker"></a>
+	<h3>constructor datePicker <span class="smalllinenumber">[line 252]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void datePicker(
+)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Constructor of the class<br /><br /><br /><br />
+
+	
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
+	<a name="methodshow"></a>
+	<h3>method show <span class="smalllinenumber">[line 311]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void show(
+string
+$controlID, [mixed
+$startMonth = ""], [mixed
+$startYear = ""], [mixed
+$startHour = ""], [mixed
+$startMinute = ""])</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Returns the JavaScript code that will open the pop-up window containing the date picker<br /><br /><br /><br />
+
+	
+        <h4>Parameters:</h4>
+    <div class="tags">
+    <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+        <td class="type" valign="top">string&nbsp;&nbsp;</td>
+        <td valign="top"><b>$controlID</b>&nbsp;&nbsp;</td>
+        <td>the ID of the HTML element (textbox or textarea) where to return the selected value</td>
+      </tr>
+      <tr>
+        <td colspan="3">
+            <hr>
+        </td>
+      </tr>
+          <tr>
+        <td class="type" valign="top">mixed&nbsp;&nbsp;</td>
+        <td valign="top"><b>$startMonth</b>&nbsp;&nbsp;</td>
+        <td><p>(optional) which month to start the calendar from</p><p>Note that you can also pass a javascript statement as argument!</p></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+            <hr>
+        </td>
+      </tr>
+          <tr>
+        <td class="type" valign="top">mixed&nbsp;&nbsp;</td>
+        <td valign="top"><b>$startYear</b>&nbsp;&nbsp;</td>
+        <td><p>(optional) which year to start the calendar from</p><p>Note that you can also pass a javascript statement as argument!</p></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+            <hr>
+        </td>
+      </tr>
+          <tr>
+        <td class="type" valign="top">mixed&nbsp;&nbsp;</td>
+        <td valign="top"><b>$startHour</b>&nbsp;&nbsp;</td>
+        <td><p>(optional) what hour to show by default</p><p>Default is &quot;0&quot;</p><p>This argument will be processed only if the <a href="../datePicker/datePicker.html#var$enableTimePicker">enableTimePicker</a> property is set to TRUE!</p><p>Note that you can also pass a javascript statement as argument!</p></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+            <hr>
+        </td>
+      </tr>
+          <tr>
+        <td class="type" valign="top">mixed&nbsp;&nbsp;</td>
+        <td valign="top"><b>$startMinute</b>&nbsp;&nbsp;</td>
+        <td><p>(optional) what minute to show by default</p><p>Default is &quot;0&quot;</p><p>This argument will be processed only if the <a href="../datePicker/datePicker.html#var$enableTimePicker">enableTimePicker</a> property is set to TRUE!</p><p>Note that you can also pass a javascript statement as argument!</p></td>
+      </tr>
+      <tr>
+        <td colspan="3">
+            <hr>
+        </td>
+      </tr>
+        </table>
+    </div><br />
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+</div><br />
+
+
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Thu, 15 Nov 2007 17:46:52 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.3.0RC6</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
