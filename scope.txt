@@ -1,0 +1,30 @@
+To transform xoops become a framework which is:
+1. Store architecture and database dependency for all SimIT developed module
+    -Organization Information
+    -Races,
+    -Period
+    -Business Partner
+    -Users
+    -Religion
+    -Contacts
+    -Country
+    -Currency
+    -Terms
+    -Bpartner group
+    -industry
+    -Windows List
+    -Access Right
+
+2.  Programming environment included:
+    -SelectCtrl
+    -Backup
+    -Restore
+    -Manipulate users information
+    -Manage Security Permission
+    -Report Library
+    -SMS Library
+    -Email Library
+    -Chart
+
+3. Module shall not effect existing xoops framework
+4. Universal php function or javascript shall prepare for others project usage
