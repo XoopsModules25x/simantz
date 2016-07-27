@@ -1,0 +1,30 @@
+Zebra PHP Framework
+
+PHP DatePicker Class
+
+author     Stefan Gabos, ix at nivelzero dot ro
+version    1.0.7 (last revision: November 15, 2007)
+copyright  (c) 2006 - 2007 Stefan Gabos
+
+    A PHP class providing access to a date/time picker
+
+    -   provides a nice and intuitive date picker and optionally, a time picker
+    -   complex formulas for selectable dates and times ranges can be set
+    -   dates can be preselected and the datepicker can be instructed to show specific month/year
+        as default
+    -   the returned format of the date can be set to any formats supported by PHP's date()
+        function
+    -   customizable starting day of the week
+    -   supports localisation (currently english, dutch, finnish, french, german, italian,
+        romanian and slovenian translations are available)
+    -   template driven and highly customizable
+    -   the included template produces valid HTML 4.01 Transitional and XHTML 1.0
+    -   code is heavily documented so you can easily understand every aspect of it
+
+Read the documentation for more information and check out the examples to see it at work!
+
+Read the LICENSE file, provided with the package, to find out how you can use this PHP script.
+If you don't find this file, please write an email to noname at nivelzero dot ro and you will be
+sent a copy of the license file
+
+For more resources visit http://stefangabos.blogspot.com

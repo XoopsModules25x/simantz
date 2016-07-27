@@ -1,0 +1,106 @@
+<html>
+<head>
+<title>example</title>
+<link rel="stylesheet" type="text/css" href="../media/style.css">
+</head>
+<body>
+
+<table border="0" cellspacing="0" cellpadding="0" height="48" width="100%">
+  <tr>
+    <td class="header_top">datePicker</td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+  <tr>
+    <td class="header_menu">
+  		  [ <a href="../classtrees_datePicker.html" class="menu">class tree: datePicker</a> ]
+		  [ <a href="../elementindex_datePicker.html" class="menu">index: datePicker</a> ]
+		  [ <a href="../elementindex.html" class="menu">all elements</a> ]
+    </td>
+  </tr>
+  <tr><td class="header_line"><img src="../media/empty.png" width="1" height="1" border="0" alt=""  /></td></tr>
+</table>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="200" class="menu">
+	<div id="ric">
+					<p><a href="../ric_ChangeLog.html">ChangeLog</a></p>
+					<p><a href="../ric_License.html">License</a></p>
+					<p><a href="../ric_ReadMe.html">ReadMe</a></p>
+			</div>
+      <b>Packages:</b><br />
+              <a href="../li_datePicker.html">datePicker</a><br />
+            <br /><br />
+                  
+      
+                </td>
+    <td>
+      <table cellpadding="10" cellspacing="0" width="100%" border="0"><tr><td valign="top">
+
+<h1 align="center">example</h1>
+<div class="php">
+<ol><li><div class="src-line">&lt;!DOCTYPE&nbsp;HTML&nbsp;PUBLIC&nbsp;&quot;-//W3C//DTD&nbsp;HTML&nbsp;4.01&nbsp;Transitional//EN&quot;&gt;</div></li>
+<li><div class="src-line">&lt;html&gt;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;head&gt;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;title&gt;datepicker&nbsp;test&lt;/title&gt;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&lt;/head&gt;</div></li>
+<li><div class="src-line">&lt;body&gt;</div></li>
+<li><div class="src-line"><span class="src-php">&lt;?php</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;include&nbsp;the&nbsp;class</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;require&nbsp;<span class="src-str">&quot;../class.datepicker.php&quot;</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-comm">//&nbsp;instantiate&nbsp;the&nbsp;object</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dp</span>=<span class="src-key">new&nbsp;</span><span class="src-id">datepicker</span><span class="src-sym">(</span><span class="src-sym">)</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-var">$dp</span><span class="src-sym">-&gt;</span><span class="src-id"><a href="../datePicker/datePicker.html#var$enableTimePicker">enableTimePicker</a>&nbsp;</span>=&nbsp;<span class="src-id">true</span><span class="src-sym">;</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line"><span class="src-php">?&gt;</span></div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&lt;p&gt;</div></li>
+<li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;Time&nbsp;picker</div></li>
+<li><div class="src-line">&lt;/p&gt;</div></li>
+<li><div class="src-line">&lt;pre&nbsp;style=&quot;font-size:11px&quot;&gt;</div></li>
+<li><div class="src-line">&amp;lt;?php</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">//&nbsp;include&nbsp;the&nbsp;class</div></li>
+<li><div class="src-line">require&nbsp;&quot;../class.datepicker.php&quot;;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">//&nbsp;instantiate&nbsp;the&nbsp;object</div></li>
+<li><div class="src-line">$dp=new&nbsp;datepicker();</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">//&nbsp;allow&nbsp;selection&nbsp;of&nbsp;time&nbsp;also</div></li>
+<li><div class="src-line">$dp-&gt;enableTimePicker&nbsp;=&nbsp;true;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">?&amp;gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&amp;lt;input&nbsp;type=&quot;text&quot;&nbsp;id=&quot;date&quot;&gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&amp;lt;--</div></li>
+<li><div class="src-line">we're&nbsp;showing&nbsp;the&nbsp;current&nbsp;month&nbsp;of&nbsp;the&nbsp;current&nbsp;year&nbsp;and&nbsp;also&nbsp;have&nbsp;the&nbsp;current&nbsp;time&nbsp;preselected</div></li>
+<li><div class="src-line">--&amp;gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&amp;lt;input&nbsp;type=&quot;button&quot;&nbsp;value=&quot;...&quot;&nbsp;onclick=&quot;&amp;lt;?=$dp-&gt;show(&quot;date&quot;,&nbsp;date(&quot;m&quot;)&nbsp;,&nbsp;date(&quot;Y&quot;),&nbsp;date(&quot;H&quot;),&nbsp;date(&quot;i&quot;))?&gt;&quot;&gt;</div></li>
+<li><div class="src-line">&lt;/pre&gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&lt;p&gt;Click&nbsp;on&nbsp;the&nbsp;button&nbsp;to&nbsp;see&nbsp;it&nbsp;work&lt;/p&gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&lt;input&nbsp;type=&quot;text&quot;&nbsp;id=&quot;date&quot;&gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&lt;input&nbsp;type=&quot;button&quot;&nbsp;value=&quot;...&quot;&nbsp;onclick=&quot;<span class="src-php">&lt;?=</span><span class="src-var">$dp</span><span class="src-sym">-&gt;</span><a href="../datePicker/datePicker.html#methodshow">show</a><span class="src-sym">(</span><span class="src-str">&quot;date&quot;</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">&quot;m&quot;</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">&quot;Y&quot;</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">&quot;H&quot;</span><span class="src-sym">)</span><span class="src-sym">,&nbsp;</span><a href="http://www.php.net/date">date</a><span class="src-sym">(</span><span class="src-str">&quot;i&quot;</span><span class="src-sym">))</span><span class="src-php">?&gt;</span>&quot;&gt;</div></li>
+<li><div class="src-line">&nbsp;</div></li>
+<li><div class="src-line">&lt;/body&gt;</div></li>
+<li><div class="src-line">&lt;/html&gt;</div></li>
+</ol>
+</div>
+        <div class="credit">
+		    <hr />
+		    Documentation generated on Thu, 15 Nov 2007 17:46:52 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.3.0RC6</a>
+	      </div>
+      </td></tr></table>
+    </td>
+  </tr>
+</table>
+
+</body>
+</html>
