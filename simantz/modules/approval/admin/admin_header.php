@@ -45,7 +45,7 @@ else
 	redirect_header(XOOPS_URL."/",1,_NOPERM);
 	exit();
 	}
-$myts =& MyTextSanitizer::getInstance();
+$myts = MyTextSanitizer::getInstance();
 
 
 
